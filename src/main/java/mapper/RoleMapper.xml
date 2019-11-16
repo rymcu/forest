@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.vertical.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.Role">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="ID" jdbcType="VARCHAR" property="idRole"/>
+        <result column="NAME" jdbcType="OTHER" property="name"/>
+        <result column="ENNAME" jdbcType="VARCHAR" property="inputCode"/>
+        <result column="CREATED_DATE" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="STATUS" jdbcType="CHAR" property="status"/>
+    </resultMap>
+    <resultMap id="RoleDTOResultMap" type="com.rymcu.vertical.dto.RoleDTO">
+        <id column="ID" property="id"></id>
+        <result column="NAME" property="name"/>
+        <result column="ENNAME" property="enname"/>
+        <result column="ROLE_TYPE" property="roleType"/>
+        <result column="REMARKS" property="remarks"/>
+        <result column="MENU_IDS" property="menuIds"/>
+    </resultMap>
+
+    <sql id="select">
+        r.ID,
+        r.NAME,
+        r.ROLE_TYPE,
+        r.ENNAME,
+        r.REMARKS
+    </sql>
+
+    <insert id="insertRoleMenu">
+        insert into SYS_ROLE_MENU (ROLE_ID, MENU_ID) VALUES (#{roleId}, #{menuId})
+    </insert>
+    <insert id="insertUserRole">
+        insert into SYS_USER_ROLE (USER_ID, ROLE_ID) VALUES (#{userId}, #{roleId})
+    </insert>
+
+    <delete id="deleteRoleMenuByRoleId">
+        delete SYS_ROLE_MENU where ROLE_ID = #{roleId}
+    </delete>
+
+    <delete id="deleteUserRoleByRoleId">
+        delete SYS_USER_ROLE where ROLE_ID = #{roleId}
+    </delete>
+    <delete id="deleteUser">
+        delete SYS_USER_ROLE where ROLE_ID = #{roleId} AND USER_ID = #{userId}
+    </delete>
+
+    <select id="findAllDTO" resultMap="RoleDTOResultMap">
+        select
+            <include refid="select"/>,
+        (select rtrim(XMLAGG(XMLELEMENT(E, MENU_ID || ',')).EXTRACT('//text()').getclobval(),',') from SYS_ROLE_MENU where ROLE_ID = r.ID) MENU_IDS
+        from SYS_ROLE r
+        where 1 = 1
+        <if test="role.name != null and role.name != ''">
+            and r.NAME like '%'||#{role.name}||'%'
+        </if>
+        <if test="role.enname != null and role.enname != ''">
+            and r.ENNAME like '%'||#{role.enname}||'%'
+        </if>
+        ORDER BY r.CREATE_DATE DESC
+    </select>
+
+    <select id="selectRoleByUser" resultMap="BaseResultMap">
+        select *
+        from SYS_ROLE
+        where ID in (select ROLE_ID
+                     from SYS_USER_ROLE
+                     where USER_ID = #{sysUser.id})
+    </select>
+    <select id="findRoleDTOById" resultMap="RoleDTOResultMap">
+        select
+            <include refid="select"/>,
+        (select rtrim(XMLAGG(XMLELEMENT(E, MENU_ID || ',')).EXTRACT('//text()').getclobval(),',') from SYS_ROLE_MENU where ROLE_ID = #{roleId}) MENU_IDS
+        from SYS_ROLE r where r.id = #{roleId}
+    </select>
+    <select id="selectRoleIdsByUser" resultType="java.lang.String">
+        SELECT wm_concat(ROLE_ID) from SYS_USER_ROLE where USER_ID = #{user.id}
+    </select>
+    <select id="findUserOfRoleListData" resultType="com.rymcu.vertical.dto.UserDTO">
+        select
+        u.ID,
+        u.NO,
+        u.LOGIN_NAME loginName,
+        u.SEX,
+        u.NAME,
+        u.EMAIL,
+        u.MOBILE,
+        u.PHONE,
+        u.OFFICE_ID officeId,
+        u.LAST_LOGIN_TIME lastLoginTime,
+        u.STATUS,
+        u.REMARKS,
+        u.INPUT_CODE inputCode,
+        (
+        select NAME from SYS_OFFICE o2 where o2.ID = u.OFFICE_ID
+        <if test="user.office != null and user.office != ''">
+            and o2.NAME = #{user.office}
+        </if>
+        ) office,
+        (select wm_concat(ROLE_ID) from SYS_USER_ROLE where USER_ID = u.ID) roleIds
+        from SYS_USER u
+        left join SYS_USER_ROLE sur
+        on u.ID = sur.USER_ID
+        where sur.ROLE_ID = #{user.remarks} and u.STATUS != 2
+        <if test="user.officeId != null and user.officeId != ''">
+            and ( u.OFFICE_ID in (select id from SYS_OFFICE where status = 0 start with id = #{user.officeId} connect by prior id = parent_id))
+        </if>
+        <if test="user.name != null and user.name != ''">
+            and u.NAME like '%'||#{user.name}||'%'
+        </if>
+        <if test="user.loginName != null and user.loginName != ''">
+            and u.LOGIN_NAME like '%'||#{user.loginName}||'%'
+        </if>
+        <if test="user.inputCode != null and user.inputCode != ''">
+            and u.INPUT_CODE like '%'||#{user.inputCode}||'%'
+        </if>
+        <if test="user.status != null and user.status != ''">
+            and u.STATUS like '%'||#{user.status}||'%'
+        </if>
+        ORDER BY CREATE_DATE
+    </select>
+    <select id="findUnAddUserOfRole" resultType="com.rymcu.vertical.dto.UserDTO">
+        select
+        u.ID,
+        u.NO,
+        u.LOGIN_NAME loginName,
+        u.SEX,
+        u.NAME,
+        u.EMAIL,
+        u.MOBILE,
+        u.PHONE,
+        u.OFFICE_ID officeId,
+        u.LAST_LOGIN_TIME lastLoginTime,
+        u.STATUS,
+        u.REMARKS,
+        u.INPUT_CODE inputCode,
+        (
+        select NAME from SYS_OFFICE o2 where o2.ID = u.OFFICE_ID
+        ) office
+        from SYS_USER u
+        where #{roleId} not in (select ROLE_ID from SYS_USER_ROLE where USER_ID = u.ID) and u.STATUS = 0
+        <if test="userName != null and userName != ''">
+            and u.NAME like '%'||#{userName}||'%'
+        </if>
+    </select>
+</mapper>
