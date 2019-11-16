@@ -7,11 +7,12 @@ import tk.mybatis.mapper.annotation.ColumnType;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Table(name = "SYS_MENU")
-public class Menu {
+public class Menu implements Serializable,Cloneable {
 
     @Id
     @Column(name = "id")

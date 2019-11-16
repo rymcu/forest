@@ -7,11 +7,12 @@ import tk.mybatis.mapper.annotation.ColumnType;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "sys_user")
 @Data
-public class User {
+public class User implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
     private Integer idUser;

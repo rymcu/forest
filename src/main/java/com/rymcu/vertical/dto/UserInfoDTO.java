@@ -7,37 +7,27 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class UserDTO implements Serializable {
+public class UserInfoDTO implements Serializable {
 
-    private String id;
+    private String idUser;
 
-    private String office;
+    private String account;
 
-    private String officeId;
+    private String avatarType;
 
-    private String loginName;
+    private String avatarUrl;
 
-    private String password;
-
-    private String no;
-
-    private String name;
+    private String nickname;
 
     private String email;
 
     private String phone;
 
-    private String mobile;
-
     private String status;
-
-    private String remarks;
 
     private String roleIds;
 
-    private String sex = "男";
-
-    private String inputCode;
+    private String sex;
 
     @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date lastLoginTime;
