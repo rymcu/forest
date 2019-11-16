@@ -49,6 +49,14 @@ public class ShiroConfig implements EnvironmentAware {
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/uploadFile/**", "anon");
         filterChainDefinitionMap.put("/login", "anon");
+
+        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
+        filterChainDefinitionMap.put("/swagger-resources", "anon");
+        filterChainDefinitionMap.put("/swagger-resources/configuration/security", "anon");
+        filterChainDefinitionMap.put("/swagger-resources/configuration/ui", "anon");
+        filterChainDefinitionMap.put("/v2/api-docs", "anon");
+        filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
+
         filterChainDefinitionMap.put("/api/**", "anon");
         //  filterChainDefinitionMap.put("/**", "authc");
         filterChainDefinitionMap.put("/**", "authc");

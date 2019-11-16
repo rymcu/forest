@@ -12,6 +12,7 @@ import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.Encodes;
 import com.rymcu.vertical.util.Utils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -85,8 +86,8 @@ public class HpeisShiroRealm extends AuthorizingRealm {
             throw new CaptchaException();
         }
         try {
-            user = userService.findByLoginName(username);
-        } catch (ServiceException e) {
+            user = userService.findByAccount(username);
+        } catch (TooManyResultsException e) {
             e.printStackTrace();
         }
         if (user == null) {
@@ -117,7 +118,7 @@ public class HpeisShiroRealm extends AuthorizingRealm {
         public Principal(User user, boolean mobileLogin) {
             this.id = user.getIdUser();
             this.account = user.getAccount();
-            this.name = user.getNickName();
+            this.name = user.getNickname();
             this.mobileLogin = mobileLogin;
         }
 

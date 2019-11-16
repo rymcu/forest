@@ -5,165 +5,41 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="ID_USER" jdbcType="VARCHAR" property="idUser"/>
-        <result column="APP_ID" jdbcType="VARCHAR" property="appId"/>
-        <result column="ACCOUNT" jdbcType="VARCHAR" property="account"/>
-        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
-        <result column="NICK_NAME" jdbcType="VARCHAR" property="nickName"/>
-        <result column="REAL_NAME" jdbcType="VARCHAR" property="realName"/>
-        <result column="SEX" jdbcType="VARCHAR" property="sex"/>
-        <result column="AVATAR_TYPE" jdbcType="VARCHAR" property="avatarType"/>
-        <result column="AVATAR_URL" jdbcType="VARCHAR" property="avatarUrl"/>
-        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
-        <result column="PHONE" jdbcType="VARCHAR" property="phone"/>
-        <result column="STATUS" jdbcType="NUMBER" property="status"/>
-        <result column="LAST_LOGIN_TIME" jdbcType="TIMESTAMP" property="lastLoginTime"/>
-        <result column="CREATED_TIME" jdbcType="TIMESTAMP" property="createdTime"/>
+        <id column="id" jdbcType="INTEGER" property="idUser"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="sex" jdbcType="CHAR" property="sex"/>
+        <result column="avatar_type" jdbcType="VARCHAR" property="avatarType"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="status" jdbcType="CHAR" property="status"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
     </resultMap>
-    <resultMap id="ExportResultMap" type="com.rymcu.vertical.dto.UserExportDTO">
-        <result column="OFFICE_NAME" property="officeName"/>
-        <result column="NAME" property="name"/>
-        <result column="SEX" property="sex"/>
-        <result column="LOGIN_NAME" property="loginName"/>
-        <result column="STORE_PERM" property="storePerm"/>
-        <result column="DEPART_PERM" property="departPerm"/>
-    </resultMap>
-    <resultMap id="RoleDTOResultMap" type="com.rymcu.vertical.dto.RoleDTO">
-        <id column="ID" property="id"></id>
-        <result column="NAME" property="name"/>
-        <result column="ENNAME" property="enname"/>
-        <result column="ROLE_TYPE" property="roleType"/>
-        <result column="REMARKS" property="remarks"/>
-        <result column="MENU_IDS" property="menuIds"/>
+    <resultMap id="UserInfoResultMapper" type="com.rymcu.vertical.dto.UserInfoDTO">
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="avatar_type" jdbcType="VARCHAR" property="avatarType"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
     </resultMap>
     <insert id="insertUserRole">
-        insert into SYS_USER_ROLE (USER_ID, ROLE_ID) VALUES (#{userId}, #{roleId})
+        insert into sys_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
     </insert>
-    <delete id="deleteUserRoleByUserId">
-        delete SYS_USER_ROLE
-        where USER_ID = #{userId}
-    </delete>
-    <update id="deleteUserById">
-        update SYS_USER set STATUS = 2 where ID = #{id}
-    </update>
-    <update id="resetPassword">
-        UPDATE SYS_USER SET PASSWORD = #{password} WHERE ID = #{userId}
-    </update>
-    <update id="updateLastLoginTime">
-        UPDATE SYS_USER SET LAST_LOGIN_TIME = #{date} WHERE ID = #{id}
-    </update>
-    <select id="findAllDTO" resultType="com.rymcu.vertical.dto.UserDTO">
-        select
-        u.ID,
-        u.NO,
-        u.LOGIN_NAME loginName,
-        u.SEX,
-        u.NAME,
-        u.EMAIL,
-        u.MOBILE,
-        u.PHONE,
-        u.OFFICE_ID officeId,
-        u.LAST_LOGIN_TIME lastLoginTime,
-        u.STATUS,
-        u.REMARKS,
-        u.INPUT_CODE inputCode,
-        (
-        select NAME from SYS_OFFICE o2 where o2.ID = u.OFFICE_ID
-        <if test="user.office != null and user.office != ''">
-            and o2.NAME = #{user.office}
-        </if>
-        ) office,
-        (select wm_concat(ROLE_ID) from SYS_USER_ROLE where USER_ID = u.ID) roleIds
-        from SYS_USER u
-        where u.STATUS != 2
-        <if test="user.officeId != null and user.officeId != ''">
-            and ( u.OFFICE_ID in (select id from SYS_OFFICE where status = 0 start with id = #{user.officeId} connect by prior id = parent_id))
-        </if>
-        <if test="user.name != null and user.name != ''">
-            and u.NAME like '%'||#{user.name}||'%'
-        </if>
-        <if test="user.loginName != null and user.loginName != ''">
-            and u.LOGIN_NAME like '%'||#{user.loginName}||'%'
-        </if>
-        <if test="user.inputCode != null and user.inputCode != ''">
-            and u.INPUT_CODE like '%'||#{user.inputCode}||'%'
-        </if>
-        <if test="user.status != null and user.status != ''">
-            and u.STATUS like '%'||#{user.status}||'%'
-        </if>
-        ORDER BY CREATE_DATE
+
+    <select id="findByAccount" resultMap="BaseResultMap">
+        select id, nickname, account, password, status from sys_user where account = #{account} AND status = 0
     </select>
-    <select id="findUserDTOById" resultType="com.rymcu.vertical.dto.UserDTO">
-        select
-            u.ID,
-            u.NO,
-            u.LOGIN_NAME loginName,
-            u.SEX,
-            u.NAME,
-            u.EMAIL,
-            u.MOBILE,
-            u.PHONE,
-            u.STATUS,
-            u.OFFICE_ID officeId,
-            u.LAST_LOGIN_TIME lastLoginTime,
-            (
-                select NAME
-                from SYS_OFFICE o2
-                where o2.ID = u.OFFICE_ID
-            )            office,
-            (select wm_concat(ROLE_ID) from SYS_USER_ROLE where USER_ID = #{id}) roleIds,
-            u.REMARKS,
-            u.INPUT_CODE inputCode
-        from SYS_USER u
-        where u.id = #{id}
-    </select>
-    <select id="findByLoginName" resultMap="BaseResultMap">
-        SELECT LOGIN_NAME, PASSWORD, STATUS, ID, NAME FROM SYS_USER WHERE LOGIN_NAME = #{loginName} AND STATUS = 0
+    <select id="findUserInfoByAccount" resultType="com.rymcu.vertical.dto.UserInfoDTO">
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, password, status, last_login_time from sus_user when account = #{account}
     </select>
 
-    <select id="queryUserByInputCode" resultType="com.rymcu.vertical.dto.UserDTO">
-      select
-        u.ID,
-        u.NO,
-        u.LOGIN_NAME loginName,
-        u.SEX,
-        u.NAME,
-        u.EMAIL,
-        u.MOBILE,
-        u.PHONE,
-        u.OFFICE_ID officeId,
-        u.LAST_LOGIN_TIME lastLoginTime,
-        u.STATUS,
-        u.REMARKS,
-        u.INPUT_CODE inputCode
-      from SYS_USER u
-      where id in (select user_id from sys_user_role where role_id in (select id from sys_role where enname = #{eName}) )
-    </select>
-
-    <select id="findUserExportData" resultMap="ExportResultMap">
-        SELECT TO_CHAR((SELECT NVL(NAME||'/','') FROM SYS_OFFICE WHERE ID = SO.PARENT_ID)||SO.NAME) AS OFFICE_NAME,SU.NAME,SEX,LOGIN_NAME,
-               (SELECT wm_concat(NAME) FROM BAS_STORE WHERE ID_STORE IN (SELECT * FROM table(fn_split(SU      .STORE,',')))) AS STORE_PERM ,
-               (SELECT wm_concat(BD.DEPART_NAME) FROM SYS_USER_DEPART_PERM SUDP LEFT JOIN BAS_DEPART BD ON SUDP.ID_DEPART = BD.ID_DEPART WHERE SUDP.USER_ID = SU.ID) AS DEPART_PERM
-        FROM SYS_USER SU LEFT JOIN SYS_OFFICE SO ON SU.OFFICE_ID = SO.ID
-        where SU.STATUS != 2
-        <if test="user.officeId != null and user.officeId != ''">
-            and ( SU.OFFICE_ID in (select id from SYS_OFFICE where status = 0 start with id = #{user.officeId} connect by prior id = parent_id))
-        </if>
-        <if test="user.name != null and user.name != ''">
-            and SU.NAME like '%'||#{user.name}||'%'
-        </if>
-        <if test="user.loginName != null and user.loginName != ''">
-            and SU.LOGIN_NAME like '%'||#{user.loginName}||'%'
-        </if>
-        <if test="user.inputCode != null and user.inputCode != ''">
-            and SU.INPUT_CODE like '%'||#{user.inputCode}||'%'
-        </if>
-        <if test="user.status != null and user.status != ''">
-            and SU.STATUS like '%'||#{user.status}||'%'
-        </if>
-        ORDER BY OFFICE_NAME
-    </select>
-    <select id="findRoleOfUser" resultMap="RoleDTOResultMap">
-        SELECT * FROM SYS_ROLE WHERE ID IN (SELECT ROLE_ID FROM SYS_USER_ROLE WHERE USER_ID = #{userId})
-    </select>
 </mapper>

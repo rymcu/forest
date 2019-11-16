@@ -14,13 +14,13 @@ import java.util.Date;
 public class Menu {
 
     @Id
-    @Column(name = "ID_MENU")
+    @Column(name = "id")
     private Integer idMenu;
 
     /**
      * 上级菜单ID
      * */
-    @Column(name = "PARENT_ID")
+    @Column(name = "parent_id")
     private String parentId;
 
     /**
@@ -57,12 +57,12 @@ public class Menu {
     /**
      * 创建时间
      * */
-    @Column(name = "CREATED_TIME")
+    @Column(name = "created_time")
     private Date createdTime;
 
     /**
      * 状态
      * */
-    @Column(name = "STATUS")
+    @Column(name = "status")
     private String status;
 }

@@ -12,14 +12,8 @@ public class RoleDTO {
     private String name;
 
     // 英文名称
-    private String enname;
-
-    // 用户类别
-    private String roleType;
+    private String inputCode;
 
     // 角色授权菜单ids
     private String menuIds;
-
-    // 备注
-    private String remarks;
 }

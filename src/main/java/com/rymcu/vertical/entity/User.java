@@ -9,97 +9,97 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
-@Table(name = "SYS_USER")
+@Table(name = "sys_user")
 @Data
 public class User {
     @Id
-    @Column(name = "ID_USER")
+    @Column(name = "id")
     private Integer idUser;
-
-    /**
-     * 应用ID
-     * */
-    @Column(name = "APP_ID")
-    private String appId;
 
     /**
      * 登录账号
      * */
-    @Column(name = "ACCOUNT")
+    @Column(name = "account")
     private String account;
 
     /**
      * 密码
      * */
-    @Column(name = "PASSWORD")
+    @Column(name = "password")
     private String password;
 
     /**
      * 昵称
      * */
-    @Column(name = "NICK_NAME")
-    private String nickName;
+    @Column(name = "nickname")
+    private String nickname;
 
     /**
      * 真实姓名
      * */
-    @Column(name = "REAL_NAME")
+    @Column(name = "real_name")
     private String realName;
 
     /**
      * 性别 1:男性 2:女性
      * */
-    @Column(name = "SEX")
-    private Integer sex;
+    @Column(name = "sex")
+    private String sex;
 
     /**
      * 头像文件类型
      * */
-    @Column(name = "AVATAR_TYPE")
-    private Integer avatarType;
+    @Column(name = "avatar_type")
+    private String avatarType;
 
     /**
      * 头像路径
      * */
-    @Column(name = "AVATAR_URL")
+    @Column(name = "avatar_url")
     private String avatarUrl;
 
     /**
      * 邮箱地址
      * */
-    @ColumnType(column = "EMAIL",
+    @ColumnType(column = "email",
             jdbcType = JdbcType.VARCHAR)
     private String email;
 
     /**
      * 手机号码
      * */
-    @ColumnType(column = "PHONE",
+    @ColumnType(column = "phone",
             jdbcType = JdbcType.VARCHAR)
     private String phone;
 
     /**
      * 签名
      * */
-    @ColumnType(column = "SIGNATURE",
+    @ColumnType(column = "signature",
             jdbcType = JdbcType.VARCHAR)
     private String signature;
 
     /**
      * 状态
      * */
-    @Column(name = "STATUS")
-    private Integer status;
+    @Column(name = "status")
+    private String status;
 
     /**
      * 最后登录时间
      * */
-    @Column(name = "LAST_LOGIN_TIME")
+    @Column(name = "last_login_time")
     private Date lastLoginTime;
 
     /**
      * 创建时间
      * */
-    @Column(name = "CREATED_TIME")
+    @Column(name = "created_time")
     private Date createdTime;
+
+    /**
+     * 创建时间
+     * */
+    @Column(name = "updated_time")
+    private Date updatedTime;
 }

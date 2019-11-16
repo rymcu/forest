@@ -52,4 +52,9 @@ public class Utils {
         }
         return null;
     }
+
+    public static Integer genCode() {
+        Integer code = (int)((Math.random()*9+1)*100000);
+        return code;
+    }
 }

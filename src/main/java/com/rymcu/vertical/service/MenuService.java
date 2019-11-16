@@ -14,20 +14,4 @@ import java.util.List;
 public interface MenuService extends Service<Menu> {
 
     List<Menu> selectMenuByUser(User sysUser);
-
-    Menu getParent(Menu e);
-
-    List<MenuDTO> findByParentId(String roleId);
-
-    MenuDTO findMenuDTOById(String id);
-
-    void saveMenu(MenuDTO menuDTO);
-
-    void deleteMenuById(String id);
-
-    void updateMenu(MenuDTO menuDTO);
-
-    List<MenuDTO> findByParentIdAndUserId(String parentId, String userId);
-
-    void updateUserStatus(String id, String flag);
 }

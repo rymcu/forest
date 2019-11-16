@@ -8,33 +8,39 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Data
-@Table(name = "SYS_ROLE")
+@Table(name = "sys_role")
 public class Role {
     @Id
-    @Column(name = "ID_ROLE")
-    private String idRole;
+    @Column(name = "id")
+    private Integer idRole;
 
     /**
      * 角色名称
      * */
-    @Column(name = "NAME")
+    @Column(name = "name")
     private String name;
 
     /**
      * 拼音码
      * */
-    @Column(name = "INPUT_CODE")
+    @Column(name = "input_code")
     private String inputCode;
 
     /**
      * 状态
      * */
-    @Column(name = "STATUS")
-    private Integer status;
+    @Column(name = "status")
+    private String status;
 
     /**
      * 创建时间
      * */
-    @Column(name = "CREATED_TIME")
+    @Column(name = "created_time")
     private Date createdTime;
+
+    /**
+     * 更新时间
+     * */
+    @Column(name = "updated_time")
+    private Date updatedTime;
 }

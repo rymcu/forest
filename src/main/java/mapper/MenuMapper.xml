@@ -5,83 +5,18 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="ID" jdbcType="VARCHAR" property="idMenu"/>
-        <result column="PARENT_ID" jdbcType="VARCHAR" property="parentId"/>
-        <result column="NAME" jdbcType="OTHER" property="name"/>
-        <result column="SORT" jdbcType="DECIMAL" property="sort"/>
-        <result column="HREF" jdbcType="VARCHAR" property="href"/>
-        <result column="MENU_TYPE" jdbcType="CHAR" property="menuType"/>
-        <result column="PERMISSION" jdbcType="VARCHAR" property="permission"/>
-        <result column="CREATED_TIME" jdbcType="TIMESTAMP" property="createdTime"/>
-        <result column="STATUS" jdbcType="CHAR" property="status"/>
+        <id column="id" jdbcType="INTEGER" property="idMenu"/>
+        <result column="parent_id" jdbcType="VARCHAR" property="parentId"/>
+        <result column="name" jdbcType="OTHER" property="name"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="href" jdbcType="VARCHAR" property="href"/>
+        <result column="menu_type" jdbcType="CHAR" property="menuType"/>
+        <result column="permission" jdbcType="VARCHAR" property="permission"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="status" jdbcType="CHAR" property="status"/>
     </resultMap>
 
-    <sql id="select">
-        ID,
-        PARENT_ID                parentId,
-        (select NAME
-        from SYS_MENU
-        where ID = #{parentId}) parentName,
-        NAME,
-        SORT,
-        HREF,
-        MENU_TYPE                  menuType,
-        PERMISSION,
-        REMARKS,
-        STATUS
-    </sql>
-
-    <sql id="selectOne">
-        ID,
-        PARENT_ID                parentId,
-        (select NAME
-        from SYS_MENU
-        where ID = m.PARENT_ID) parentName,
-        NAME,
-        SORT,
-        HREF,
-        MENU_TYPE                  menuType,
-        PERMISSION,
-        REMARKS,
-        STATUS
-    </sql>
-
-    <delete id="deleteRoleMenu">
-        delete SYS_ROLE_MENU
-        where MENU_ID = #{menuId}
-    </delete>
-    <update id="deleteMenu">
-        update SYS_MENU set STATUS = '2' where ID = #{id}
-    </update>
-
-    <select id="selectMenuByRole" resultType="com.rymcu.vertical.entity.Menu">
-        select *
-        from SYS_MENU
-        where STATUS = '0' and ID in (select MENU_ID
-                                     from SYS_ROLE_MENU
-                                     where ROLE_ID = #{role.id})  order by SORT
+    <select id="selectMenuByIdRole" resultMap="BaseResultMap">
+        select * from sys_role_menu srm left join sys_menu sm on srm.id_menu = sm.id where status = '0'  order by sort
     </select>
-
-    <select id="findByParentId" resultType="com.rymcu.vertical.dto.MenuDTO">
-        select
-            <include refid="select"/>
-        from SYS_MENU
-        where PARENT_ID = #{parentId} and STATUS != '2'  order by SORT
-    </select>
-
-    <select id="findMenuDTOById" resultType="com.rymcu.vertical.dto.MenuDTO">
-        select
-            <include refid="selectOne"/>
-        from SYS_MENU m
-        where ID = #{id} order by SORT
-    </select>
-
-    <select id="findByParentIdAndUserId" resultType="com.rymcu.vertical.dto.MenuDTO">
-        select
-            <include refid="selectOne"/>
-        from SYS_MENU m where PARENT_ID = #{parentId} and MENU_TYPE = '0' and STATUS = '0'
-            and ID in (select MENU_ID from SYS_ROLE_MENU where ROLE_ID in (SELECT ROLE_ID from SYS_USER_ROLE where USER_ID = #{userId}))
-        order by SORT
-    </select>
-
 </mapper>
