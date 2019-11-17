@@ -86,7 +86,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 TUser tUser = new TUser();
                 BeanCopierUtil.copy(user,tUser);
                 tUser.setToken(tokenManager.createToken(account));
-                map.put("user",user);
+                map.put("user",tUser);
             } else {
                 map.put("message","密码错误！");
             }

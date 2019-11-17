@@ -1,19 +1,11 @@
-package com.rymcu.vertical.entity;
+package com.rymcu.vertical.dto;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Article implements Serializable,Cloneable {
-    /** 主键 */
-    @Id
-    @GeneratedValue(generator = "JDBC")
-    @Column(name = "id")
+public class ArticleDTO {
     private Integer idArticle ;
     /** 文章标题 */
     private String articleTitle ;
@@ -21,6 +13,10 @@ public class Article implements Serializable,Cloneable {
     private String articleThumbnailUrl ;
     /** 文章作者id */
     private Integer articleAuthorId ;
+    /** 文章作者 */
+    private String articleAuthorName ;
+    /** 文章作者头像 */
+    private String articleAuthorAvatarUrl ;
     /** 文章类型 */
     private String articleType ;
     /** 文章标签 */
@@ -31,12 +27,14 @@ public class Article implements Serializable,Cloneable {
     private Integer articlePreviewContent ;
     /** 评论总数 */
     private Integer commentCount ;
+    /** 过去时长 */
+    private String timeAgo ;
     /** 文章永久链接 */
     private String articlePermalink ;
     /** 站内链接 */
     private String articleLink ;
-    /** 创建时间 */
-    private Date createdTime ;
     /** 更新时间 */
     private Date updatedTime ;
+
+    private Author articleAuthor;
 }

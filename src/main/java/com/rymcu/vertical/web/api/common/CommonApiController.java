@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/console")
 public class CommonApiController {
 
     @Resource
@@ -50,5 +50,10 @@ public class CommonApiController {
     public GlobalResult login(@RequestParam("account") String account, @RequestParam("password") String password){
         Map map = userService.login(account,password);
         return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/heartbeat")
+    public GlobalResult heartbeat(){
+        return GlobalResultGenerator.genSuccessResult("heartbeat");
     }
 }

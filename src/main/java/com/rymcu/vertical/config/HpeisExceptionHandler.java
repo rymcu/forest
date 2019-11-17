@@ -4,6 +4,7 @@ import com.alibaba.fastjson.support.spring.FastJsonJsonView;
 import com.rymcu.vertical.core.exception.ServiceException;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.ResultCode;
+import com.rymcu.vertical.web.api.exception.MallApiException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
@@ -33,7 +34,11 @@ public class HpeisExceptionHandler {
     public Object errorHandler(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex){
         if(isAjax(request)){
             GlobalResult result = new GlobalResult();
-            if (ex instanceof UnauthenticatedException) {
+            if (ex instanceof MallApiException){
+                result.setCode(401);
+                result.setMessage("用户未登录");
+                logger.info("用户未登录");
+            } else if (ex instanceof UnauthenticatedException) {
                 result.setCode(1000001);
                 result.setMessage("token错误");
                 logger.info("token错误");
@@ -74,7 +79,10 @@ public class HpeisExceptionHandler {
             ModelAndView mv = new ModelAndView();
             FastJsonJsonView view = new FastJsonJsonView();
             Map<String, Object> attributes = new HashMap();
-            if (ex instanceof UnauthenticatedException) {
+            if (ex instanceof MallApiException){
+                attributes.put("code", "401");
+                attributes.put("message", "用户未登录");
+            } else if (ex instanceof UnauthenticatedException) {
                 attributes.put("code", "1000001");
                 attributes.put("message", "token错误");
             } else if (ex instanceof UnauthorizedException) {

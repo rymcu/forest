@@ -1,0 +1,51 @@
+spring:
+  profiles:
+    active: pord
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+  redis:
+    host: 127.0.0.1:6379
+    password: d9d2j9w2
+    database: 1
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 500
+        min-idle: 0
+  datasource:
+    url: jdbc:mysql://localhost:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    username: root
+    password: d9d2j9w2
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    resources:
+      add-mappings: true
+  mail:
+    host: smtp.qiye.163.com #SMTP服务器地址
+    username: service@rymcu.com
+    password: 12345678Aa
+    properties:
+      form: service@rymcu.com
+wx:
+  miniapp:
+    configs:
+      - appid: wxf57df4f171606a26
+        secret: 574ff86cb48a42f3980b221e942c53b1
+        token: #微信小程序消息服务器配置的token
+        aesKey: #微信小程序消息服务器配置的EncodingAESKey
+        msgDataFormat: JSON
+env: dev
+logging:
+  file:
+    path: f:/logs/vertical
+server:
+  port: 8082
+  servlet:
+    context-path: /vertical
