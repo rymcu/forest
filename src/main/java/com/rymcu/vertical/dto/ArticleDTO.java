@@ -24,7 +24,9 @@ public class ArticleDTO {
     /** 浏览总数 */
     private Integer articleViewCount ;
     /** 预览内容 */
-    private Integer articlePreviewContent ;
+    private String articlePreviewContent ;
+    /** 文章内容 */
+    private String articleContent ;
     /** 评论总数 */
     private Integer commentCount ;
     /** 过去时长 */

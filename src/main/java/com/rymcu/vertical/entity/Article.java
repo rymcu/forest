@@ -26,9 +26,9 @@ public class Article implements Serializable,Cloneable {
     /** 文章标签 */
     private String articleTags ;
     /** 浏览总数 */
-    private Integer articleViewCount ;
+    private Integer articleViewCount;
     /** 预览内容 */
-    private Integer articlePreviewContent ;
+    private String articlePreviewContent ;
     /** 评论总数 */
     private Integer commentCount ;
     /** 文章永久链接 */

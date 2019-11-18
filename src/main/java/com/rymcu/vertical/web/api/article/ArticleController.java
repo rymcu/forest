@@ -47,7 +47,7 @@ public class ArticleController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     public GlobalResult detail(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id);
         Map map = new HashMap<>();

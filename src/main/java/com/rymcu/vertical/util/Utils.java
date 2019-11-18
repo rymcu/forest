@@ -6,6 +6,10 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
+import java.text.ParseException;
+import java.time.*;
+import java.util.Date;
+
 public class Utils {
     public static final String HASH_ALGORITHM = "SHA-1";
     public static final int HASH_INTERATIONS = 1024;
@@ -56,5 +60,49 @@ public class Utils {
     public static Integer genCode() {
         Integer code = (int)((Math.random()*9+1)*100000);
         return code;
+    }
+
+    public static String getTimeAgo(Date date) {
+
+        String timeAgo;
+
+        Instant instant = date.toInstant();
+        ZoneId zone = ZoneId.systemDefault();
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+        LocalDate oldLocalDate = localDateTime.toLocalDate();
+
+        LocalDate today = LocalDate.now();
+
+        Period p = Period.between(oldLocalDate, today);
+        if(p.getYears() > 0){
+            timeAgo = p.getYears()+" 年前 ";
+        }else if(p.getMonths() > 0){
+            timeAgo = p.getMonths()+" 月前 ";
+        }else if(p.getDays() > 0){
+            timeAgo = p.getDays()+" 天前 ";
+        }else {
+            long to = System.currentTimeMillis();
+            long from = date.getTime();
+            int hours = (int) ((to - from)/(1000 * 60 * 60));
+            if(hours > 0){
+                timeAgo = hours+" 小时前 ";
+            }else {
+                int minutes = (int) ((to - from)/(1000 * 60));
+                if(minutes > 0){
+                    timeAgo = " 刚刚 ";
+                }else {
+                    timeAgo = minutes+" 分钟前 ";
+                }
+            }
+        }
+        return timeAgo;
+    }
+
+    public static void main(String[] args){
+        LocalDate localDate = LocalDate.parse("2019-11-15");
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
+        String s = getTimeAgo(Date.from(instant));
+        System.out.println(s);
     }
 }
