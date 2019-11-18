@@ -132,9 +132,11 @@ public class ShiroConfig implements EnvironmentAware {
 
 
     public RedisManager redisManager() {
+        StringBuffer host = new StringBuffer(env.getProperty("spring.redis.host"));
+        host.append(":").append(env.getProperty("spring.redis.port"));
         // 设置redis配置信息
         RedisManager redisManager = new RedisManager();
-        redisManager.setHost(env.getProperty("spring.redis.host"));
+        redisManager.setHost(host.toString());
         redisManager.setPassword(env.getProperty("spring.redis.password"));
         return redisManager;
     }
