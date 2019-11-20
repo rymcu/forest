@@ -40,6 +40,9 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 		
 		//从header中得到token
 		String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
+		if(StringUtils.isBlank(authHeader)){
+			authHeader = request.getHeader(JwtConstants.UPLOAD_TOKEN);
+		}
 		if (StringUtils.isBlank(authHeader)) {
             throw new MallApiException(ErrorCode.UNAUTHORIZED);
         }

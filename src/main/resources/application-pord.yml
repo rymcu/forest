@@ -27,11 +27,14 @@ spring:
     resources:
       add-mappings: true
   mail:
-    host: smtp.ym.163.com #SMTP服务器地址
+    host: smtp.ym.163.com
+    port: 465
     username: service@rymcu.com
     password: Aa12345678
-    properties:
-      form: service@rymcu.com
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
 wx:
   miniapp:
     configs:
@@ -43,10 +46,16 @@ wx:
 env: dev
 logging:
   file:
-    path: f:/logs/vertical
+    path: /logs/vertical
+  level:
+    root: info
 server:
   port: 8099
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024
+  max-http-header-size: 1024
+version: 1.0
+resource:
+  file-path: https://rymcu.com/vertical

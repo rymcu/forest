@@ -8,7 +8,9 @@ import com.rymcu.vertical.entity.ArticleContent;
 import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.util.Html2TextUtil;
+import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
+import com.rymcu.vertical.web.api.exception.MallApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +41,13 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional
-    public Map postArticle(Integer idArticle, String articleTitle, String articleContent, String articleContentHtml, String articleTags, HttpServletRequest request) {
+    public Map postArticle(Integer idArticle, String articleTitle, String articleContent, String articleContentHtml, String articleTags, HttpServletRequest request) throws MallApiException {
         Map map = new HashMap();
         Article article;
         if(idArticle == null || idArticle == 0){
             article = new Article();
             article.setArticleTitle(articleTitle);
-            article.setArticleAuthorId(5);
+            article.setArticleAuthorId(UserUtils.getWxCurrentUser().getIdUser());
             article.setArticleTags(articleTags);
             article.setCreatedTime(new Date());
             article.setUpdatedTime(article.getCreatedTime());
@@ -55,6 +57,10 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             articleMapper.insertArticleContent(article.getIdArticle(),articleContent,articleContentHtml);
         } else {
             article = articleMapper.selectByPrimaryKey(idArticle);
+            if(UserUtils.getWxCurrentUser().getIdUser() != article.getIdArticle()){
+                map.put("message","非法用户！");
+                return map;
+            }
             article.setArticleTitle(articleTitle);
             article.setArticleTags(articleTags);
             if(StringUtils.isNotBlank(articleContentHtml)){
@@ -74,9 +80,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    public ArticleDTO findArticleDTOById(Integer id) {
+    public ArticleDTO findArticleDTOById(Integer id, int type) {
         ArticleDTO articleDTO = articleMapper.selectArticleDTOById(id);
-        articleDTO = genArticle(articleDTO,1);
+        articleDTO = genArticle(articleDTO,type);
         return articleDTO;
     }
 
@@ -87,6 +93,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         if(type == 1){
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             article.setArticleContent(articleContent.getArticleContentHtml());
+        } else if(type == 2){
+            ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
+            article.setArticleContent(articleContent.getArticleContent());
         } else {
           if(StringUtils.isBlank(article.getArticlePreviewContent())){
               ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());

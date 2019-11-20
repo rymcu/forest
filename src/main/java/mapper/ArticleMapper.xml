@@ -66,6 +66,6 @@
         select art.*,su.nickname,su.avatar_url from article art left join sys_user su on art.article_author_id = su.id where art.id = #{id}
     </select>
     <select id="selectArticleContent" resultMap="ArticleContentResultMap">
-        select article_content_html from article_content where id_article = #{idArticle}
+        select article_content,article_content_html from article_content where id_article = #{idArticle}
     </select>
 </mapper>

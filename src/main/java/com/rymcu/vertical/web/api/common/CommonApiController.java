@@ -34,14 +34,14 @@ public class CommonApiController {
     @PostMapping("/get-email-code")
     public GlobalResult getEmailCode(@RequestParam("email") String email) throws ServiceException {
         Map map = new HashMap();
-        map.put("message",GlobalResultMessage.SEND_SUCCESS);
+        map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
             map.put("message","该邮箱已被注册！");
         } else {
             Integer result = javaMailService.sendEmailCode(email);
             if(result == 0){
-                map.put("message",GlobalResultMessage.SEND_FAIL);
+                map.put("message",GlobalResultMessage.SEND_FAIL.getMessage());
             }
         }
         return GlobalResultGenerator.genSuccessResult(map);
@@ -81,9 +81,17 @@ public class CommonApiController {
 
 
 
-    @GetMapping("/articles/{id}")
+    @GetMapping("/article/{id}")
     public GlobalResult detail(@PathVariable Integer id){
-        ArticleDTO articleDTO = articleService.findArticleDTOById(id);
+        ArticleDTO articleDTO = articleService.findArticleDTOById(id,1);
+        Map map = new HashMap<>();
+        map.put("article", articleDTO);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/update/{id}")
+    public GlobalResult update(@PathVariable Integer id){
+        ArticleDTO articleDTO = articleService.findArticleDTOById(id,2);
         Map map = new HashMap<>();
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);

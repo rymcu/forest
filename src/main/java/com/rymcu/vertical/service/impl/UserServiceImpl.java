@@ -66,6 +66,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     Role role = roleMapper.selectRoleByInputCode("user");
                     userMapper.insertUserRole(user.getIdUser(), role.getIdRole());
                     map.put("message","注册成功！");
+                    map.put("flag",1);
                     redisService.delete(email);
                 }
             }

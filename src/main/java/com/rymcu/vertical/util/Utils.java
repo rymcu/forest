@@ -5,8 +5,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.springframework.core.env.Environment;
 
-import java.text.ParseException;
 import java.time.*;
 import java.util.Date;
 
@@ -14,6 +14,9 @@ public class Utils {
     public static final String HASH_ALGORITHM = "SHA-1";
     public static final int HASH_INTERATIONS = 1024;
     public static final int SALT_SIZE = 8;
+
+    private static Environment env = SpringContextHolder.getBean(Environment.class);
+
     /**
      * 生成安全的密码，生成随机的16位salt并经过1024次 sha-1 hash
      */
@@ -62,6 +65,15 @@ public class Utils {
         return code;
     }
 
+    /**
+     * 获取配置文件内属性
+     * @param key 键值
+     * @return 属性值
+     * */
+    public static String getProperty(String key){
+        return env.getProperty(key);
+    }
+
     public static String getTimeAgo(Date date) {
 
         String timeAgo;
@@ -88,7 +100,7 @@ public class Utils {
                 timeAgo = hours+" 小时前 ";
             }else {
                 int minutes = (int) ((to - from)/(1000 * 60));
-                if(minutes > 0){
+                if(minutes == 0){
                     timeAgo = " 刚刚 ";
                 }else {
                     timeAgo = minutes+" 分钟前 ";
