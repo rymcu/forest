@@ -28,11 +28,10 @@ spring:
     resources:
       add-mappings: true
   mail:
-    host: smtp.qiye.163.com #SMTP服务器地址
-    username: service@rymcu.com
-    password: 12345678Aa
-    properties:
-      form: service@rymcu.com
+    host: smtp.ym.163.com
+    port: 465
+    username: #你的邮箱账号
+    password: #你的邮箱密码
 wx:
   miniapp:
     configs:
