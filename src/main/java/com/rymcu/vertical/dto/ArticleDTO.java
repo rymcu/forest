@@ -30,7 +30,7 @@ public class ArticleDTO {
     /** 文章内容html */
     private String articleContentHtml;
     /** 评论总数 */
-    private Integer commentCount;
+    private Integer articleCommentCount;
     /** 过去时长 */
     private String timeAgo;
     /** 文章永久链接 */

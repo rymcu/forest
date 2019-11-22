@@ -10,7 +10,7 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    password: #密码
+    password: d9d2j9w2
     database: 1
     timeout: 3000
     jedis:
@@ -20,17 +20,17 @@ spring:
         max-idle: 500
         min-idle: 0
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
-    username: #你的账号
-    password: #你的密码
+    url: jdbc:mysql://101.132.182.12:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    username: root
+    password: d9d2j9w2.RYMCU
     driver-class-name: com.mysql.cj.jdbc.Driver
     resources:
       add-mappings: true
   mail:
     host: smtp.ym.163.com
     port: 465
-    username: #你的邮箱账号
-    password: #你的邮箱密码
+    username: service@rymcu.com
+    password: Aa12345678
   servlet:
     multipart:
       max-file-size: 10MB
@@ -38,8 +38,8 @@ spring:
 wx:
   miniapp:
     configs:
-      - appid: #
-        secret: #
+      - appid: wxf57df4f171606a26
+        secret: 574ff86cb48a42f3980b221e942c53b1
         token: #微信小程序消息服务器配置的token
         aesKey: #微信小程序消息服务器配置的EncodingAESKey
         msgDataFormat: JSON
@@ -48,7 +48,8 @@ logging:
   file:
     path: /logs/vertical
   level:
-    root: info
+    com:
+      rymcu: warn
 server:
   port: 8099
   compression:

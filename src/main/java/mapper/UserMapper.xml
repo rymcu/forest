@@ -5,41 +5,51 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" jdbcType="INTEGER" property="idUser"/>
-        <result column="account" jdbcType="VARCHAR" property="account"/>
-        <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
-        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
-        <result column="sex" jdbcType="CHAR" property="sex"/>
-        <result column="avatar_type" jdbcType="VARCHAR" property="avatarType"/>
-        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
-        <result column="email" jdbcType="VARCHAR" property="email"/>
-        <result column="phone" jdbcType="VARCHAR" property="phone"/>
-        <result column="status" jdbcType="CHAR" property="status"/>
-        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
-        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
-        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <id column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="real_name" property="realName"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
     </resultMap>
     <resultMap id="UserInfoResultMapper" type="com.rymcu.vertical.dto.UserInfoDTO">
-        <result column="account" jdbcType="VARCHAR" property="account"/>
-        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
-        <result column="sex" jdbcType="VARCHAR" property="sex"/>
-        <result column="avatar_type" jdbcType="VARCHAR" property="avatarType"/>
-        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
-        <result column="email" jdbcType="VARCHAR" property="email"/>
-        <result column="phone" jdbcType="VARCHAR" property="phone"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
-        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+    </resultMap>
+    <resultMap id="DTOResultMapper" type="com.rymcu.vertical.dto.UserDTO">
+        <result column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
     </resultMap>
     <insert id="insertUserRole">
-        insert into sys_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
+        insert into vertical_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
     </insert>
 
     <select id="findByAccount" resultMap="BaseResultMap">
-        select id, nickname, account, password, status from sys_user where account = #{account} AND status = 0
+        select id, nickname, account, password, status from vertical_user where account = #{account} AND status = 0
     </select>
     <select id="findUserInfoByAccount" resultType="com.rymcu.vertical.dto.UserInfoDTO">
-        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, password, status, last_login_time from sus_user when account = #{account}
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, password, status, last_login_time from vertical_user when account = #{account}
+    </select>
+    <select id="selectUserDTOByNickname" resultMap="DTOResultMapper">
+        select id, nickname, avatar_type, avatar_url, account from vertical_user where nickname = #{nickname} and status = 0
     </select>
 
 </mapper>

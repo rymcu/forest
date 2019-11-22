@@ -20,10 +20,10 @@
     </resultMap>
 
     <select id="selectRoleByIdUser" resultMap="BaseResultMap">
-        select sr.* from sys_user_role sur left join sys_role sr on sur.id_role = sr.id where id_user = #{id}
+        select sr.* from vertical_user_role sur left join vertical_role sr on sur.id_role = sr.id where id_user = #{id}
     </select>
     <select id="selectRoleByInputCode" resultMap="BaseResultMap">
-        select * from sys_role where input_code = #{inputCode}
+        select * from vertical_role where input_code = #{inputCode}
     </select>
 
 </mapper>

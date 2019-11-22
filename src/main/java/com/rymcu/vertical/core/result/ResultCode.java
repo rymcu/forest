@@ -13,7 +13,7 @@ public enum ResultCode {
 
 
 
-    ;
+   ;
     private int code;
     private String message;
 

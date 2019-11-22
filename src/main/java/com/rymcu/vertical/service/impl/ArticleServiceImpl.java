@@ -3,10 +3,14 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.Author;
+import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
+import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
+import com.rymcu.vertical.service.TagService;
+import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.Html2TextUtil;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
@@ -17,21 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 @Service
 public class ArticleServiceImpl extends AbstractService<Article> implements ArticleService {
 
     @Resource
     private ArticleMapper articleMapper;
+    @Resource
+    private TagService tagService;
+    @Resource
+    private UserService userService;
 
     private static final String DOMAIN = "https://rymcu.com";
 
     @Override
-    public List<ArticleDTO> articles(String searchText, String tag) {
+    public List<ArticleDTO> findArticles(String searchText, String tag) {
         List<ArticleDTO> list = articleMapper.selectArticles(searchText, tag);
         list.forEach(article->{
             article = genArticle(article,0);
@@ -41,13 +47,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional
-    public Map postArticle(Integer idArticle, String articleTitle, String articleContent, String articleContentHtml, String articleTags, HttpServletRequest request) throws MallApiException {
+    public Map postArticle(Integer idArticle, String articleTitle, String articleContent, String articleContentHtml, String articleTags, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException {
         Map map = new HashMap();
         Article article;
+        User user = UserUtils.getWxCurrentUser();
         if(idArticle == null || idArticle == 0){
             article = new Article();
             article.setArticleTitle(articleTitle);
-            article.setArticleAuthorId(UserUtils.getWxCurrentUser().getIdUser());
+            article.setArticleAuthorId(user.getIdUser());
             article.setArticleTags(articleTags);
             article.setCreatedTime(new Date());
             article.setUpdatedTime(article.getCreatedTime());
@@ -57,8 +64,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             articleMapper.insertArticleContent(article.getIdArticle(),articleContent,articleContentHtml);
         } else {
             article = articleMapper.selectByPrimaryKey(idArticle);
-            if(UserUtils.getWxCurrentUser().getIdUser() != article.getIdArticle()){
-                map.put("message","非法用户！");
+            if(user.getIdUser() != article.getArticleAuthorId()){
+                map.put("message","非法访问！");
                 return map;
             }
             article.setArticleTitle(articleTitle);
@@ -74,7 +81,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             article.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(article.getIdArticle(),articleContent,articleContentHtml);
         }
+        tagService.saveTagArticle(article);
         articleMapper.updateByPrimaryKeySelective(article);
+
         map.put("id", article.getIdArticle());
         return map;
     }
@@ -84,6 +93,27 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         ArticleDTO articleDTO = articleMapper.selectArticleDTOById(id);
         articleDTO = genArticle(articleDTO,type);
         return articleDTO;
+    }
+
+    @Override
+    public List<ArticleDTO> findArticlesByTopicName(String name) {
+        List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTopicName(name);
+        return articleDTOS;
+    }
+
+    @Override
+    public List<ArticleDTO> findArticlesByTagName(String name) {
+        List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTagName(name);
+        return articleDTOS;
+    }
+
+    @Override
+    public List<ArticleDTO> findUserArticlesByIdUser(Integer idUser) {
+        List<ArticleDTO> list = articleMapper.selectUserArticles(idUser);
+        list.forEach(article->{
+            article = genArticle(article,0);
+        });
+        return list;
     }
 
     private ArticleDTO genArticle(ArticleDTO article,Integer type) {

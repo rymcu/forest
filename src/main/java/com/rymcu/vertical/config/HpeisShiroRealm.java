@@ -2,11 +2,10 @@ package com.rymcu.vertical.config;
 
 import com.rymcu.vertical.core.constant.ShiroConstants;
 import com.rymcu.vertical.core.exception.CaptchaException;
-import com.rymcu.vertical.core.exception.ServiceException;
-import com.rymcu.vertical.entity.Menu;
+import com.rymcu.vertical.entity.Permission;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
-import com.rymcu.vertical.service.MenuService;
+import com.rymcu.vertical.service.PermissionService;
 import com.rymcu.vertical.service.RoleService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.Encodes;
@@ -36,7 +35,7 @@ public class HpeisShiroRealm extends AuthorizingRealm {
     private RoleService roleService;
 
     @Resource
-    private MenuService menuService;
+    private PermissionService permissionService;
 
     @Resource
     private UserService userService;
@@ -56,10 +55,10 @@ public class HpeisShiroRealm extends AuthorizingRealm {
                     authorizationInfo.addRole(role.getInputCode());
                 }
             }
-            List<Menu> permissions = menuService.selectMenuByUser(user);
-            for (Menu perm : permissions) {
-                if (perm.getPermission() != null) {
-                    authorizationInfo.addStringPermission(perm.getPermission());
+            List<Permission> permissions = permissionService.selectMenuByUser(user);
+            for (Permission perm : permissions) {
+                if (perm.getPermissionCategory() != null) {
+                    authorizationInfo.addStringPermission(perm.getPermissionCategory());
                 }
             }
             // 添加用户权限

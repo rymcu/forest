@@ -47,6 +47,23 @@ public class CommonApiController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
+    @ApiOperation(value = "获取找回密码邮件验证码")
+    @PostMapping("/get-forget-email-code")
+    public GlobalResult getForgetEmailCode(@RequestParam("email") String email) {
+        Map map = new HashMap();
+        map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
+        User user = userService.findByAccount(email);
+        if (user != null) {
+            Integer result = javaMailService.sendEmailCode(email);
+            if(result == 0){
+                map.put("message",GlobalResultMessage.SEND_FAIL.getMessage());
+            }
+        } else {
+            map.put("message","该邮箱未注册！");
+        }
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
     @PostMapping("/register")
     public GlobalResult register(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") String code){
         Map map = userService.register(email,password,code);
@@ -67,7 +84,7 @@ public class CommonApiController {
     @GetMapping("/articles")
     public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page,@RequestParam(defaultValue = "10") Integer rows,@RequestParam(defaultValue = "") String searchText,@RequestParam(defaultValue = "") String tag){
         PageHelper.startPage(page, rows);
-        List<ArticleDTO> list = articleService.articles(searchText,tag);
+        List<ArticleDTO> list = articleService.findArticles(searchText,tag);
         PageInfo pageInfo = new PageInfo(list);
         Map map = new HashMap();
         map.put("articles", pageInfo.getList());

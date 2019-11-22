@@ -5,6 +5,28 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" jdbcType="INTEGER" property="idTag"/>
+        <id column="id" property="idTag"/>
+        <id column="tag_title" property="tagTitle"/>
+        <id column="tag_icon_path" property="tagIconPath"/>
+        <id column="tag_uri" property="tagUri"/>
+        <id column="tag_description" property="tagDescription"/>
+        <id column="tag_view_count" property="tagViewCount"/>
+        <id column="tag_article_count" property="tagArticleCount"/>
+        <id column="tag_ad" property="tagAd"/>
+        <id column="tag_show_side_ad" property="tagShowSideAd"/>
+        <id column="created_time" property="createdTime"/>
+        <id column="updated_time" property="updatedTime"/>
     </resultMap>
+    <insert id="insertTagArticle">
+        insert into vertical_tag_article (id_tag,id_article,created_time,updated_time) values (#{idTag},#{idArticle},sysdate(),sysdate())
+    </insert>
+    <insert id="insertUserTag">
+        insert into vertical_user_tag (id_tag,id_user,type,created_time,updated_time) values (#{idTag},#{idUser},#{type},sysdate(),sysdate())
+    </insert>
+    <select id="selectCountTagArticleById" resultType="java.lang.Integer">
+        select count(*) from vertical_tag_article where id_tag = #{idTag} and id_article = #{idArticle}
+    </select>
+    <select id="selectCountUserTagById" resultType="java.lang.Integer">
+        select count(*) from vertical_user_tag where id_tag = #{idTag} and id_user = #{idUser}
+    </select>
 </mapper>

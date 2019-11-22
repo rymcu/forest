@@ -5,16 +5,18 @@ import org.apache.ibatis.type.JdbcType;
 import tk.mybatis.mapper.annotation.ColumnType;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name = "sys_user")
+@Table(name = "vertical_user")
 @Data
 public class User implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
+    @GeneratedValue(generator = "JDBC")
     private Integer idUser;
 
     /**

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestController
@@ -20,7 +21,7 @@ public class ArticleController {
     @PostMapping("/post")
     public GlobalResult postArticle(@RequestParam(name = "idArticle",defaultValue = "0") Integer idArticle,@RequestParam(name = "articleTitle",defaultValue = "") String articleTitle,
                                     @RequestParam(name = "articleContent",defaultValue = "") String articleContent,@RequestParam(name = "articleContentHtml",defaultValue = "") String articleContentHtml,
-                                    @RequestParam(name = "articleTags",defaultValue = "") String articleTags, HttpServletRequest request) throws MallApiException {
+                                    @RequestParam(name = "articleTags",defaultValue = "") String articleTags, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException {
         Map map = articleService.postArticle(idArticle,articleTitle,articleContent,articleContentHtml,articleTags,request);
         return GlobalResultGenerator.genSuccessResult(map);
     }
@@ -28,7 +29,7 @@ public class ArticleController {
     @PutMapping("/post")
     public GlobalResult updateArticle(@RequestParam(name = "idArticle",defaultValue = "0") Integer idArticle,@RequestParam(name = "articleTitle",defaultValue = "") String articleTitle,
                                     @RequestParam(name = "articleContent",defaultValue = "") String articleContent,@RequestParam(name = "articleContentHtml",defaultValue = "") String articleContentHtml,
-                                    @RequestParam(name = "articleTags",defaultValue = "") String articleTags, HttpServletRequest request) throws MallApiException {
+                                    @RequestParam(name = "articleTags",defaultValue = "") String articleTags, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException {
         Map map = articleService.postArticle(idArticle,articleTitle,articleContent,articleContentHtml,articleTags,request);
         return GlobalResultGenerator.genSuccessResult(map);
     }

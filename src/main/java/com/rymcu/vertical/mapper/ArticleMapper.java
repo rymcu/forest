@@ -21,4 +21,10 @@ public interface ArticleMapper extends Mapper<Article> {
     Integer updateArticleContent(@Param("idArticle") Integer idArticle, @Param("articleContent") String articleContent, @Param("articleContentHtml") String articleContentHtml);
 
     ArticleContent selectArticleContent(@Param("idArticle") Integer idArticle);
+
+    List<ArticleDTO> selectArticlesByTopicName(@Param("topicName") String topicName);
+
+    List<ArticleDTO> selectArticlesByTagName(@Param("tagName") String tagName);
+
+    List<ArticleDTO> selectUserArticles(@Param("idUser") Integer idUser);
 }

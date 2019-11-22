@@ -3,16 +3,18 @@ package com.rymcu.vertical.entity;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@Table(name = "sys_role")
+@Table(name = "vertical_role")
 public class Role implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
+    @GeneratedValue(generator = "JDBC")
     private Integer idRole;
 
     /**

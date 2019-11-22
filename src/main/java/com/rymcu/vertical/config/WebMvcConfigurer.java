@@ -71,7 +71,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         // TODO 先不拦截接口,进行测试
         registry.addInterceptor(restAuthTokenInterceptor()).addPathPatterns("/api/**")
-                .excludePathPatterns("/api/v1/console/**","/api/v1/article/articles/**","/api/v1/article/detail/**");
+                .excludePathPatterns("/api/v1/console/**","/api/v1/article/articles/**","/api/v1/article/detail/**","/api/v1/topic/**");
 
     }
 

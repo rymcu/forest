@@ -1,6 +1,7 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.User;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
@@ -18,4 +19,6 @@ public interface UserService extends Service<User> {
     Map register(String email, String password, String code);
 
     Map login(String account, String password);
+
+    UserDTO findUserDTOByNickname(String nickname);
 }

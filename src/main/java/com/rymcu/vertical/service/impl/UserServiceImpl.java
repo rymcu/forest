@@ -3,12 +3,13 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.core.service.redis.RedisService;
 import com.rymcu.vertical.dto.TUser;
-import com.rymcu.vertical.dto.UserInfoDTO;
+import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.jwt.service.TokenManager;
 import com.rymcu.vertical.mapper.RoleMapper;
 import com.rymcu.vertical.mapper.UserMapper;
+import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.BeanCopierUtil;
 import com.rymcu.vertical.util.Utils;
@@ -56,7 +57,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 } else {
                     user = new User();
                     user.setAccount(email);
-                    user.setNickname(email);
+                    user.setNickname(email.split("@")[0]);
                     user.setEmail(email);
                     user.setPassword(Utils.entryptPassword(password));
                     user.setCreatedTime(new Date());
@@ -95,5 +96,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             map.put("message","该账号不存在！");
         }
         return map;
+    }
+
+    @Override
+    public UserDTO findUserDTOByNickname(String nickname) {
+        UserDTO user = userMapper.selectUserDTOByNickname(nickname);
+        return user;
     }
 }
