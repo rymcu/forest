@@ -1,7 +1,6 @@
 package com.rymcu.vertical.jwt.service;
 
 
-import com.rymcu.vertical.core.service.redis.RedisService;
 import com.rymcu.vertical.jwt.def.JwtConstants;
 import com.rymcu.vertical.jwt.model.TokenModel;
 import io.jsonwebtoken.Jwts;
@@ -22,12 +21,11 @@ import java.util.concurrent.TimeUnit;
 public class RedisTokenManager implements TokenManager {
     @Autowired
     private StringRedisTemplate redisTemplate;
-    @Autowired
-    private RedisService redisService;
 
     /**
      * 生成TOKEN
      */
+    @Override
     public String createToken(String id) {
         //使用uuid作为源token
         String token = Jwts.builder().setId(id).setSubject(id).setIssuedAt(new Date()).signWith(SignatureAlgorithm.HS256, JwtConstants.JWT_SECRET).compact();
@@ -36,10 +34,12 @@ public class RedisTokenManager implements TokenManager {
         return token;
     }
 
-    public TokenModel getToken(String token, String userid) {
-        return new TokenModel(userid, token);
+    @Override
+    public TokenModel getToken(String token, String account) {
+        return new TokenModel(account, token);
     }
 
+    @Override
     public boolean checkToken(TokenModel model) {
         if (model == null) {
             return false;
@@ -53,7 +53,8 @@ public class RedisTokenManager implements TokenManager {
         return true;
     }
 
-    public void deleteToken(String username) {
-        redisTemplate.delete(username);
+    @Override
+    public void deleteToken(String account) {
+        redisTemplate.delete(account);
     }
 }

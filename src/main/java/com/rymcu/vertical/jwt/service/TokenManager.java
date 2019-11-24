@@ -27,12 +27,12 @@ public interface TokenManager {
      * 从字符串中解析token
      * @return
      */
-    public TokenModel getToken(String token, String userid);
+    public TokenModel getToken(String token, String account);
 
     /**
      * 清除token
-     * @param username 登录用户账号
+     * @param account 登录用户账号
      */
-    public void deleteToken(String username);
+    public void deleteToken(String account);
 
 }
