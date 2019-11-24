@@ -2,8 +2,10 @@ package com.rymcu.vertical.web.api.common;
 
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.dto.TUser;
 import com.rymcu.vertical.jwt.def.JwtConstants;
 import com.rymcu.vertical.util.FileUtils;
+import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
 import com.rymcu.vertical.web.api.exception.ErrorCode;
 import com.rymcu.vertical.web.api.exception.MallApiException;
@@ -53,7 +55,7 @@ public class UploadController {
         }
 
         String localPath = Utils.getProperty("resource.file-path")+"/"+typePath+"/";
-        Map succMap = new HashMap();
+        Map succMap = new HashMap(10);
         Set errFiles = new HashSet();
 
         String orgName = multipartFile.getOriginalFilename();
@@ -68,7 +70,7 @@ public class UploadController {
         } catch (IOException e) {
             errFiles.add(orgName);
         }
-        Map data = new HashMap();
+        Map data = new HashMap(2);
         data.put("errFiles",errFiles);
         data.put("succMap",succMap);
         return GlobalResultGenerator.genSuccessResult(data);
@@ -97,7 +99,7 @@ public class UploadController {
         }
 
         String localPath = Utils.getProperty("resource.file-path")+"/"+typePath+"/";
-        Map succMap = new HashMap();
+        Map succMap = new HashMap(10);
         Set errFiles = new HashSet();
 
         for(int i=0,len=multipartFiles.length;i<len;i++){
@@ -115,7 +117,7 @@ public class UploadController {
                 errFiles.add(orgName);
             }
         }
-        Map data = new HashMap();
+        Map data = new HashMap(2);
         data.put("errFiles",errFiles);
         data.put("succMap",succMap);
         return GlobalResultGenerator.genSuccessResult(data);
@@ -127,8 +129,9 @@ public class UploadController {
         if(StringUtils.isBlank(authHeader)){
             throw new MallApiException(ErrorCode.UNAUTHORIZED);
         }
-        Map map = new HashMap();
-        map.put("uploadToken",authHeader);
+        TUser tUser = UserUtils.getTUser(authHeader);
+        Map map = new HashMap(2);
+        map.put("uploadToken",tUser.getToken());
         map.put("uploadURL", UPLOAD_URL);
         return GlobalResultGenerator.genSuccessResult(map);
     }
