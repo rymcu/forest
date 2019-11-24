@@ -41,6 +41,9 @@
     <insert id="insertUserRole">
         insert into vertical_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
     </insert>
+    <update id="updatePasswordByAccount">
+        update vertical_user set password = #{password} where account = #{account}
+    </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
         select id, nickname, account, password, status from vertical_user where account = #{account} AND status = 0

@@ -15,4 +15,6 @@ public interface UserMapper extends Mapper<User> {
     UserInfoDTO findUserInfoByAccount(@Param("account") String account);
 
     UserDTO selectUserDTOByNickname(@Param("nickname") String nickname);
+
+    Integer updatePasswordByAccount(@Param("account") String account, @Param("password") String password);
 }

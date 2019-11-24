@@ -7,14 +7,19 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.core.result.GlobalResultMessage;
 import com.rymcu.vertical.dto.ArticleDTO;
+import com.rymcu.vertical.dto.ForgetPasswordDTO;
+import com.rymcu.vertical.dto.TUser;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.JavaMailService;
 import com.rymcu.vertical.service.UserService;
+import com.rymcu.vertical.util.UserUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +37,7 @@ public class CommonApiController {
 
     @ApiOperation(value = "获取邮件验证码")
     @PostMapping("/get-email-code")
-    public GlobalResult getEmailCode(@RequestParam("email") String email) throws ServiceException {
+    public GlobalResult getEmailCode(@RequestParam("email") String email) throws MessagingException {
         Map map = new HashMap();
         map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
@@ -47,14 +52,14 @@ public class CommonApiController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @ApiOperation(value = "获取找回密码邮件验证码")
-    @PostMapping("/get-forget-email-code")
-    public GlobalResult getForgetEmailCode(@RequestParam("email") String email) {
-        Map map = new HashMap();
+    @ApiOperation(value = "获取找回密码邮件")
+    @PostMapping("/get-forget-password-email")
+    public GlobalResult getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
+        Map map = new HashMap<>(1);
         map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
-            Integer result = javaMailService.sendEmailCode(email);
+            Integer result = javaMailService.sendForgetPasswordEmail(email);
             if(result == 0){
                 map.put("message",GlobalResultMessage.SEND_FAIL.getMessage());
             }
@@ -86,9 +91,9 @@ public class CommonApiController {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(searchText,tag);
         PageInfo pageInfo = new PageInfo(list);
-        Map map = new HashMap();
+        Map map = new HashMap(2);
         map.put("articles", pageInfo.getList());
-        Map pagination = new HashMap();
+        Map pagination = new HashMap(3);
         pagination.put("paginationPageCount",pageInfo.getPages());
         pagination.put("paginationPageNums",pageInfo.getNavigatepageNums());
         pagination.put("currentPage",pageInfo.getPageNum());
@@ -101,7 +106,7 @@ public class CommonApiController {
     @GetMapping("/article/{id}")
     public GlobalResult detail(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id,1);
-        Map map = new HashMap<>();
+        Map map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
     }
@@ -109,8 +114,20 @@ public class CommonApiController {
     @GetMapping("/update/{id}")
     public GlobalResult update(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id,2);
-        Map map = new HashMap<>();
+        Map map = new HashMap<>(1);
         map.put("article", articleDTO);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/token/{token}")
+    public GlobalResult token(@PathVariable String token){
+        TUser tUser = UserUtils.getTUser(token);
+        return GlobalResultGenerator.genSuccessResult(tUser);
+    }
+
+    @PatchMapping("/forget-password")
+    public GlobalResult forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword){
+        Map map = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 }

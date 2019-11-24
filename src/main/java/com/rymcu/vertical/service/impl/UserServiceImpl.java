@@ -46,7 +46,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     @Transactional
     public Map register(String email, String password, String code) {
-        Map map = new HashMap();
+        Map map = new HashMap(2);
         map.put("message","验证码无效！");
         String vcode = redisService.get(email);
         if(StringUtils.isNotBlank(vcode)){
@@ -77,7 +77,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public Map login(String account, String password) {
-        Map map = new HashMap();
+        Map map = new HashMap(1);
         User user = new User();
         user.setAccount(account);
         user = userMapper.selectOne(user);
@@ -102,5 +102,20 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public UserDTO findUserDTOByNickname(String nickname) {
         UserDTO user = userMapper.selectUserDTOByNickname(nickname);
         return user;
+    }
+
+    @Override
+    public Map forgetPassword(String code, String password) {
+        Map map = new HashMap<>(2);
+        String account = redisService.get(code);
+        System.out.println("account:\n"+account);
+        if(StringUtils.isBlank(account)){
+            map.put("message","链接已失效");
+        } else {
+          userMapper.updatePasswordByAccount(account,Utils.entryptPassword(password));
+          map.put("message","修改成功，正在跳转登录登陆界面！");
+          map.put("flag",1);
+        }
+        return map;
     }
 }

@@ -21,4 +21,6 @@ public interface UserService extends Service<User> {
     Map login(String account, String password);
 
     UserDTO findUserDTOByNickname(String nickname);
+
+    Map forgetPassword(String code, String password);
 }

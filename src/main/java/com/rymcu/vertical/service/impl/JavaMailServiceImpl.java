@@ -3,21 +3,42 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.service.redis.RedisService;
 import com.rymcu.vertical.service.JavaMailService;
 import com.rymcu.vertical.util.Utils;
+import org.apache.commons.lang.time.StopWatch;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @author ronger
+ */
 @Service
 public class JavaMailServiceImpl implements JavaMailService {
 
+    /**
+     * Java邮件发送器
+     */
     @Resource
     private JavaMailSenderImpl mailSender;
     @Resource
     private RedisService redisService;
+    /**
+     * thymeleaf模板引擎
+     */
+    @Resource
+    private TemplateEngine templateEngine;
 
     @Value("${spring.mail.host}")
     private String SERVER_HOST;
@@ -27,13 +48,19 @@ public class JavaMailServiceImpl implements JavaMailService {
     private String USERNAME;
     @Value("${spring.mail.password}")
     private String PASSWORD;
+    private final static String BASE_URL = "https://rymcu.com";
 
     @Override
-    public Integer sendEmailCode(String email) {
+    public Integer sendEmailCode(String email) throws MessagingException {
         return sendCode(email,0);
     }
 
-    private Integer sendCode(String to, Integer type) {
+    @Override
+    public Integer sendForgetPasswordEmail(String email) throws MessagingException {
+        return sendCode(email,1);
+    }
+
+    private Integer sendCode(String to, Integer type) throws MessagingException {
         Properties props = new Properties();
         // 表示SMTP发送邮件，需要进行身份验证
         props.put("mail.smtp.auth", "true");
@@ -47,18 +74,118 @@ public class JavaMailServiceImpl implements JavaMailService {
         // 访问SMTP服务时需要提供的密码(在控制台选择发信地址进行设置)
         props.put("mail.password", PASSWORD);
         mailSender.setJavaMailProperties(props);
-        Integer code = Utils.genCode();
-        redisService.set(to,code,5*60);
-        System.out.println(code);
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setFrom(USERNAME);
+        simpleMailMessage.setTo(to);
         if(type == 0) {
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setFrom(USERNAME);
-            simpleMailMessage.setTo(to);
+            Integer code = Utils.genCode();
+            redisService.set(to,code,5*60);
             simpleMailMessage.setSubject("新用户注册邮箱验证");
             simpleMailMessage.setText("【RYMCU】您的校验码是 " + code + ",有效时间 5 分钟，请不要泄露验证码给其他人。如非本人操作,请忽略！");
             mailSender.send(simpleMailMessage);
             return 1;
+        } else if(type == 1){
+            String code = Utils.entryptPassword(to);
+            String url = BASE_URL + "/forget-password?code=" + code;
+            redisService.set(code,to,15*60);
+
+                String thymeleafTemplatePath = "mail/forgetPasswordTemplate";
+                Map<String, Object> thymeleafTemplateVariable = new HashMap<String, Object>();
+                thymeleafTemplateVariable.put("url", url);
+
+                sendTemplateEmail(USERNAME,
+                        new String[] { to },
+                        new String[] {},
+                        "【RYMCU】 找回密码",
+                        thymeleafTemplatePath,
+                        thymeleafTemplateVariable);
+                return 1;
         }
         return 0;
     }
+
+    /**
+     * 发送thymeleaf模板邮件
+     *
+     * @param deliver
+     *            发送人邮箱名 如： javalsj@163.com
+     * @param receivers
+     *            收件人，可多个收件人 如：11111@qq.com,2222@163.com
+     * @param carbonCopys
+     *            抄送人，可多个抄送人 如：33333@sohu.com
+     * @param subject
+     *            邮件主题 如：您收到一封高大上的邮件，请查收。
+     * @param thymeleafTemplatePath
+     *            邮件模板 如：mail\mailTemplate.html。
+     * @param thymeleafTemplateVariable
+     *            邮件模板变量集
+     */
+    public void sendTemplateEmail(String deliver, String[] receivers, String[] carbonCopys, String subject, String thymeleafTemplatePath,
+                                  Map<String, Object> thymeleafTemplateVariable) throws MessagingException {
+        String text = null;
+        if (thymeleafTemplateVariable != null && thymeleafTemplateVariable.size() > 0) {
+            Context context = new Context();
+            thymeleafTemplateVariable.forEach((key, value)->context.setVariable(key, value));
+            text = templateEngine.process(thymeleafTemplatePath, context);
+        }
+        sendMimeMail(deliver, receivers, carbonCopys, subject, text, true, null);
+    }
+
+    /**
+     * 发送的邮件(支持带附件/html类型的邮件)
+     *
+     * @param deliver
+     *            发送人邮箱名 如： javalsj@163.com
+     * @param receivers
+     *            收件人，可多个收件人 如：11111@qq.com,2222@163.com
+     * @param carbonCopys
+     *            抄送人，可多个抄送人 如：3333@sohu.com
+     * @param subject
+     *            邮件主题 如：您收到一封高大上的邮件，请查收。
+     * @param text
+     *            邮件内容 如：测试邮件逗你玩的。 <html><body><img
+     *            src=\"cid:attchmentFileName\"></body></html>
+     * @param attachmentFilePaths
+     *            附件文件路径 如：
+     *            需要注意的是addInline函数中资源名称attchmentFileName需要与正文中cid:attchmentFileName对应起来
+     * @throws Exception
+     *             邮件发送过程中的异常信息
+     */
+    private void sendMimeMail(String deliver, String[] receivers, String[] carbonCopys, String subject, String text,
+                              boolean isHtml, String[] attachmentFilePaths) throws MessagingException {
+        StopWatch stopWatch = new StopWatch();
+
+        stopWatch.start();
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setFrom(deliver);
+        helper.setTo(receivers);
+        helper.setCc(carbonCopys);
+        helper.setSubject(subject);
+        helper.setText(text, isHtml);
+        // 添加邮件附件
+        if (attachmentFilePaths != null && attachmentFilePaths.length > 0) {
+            for (String attachmentFilePath : attachmentFilePaths) {
+                File file = new File(attachmentFilePath);
+                if (file.exists()) {
+                    String attachmentFile = attachmentFilePath
+                            .substring(attachmentFilePath.lastIndexOf(File.separator));
+                    long size = file.length();
+                    if (size > 1024 * 1024) {
+                        String msg = String.format("邮件单个附件大小不允许超过1MB，[%s]文件大小[%s]。", attachmentFilePath,
+                                file.length());
+                        throw new RuntimeException(msg);
+                    } else {
+                        FileSystemResource fileSystemResource = new FileSystemResource(file);
+                        helper.addInline(attachmentFile, fileSystemResource);
+                    }
+                }
+            }
+        }
+        mailSender.send(mimeMessage);
+        stopWatch.stop();
+        //logger.info("邮件发送成功, 花费时间{}秒", stopWatch.getStartTime());
+
+    }
+
 }
