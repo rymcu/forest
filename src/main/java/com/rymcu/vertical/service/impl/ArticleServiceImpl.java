@@ -3,7 +3,6 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.Author;
-import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import com.rymcu.vertical.entity.User;
@@ -22,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ArticleServiceImpl extends AbstractService<Article> implements ArticleService {
@@ -36,56 +38,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     private static final String DOMAIN = "https://rymcu.com";
 
+    private static final int MAX_PREVIEW = 200;
+
     @Override
     public List<ArticleDTO> findArticles(String searchText, String tag) {
         List<ArticleDTO> list = articleMapper.selectArticles(searchText, tag);
         list.forEach(article->{
-            article = genArticle(article,0);
+            genArticle(article,0);
         });
         return list;
-    }
-
-    @Override
-    @Transactional
-    public Map postArticle(Integer idArticle, String articleTitle, String articleContent, String articleContentHtml, String articleTags, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException {
-        Map map = new HashMap();
-        Article article;
-        User user = UserUtils.getWxCurrentUser();
-        if(idArticle == null || idArticle == 0){
-            article = new Article();
-            article.setArticleTitle(articleTitle);
-            article.setArticleAuthorId(user.getIdUser());
-            article.setArticleTags(articleTags);
-            article.setCreatedTime(new Date());
-            article.setUpdatedTime(article.getCreatedTime());
-            articleMapper.insertSelective(article);
-            article.setArticlePermalink(DOMAIN + "/article/"+article.getIdArticle());
-            article.setArticleLink("/article/"+article.getIdArticle());
-            articleMapper.insertArticleContent(article.getIdArticle(),articleContent,articleContentHtml);
-        } else {
-            article = articleMapper.selectByPrimaryKey(idArticle);
-            if(user.getIdUser() != article.getArticleAuthorId()){
-                map.put("message","非法访问！");
-                return map;
-            }
-            article.setArticleTitle(articleTitle);
-            article.setArticleTags(articleTags);
-            if(StringUtils.isNotBlank(articleContentHtml)){
-                Integer length = articleContentHtml.length();
-                if(length>200){
-                    length = 200;
-                }
-                String articlePreviewContent = articleContentHtml.substring(0,length);
-                article.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
-            }
-            article.setUpdatedTime(new Date());
-            articleMapper.updateArticleContent(article.getIdArticle(),articleContent,articleContentHtml);
-        }
-        tagService.saveTagArticle(article);
-        articleMapper.updateByPrimaryKeySelective(article);
-
-        map.put("id", article.getIdArticle());
-        return map;
     }
 
     @Override
@@ -111,9 +72,64 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     public List<ArticleDTO> findUserArticlesByIdUser(Integer idUser) {
         List<ArticleDTO> list = articleMapper.selectUserArticles(idUser);
         list.forEach(article->{
-            article = genArticle(article,0);
+            genArticle(article,0);
         });
         return list;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, MallApiException {
+        Map map = new HashMap(1);
+        if(StringUtils.isBlank(article.getArticleTitle())){
+            map.put("message","标题不能为空！");
+            return map;
+        }
+        if(StringUtils.isBlank(article.getArticleContent())){
+            map.put("message","正文不能为空！");
+            return map;
+        }
+        String articleTitle = article.getArticleTitle();
+        String articleTags = article.getArticleTags();
+        String articleContent = article.getArticleContent();
+        String articleContentHtml = article.getArticleContentHtml();
+        User user = UserUtils.getWxCurrentUser();
+        Article article1;
+        if(article.getIdArticle() == null || article.getIdArticle() == 0){
+            article1 = new Article();
+            article1.setArticleTitle(articleTitle);
+            article1.setArticleAuthorId(user.getIdUser());
+            article1.setArticleTags(articleTags);
+            article1.setCreatedTime(new Date());
+            article1.setUpdatedTime(article1.getCreatedTime());
+            articleMapper.insertSelective(article1);
+            article1.setArticlePermalink(DOMAIN + "/article/"+article1.getIdArticle());
+            article1.setArticleLink("/article/"+article1.getIdArticle());
+            articleMapper.insertArticleContent(article1.getIdArticle(),articleContent,articleContentHtml);
+        } else {
+            article1 = articleMapper.selectByPrimaryKey(article.getIdArticle());
+            if(!user.getIdUser().equals(article1.getArticleAuthorId())){
+                map.put("message","非法访问！");
+                return map;
+            }
+            article1.setArticleTitle(articleTitle);
+            article1.setArticleTags(articleTags);
+            if(StringUtils.isNotBlank(articleContentHtml)){
+                Integer length = articleContentHtml.length();
+                if(length > MAX_PREVIEW){
+                    length = 200;
+                }
+                String articlePreviewContent = articleContentHtml.substring(0,length);
+                article1.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
+            }
+            article1.setUpdatedTime(new Date());
+            articleMapper.updateArticleContent(article1.getIdArticle(),articleContent,articleContentHtml);
+        }
+        tagService.saveTagArticle(article1);
+        articleMapper.updateByPrimaryKeySelective(article1);
+
+        map.put("id", article1.getIdArticle());
+        return map;
     }
 
     private ArticleDTO genArticle(ArticleDTO article,Integer type) {
@@ -130,7 +146,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
           if(StringUtils.isBlank(article.getArticlePreviewContent())){
               ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
               Integer length = articleContent.getArticleContentHtml().length();
-              if(length>200){
+              if(length > MAX_PREVIEW){
                   length = 200;
               }
               String articlePreviewContent = articleContent.getArticleContentHtml().substring(0,length);

@@ -13,8 +13,6 @@ import java.util.Map;
 public interface ArticleService extends Service<Article> {
     List<ArticleDTO> findArticles(String searchText, String tag);
 
-    Map postArticle(Integer idArticle, String articleTitle, String articleContent, String articleContentHtml, String articleTags, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException;
-
     ArticleDTO findArticleDTOById(Integer id, int i);
 
     List<ArticleDTO> findArticlesByTopicName(String name);
@@ -22,4 +20,6 @@ public interface ArticleService extends Service<Article> {
     List<ArticleDTO> findArticlesByTagName(String name);
 
     List<ArticleDTO> findUserArticlesByIdUser(Integer idUser);
+
+    Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, MallApiException;
 }
