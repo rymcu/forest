@@ -25,11 +25,11 @@ public class TagController {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTagName(name);
         PageInfo pageInfo = new PageInfo(list);
-        Map map = new HashMap();
+        Map map = new HashMap(2);
         map.put("articles", pageInfo.getList());
-        Map pagination = new HashMap();
-        pagination.put("paginationPageCount",pageInfo.getPages());
-        pagination.put("paginationPageNums",pageInfo.getNavigatepageNums());
+        Map pagination = new HashMap(3);
+        pagination.put("pageSize",pageInfo.getPageSize());
+        pagination.put("total",pageInfo.getTotal());
         pagination.put("currentPage",pageInfo.getPageNum());
         map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);

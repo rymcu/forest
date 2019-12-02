@@ -1,5 +1,6 @@
 package com.rymcu.vertical.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import tk.mybatis.mapper.annotation.ColumnType;
@@ -29,6 +30,7 @@ public class User implements Serializable,Cloneable {
      * 密码
      * */
     @Column(name = "password")
+    @JSONField(serialize=false)
     private String password;
 
     /**
@@ -92,17 +94,20 @@ public class User implements Serializable,Cloneable {
      * 最后登录时间
      * */
     @Column(name = "last_login_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date lastLoginTime;
 
     /**
      * 创建时间
      * */
     @Column(name = "created_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 
     /**
      * 创建时间
      * */
     @Column(name = "updated_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 }
