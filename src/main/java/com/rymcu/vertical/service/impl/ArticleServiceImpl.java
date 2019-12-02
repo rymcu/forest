@@ -13,7 +13,7 @@ import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.Html2TextUtil;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,7 +79,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, MallApiException {
+    public Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException {
         Map map = new HashMap(1);
         if(StringUtils.isBlank(article.getArticleTitle())){
             map.put("message","标题不能为空！");

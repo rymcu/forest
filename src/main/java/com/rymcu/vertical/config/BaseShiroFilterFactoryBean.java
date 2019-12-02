@@ -21,11 +21,11 @@ import java.util.Set;
 /**
  * Shiro静态资源配置
  * */
-public class HpeisShiroFilterFactoryBean extends ShiroFilterFactoryBean {
+public class BaseShiroFilterFactoryBean extends ShiroFilterFactoryBean {
     // 对ShiroFilter来说，需要直接忽略的请求
     private Set<String> ignoreExt;
 
-    public HpeisShiroFilterFactoryBean() {
+    public BaseShiroFilterFactoryBean() {
         super();
         ignoreExt = new HashSet<>();
         ignoreExt.add(".svg");
@@ -56,12 +56,12 @@ public class HpeisShiroFilterFactoryBean extends ShiroFilterFactoryBean {
         PathMatchingFilterChainResolver chainResolver = new PathMatchingFilterChainResolver();
         chainResolver.setFilterChainManager(manager);
 
-        return new HpeisSpringShiroFilter((WebSecurityManager) securityManager, chainResolver);
+        return new BaseSpringShiroFilter((WebSecurityManager) securityManager, chainResolver);
     }
 
-    private final class HpeisSpringShiroFilter extends AbstractShiroFilter {
+    private final class BaseSpringShiroFilter extends AbstractShiroFilter {
 
-        protected HpeisSpringShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver resolver) {
+        protected BaseSpringShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver resolver) {
             super();
             if (webSecurityManager == null) {
                 throw new IllegalArgumentException("WebSecurityManager property cannot be null.");

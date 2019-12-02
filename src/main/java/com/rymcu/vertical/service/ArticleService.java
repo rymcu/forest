@@ -3,7 +3,7 @@ package com.rymcu.vertical.service;
 import com.rymcu.vertical.core.service.Service;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.entity.Article;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -21,5 +21,5 @@ public interface ArticleService extends Service<Article> {
 
     List<ArticleDTO> findUserArticlesByIdUser(Integer idUser);
 
-    Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, MallApiException;
+    Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException;
 }

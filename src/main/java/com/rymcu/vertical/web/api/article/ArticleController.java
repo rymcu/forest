@@ -4,7 +4,7 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.service.ArticleService;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -20,13 +20,13 @@ public class ArticleController {
     private ArticleService articleService;
 
     @PostMapping("/post")
-    public GlobalResult postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException {
+    public GlobalResult postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
         Map map = articleService.postArticle(article,request);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PutMapping("/post")
-    public GlobalResult updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws MallApiException, UnsupportedEncodingException {
+    public GlobalResult updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
         Map map = articleService.postArticle(article,request);
         return GlobalResultGenerator.genSuccessResult(map);
     }

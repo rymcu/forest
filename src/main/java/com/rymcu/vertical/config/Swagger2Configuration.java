@@ -10,6 +10,9 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * @author ronger
+ */
 @Configuration
 @EnableSwagger2
 public class Swagger2Configuration {
@@ -19,7 +22,7 @@ public class Swagger2Configuration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.rymcu.vertical.web.api"))//这是注意的代码
+                .apis(RequestHandlerSelectors.basePackage("com.rymcu.vertical.web.api"))
                 .paths(PathSelectors.any())
                 .build();
     }

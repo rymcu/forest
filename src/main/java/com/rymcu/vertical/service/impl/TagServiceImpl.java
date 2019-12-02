@@ -7,7 +7,7 @@ import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.TagMapper;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.util.UserUtils;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     @Transactional
-    public void saveTagArticle(Article article) throws UnsupportedEncodingException, MallApiException {
+    public void saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException {
         User user = UserUtils.getWxCurrentUser();
         String articleTags = article.getArticleTags();
         if(StringUtils.isNotBlank(articleTags)){

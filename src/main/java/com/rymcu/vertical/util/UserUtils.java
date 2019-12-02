@@ -7,7 +7,7 @@ import com.rymcu.vertical.jwt.model.TokenModel;
 import com.rymcu.vertical.jwt.service.TokenManager;
 import com.rymcu.vertical.mapper.UserMapper;
 import com.rymcu.vertical.web.api.exception.ErrorCode;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
@@ -22,7 +22,7 @@ public class UserUtils {
      * 通过token获取当前用户的信息
      * @return
      */
-    public static User getWxCurrentUser() throws MallApiException {
+    public static User getWxCurrentUser() throws BaseApiException {
         String authHeader = ContextHolderUtils.getRequest().getHeader(JwtConstants.AUTHORIZATION);
         if (authHeader == null) {
             return null;
@@ -32,7 +32,7 @@ public class UserUtils {
         try {
             claims = Jwts.parser().setSigningKey(JwtConstants.JWT_SECRET).parseClaimsJws(authHeader).getBody();
         } catch (final SignatureException e) {
-            throw new MallApiException(ErrorCode.UNAUTHORIZED);
+            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
         Object account = claims.getId();
         if (!oConvertUtils.isEmpty(account)) {
@@ -41,7 +41,7 @@ public class UserUtils {
                 return userMapper.findByAccount(account.toString());
             }
         } else {
-            throw new MallApiException(ErrorCode.UNAUTHORIZED);
+            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
         return null;
     }

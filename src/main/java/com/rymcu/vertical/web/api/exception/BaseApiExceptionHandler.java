@@ -1,6 +1,6 @@
 package com.rymcu.vertical.web.api.exception;
 
-import com.rymcu.vertical.config.HpeisExceptionHandler;
+import com.rymcu.vertical.config.BaseExceptionHandler;
 import com.rymcu.vertical.core.result.GlobalResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +12,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ControllerAdvice(basePackages = {"com.rymcu.vertical.web.api", "com.rymcu.vertical.jwt"} )
-public class MallApiExceptionHandler {
+public class BaseApiExceptionHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(HpeisExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);
 
-    @ExceptionHandler(MallApiException.class)
+    @ExceptionHandler(BaseApiException.class)
     @ResponseBody
     public GlobalResult handlerException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
             logger.error(ex.getMessage());
             GlobalResult result = new GlobalResult();
-            if (ex instanceof MallApiException) {
-                result.setCode(((MallApiException) ex).getCode());
+            if (ex instanceof BaseApiException) {
+                result.setCode(((BaseApiException) ex).getCode());
                 result.setMessage(ex.getMessage());
             } /*else if (ex instanceof Exception) {
                 result.setCode(ErrorCode.INTERNAL_SERVER_ERROR.getCode());

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.support.spring.FastJsonJsonView;
 import com.rymcu.vertical.core.exception.ServiceException;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.ResultCode;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
@@ -25,16 +25,16 @@ import java.util.Map;
  * 全局异常处理器
  * */
 @RestControllerAdvice
-public class HpeisExceptionHandler {
+public class BaseExceptionHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(HpeisExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(BaseExceptionHandler.class);
 
     @SuppressWarnings("Duplicates")
     @ExceptionHandler(Exception.class)
     public Object errorHandler(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex){
         if(isAjax(request)){
             GlobalResult result = new GlobalResult();
-            if (ex instanceof MallApiException){
+            if (ex instanceof BaseApiException){
                 result.setCode(401);
                 result.setMessage("用户未登录");
                 logger.info("用户未登录");
@@ -79,7 +79,7 @@ public class HpeisExceptionHandler {
             ModelAndView mv = new ModelAndView();
             FastJsonJsonView view = new FastJsonJsonView();
             Map<String, Object> attributes = new HashMap();
-            if (ex instanceof MallApiException){
+            if (ex instanceof BaseApiException){
                 attributes.put("code", "401");
                 attributes.put("message", "用户未登录");
             } else if (ex instanceof UnauthenticatedException) {

@@ -7,7 +7,7 @@ import com.rymcu.vertical.jwt.model.TokenModel;
 import com.rymcu.vertical.jwt.service.TokenManager;
 import com.rymcu.vertical.jwt.util.oConvertUtils;
 import com.rymcu.vertical.web.api.exception.ErrorCode;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
@@ -44,19 +44,19 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 			authHeader = request.getHeader(JwtConstants.UPLOAD_TOKEN);
 		}
 		if (StringUtils.isBlank(authHeader)) {
-            throw new MallApiException(ErrorCode.UNAUTHORIZED);
+            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
 		// 验证token
 		Claims claims = null;
 		try {
 		    claims = Jwts.parser().setSigningKey(JwtConstants.JWT_SECRET).parseClaimsJws(authHeader).getBody();
 		}catch (final SignatureException e) {
-			throw new MallApiException(ErrorCode.INVALID_TOKEN);
+			throw new BaseApiException(ErrorCode.INVALID_TOKEN);
 		}
 		
 		Object username = claims.getId();
 		if (oConvertUtils.isEmpty(username)) {
-			throw new MallApiException(ErrorCode.INVALID_TOKEN);
+			throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
 		TokenModel model = manager.getToken(authHeader,username.toString());
 		if (manager.checkToken(model)) {
@@ -66,7 +66,7 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 			request.setAttribute(JwtConstants.CURRENT_USER_NAME, model.getUsername());
 			return true;
 		} else {
-			throw new MallApiException(ErrorCode.TOKEN_);
+			throw new BaseApiException(ErrorCode.TOKEN_);
 		}
 	}
 

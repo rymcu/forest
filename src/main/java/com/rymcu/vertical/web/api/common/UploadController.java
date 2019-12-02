@@ -8,13 +8,12 @@ import com.rymcu.vertical.util.FileUtils;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
 import com.rymcu.vertical.web.api.exception.ErrorCode;
-import com.rymcu.vertical.web.api.exception.MallApiException;
+import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
@@ -124,10 +123,10 @@ public class UploadController {
     }
 
     @GetMapping("/token")
-    public GlobalResult uploadToken(HttpServletRequest request) throws MallApiException {
+    public GlobalResult uploadToken(HttpServletRequest request) throws BaseApiException {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
         if(StringUtils.isBlank(authHeader)){
-            throw new MallApiException(ErrorCode.UNAUTHORIZED);
+            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
         TUser tUser = UserUtils.getTUser(authHeader);
         Map map = new HashMap(2);

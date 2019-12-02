@@ -35,7 +35,7 @@ public class ShiroConfig implements EnvironmentAware {
 
     @Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
-        ShiroFilterFactoryBean shiroFilterFactoryBean = new HpeisShiroFilterFactoryBean();
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new BaseShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
@@ -50,16 +50,8 @@ public class ShiroConfig implements EnvironmentAware {
         filterChainDefinitionMap.put("/uploadFile/**", "anon");
         filterChainDefinitionMap.put("/login", "anon");
 
-        filterChainDefinitionMap.put("/swagger-ui.html", "anon");
-        filterChainDefinitionMap.put("/swagger-resources", "anon");
-        filterChainDefinitionMap.put("/swagger-resources/configuration/security", "anon");
-        filterChainDefinitionMap.put("/swagger-resources/configuration/ui", "anon");
-        filterChainDefinitionMap.put("/v2/api-docs", "anon");
-        filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
-
         filterChainDefinitionMap.put("/api/**", "anon");
-        //  filterChainDefinitionMap.put("/**", "authc");
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "auth");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，后台仅返回json数据
         shiroFilterFactoryBean.setLoginUrl("/login");
         // 登录成功后要跳转的链接
@@ -69,10 +61,10 @@ public class ShiroConfig implements EnvironmentAware {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         Map<String, Filter> filtersMap = new LinkedHashMap<>();
-        filtersMap.put("authc",hpeisFormAuthenticationFilter());
+        filtersMap.put("auth", baseFormAuthenticationFilter());
         shiroFilterFactoryBean.setFilters(filtersMap);
 
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "auth");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return shiroFilterFactoryBean;
@@ -88,14 +80,16 @@ public class ShiroConfig implements EnvironmentAware {
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName("SHA-1");//散列算法:这里使用MD5算法;
-        hashedCredentialsMatcher.setHashIterations(1024);//散列的次数，比如散列两次，相当于 md5(md5(""));
+        // 散列算法:这里使用MD5算法;
+        hashedCredentialsMatcher.setHashAlgorithmName("SHA-1");
+        // 散列的次数，比如散列两次，相当于 md5(md5(""));
+        hashedCredentialsMatcher.setHashIterations(1024);
         return hashedCredentialsMatcher;
     }
 
     @Bean
-    public HpeisShiroRealm hpeisShiroRealm() {
-        HpeisShiroRealm shiroRealm = new HpeisShiroRealm();
+    public BaseShiroRealm baseShiroRealm() {
+        BaseShiroRealm shiroRealm = new BaseShiroRealm();
         shiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
         return shiroRealm;
     }
@@ -104,18 +98,18 @@ public class ShiroConfig implements EnvironmentAware {
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(hpeisShiroRealm());
+        securityManager.setRealm(baseShiroRealm());
         // 自定义session管理 使用redis
         securityManager.setSessionManager(sessionManager());
-        // 自定义缓存实现 使用redis
-        //securityManager.setCacheManager(cacheManager());
         return securityManager;
     }
 
-    //自定义sessionManager
+    /**
+     * 自定义sessionManager
+     * */
     @Bean
     public SessionManager sessionManager() {
-        HpeisSessionManager sessionManager = new HpeisSessionManager();
+        BaseSessionManager sessionManager = new BaseSessionManager();
         sessionManager.setSessionDAO(redisSessionDAO());
         sessionManager.setSessionIdUrlRewritingEnabled(false);
         sessionManager.setGlobalSessionTimeout(21600000L);
@@ -169,9 +163,6 @@ public class ShiroConfig implements EnvironmentAware {
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
         redisSessionDAO.setRedisManager(redisManager());
         redisSessionDAO.setExpire(21600);
-//      Custom your redis key prefix for session management, if you doesn't define this parameter,
-//      shiro-redis will use 'shiro_redis_session:' as default prefix
-//      redisSessionDAO.setKeyPrefix("");
         return redisSessionDAO;
     }
 
@@ -197,21 +188,13 @@ public class ShiroConfig implements EnvironmentAware {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
         return new LifecycleBeanPostProcessor();
     }
-//
-//    /**
-//     * 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证
-//     * 配置以下两个bean(DefaultAdvisorAutoProxyCreator(可选)和AuthorizationAttributeSourceAdvisor)即可实现此功能
-//     *
-//     * @return
-//     */
-//    @Bean
-//    @DependsOn({"lifecycleBeanPostProcessor"})
-//    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
-//        DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-//        advisorAutoProxyCreator.setProxyTargetClass(true);
-//        return advisorAutoProxyCreator;
-//    }
 
+    /**
+     * 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证
+     * 配置以下两个bean(DefaultAdvisorAutoProxyCreator(可选)和AuthorizationAttributeSourceAdvisor)即可实现此功能
+     *
+     * @return
+     */
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
@@ -219,7 +202,7 @@ public class ShiroConfig implements EnvironmentAware {
         return authorizationAttributeSourceAdvisor;
     }
 
-    public FormAuthenticationFilter hpeisFormAuthenticationFilter(){
+    public FormAuthenticationFilter baseFormAuthenticationFilter(){
         FormAuthenticationFilter formAuthenticationFilter = new ShiroLoginFilter();
         return formAuthenticationFilter;
     }
@@ -227,22 +210,9 @@ public class ShiroConfig implements EnvironmentAware {
     @Bean
     public FilterRegistrationBean someFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        FormAuthenticationFilter hpeisFormAuthenticationFilter = new ShiroLoginFilter();
-        registration.setFilter(hpeisFormAuthenticationFilter);
+        FormAuthenticationFilter baseFormAuthenticationFilter = new ShiroLoginFilter();
+        registration.setFilter(baseFormAuthenticationFilter);
         registration.setEnabled(false);
         return registration;
     }
-
-
-
-
-    /**
-     * 注册全局异常处理
-     *
-     * @return
-     */
-    /*@Bean(name = "exceptionHandler")
-    public HandlerExceptionResolver handlerExceptionResolver() {
-        return new HpeisExceptionHandler();
-    }*/
 }

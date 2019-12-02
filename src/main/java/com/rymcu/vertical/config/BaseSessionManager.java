@@ -9,12 +9,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.Serializable;
 
-public class HpeisSessionManager extends DefaultWebSessionManager {
+public class BaseSessionManager extends DefaultWebSessionManager {
     private static final String AUTHORIZATION = "Authorization";
 
     private static final String REFERENCED_SESSION_ID_SOURCE = "Stateless request";
 
-    public HpeisSessionManager() {
+    public BaseSessionManager() {
         super();
     }
 
