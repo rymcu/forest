@@ -27,6 +27,13 @@
         <id column="topic_tag_count" property="topicTagCount"/>
         <id column="topic_status" property="topicStatus"/>
     </resultMap>
+    <resultMap id="TagDTOResultMap" type="com.rymcu.vertical.dto.admin.TagDTO">
+        <id column="id" property="idTag"/>
+        <id column="tag_title" property="tagTitle"/>
+        <id column="tag_uri" property="tagUri"/>
+        <id column="tag_description" property="tagDescription"/>
+        <id column="tag_icon_path" property="tagIconPath"/>
+    </resultMap>
     <select id="selectTopicNav" resultMap="BaseResultMap">
         select id,topic_title,topic_uri,topic_icon_path from vertical_topic where topic_nva = 0 and topic_status = 0 order by topic_sort
     </select>
@@ -34,6 +41,6 @@
         select id,topic_title,topic_uri,topic_icon_path,topic_description,topic_tag_count,topic_status from vertical_topic where topic_uri = #{topicUri}
     </select>
     <select id="selectTopicTag" resultType="com.rymcu.vertical.dto.admin.TagDTO">
-        select * from vertical_tag vt left join vertical_topic_tag vtt on vt.id = vtt.id_tag where vtt.id_topic = #{idTopic}
+        select vt.id,vt.tag_title,vt.tag_uri,vt.tag_description,vt.tag_icon_path from vertical_tag vt left join vertical_topic_tag vtt on vt.id = vtt.id_tag where vtt.id_topic = #{idTopic}
     </select>
 </mapper>
