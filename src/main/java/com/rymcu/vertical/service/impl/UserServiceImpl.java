@@ -81,7 +81,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private String checkNickname(String nickname) {
         Integer result = userMapper.selectCountByNickName(nickname);
         if (result > 0) {
-            return checkNickname(nickname + System.currentTimeMillis());
+            StringBuilder stringBuilder = new StringBuilder(nickname);
+            return checkNickname(stringBuilder.append("_").append(System.currentTimeMillis()).toString());
         }
         return nickname;
     }
