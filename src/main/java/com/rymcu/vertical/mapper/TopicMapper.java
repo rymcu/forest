@@ -14,4 +14,6 @@ public interface TopicMapper extends Mapper<Topic> {
     TopicDTO selectTopicByTopicUri(@Param("topicUri") String topicUri);
 
     List<TagDTO> selectTopicTag(@Param("idTopic") Integer idTopic);
+
+    Integer update(@Param("idTopic") Integer idTopic, @Param("topicTitle") String topicTitle, @Param("topicUri") String topicUri, @Param("topicIconPath") String topicIconPath, @Param("topicNva") String topicNva, @Param("topicStatus") String topicStatus, @Param("topicSort") Integer topicSort, @Param("topicDescription") String topicDescription);
 }

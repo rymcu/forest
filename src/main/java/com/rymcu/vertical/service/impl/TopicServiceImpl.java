@@ -11,6 +11,7 @@ import com.rymcu.vertical.service.TopicService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,28 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
         pagination.put("total",pageInfo.getTotal());
         pagination.put("currentPage",pageInfo.getPageNum());
         map.put("pagination", pagination);
+        return map;
+    }
+
+    @Override
+    public Map saveTopic(Topic topic) {
+        Integer result = 0;
+        if (topic.getIdTopic() == null) {
+            topic.setCreatedTime(new Date());
+            topic.setUpdatedTime(topic.getCreatedTime());
+            result = topicMapper.insertSelective(topic);
+        } else {
+            topic.setCreatedTime(new Date());
+            result = topicMapper.update(topic.getIdTopic(),topic.getTopicTitle(),topic.getTopicUri()
+                    ,topic.getTopicIconPath(),topic.getTopicNva(),topic.getTopicStatus()
+                    ,topic.getTopicSort(),topic.getTopicDescription());
+        }
+        Map map = new HashMap(1);
+        if (result == 0) {
+            map.put("message","操作失败!");
+        } else {
+            map.put("topic", topic);
+        }
         return map;
     }
 }

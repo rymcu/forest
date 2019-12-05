@@ -25,4 +25,6 @@ public interface TopicService extends Service<Topic> {
      * @return
      * */
     Map findTopicByTopicUri(String topicUri, Integer page, Integer rows);
+
+    Map saveTopic(Topic topic);
 }

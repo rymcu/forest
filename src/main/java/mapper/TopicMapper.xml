@@ -34,6 +34,11 @@
         <id column="tag_description" property="tagDescription"/>
         <id column="tag_icon_path" property="tagIconPath"/>
     </resultMap>
+    <update id="update">
+        update vertical_topic set topic_title = #{topicTitle},topic_uri = #{topicUri},topic_icon_path = #{topicIconPath}
+        ,topic_nva = #{topicNva},topic_status = #{topicStatus},topic_sort = #{topicSort},topic_description = #{topicDescription}
+        where id = #{idTopic}
+    </update>
     <select id="selectTopicNav" resultMap="BaseResultMap">
         select id,topic_title,topic_uri,topic_icon_path from vertical_topic where topic_nva = 0 and topic_status = 0 order by topic_sort
     </select>

@@ -123,4 +123,22 @@ public class AdminController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
+    @GetMapping("/topic/detail/{idTopic}")
+    public GlobalResult topicDetail(@PathVariable Integer idTopic){
+        Topic topic = topicService.findById(idTopic.toString());
+        return GlobalResultGenerator.genSuccessResult(topic);
+    }
+
+    @PostMapping("/topic/post")
+    public GlobalResult addTopic(@RequestBody Topic topic){
+        Map map = topicService.saveTopic(topic);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PutMapping("/topic/post")
+    public GlobalResult updateTopic(@RequestBody Topic topic){
+        Map map = topicService.saveTopic(topic);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
 }
