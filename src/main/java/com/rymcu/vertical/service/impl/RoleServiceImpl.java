@@ -51,13 +51,12 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     public Map saveRole(Role role) {
         Integer result = 0;
         if (role.getIdRole() == null) {
-            role.setStatus("0");
             role.setCreatedTime(new Date());
             role.setUpdatedTime(role.getCreatedTime());
             result = roleMapper.insertSelective(role);
         } else {
             role.setCreatedTime(new Date());
-            result = roleMapper.updateByPrimaryKeySelective(role);
+            result = roleMapper.update(role.getIdRole(),role.getName(),role.getInputCode(),role.getWeights());
         }
         Map map = new HashMap(1);
         if (result == 0) {
