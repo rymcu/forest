@@ -58,7 +58,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 } else {
                     user = new User();
                     user.setAccount(email);
-                    user.setNickname(email.split("@")[0]);
+                    String nickname = email.split("@")[0];
+                    nickname = checkNickname(nickname);
+                    user.setNickname(nickname);
                     user.setEmail(email);
                     user.setPassword(Utils.entryptPassword(password));
                     user.setCreatedTime(new Date());
@@ -74,6 +76,14 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             }
         }
         return map;
+    }
+
+    private String checkNickname(String nickname) {
+        Integer result = userMapper.selectCountByNickName(nickname);
+        if (result > 0) {
+            return checkNickname(nickname + System.currentTimeMillis());
+        }
+        return nickname;
     }
 
     @Override

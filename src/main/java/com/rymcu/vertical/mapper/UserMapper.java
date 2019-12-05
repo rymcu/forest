@@ -23,4 +23,6 @@ public interface UserMapper extends Mapper<User> {
     Integer updateUserRole(@Param("idUser") Integer idUser, @Param("idRole") Integer idRole);
 
     Integer updateStatus(@Param("idUser") Integer idUser, @Param("status") String status);
+
+    Integer selectCountByNickName(@Param("nickname") String nickname);
 }

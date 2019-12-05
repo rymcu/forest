@@ -63,5 +63,8 @@
     <select id="selectRoleWeightsByUser" resultType="java.lang.Integer">
         select vr.weights from vertical_role vr left join vertical_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}
     </select>
+    <select id="selectCountByNickName" resultType="java.lang.Integer">
+        select count(*) from vertical_user where nickname = #{nickname}
+    </select>
 
 </mapper>
