@@ -1,10 +1,10 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
-import com.rymcu.vertical.dto.admin.TopicDTO;
 import com.rymcu.vertical.entity.Topic;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ronger
@@ -24,5 +24,5 @@ public interface TopicService extends Service<Topic> {
      * @param rows
      * @return
      * */
-    TopicDTO findTopicByTopicUri(String topicUri, Integer page, Integer rows);
+    Map findTopicByTopicUri(String topicUri, Integer page, Integer rows);
 }

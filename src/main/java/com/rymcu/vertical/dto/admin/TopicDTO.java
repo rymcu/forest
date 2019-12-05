@@ -1,5 +1,6 @@
 package com.rymcu.vertical.dto.admin;
 
+import com.rymcu.vertical.dto.Author;
 import lombok.Data;
 
 import java.util.List;
