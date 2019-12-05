@@ -5,7 +5,7 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" property="id"/>
+        <id column="id" property="idPermission"/>
         <result column="permission_category" property="permissionCategory"/>
     </resultMap>
 

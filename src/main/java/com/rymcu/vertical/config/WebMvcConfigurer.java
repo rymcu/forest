@@ -23,29 +23,33 @@ import java.util.List;
 
 /**
  * Spring MVC 配置
+ * @author ronger
  */
 @Configuration
 public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
     private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
-//    @Value("${env}")
-//    private String env;//当前激活的配置文件
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
         FastJsonConfig config = new FastJsonConfig();
-        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,//保留空的字段
-                SerializerFeature.WriteNullStringAsEmpty);//String null -> ""
-        //SerializerFeature.WriteNullNumberAsZero);//Number null -> 0
-        config.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect); //关闭循环引用
+        // 保留空的字段
+        config.setSerializerFeatures(SerializerFeature.WriteMapNullValue,
+                //String null -> ""
+                SerializerFeature.WriteNullStringAsEmpty);
+        // SerializerFeature.WriteNullNumberAsZero);//Number null -> 0
+        //关闭循环引用
+        config.setSerializerFeatures(SerializerFeature.DisableCircularReferenceDetect);
         converter.setFastJsonConfig(config);
         converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
         converter.setDefaultCharset(Charset.forName("UTF-8"));
         converters.add(0, converter);
     }
 
-    //解决跨域问题
+    /**
+     * 解决跨域问题
+     * */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -59,10 +63,11 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
         return new RestAuthTokenInterceptor();
     }
 
-    //添加拦截器
+    /**
+     * 添加拦截器
+     * */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // TODO 先不拦截接口,进行测试
         registry.addInterceptor(restAuthTokenInterceptor()).addPathPatterns("/api/**")
                 .excludePathPatterns("/api/v1/console/**","/api/v1/article/articles/**","/api/v1/article/detail/**","/api/v1/topic/**","/api/v1/user/**");
 

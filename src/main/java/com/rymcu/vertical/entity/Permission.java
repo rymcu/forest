@@ -11,6 +11,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Data
 @Table(name = "vertical_permission")
 public class Permission implements Serializable,Cloneable {
