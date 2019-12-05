@@ -5,6 +5,7 @@ import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -13,4 +14,10 @@ import java.util.List;
 public interface RoleService extends Service<Role> {
 
     List<Role> selectRoleByUser(User sysUser);
+
+    List<Role> findByIdUser(Integer idUser);
+
+    Map updateStatus(Integer idRole, String status);
+
+    Map saveRole(Role role);
 }

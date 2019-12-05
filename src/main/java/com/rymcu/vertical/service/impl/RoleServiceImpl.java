@@ -9,14 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
- * Created by CodeGenerator on 2018/05/29.
+ *
+ * @author CodeGenerator
+ * @date 2018/05/29
  */
 @Service
-@Transactional
 public class RoleServiceImpl extends AbstractService<Role> implements RoleService {
     @Resource
     private RoleMapper roleMapper;
@@ -25,6 +29,43 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     public List<Role> selectRoleByUser(User sysUser) {
         List<Role> roles = roleMapper.selectRoleByIdUser(sysUser.getIdUser());
         return roles;
+    }
+
+    @Override
+    public List<Role> findByIdUser(Integer idUser) {
+        return roleMapper.selectRoleByIdUser(idUser);
+    }
+
+    @Override
+    @Transactional
+    public Map updateStatus(Integer idRole, String status) {
+        Map map = new HashMap(1);
+        Integer result = roleMapper.updateStatus(idRole,status);
+        if(result == 0) {
+            map.put("message","更新失败!");
+        }
+        return map;
+    }
+
+    @Override
+    public Map saveRole(Role role) {
+        Integer result = 0;
+        if (role.getIdRole() == null) {
+            role.setStatus("0");
+            role.setCreatedTime(new Date());
+            role.setUpdatedTime(role.getCreatedTime());
+            result = roleMapper.insertSelective(role);
+        } else {
+            role.setCreatedTime(new Date());
+            result = roleMapper.updateByPrimaryKeySelective(role);
+        }
+        Map map = new HashMap(1);
+        if (result == 0) {
+            map.put("message","操作失败!");
+        } else {
+            map.put("role", role);
+        }
+        return map;
     }
 
 }

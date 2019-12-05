@@ -8,16 +8,14 @@
         <id column="id" jdbcType="INTEGER" property="idRole"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="input_code" jdbcType="VARCHAR" property="inputCode"/>
+        <result column="weights" jdbcType="TINYINT" property="weights"/>
         <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
         <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
     </resultMap>
-    <resultMap id="RoleDTOResultMap" type="com.rymcu.vertical.dto.RoleDTO">
-        <id column="id" property="id"></id>
-        <result column="name" property="name"/>
-        <result column="input_code" property="inputCode"/>
-        <result column="menu_ids" property="menuIds"/>
-    </resultMap>
+    <update id="updateStatus">
+        update vertical_role set status = #{status},updated_time = sysdate() where id = #{idRole}
+    </update>
 
     <select id="selectRoleByIdUser" resultMap="BaseResultMap">
         select sr.* from vertical_user_role sur left join vertical_role sr on sur.id_role = sr.id where id_user = #{id}

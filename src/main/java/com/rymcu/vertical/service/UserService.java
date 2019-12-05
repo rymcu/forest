@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public interface UserService extends Service<User> {
 
-
     User findByAccount(String account) throws TooManyResultsException;
 
     Map register(String email, String password, String code);
@@ -23,4 +22,8 @@ public interface UserService extends Service<User> {
     UserDTO findUserDTOByNickname(String nickname);
 
     Map forgetPassword(String code, String password);
+
+    Map updateUserRole(Integer idUser, Integer idRole);
+
+    Map updateStatus(Integer idUser, String status);
 }

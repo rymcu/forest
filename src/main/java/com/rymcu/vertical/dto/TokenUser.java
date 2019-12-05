@@ -2,8 +2,11 @@ package com.rymcu.vertical.dto;
 
 import lombok.Data;
 
+/**
+ * @author ronger
+ */
 @Data
-public class TUser {
+public class TokenUser {
 
     private String account;
 
@@ -14,5 +17,7 @@ public class TUser {
     private String avatarType;
 
     private String avatarUrl;
+
+    private Integer weights;
 
 }

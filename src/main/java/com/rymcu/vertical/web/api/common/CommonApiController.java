@@ -2,13 +2,12 @@ package com.rymcu.vertical.web.api.common;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.rymcu.vertical.core.exception.ServiceException;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.core.result.GlobalResultMessage;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ForgetPasswordDTO;
-import com.rymcu.vertical.dto.TUser;
+import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.JavaMailService;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,8 +119,8 @@ public class CommonApiController {
 
     @GetMapping("/token/{token}")
     public GlobalResult token(@PathVariable String token){
-        TUser tUser = UserUtils.getTUser(token);
-        return GlobalResultGenerator.genSuccessResult(tUser);
+        TokenUser tokenUser = UserUtils.getTokenUser(token);
+        return GlobalResultGenerator.genSuccessResult(tokenUser);
     }
 
     @PatchMapping("/forget-password")

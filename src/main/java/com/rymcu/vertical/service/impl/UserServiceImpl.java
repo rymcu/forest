@@ -2,14 +2,13 @@ package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.core.service.redis.RedisService;
-import com.rymcu.vertical.dto.TUser;
+import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.jwt.service.TokenManager;
 import com.rymcu.vertical.mapper.RoleMapper;
 import com.rymcu.vertical.mapper.UserMapper;
-import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.BeanCopierUtil;
 import com.rymcu.vertical.util.Utils;
@@ -25,7 +24,9 @@ import java.util.Map;
 
 
 /**
- * Created by CodeGenerator on 2018/05/29.
+ *
+ * @author CodeGenerator
+ * @date 2018/05/29
  */
 @Service
 public class UserServiceImpl extends AbstractService<User> implements UserService {
@@ -85,10 +86,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             if(Utils.comparePwd(password, user.getPassword())){
                 user.setLastLoginTime(new Date());
                 userMapper.updateByPrimaryKeySelective(user);
-                TUser tUser = new TUser();
-                BeanCopierUtil.copy(user,tUser);
-                tUser.setToken(tokenManager.createToken(account));
-                map.put("user",tUser);
+                TokenUser tokenUser = new TokenUser();
+                BeanCopierUtil.copy(user, tokenUser);
+                tokenUser.setToken(tokenManager.createToken(account));
+                tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
+                map.put("user", tokenUser);
             } else {
                 map.put("message","密码错误！");
             }
@@ -115,6 +117,28 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
           userMapper.updatePasswordByAccount(account,Utils.entryptPassword(password));
           map.put("message","修改成功，正在跳转登录登陆界面！");
           map.put("flag",1);
+        }
+        return map;
+    }
+
+    @Override
+    @Transactional
+    public Map updateUserRole(Integer idUser, Integer idRole) {
+        Map map = new HashMap(1);
+        Integer result = userMapper.updateUserRole(idUser,idRole);
+        if(result == 0) {
+            map.put("message","更新失败!");
+        }
+        return map;
+    }
+
+    @Override
+    @Transactional
+    public Map updateStatus(Integer idUser, String status) {
+        Map map = new HashMap(1);
+        Integer result = userMapper.updateStatus(idUser,status);
+        if(result == 0) {
+            map.put("message","更新失败!");
         }
         return map;
     }

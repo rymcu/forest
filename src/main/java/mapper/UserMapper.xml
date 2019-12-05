@@ -44,6 +44,12 @@
     <update id="updatePasswordByAccount">
         update vertical_user set password = #{password} where account = #{account}
     </update>
+    <update id="updateUserRole">
+        update vertical_user_role set id_role = #{idRole},created_time = sysdate() where id_user = #{idUser}
+    </update>
+    <update id="updateStatus">
+        update vertical_user set status = #{status} where id = #{idUser}
+    </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
         select id, nickname, account, password, status from vertical_user where account = #{account} AND status = 0
@@ -53,6 +59,9 @@
     </select>
     <select id="selectUserDTOByNickname" resultMap="DTOResultMapper">
         select id, nickname, avatar_type, avatar_url, account from vertical_user where nickname = #{nickname} and status = 0
+    </select>
+    <select id="selectRoleWeightsByUser" resultType="java.lang.Integer">
+        select vr.weights from vertical_role vr left join vertical_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}
     </select>
 
 </mapper>

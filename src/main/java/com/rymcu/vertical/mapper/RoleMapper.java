@@ -12,4 +12,6 @@ public interface RoleMapper extends Mapper<Role> {
     List<Role> selectRoleByIdUser(@Param("id") Integer id);
 
     Role selectRoleByInputCode(@Param("inputCode") String inputCode);
+
+    Integer updateStatus(@Param("idRole") Integer idRole, @Param("status") String status);
 }

@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Data
 public class ArticleDTO {
     private Integer idArticle;

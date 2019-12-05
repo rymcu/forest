@@ -1,6 +1,6 @@
 package com.rymcu.vertical.util;
 
-import com.rymcu.vertical.dto.TUser;
+import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.jwt.def.JwtConstants;
 import com.rymcu.vertical.jwt.model.TokenModel;
@@ -13,6 +13,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * @author ronger
+ */
 public class UserUtils {
 
     private static UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
@@ -46,7 +49,7 @@ public class UserUtils {
         return null;
     }
 
-    public static TUser getTUser(String token) {
+    public static TokenUser getTokenUser(String token) {
         if(StringUtils.isNotBlank(token)){
             // 验证token
             Claims claims = null;
@@ -61,10 +64,11 @@ public class UserUtils {
                 if (tokenManager.checkToken(model)) {
                     User user = userMapper.findByAccount(account.toString());
                     if(user != null){
-                        TUser tUser = new TUser();
-                        BeanCopierUtil.copy(user,tUser);
-                        tUser.setToken(token);
-                        return tUser;
+                        TokenUser tokenUser = new TokenUser();
+                        BeanCopierUtil.copy(user, tokenUser);
+                        tokenUser.setToken(token);
+                        tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
+                        return tokenUser;
                     }
                 }
             }

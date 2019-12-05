@@ -2,7 +2,7 @@ package com.rymcu.vertical.web.api.common;
 
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
-import com.rymcu.vertical.dto.TUser;
+import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.jwt.def.JwtConstants;
 import com.rymcu.vertical.util.FileUtils;
 import com.rymcu.vertical.util.UserUtils;
@@ -128,9 +128,9 @@ public class UploadController {
         if(StringUtils.isBlank(authHeader)){
             throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
-        TUser tUser = UserUtils.getTUser(authHeader);
+        TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
         Map map = new HashMap(2);
-        map.put("uploadToken",tUser.getToken());
+        map.put("uploadToken", tokenUser.getToken());
         map.put("uploadURL", UPLOAD_URL);
         return GlobalResultGenerator.genSuccessResult(map);
     }

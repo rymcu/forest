@@ -1,5 +1,6 @@
 package com.rymcu.vertical.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -9,6 +10,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Data
 @Table(name = "vertical_role")
 public class Role implements Serializable,Cloneable {
@@ -30,6 +34,12 @@ public class Role implements Serializable,Cloneable {
     private String inputCode;
 
     /**
+     * 权重
+     * */
+    @Column(name = "weights")
+    private Integer weights;
+
+    /**
      * 状态
      * */
     @Column(name = "status")
@@ -39,11 +49,13 @@ public class Role implements Serializable,Cloneable {
      * 创建时间
      * */
     @Column(name = "created_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 
     /**
      * 更新时间
      * */
     @Column(name = "updated_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 }
