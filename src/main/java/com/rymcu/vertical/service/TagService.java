@@ -7,7 +7,17 @@ import com.rymcu.vertical.web.api.exception.BaseApiException;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * @author ronger
+ */
 public interface TagService extends Service<Tag> {
 
-    void saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException;
+    /**
+     * 保存文章标签
+     * @param article
+     * @throws UnsupportedEncodingException
+     * @throws BaseApiException
+     * @return
+     * */
+    Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException;
 }

@@ -26,5 +26,10 @@ public interface TopicService extends Service<Topic> {
      * */
     Map findTopicByTopicUri(String topicUri, Integer page, Integer rows);
 
+    /**
+     * 新增/更新主题信息
+     * @param topic 主题信息
+     * @return
+     * */
     Map saveTopic(Topic topic);
 }

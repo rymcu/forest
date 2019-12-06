@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author ronger
+ */
 @Service
 public class ArticleServiceImpl extends AbstractService<Article> implements ArticleService {
 
@@ -78,7 +81,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
     public Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException {
         Map map = new HashMap(1);
         if(StringUtils.isBlank(article.getArticleTitle())){

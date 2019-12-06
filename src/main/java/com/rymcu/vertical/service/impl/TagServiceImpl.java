@@ -17,6 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Service
 public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
@@ -24,8 +27,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     private TagMapper tagMapper;
 
     @Override
-    @Transactional
-    public void saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException {
+    @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
+    public Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException {
         User user = UserUtils.getWxCurrentUser();
         String articleTags = article.getArticleTags();
         if(StringUtils.isNotBlank(articleTags)){
@@ -62,6 +65,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     tagMapper.insertUserTag(tag.getIdTag(),user.getIdUser(),1);
                 }
             }
+            return 1;
         }
+        return 0;
     }
 }

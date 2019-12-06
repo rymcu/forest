@@ -8,7 +8,9 @@ import java.util.List;
 
 
 /**
- * Created by CodeGenerator on 2018/05/29.
+ *
+ * @author CodeGenerator
+ * @date 2018/05/29
  */
 public interface PermissionService extends Service<Permission> {
 

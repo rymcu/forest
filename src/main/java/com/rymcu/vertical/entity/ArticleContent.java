@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Data
 @Table(name = "vertical_article_content")
 public class ArticleContent {

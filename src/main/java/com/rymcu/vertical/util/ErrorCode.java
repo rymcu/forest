@@ -1,7 +1,9 @@
 package com.rymcu.vertical.util;
 
 /**
- * Created by kaenry on 2016/9/20.
+ *
+ * @author kaenry
+ * @date 2016/9/20
  * ErrorCode
  */
 public enum ErrorCode {

@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Table(name = "vertical_user")
 @Data
 public class User implements Serializable,Cloneable {

@@ -7,10 +7,8 @@ package com.rymcu.vertical.jwt.model;
  */
 public class TokenModel {
 
-    //用户id
     private String username;
 
-    //随机生成的uuid
     private String token;
 
     public TokenModel(String username, String token) {

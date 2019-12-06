@@ -13,6 +13,7 @@ import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.JavaMailService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.UserUtils;
+import com.rymcu.vertical.util.Utils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author ronger
+ */
 @RestController
 @RequestMapping("/api/v1/console")
 public class CommonApiController {
@@ -35,8 +39,8 @@ public class CommonApiController {
 
     @ApiOperation(value = "获取邮件验证码")
     @PostMapping("/get-email-code")
-    public GlobalResult getEmailCode(@RequestParam("email") String email) throws MessagingException {
-        Map map = new HashMap();
+    public GlobalResult<Map<String, String>> getEmailCode(@RequestParam("email") String email) throws MessagingException {
+        Map<String, String> map = new HashMap<>(1);
         map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
@@ -52,8 +56,8 @@ public class CommonApiController {
 
     @ApiOperation(value = "获取找回密码邮件")
     @PostMapping("/get-forget-password-email")
-    public GlobalResult getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
-        Map map = new HashMap<>(1);
+    public GlobalResult<Map<Object, Object>> getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
+        Map<Object, Object> map = new HashMap<>(1);
         map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
@@ -68,13 +72,13 @@ public class CommonApiController {
     }
 
     @PostMapping("/register")
-    public GlobalResult register(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") String code){
+    public GlobalResult<Map> register(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") String code){
         Map map = userService.register(email,password,code);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PostMapping("/login")
-    public GlobalResult login(@RequestParam("account") String account, @RequestParam("password") String password){
+    public GlobalResult<Map> login(@RequestParam("account") String account, @RequestParam("password") String password){
         Map map = userService.login(account,password);
         return GlobalResultGenerator.genSuccessResult(map);
     }
@@ -85,32 +89,26 @@ public class CommonApiController {
     }
 
     @GetMapping("/articles")
-    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page,@RequestParam(defaultValue = "10") Integer rows,@RequestParam(defaultValue = "") String searchText,@RequestParam(defaultValue = "") String tag){
+    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText, @RequestParam(defaultValue = "") String tag){
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(searchText,tag);
-        PageInfo pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("articles", pageInfo.getList());
-        Map pagination = new HashMap(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
-        map.put("pagination", pagination);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
+        Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
 
 
     @GetMapping("/article/{id}")
-    public GlobalResult detail(@PathVariable Integer id){
+    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id,1);
-        Map map = new HashMap<>(1);
+        Map<String, Object> map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @GetMapping("/update/{id}")
-    public GlobalResult update(@PathVariable Integer id){
+    public GlobalResult<Map<String, Object>> update(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id,2);
         Map map = new HashMap<>(1);
         map.put("article", articleDTO);
@@ -118,13 +116,13 @@ public class CommonApiController {
     }
 
     @GetMapping("/token/{token}")
-    public GlobalResult token(@PathVariable String token){
+    public GlobalResult<TokenUser> token(@PathVariable String token){
         TokenUser tokenUser = UserUtils.getTokenUser(token);
         return GlobalResultGenerator.genSuccessResult(tokenUser);
     }
 
     @PatchMapping("/forget-password")
-    public GlobalResult forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword){
+    public GlobalResult<Map> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword){
         Map map = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
         return GlobalResultGenerator.genSuccessResult(map);
     }

@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+/**
+ * @author ronger
+ */
 @RestController
 @RequestMapping("/api/v1/article")
 public class ArticleController {

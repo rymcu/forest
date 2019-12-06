@@ -8,14 +8,16 @@ import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.entity.Topic;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.TopicService;
+import com.rymcu.vertical.util.Utils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("ALL")
+/**
+ * @author ronger
+ */
 @RestController
 @RequestMapping("/api/v1/topic")
 public class TopicController {
@@ -34,14 +36,8 @@ public class TopicController {
     public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTopicName(name);
-        PageInfo pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("articles", pageInfo.getList());
-        Map pagination = new HashMap(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
-        map.put("pagination", pagination);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
+        Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 }

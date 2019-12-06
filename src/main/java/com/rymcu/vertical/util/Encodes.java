@@ -18,6 +18,7 @@ import java.net.URLEncoder;
  * 2.自制的base62 编码
  * 3.Commons-Lang的xml/html escape
  * 4.JDK提供的URLEncoder
+ * @author ronger
  */
 public class Encodes {
 

@@ -1,5 +1,8 @@
 package com.rymcu.vertical.jwt.def;
 
+/**
+ * @author ronger
+ */
 public class JwtConstants {
 
 	/**

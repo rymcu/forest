@@ -1,6 +1,8 @@
 package com.rymcu.vertical.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -12,6 +14,8 @@ import java.net.URLEncoder;
  *
  */
 public class FileUtils {
+
+	private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 	/**
 	 * 获取文件扩展名
 	 * 
@@ -159,7 +163,7 @@ public class FileUtils {
 		File fileDelete = new File(strFileName);
 
 		if (!fileDelete.exists() || !fileDelete.isFile()) {
-			//LogUtil.info("错误: " + strFileName + "不存在!");
+			logger.info("错误: " + strFileName + "不存在!");
 			return false;
 		}
 

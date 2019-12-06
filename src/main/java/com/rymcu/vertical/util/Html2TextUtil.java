@@ -4,6 +4,9 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 import java.io.*;
 
+/**
+ * @author ronger
+ */
 public class Html2TextUtil extends HTMLEditorKit.ParserCallback {
 
     private static Html2TextUtil html2Text = new Html2TextUtil();
