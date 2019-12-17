@@ -6,6 +6,7 @@ import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * @author ronger
@@ -20,4 +21,17 @@ public interface TagService extends Service<Tag> {
      * @return
      * */
     Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException;
+
+    /**
+     * 清除未使用标签
+     * @return
+     * */
+    Map cleanUnusedTag();
+
+    /**
+     * 添加/更新标签
+     * @param tag
+     * @return
+     */
+    Map saveTag(Tag tag);
 }

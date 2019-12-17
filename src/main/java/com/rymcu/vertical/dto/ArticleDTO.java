@@ -3,6 +3,7 @@ package com.rymcu.vertical.dto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author ronger
@@ -44,4 +45,6 @@ public class ArticleDTO {
     private Date updatedTime;
 
     private Author articleAuthor;
+
+    private List<ArticleTagDTO> tags;
 }

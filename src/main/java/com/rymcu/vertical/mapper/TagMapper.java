@@ -12,4 +12,8 @@ public interface TagMapper extends Mapper<Tag> {
     Integer selectCountUserTagById(@Param("idUser") Integer idUser, @Param("idTag") Integer idTag);
 
     Integer insertUserTag(@Param("idTag") Integer idTag, @Param("idUser") Integer idUser, @Param("type") Integer type);
+
+    Integer deleteUnusedTag();
+
+    Integer update(@Param("idTag") Integer idTag, @Param("tagUri") String tagUri, @Param("tagIconPath") String tagIconPath, @Param("tagStatus") String tagStatus, @Param("tagDescription") String tagDescription);
 }

@@ -2,6 +2,7 @@ package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleDTO;
+import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
@@ -135,10 +136,30 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return map;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map delete(Integer id) {
+        Map<String,String> map = new HashMap(1);
+        Integer result;
+        // 删除引用标签记录
+        result = articleMapper.deleteTagArticle(id);
+        if (result > 0){
+            result = articleMapper.deleteByPrimaryKey(id);
+            if (result < 1){
+                map.put("message", "删除失败!");
+            }
+        } else {
+            map.put("message", "删除失败!");
+        }
+        return map;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article,Integer type) {
         Author author = articleMapper.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);
         article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
+        List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
+        article.setTags(tags);
         if(type == 1){
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             article.setArticleContent(articleContent.getArticleContentHtml());

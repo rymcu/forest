@@ -61,4 +61,11 @@ public interface ArticleService extends Service<Article> {
      * @return
      * */
     Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException;
+
+    /**
+     * 删除文章
+     * @param id
+     * @return
+     * */
+    Map delete(Integer id);
 }

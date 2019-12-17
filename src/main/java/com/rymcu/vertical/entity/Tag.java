@@ -36,6 +36,8 @@ public class Tag implements Serializable,Cloneable {
     private String tagAd;
     /** 是否显示全站侧边栏广告 */
     private String tagShowSideAd;
+    /** 标签状态 */
+    private String tagStatus;
     /** 创建时间 */
     private Date createdTime;
     /** 更新时间 */

@@ -136,7 +136,7 @@ public class Utils {
     public static Map getArticlesGlobalResult(PageInfo<ArticleDTO> pageInfo) {
         Map map = new HashMap(2);
         map.put("articles", pageInfo.getList());
-        Map pagination = new HashMap(3);
+        Map pagination = new HashMap(4);
         pagination.put("pageSize",pageInfo.getPageSize());
         pagination.put("total",pageInfo.getTotal());
         pagination.put("currentPage",pageInfo.getPageNum());

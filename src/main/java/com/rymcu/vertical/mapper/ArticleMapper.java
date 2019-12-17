@@ -2,6 +2,7 @@ package com.rymcu.vertical.mapper;
 
 import com.rymcu.vertical.core.mapper.Mapper;
 import com.rymcu.vertical.dto.ArticleDTO;
+import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
@@ -27,4 +28,8 @@ public interface ArticleMapper extends Mapper<Article> {
     List<ArticleDTO> selectArticlesByTagName(@Param("tagName") String tagName);
 
     List<ArticleDTO> selectUserArticles(@Param("idUser") Integer idUser);
+
+    Integer deleteTagArticle(@Param("id") Integer id);
+
+    List<ArticleTagDTO> selectTags(@Param("idArticle") Integer idArticle);
 }

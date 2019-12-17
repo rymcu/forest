@@ -6,9 +6,11 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.admin.UserRoleDTO;
 import com.rymcu.vertical.entity.Role;
+import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.Topic;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.service.RoleService;
+import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.service.TopicService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.Utils;
@@ -33,6 +35,8 @@ public class AdminController {
     private RoleService roleService;
     @Resource
     private TopicService topicService;
+    @Resource
+    private TagService tagService;
 
     @GetMapping("/users")
     public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
@@ -133,6 +137,42 @@ public class AdminController {
     @PutMapping("/topic/post")
     public GlobalResult<Map> updateTopic(@RequestBody Topic topic){
         Map map = topicService.saveTopic(topic);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/tags")
+    public GlobalResult<Map<String, Object>> tags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+        PageHelper.startPage(page, rows);
+        List<Tag> list = tagService.findAll();
+        PageInfo<Tag> pageInfo = new PageInfo<>(list);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("tags", pageInfo.getList());
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @DeleteMapping("/tag/clean-unused")
+    public GlobalResult<Map<String, Object>> cleanUnusedTag(){
+        Map map = tagService.cleanUnusedTag();
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/tag/detail/{idTag}")
+    public GlobalResult<Tag> tagDetail(@PathVariable Integer idTag){
+        Tag tag = tagService.findById(idTag.toString());
+        return GlobalResultGenerator.genSuccessResult(tag);
+    }
+
+    @PostMapping("/tag/post")
+    public GlobalResult<Map> addTag(@RequestBody Tag tag){
+        Map map = tagService.saveTag(tag);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PutMapping("/tag/post")
+    public GlobalResult<Map> updateTag(@RequestBody Tag tag){
+        Map map = tagService.saveTag(tag);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

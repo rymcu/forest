@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ronger
@@ -45,12 +47,15 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     tag.setTagUri(URLEncoder.encode(tag.getTagTitle(),"UTF-8"));
                     tag.setCreatedTime(new Date());
                     tag.setUpdatedTime(tag.getCreatedTime());
+                    tag.setTagArticleCount(1);
                     tagMapper.insertSelective(tag);
                     addTagArticle = true;
                     addUserTag = true;
                 } else {
                     Integer count = tagMapper.selectCountTagArticleById(tag.getIdTag(),article.getIdArticle());
                     if(count == 0){
+                        tag.setTagArticleCount(tag.getTagArticleCount() + 1);
+                        tagMapper.updateByPrimaryKeySelective(tag);
                         addTagArticle = true;
                     }
                     Integer countUserTag = tagMapper.selectCountUserTagById(user.getIdUser(),tag.getIdTag());
@@ -68,5 +73,34 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map cleanUnusedTag() {
+        Map map = new HashMap(1);
+        tagMapper.deleteUnusedTag();
+        return map;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map saveTag(Tag tag) {
+        Integer result = 0;
+        if (tag.getIdTag() == null) {
+            tag.setCreatedTime(new Date());
+            tag.setUpdatedTime(tag.getCreatedTime());
+            result = tagMapper.insertSelective(tag);
+        } else {
+            tag.setUpdatedTime(new Date());
+            result = tagMapper.update(tag.getIdTag(),tag.getTagUri(),tag.getTagIconPath(),tag.getTagStatus(),tag.getTagDescription());
+        }
+        Map map = new HashMap(1);
+        if (result == 0) {
+            map.put("message","操作失败!");
+        } else {
+            map.put("tag", tag);
+        }
+        return map;
     }
 }

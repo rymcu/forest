@@ -9,6 +9,7 @@ import com.rymcu.vertical.entity.Topic;
 import com.rymcu.vertical.mapper.TopicMapper;
 import com.rymcu.vertical.service.TopicService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -52,6 +53,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Map saveTopic(Topic topic) {
         Integer result = 0;
         if (topic.getIdTopic() == null) {
