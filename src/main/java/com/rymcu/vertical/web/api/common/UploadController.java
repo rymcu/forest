@@ -26,11 +26,12 @@ import java.util.Set;
 @RequestMapping("/api/v1/upload")
 public class UploadController {
 
+    private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";
     private final static String UPLOAD_URL = "/api/upload/file/batch";
     public static final String ctxHeadPicPath = "/usr/local/src/tomcat-hp/webapps/vertical";
 
     @PostMapping("/file")
-    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, Integer type, HttpServletRequest request){
+    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile,@RequestParam(defaultValue = "1")Integer type, HttpServletRequest request){
         if (multipartFile == null) {
             return GlobalResultGenerator.genErrorResult("请选择要上传的文件");
         }
@@ -54,24 +55,20 @@ public class UploadController {
         }
 
         String localPath = Utils.getProperty("resource.file-path")+"/"+typePath+"/";
-        Map succMap = new HashMap(10);
-        Set errFiles = new HashSet();
 
         String orgName = multipartFile.getOriginalFilename();
         String fileName = System.currentTimeMillis()+"."+ FileUtils.getExtend(orgName).toLowerCase();
 
         String savePath = file.getPath() + File.separator + fileName;
 
+        Map data = new HashMap(2);
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
-            succMap.put(orgName,localPath+fileName);
+            data.put("url", localPath+fileName);
         } catch (IOException e) {
-            errFiles.add(orgName);
+            data.put("message", "上传失败!");
         }
-        Map data = new HashMap(2);
-        data.put("errFiles",errFiles);
-        data.put("succMap",succMap);
         return GlobalResultGenerator.genSuccessResult(data);
 
     }
@@ -120,6 +117,19 @@ public class UploadController {
         data.put("errFiles",errFiles);
         data.put("succMap",succMap);
         return GlobalResultGenerator.genSuccessResult(data);
+    }
+
+    @GetMapping("/simple/token")
+    public GlobalResult uploadSimpleToken(HttpServletRequest request) throws BaseApiException {
+        String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
+        if(StringUtils.isBlank(authHeader)){
+            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
+        }
+        TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
+        Map map = new HashMap(2);
+        map.put("uploadToken", tokenUser.getToken());
+        map.put("uploadURL", UPLOAD_SIMPLE_URL);
+        return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @GetMapping("/token")
