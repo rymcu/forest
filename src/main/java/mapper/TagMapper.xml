@@ -23,6 +23,12 @@
     <insert id="insertUserTag">
         insert into vertical_user_tag (id_tag,id_user,type,created_time,updated_time) values (#{idTag},#{idUser},#{type},sysdate(),sysdate())
     </insert>
+    <update id="update">
+        update vertical_tag set tag_uri = #{tagUri}, tag_icon_path = #{tagIconPath}, tag_status = #{tagStatus}, tag_description = #{tagDescription} where id = #{idTag}
+    </update>
+    <delete id="deleteUnusedTag">
+        delete from vertical_tag where id not in (select * from (select id_tag from vertical_tag_article vta left join vertical_article va on vta.id_article = va.id where va.id is not null) tmp);
+    </delete>
     <select id="selectCountTagArticleById" resultType="java.lang.Integer">
         select count(*) from vertical_tag_article where id_tag = #{idTag} and id_article = #{idArticle}
     </select>

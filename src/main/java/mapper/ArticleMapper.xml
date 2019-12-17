@@ -49,6 +49,13 @@
         <result column="created_time" property="createdTime"/>
         <result column="updated_time" property="updatedTime"/>
     </resultMap>
+    <resultMap id="ArticleTagDTOResultMap" type="com.rymcu.vertical.dto.ArticleTagDTO">
+        <id column="id" property="idTag"/>
+        <id column="tag_title" property="tagTitle"/>
+        <id column="tag_icon_path" property="tagIconPath"/>
+        <id column="tag_uri" property="tagUri"/>
+        <id column="tag_description" property="tagDescription"/>
+    </resultMap>
     <insert id="insertArticleContent">
         insert into vertical_article_content (id_article,article_content,article_content_html,created_time,updated_time)
         values (#{idArticle},#{articleContent},#{articleContentHtml},sysdate(),sysdate())
@@ -56,6 +63,9 @@
     <update id="updateArticleContent">
         update vertical_article_content set article_content = #{articleContent},article_content_html = #{articleContentHtml},updated_time = sysdate() where id_article = #{idArticle}
     </update>
+    <delete id="deleteTagArticle">
+        delete from vertical_tag_article where id_article = #{id}
+    </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id order by updated_time desc
     </select>
@@ -76,5 +86,8 @@
     </select>
     <select id="selectUserArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on su.id = #{idUser} and art.article_author_id = su.id where article_author_id = #{idUser} order by updated_time desc
+    </select>
+    <select id="selectTags" resultMap="ArticleTagDTOResultMap">
+        select vt.id, vt.tag_title, vt.tag_icon_path, vt.tag_uri, vt.tag_description from vertical_tag vt left join vertical_tag_article vta on vt.id = vta.id_tag where vta.id_article = #{idArticle}
     </select>
 </mapper>
