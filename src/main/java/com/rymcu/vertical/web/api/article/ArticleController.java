@@ -36,8 +36,8 @@ public class ArticleController {
 
     @DeleteMapping("/delete/{id}")
     public GlobalResult delete(@PathVariable Integer id){
-        articleService.deleteById(id.toString());
-        return GlobalResultGenerator.genSuccessResult();
+        Map map = articleService.delete(id);
+        return GlobalResultGenerator.genSuccessResult(map);
     }
 
 }
