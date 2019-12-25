@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/{nickname}/articles")
-    public GlobalResult userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String nickname){
+    public GlobalResult userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
         UserDTO userDTO = userService.findUserDTOByNickname(nickname);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");

@@ -97,8 +97,6 @@ public class CommonApiController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-
-
     @GetMapping("/article/{id}")
     public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id,1);
