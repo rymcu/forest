@@ -78,8 +78,11 @@
     <select id="selectArticleContent" resultMap="ArticleContentResultMap">
         select article_content,article_content_html from vertical_article_content where id_article = #{idArticle}
     </select>
-    <select id="selectArticlesByTopicName" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id order by updated_time desc
+    <select id="selectArticlesByTopicUri" resultMap="DTOResultMap">
+        select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id
+        where exists(select * from vertical_tag_article vta where vta.id_article = art.id and exists(select * from vertical_topic_tag vtt
+        left join vertical_tag vt on vtt.id_tag = vt.id where vt.id = vta.id_tag and exists(select * from vertical_topic topic
+        where topic.id = vtt.id_topic and topic.topic_uri = #{topicName}))) order by updated_time desc
     </select>
     <select id="selectArticlesByTagName" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id order by updated_time desc

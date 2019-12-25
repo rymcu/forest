@@ -5,9 +5,12 @@ import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.admin.TagDTO;
 import com.rymcu.vertical.dto.admin.TopicDTO;
+import com.rymcu.vertical.dto.admin.TopicTagDTO;
+import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.Topic;
 import com.rymcu.vertical.mapper.TopicMapper;
 import com.rymcu.vertical.service.TopicService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +74,40 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             map.put("message","操作失败!");
         } else {
             map.put("topic", topic);
+        }
+        return map;
+    }
+
+    @Override
+    public List<Tag> findUnbindTagsById(Integer idTopic, String tagTitle) {
+        if (StringUtils.isBlank(tagTitle)) {
+            tagTitle = "";
+        }
+        return topicMapper.selectUnbindTagsById(idTopic,tagTitle);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map bindTopicTag(TopicTagDTO topicTag) {
+        Integer result = topicMapper.insertTopicTag(topicTag.getIdTopic(), topicTag.getIdTag());
+        Map map = new HashMap(1);
+        if (result == 0) {
+            map.put("message", "操作失败!");
+        } else {
+            map.put("topicTag", topicTag);
+        }
+        return map;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map unbindTopicTag(TopicTagDTO topicTag) {
+        Integer result = topicMapper.deleteTopicTag(topicTag.getIdTopic(), topicTag.getIdTag());
+        Map map = new HashMap(1);
+        if (result == 0) {
+            map.put("message", "操作失败!");
+        } else {
+            map.put("topicTag", topicTag);
         }
         return map;
     }

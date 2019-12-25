@@ -23,7 +23,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     ArticleContent selectArticleContent(@Param("idArticle") Integer idArticle);
 
-    List<ArticleDTO> selectArticlesByTopicName(@Param("topicName") String topicName);
+    List<ArticleDTO> selectArticlesByTopicUri(@Param("topicName") String topicName);
 
     List<ArticleDTO> selectArticlesByTagName(@Param("tagName") String tagName);
 

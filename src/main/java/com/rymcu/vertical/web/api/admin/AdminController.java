@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.dto.admin.TopicTagDTO;
 import com.rymcu.vertical.dto.admin.UserRoleDTO;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.Tag;
@@ -18,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,6 +128,32 @@ public class AdminController {
     public GlobalResult<Topic> topicDetail(@PathVariable Integer idTopic){
         Topic topic = topicService.findById(idTopic.toString());
         return GlobalResultGenerator.genSuccessResult(topic);
+    }
+
+    @GetMapping("/topic/unbind-topic-tags")
+    public GlobalResult unbindTopicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, HttpServletRequest request){
+        Integer idTopic = Integer.valueOf(request.getParameter("idTopic"));
+        String tagTitle = request.getParameter("tagTitle");
+        PageHelper.startPage(page, rows);
+        List<Tag> list = topicService.findUnbindTagsById(idTopic, tagTitle);
+        PageInfo<Tag> pageInfo = new PageInfo<>(list);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("tags", pageInfo.getList());
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PostMapping("/topic/bind-topic-tag")
+    public GlobalResult bindTopicTag(@RequestBody TopicTagDTO topicTag){
+        Map map = topicService.bindTopicTag(topicTag);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @DeleteMapping("/topic/unbind-topic-tag")
+    public GlobalResult unbindTopicTag(@RequestBody TopicTagDTO topicTag){
+        Map map = topicService.unbindTopicTag(topicTag);
+        return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PostMapping("/topic/post")

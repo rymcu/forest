@@ -36,7 +36,7 @@ public interface ArticleService extends Service<Article> {
      * @param name
      * @return
      * */
-    List<ArticleDTO> findArticlesByTopicName(String name);
+    List<ArticleDTO> findArticlesByTopicUri(String name);
 
     /**
      * 查询标签下文章列表

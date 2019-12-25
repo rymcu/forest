@@ -61,8 +61,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    public List<ArticleDTO> findArticlesByTopicName(String name) {
-        List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTopicName(name);
+    public List<ArticleDTO> findArticlesByTopicUri(String name) {
+        List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTopicUri(name);
         return articleDTOS;
     }
 

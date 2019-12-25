@@ -1,6 +1,8 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.admin.TopicTagDTO;
+import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.Topic;
 
 import java.util.List;
@@ -32,4 +34,26 @@ public interface TopicService extends Service<Topic> {
      * @return
      * */
     Map saveTopic(Topic topic);
+
+    /**
+     * 查询未绑定标签
+     * @param idTopic
+     * @param tagTitle
+     * @return
+     */
+    List<Tag> findUnbindTagsById(Integer idTopic, String tagTitle);
+
+    /**
+     * 绑定标签
+     * @param topicTag
+     * @return
+     */
+    Map bindTopicTag(TopicTagDTO topicTag);
+
+    /**
+     * 取消绑定标签
+     * @param topicTag
+     * @return
+     */
+    Map unbindTopicTag(TopicTagDTO topicTag);
 }
