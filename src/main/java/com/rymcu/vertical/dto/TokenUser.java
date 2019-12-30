@@ -8,6 +8,8 @@ import lombok.Data;
 @Data
 public class TokenUser {
 
+    private Integer idUser;
+
     private String account;
 
     private String nickname;
