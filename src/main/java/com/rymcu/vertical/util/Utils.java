@@ -2,6 +2,7 @@ package com.rymcu.vertical.util;
 
 import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.dto.ArticleDTO;
+import com.rymcu.vertical.entity.Notification;
 import com.rymcu.vertical.entity.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.InvalidSessionException;
@@ -136,6 +137,17 @@ public class Utils {
     public static Map getArticlesGlobalResult(PageInfo<ArticleDTO> pageInfo) {
         Map map = new HashMap(2);
         map.put("articles", pageInfo.getList());
+        Map pagination = new HashMap(4);
+        pagination.put("pageSize",pageInfo.getPageSize());
+        pagination.put("total",pageInfo.getTotal());
+        pagination.put("currentPage",pageInfo.getPageNum());
+        map.put("pagination", pagination);
+        return map;
+    }
+
+    public static Map getNotificationsGlobalResult(PageInfo<Notification> pageInfo) {
+        Map map = new HashMap(2);
+        map.put("notifications", pageInfo.getList());
         Map pagination = new HashMap(4);
         pagination.put("pageSize",pageInfo.getPageSize());
         pagination.put("total",pageInfo.getTotal());
