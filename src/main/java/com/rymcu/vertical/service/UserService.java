@@ -2,6 +2,7 @@ package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
 import com.rymcu.vertical.dto.UserDTO;
+import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.User;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
@@ -70,4 +71,26 @@ public interface UserService extends Service<User> {
      * @return Map
      * */
     Map updateStatus(Integer idUser, String status);
+
+    /**
+     * 获取用户信息
+     * @param idUser
+     * @return
+     */
+    Map findUserInfo(Integer idUser);
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @return
+     */
+    Map updateUserInfo(UserInfoDTO user);
+
+    /**
+     * 验证昵称是否重复
+     * @param idUser
+     * @param nickname
+     * @return
+     */
+    Map checkNickname(Integer idUser, String nickname);
 }

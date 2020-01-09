@@ -21,6 +21,7 @@
         <result column="updated_time" property="updatedTime"/>
     </resultMap>
     <resultMap id="UserInfoResultMapper" type="com.rymcu.vertical.dto.UserInfoDTO">
+        <result column="id" property="idUser"/>
         <result column="account" property="account"/>
         <result column="nickname" property="nickname"/>
         <result column="sex" property="sex"/>
@@ -30,6 +31,7 @@
         <result column="phone" property="phone"/>
         <result column="status" property="status"/>
         <result column="last_login_time" property="lastLoginTime"/>
+        <result column="signature" property="signature"/>
     </resultMap>
     <resultMap id="DTOResultMapper" type="com.rymcu.vertical.dto.UserDTO">
         <result column="id" property="idUser"/>
@@ -50,12 +52,19 @@
     <update id="updateStatus">
         update vertical_user set status = #{status} where id = #{idUser}
     </update>
+    <update id="updateUserInfo">
+        update vertical_user set nickname = #{nickname},email = #{email},signature = #{signature},avatar_type = #{avatarType},avatar_url = #{avatarUrl},sex = #{sex}
+        <if test="phone != null and phone != ''">
+            ,phone = #{phone}
+        </if>
+        where id = #{idUser}
+    </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
-        select id, nickname, account, password, status from vertical_user where account = #{account} AND status = 0
+        select id, nickname, account, password, status from vertical_user where account = #{account} and status = 0
     </select>
-    <select id="findUserInfoByAccount" resultType="com.rymcu.vertical.dto.UserInfoDTO">
-        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, password, status, last_login_time from vertical_user when account = #{account}
+    <select id="findUserInfoByAccount" resultMap="UserInfoResultMapper">
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where account = #{account}
     </select>
     <select id="selectUserDTOByNickname" resultMap="DTOResultMapper">
         select id, nickname, avatar_type, avatar_url, account from vertical_user where nickname = #{nickname} and status = 0
@@ -65,6 +74,12 @@
     </select>
     <select id="selectCountByNickName" resultType="java.lang.Integer">
         select count(*) from vertical_user where nickname = #{nickname}
+    </select>
+    <select id="selectUserInfo" resultMap="UserInfoResultMapper">
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where id = #{idUser}
+    </select>
+    <select id="checkNicknameByIdUser" resultType="java.lang.Integer">
+        select count(*) from vertical_user where nickname = #{nickname} and id != #{idUser}
     </select>
 
 </mapper>

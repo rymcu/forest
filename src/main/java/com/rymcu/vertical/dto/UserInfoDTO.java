@@ -6,10 +6,13 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author ronger
+ */
 @Data
 public class UserInfoDTO implements Serializable {
 
-    private String idUser;
+    private Integer idUser;
 
     private String account;
 
@@ -28,6 +31,8 @@ public class UserInfoDTO implements Serializable {
     private String roleIds;
 
     private String sex;
+
+    private String signature;
 
     @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date lastLoginTime;

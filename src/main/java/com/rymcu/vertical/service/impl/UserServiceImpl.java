@@ -4,6 +4,7 @@ import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.core.service.redis.RedisService;
 import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.dto.UserDTO;
+import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.jwt.service.TokenManager;
@@ -12,6 +13,7 @@ import com.rymcu.vertical.mapper.UserMapper;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.BeanCopierUtil;
 import com.rymcu.vertical.util.Utils;
+import com.rymcu.vertical.web.api.common.UploadController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private RedisService redisService;
     @Resource
     private TokenManager tokenManager;
+
+    private final static String avatarSvgType = "1";
 
     @Override
     public User findByAccount(String account) throws TooManyResultsException{
@@ -133,7 +137,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Map updateUserRole(Integer idUser, Integer idRole) {
         Map map = new HashMap(1);
         Integer result = userMapper.updateUserRole(idUser,idRole);
@@ -144,12 +148,57 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Map updateStatus(Integer idUser, String status) {
         Map map = new HashMap(1);
         Integer result = userMapper.updateStatus(idUser,status);
         if(result == 0) {
             map.put("message","更新失败!");
+        }
+        return map;
+    }
+
+    @Override
+    public Map findUserInfo(Integer idUser) {
+        Map map = new HashMap(1);
+        UserInfoDTO user = userMapper.selectUserInfo(idUser);
+        if (user == null) {
+            map.put("message", "用户不存在!");
+        } else {
+            map.put("user", user);
+        }
+        return map;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map updateUserInfo(UserInfoDTO user) {
+        Map map = new HashMap(1);
+        Integer number = userMapper.checkNicknameByIdUser(user.getIdUser(), user.getNickname());
+        if (number > 0) {
+            map.put("message", "该昵称已使用!");
+            return map;
+        }
+        if (StringUtils.isNotBlank(user.getAvatarType()) && avatarSvgType.equals(user.getAvatarType())) {
+            String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), 0);
+            user.setAvatarUrl(avatarUrl);
+        }
+        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),
+                user.getEmail(),user.getPhone(),user.getSignature(), user.getSex());
+        if (result == 0) {
+            map.put("message", "操作失败!");
+            return map;
+        }
+        map.put("user",user);
+        return map;
+    }
+
+    @Override
+    public Map checkNickname(Integer idUser, String nickname) {
+        Map map = new HashMap(1);
+        Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
+        if (number > 0) {
+            map.put("message", "该昵称已使用!");
         }
         return map;
     }
