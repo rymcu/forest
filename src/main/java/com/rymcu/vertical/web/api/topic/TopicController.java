@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.core.service.log.annotation.VisitLogger;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.entity.Topic;
 import com.rymcu.vertical.service.ArticleService;
@@ -33,6 +34,7 @@ public class TopicController {
     }
 
     @GetMapping("/{name}")
+    @VisitLogger
     public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTopicUri(name);

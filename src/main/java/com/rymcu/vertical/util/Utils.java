@@ -10,6 +10,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.core.env.Environment;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.*;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 public class Utils {
     public static final String HASH_ALGORITHM = "SHA-1";
+    public static final String UNKOWN = "unknown";
     public static final int HASH_INTERATIONS = 1024;
     public static final int SALT_SIZE = 8;
 
@@ -154,5 +156,30 @@ public class Utils {
         pagination.put("currentPage",pageInfo.getPageNum());
         map.put("pagination", pagination);
         return map;
+    }
+
+    public static String getIpAddress(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || UNKOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || UNKOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || UNKOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || UNKOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || UNKOWN.equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        // 如果是多级代理，那么取第一个ip为客户端ip
+        if (ip != null && ip.indexOf(",") != -1) {
+            ip = ip.substring(0, ip.indexOf(",")).trim();
+        }
+
+        return ip;
     }
 }

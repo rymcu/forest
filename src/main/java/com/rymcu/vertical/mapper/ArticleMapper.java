@@ -32,4 +32,12 @@ public interface ArticleMapper extends Mapper<Article> {
     Integer deleteTagArticle(@Param("id") Integer id);
 
     List<ArticleTagDTO> selectTags(@Param("idArticle") Integer idArticle);
+
+    /**
+     *
+     * @param id
+     * @param articleViewCount
+     * @return
+     */
+    Integer updateArticleViewCount(@Param("id") Integer id, @Param("articleViewCount") Integer articleViewCount);
 }

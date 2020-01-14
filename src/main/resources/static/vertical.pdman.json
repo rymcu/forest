@@ -99,16 +99,6 @@
               "defaultValue": ""
             },
             {
-              "name": "time_ago",
-              "type": "VARCHAR_32",
-              "chnname": "过去时长",
-              "remark": "",
-              "pk": false,
-              "notNull": false,
-              "autoIncrement": false,
-              "defaultValue": ""
-            },
-            {
               "name": "article_permalink",
               "type": "VARCHAR_128",
               "chnname": "文章永久链接",
@@ -1486,6 +1476,122 @@
             }
           ],
           "chnname": "关注表"
+        },
+        {
+          "title": "vertical_visit",
+          "fields": [
+            {
+              "name": "id",
+              "type": "BigInt",
+              "remark": "",
+              "chnname": "主键",
+              "pk": true,
+              "notNull": true,
+              "autoIncrement": true
+            },
+            {
+              "name": "visit_url",
+              "type": "VARCHAR_256",
+              "remark": "",
+              "chnname": "浏览链接"
+            },
+            {
+              "name": "visit_ip",
+              "type": "ShortString",
+              "remark": "",
+              "chnname": "IP"
+            },
+            {
+              "name": "visit_ua",
+              "type": "VARCHAR_256",
+              "remark": "",
+              "chnname": "User-Agent"
+            },
+            {
+              "name": "visit_city",
+              "type": "IdOrKey",
+              "remark": "",
+              "chnname": "城市"
+            },
+            {
+              "name": "visit_device_id",
+              "type": "VARCHAR_256",
+              "remark": "",
+              "chnname": "设备唯一标识"
+            },
+            {
+              "name": "visit_user_id",
+              "type": "BigInt",
+              "remark": "",
+              "chnname": "浏览者 id"
+            },
+            {
+              "name": "visit_referer_url",
+              "type": "VARCHAR_256",
+              "remark": "",
+              "chnname": "上游链接"
+            },
+            {
+              "name": "created_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "创建时间"
+            },
+            {
+              "name": "expired_time",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "过期时间"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "浏览表"
         }
       ],
       "graphCanvas": {

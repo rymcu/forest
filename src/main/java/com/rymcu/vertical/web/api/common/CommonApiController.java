@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.core.result.GlobalResultMessage;
+import com.rymcu.vertical.core.service.log.annotation.VisitLogger;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ForgetPasswordDTO;
 import com.rymcu.vertical.dto.TokenUser;
@@ -89,6 +90,7 @@ public class CommonApiController {
     }
 
     @GetMapping("/articles")
+    @VisitLogger
     public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText, @RequestParam(defaultValue = "") String tag){
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(searchText,tag);
@@ -98,17 +100,10 @@ public class CommonApiController {
     }
 
     @GetMapping("/article/{id}")
-    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id){
+    @VisitLogger
+    public GlobalResult<Map<String, Object>> article(@PathVariable Integer id){
         ArticleDTO articleDTO = articleService.findArticleDTOById(id,1);
         Map<String, Object> map = new HashMap<>(1);
-        map.put("article", articleDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
-    }
-
-    @GetMapping("/update/{id}")
-    public GlobalResult<Map<String, Object>> update(@PathVariable Integer id){
-        ArticleDTO articleDTO = articleService.findArticleDTOById(id,2);
-        Map map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
     }

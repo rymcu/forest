@@ -63,6 +63,9 @@
     <update id="updateArticleContent">
         update vertical_article_content set article_content = #{articleContent},article_content_html = #{articleContentHtml},updated_time = sysdate() where id_article = #{idArticle}
     </update>
+    <update id="updateArticleViewCount">
+        update vertical_article set article_view_count = #{articleViewCount} where id = #{id}
+    </update>
     <delete id="deleteTagArticle">
         delete from vertical_tag_article where id_article = #{id}
     </delete>

@@ -154,6 +154,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return map;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void incrementArticleViewCount(Integer id) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        Integer articleViewCount = article.getArticleViewCount() + 1;
+        articleMapper.updateArticleViewCount(article.getIdArticle(), articleViewCount);
+    }
+
     private ArticleDTO genArticle(ArticleDTO article,Integer type) {
         Author author = articleMapper.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);

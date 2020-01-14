@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,6 +22,16 @@ public class ArticleController {
 
     @Resource
     private ArticleService articleService;
+
+
+
+    @GetMapping("/detail/{id}")
+    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id){
+        ArticleDTO articleDTO = articleService.findArticleDTOById(id,2);
+        Map map = new HashMap<>(1);
+        map.put("article", articleDTO);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
 
     @PostMapping("/post")
     public GlobalResult postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {

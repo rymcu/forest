@@ -68,4 +68,10 @@ public interface ArticleService extends Service<Article> {
      * @return
      * */
     Map delete(Integer id);
+
+    /**
+     * 增量文章浏览数
+     * @param id
+     */
+    void incrementArticleViewCount(Integer id);
 }
