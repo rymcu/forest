@@ -176,16 +176,16 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         } else if(type == 2){
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             article.setArticleContent(articleContent.getArticleContent());
-        } else {
-          if(StringUtils.isBlank(article.getArticlePreviewContent())){
-              ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
-              Integer length = articleContent.getArticleContentHtml().length();
-              if(length > MAX_PREVIEW){
-                  length = 200;
-              }
-              String articlePreviewContent = articleContent.getArticleContentHtml().substring(0,length);
-              article.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
-          }
+        }
+
+        if(StringUtils.isBlank(article.getArticlePreviewContent())){
+            ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
+            Integer length = articleContent.getArticleContentHtml().length();
+            if(length > MAX_PREVIEW){
+              length = 200;
+            }
+            String articlePreviewContent = articleContent.getArticleContentHtml().substring(0,length);
+            article.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
         return article;
     }
