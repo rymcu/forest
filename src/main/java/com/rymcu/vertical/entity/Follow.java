@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @Table(name="vertical_follow")
-public class Follow implements Serializable,Cloneable{
+public class Follow implements Serializable,Cloneable {
     /** 主键 */
     @Id
     @GeneratedValue(generator = "JDBC")

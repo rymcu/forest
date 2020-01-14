@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @Table(name="vertical_comment")
-public class Comment implements Serializable,Cloneable{
+public class Comment implements Serializable,Cloneable {
     /** 主键 */
     @Id
     @GeneratedValue(generator = "JDBC")
