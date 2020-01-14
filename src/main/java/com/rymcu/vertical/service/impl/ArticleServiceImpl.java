@@ -11,6 +11,7 @@ import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.service.UserService;
+import com.rymcu.vertical.util.BaiDuUtils;
 import com.rymcu.vertical.util.Html2TextUtil;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
@@ -110,6 +111,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             article1.setArticlePermalink(DOMAIN + "/article/"+article1.getIdArticle());
             article1.setArticleLink("/article/"+article1.getIdArticle());
             articleMapper.insertArticleContent(article1.getIdArticle(),articleContent,articleContentHtml);
+            BaiDuUtils.sendSEOData(article1.getArticlePermalink());
         } else {
             article1 = articleMapper.selectByPrimaryKey(article.getIdArticle());
             if(!user.getIdUser().equals(article1.getArticleAuthorId())){
