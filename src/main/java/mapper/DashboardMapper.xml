@@ -15,4 +15,11 @@
         select count(*) from vertical_article where created_time between date_sub(sysdate(),interval 1 day)
             and date_sub(sysdate(),interval - 1 day)
     </select>
+    <select id="selectCountViewNum" resultType="java.lang.Integer">
+        select count(*) from vertical_visit
+    </select>
+    <select id="selectTodayViewNum" resultType="java.lang.Integer">
+        select count(*) from vertical_visit where created_time between date_sub(sysdate(),interval 1 day)
+            and date_sub(sysdate(),interval - 1 day)
+    </select>
 </mapper>

@@ -23,9 +23,8 @@ public class DashboardServiceImpl implements DashboardService {
         dashboard.setNewUserNum(dashboardMapper.selectNewUserCount());
         dashboard.setCountArticleNum(dashboardMapper.selectArticleCount());
         dashboard.setNewArticleNum(dashboardMapper.selectNewArticleCount());
-        // TODO 待完成浏览量统计
-        dashboard.setCountViewNum(1000);
-        dashboard.setToadyViewNum(100);
+        dashboard.setCountViewNum(dashboardMapper.selectCountViewNum());
+        dashboard.setTodayViewNum(dashboardMapper.selectTodayViewNum());
         return dashboard;
     }
 }

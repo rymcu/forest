@@ -18,5 +18,5 @@ public class Dashboard {
 
     private Integer countViewNum;
 
-    private Integer toadyViewNum;
+    private Integer todayViewNum;
 }
