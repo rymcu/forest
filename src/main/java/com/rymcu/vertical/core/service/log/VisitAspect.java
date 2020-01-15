@@ -16,6 +16,8 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -36,6 +38,8 @@ import java.util.Map;
 @Component
 public class VisitAspect {
 
+    Logger logger = LoggerFactory.getLogger(VisitAspect.class);
+
     @Resource
     private ArticleService articleService;
     @Resource
@@ -53,26 +57,12 @@ public class VisitAspect {
      */
     @AfterReturning(value = "pointCut()", returning="obj")
     public void save(JoinPoint joinPoint, Object obj) {
+        logger.info("保存访问记录 start ...");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String ip = Utils.getIpAddress(request);
         String url = request.getRequestURL().toString();
         String ua = request.getHeader("user-agent");
         String referer = request.getHeader("Referer");
-        String methodName = joinPoint.getSignature().getName();
-        Map params = getParams(request);
-        if (params.isEmpty()) {
-            params = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-        } else {
-            params.putAll((Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
-        }
-        switch (methodName) {
-            case LoggerConstant.ARTICLE:
-                Integer id = Integer.parseInt(String.valueOf(params.get("id")));
-                articleService.incrementArticleViewCount(id);
-                break;
-            default:
-                break;
-        }
         Visit visit = new Visit();
         visit.setVisitUrl(url);
         visit.setVisitIp(ip);
@@ -87,6 +77,27 @@ public class VisitAspect {
             visit.setVisitUserId(tokenUser.getIdUser());
         }
         visitService.save(visit);
+
+        String methodName = joinPoint.getSignature().getName();
+        Map params = getParams(request);
+        if (params.isEmpty()) {
+            params = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        } else {
+            params.putAll((Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
+        }
+        switch (methodName) {
+            case LoggerConstant.ARTICLE:
+                String param = String.valueOf(params.get("id"));
+                if (StringUtils.isBlank(param) || "undefined".equals(param) || "null".equals(param)) {
+                    break;
+                }
+                Integer id = Integer.parseInt(param);
+                articleService.incrementArticleViewCount(id);
+                break;
+            default:
+                break;
+        }
+        logger.info("保存访问记录 end ...");
     }
 
     private Map<String, String> getParams(HttpServletRequest request) {
