@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by wanwh on 2019/1/24 0024.
+ *
+ * @author wanwh
+ * @date 2019/1/24 0024
  */
 public class ShiroLoginFilter extends FormAuthenticationFilter {
 

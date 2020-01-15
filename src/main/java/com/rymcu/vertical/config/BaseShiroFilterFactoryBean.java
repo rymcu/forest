@@ -19,10 +19,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * @author ronger
  * Shiro静态资源配置
  * */
 public class BaseShiroFilterFactoryBean extends ShiroFilterFactoryBean {
-    // 对ShiroFilter来说，需要直接忽略的请求
+
     private Set<String> ignoreExt;
 
     public BaseShiroFilterFactoryBean() {

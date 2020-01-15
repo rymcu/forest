@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 动态配置文件,可以设置更新周期
  * 配置读取读取服务
+ * @author ronger
  */
 @Component
 public class DynProps4FilesService {

@@ -2,6 +2,7 @@ package com.rymcu.vertical.config;
 
 /**
  * 用户和密码（包含验证码）令牌类
+ * @author ronger
  */
 public class UsernamePasswordToken extends org.apache.shiro.authc.UsernamePasswordToken {
 
