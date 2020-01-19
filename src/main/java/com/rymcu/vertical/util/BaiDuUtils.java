@@ -3,7 +3,6 @@ package com.rymcu.vertical.util;
 import jodd.http.HttpRequest;
 import jodd.http.HttpResponse;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.*;
 
@@ -12,13 +11,11 @@ import java.util.concurrent.*;
  */
 public class BaiDuUtils {
 
-    @Value("${baidu.data.token}")
-    private static String token;
-    @Value("${baidu.data.site}")
-    private static String site;
+    private static String token = "9cdKR6bVCJzxDEJS";
+    private static String site = "https://rymcu.com";
 
-    public static void sendSEOData(String articlePermalink) {
-        if (StringUtils.isBlank(articlePermalink) || StringUtils.isBlank(token)) {
+    public static void sendSEOData(String permalink) {
+        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(token)) {
             return;
         }
         ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
@@ -28,12 +25,17 @@ public class BaiDuUtils {
                         header("User-Agent", "curl/7.12.1").
                         header("Host", "data.zz.baidu.com").
                         header("Content-Type", "text/plain").
-                        header("Connection", "close").body(articlePermalink.getBytes(), "text/plain").timeout(30000).send();
+                        header("Connection", "close").body(permalink.getBytes(), "text/plain").timeout(30000).send();
                 response.charset("UTF-8");
+                System.out.println(response.bodyText());
             } catch (Exception e){
                 e.printStackTrace();
             }
             return 0;
         },executor);
+    }
+
+    public static void main(String agrs[]){
+        sendSEOData("https://rymcu.com/article/31");
     }
 }
