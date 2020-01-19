@@ -2,6 +2,8 @@ package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.dto.admin.Dashboard;
 
+import java.util.Map;
+
 /**
  * @author ronger
  */
@@ -12,4 +14,16 @@ public interface DashboardService {
      * @return
      * */
     Dashboard dashboard();
+
+    /**
+     * 统计最近三十天数据
+     * @return
+     */
+    Map lastThirtyDaysData();
+
+    /**
+     * 获取历史数据
+     * @return
+     */
+    Map history();
 }

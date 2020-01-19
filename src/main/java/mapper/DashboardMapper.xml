@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rymcu.vertical.mapper.DashboardMapper">
+    <resultMap id="DashboardDataResultMap" type="com.rymcu.vertical.dto.admin.DashboardData">
+        <result column="label" property="label"></result>
+        <result column="value" property="value"></result>
+    </resultMap>
     <select id="selectUserCount" resultType="java.lang.Integer">
         select count(*) from vertical_user
     </select>
@@ -19,7 +23,31 @@
         select count(*) from vertical_visit
     </select>
     <select id="selectTodayViewNum" resultType="java.lang.Integer">
-        select count(*) from vertical_visit where created_time between date_sub(sysdate(),interval 1 day)
-            and date_sub(sysdate(),interval - 1 day)
+        select count(*) from vertical_visit where created_time between str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d')
+            and str_to_date(date_format(date_sub(sysdate(),interval - 1 day),'%Y-%m-%d'),'%Y-%m-%d')
+    </select>
+    <select id="selectLastThirtyDaysArticleData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label from vertical_article
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 30 day),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m-%d')
+    </select>
+    <select id="selectLastThirtyDaysUserData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label from vertical_user
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 30 day),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m-%d')
+    </select>
+    <select id="selectLastThirtyDaysVisitData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label from vertical_visit
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 30 day),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m-%d')
+    </select>
+    <select id="selectHistoryArticleData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m') as label from vertical_article
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 1 year),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m')
+    </select>
+    <select id="selectHistoryUserData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m') as label from vertical_user
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 1 year),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m')
+    </select>
+    <select id="selectHistoryVisitData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m') as label from vertical_visit
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 1 year),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m')
     </select>
 </mapper>

@@ -1,6 +1,9 @@
 package com.rymcu.vertical.mapper;
 
+import com.rymcu.vertical.dto.admin.DashboardData;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author ronger
@@ -41,4 +44,38 @@ public interface DashboardMapper {
      * @return
      */
     Integer selectTodayViewNum();
+
+    /**
+     * 获取最近 30 天文章数据
+     * @return
+     */
+    List<DashboardData> selectLastThirtyDaysArticleData();
+
+    /**
+     * 获取最近 30 天文章数据
+     * @return
+     */
+    List<DashboardData> selectLastThirtyDaysUserData();
+
+    /**
+     * 获取最近 30 天文章数据
+     * @return
+     */
+    List<DashboardData> selectLastThirtyDaysVisitData();
+
+    /**
+     *
+     * @return
+     */
+    List<DashboardData> selectHistoryArticleData();
+
+    /**
+     * @return
+     */
+    List<DashboardData> selectHistoryUserData();
+
+    /**
+     * @return
+     */
+    List<DashboardData> selectHistoryVisitData();
 }

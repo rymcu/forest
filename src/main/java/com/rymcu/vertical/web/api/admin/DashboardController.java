@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @author ronger
@@ -21,8 +22,20 @@ public class DashboardController {
     private DashboardService dashboardService;
 
     @GetMapping
-    public GlobalResult dashboard(){
+    public GlobalResult dashboard() {
         Dashboard dashboard = dashboardService.dashboard();
         return GlobalResultGenerator.genSuccessResult(dashboard);
+    }
+
+    @GetMapping("/last-thirty-days")
+    public GlobalResult LastThirtyDaysData() {
+        Map map = dashboardService.lastThirtyDaysData();
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/history")
+    public GlobalResult history() {
+        Map map = dashboardService.history();
+        return GlobalResultGenerator.genSuccessResult(map);
     }
 }
