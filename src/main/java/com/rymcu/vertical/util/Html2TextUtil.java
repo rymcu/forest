@@ -25,6 +25,7 @@ public class Html2TextUtil extends HTMLEditorKit.ParserCallback {
         delegator.parse(reader, this, Boolean.TRUE);
     }
 
+    @Override
     public void handleText(char[] text, int pos) {
         s.append(text);
     }

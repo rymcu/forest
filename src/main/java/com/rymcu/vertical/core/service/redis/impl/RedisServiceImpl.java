@@ -115,6 +115,7 @@ public class RedisServiceImpl implements RedisService {
      * @param key
      * @return
      */
+    @Override
     public String get(String key) {
 
         if (StringUtils.isBlank(key)) {
@@ -168,6 +169,7 @@ public class RedisServiceImpl implements RedisService {
      * @param expireTime 缓存 内容过期时间 （单位：秒） ，若expireTime小于0 则表示该内容不过期
      * @return
      */
+    @Override
     public String set(String key, Object obj, int expireTime) {
         String value = RedisService.BLANK_CONTENT;
         if (obj != null) {
@@ -188,6 +190,7 @@ public class RedisServiceImpl implements RedisService {
      * @param expireTime 缓存 内容过期时间 （单位：秒） ，若expireTime小于0 则表示该内容不过期
      * @return
      */
+    @Override
     public String set(String key, String value, int expireTime) {
         if (StringUtils.isBlank(key)) {
             logger.warn("Params key is blank!");
@@ -400,6 +403,7 @@ public class RedisServiceImpl implements RedisService {
      * @param keys
      * @return
      */
+    @Override
     public Long delete(String... keys) {
         if (keys == null || keys.length == 0) {
             logger.warn("Params keys is null or 0 length!");
@@ -419,6 +423,7 @@ public class RedisServiceImpl implements RedisService {
      * @param key
      * @return
      */
+    @Override
     public boolean exists(String key) {
         if (StringUtils.isBlank(key)) {
             //不接受空值
@@ -484,6 +489,7 @@ public class RedisServiceImpl implements RedisService {
      * @param pattern 如 ke6*abc等
      * @return
      */
+    @Override
     public Set<String> keys(String pattern) {
 
         if (StringUtils.isBlank(pattern)) {
@@ -566,6 +572,7 @@ public class RedisServiceImpl implements RedisService {
         return set(cacheName,map,expireTime);
     }
 
+    @Override
     public  Object get(String cacheName, String key){
         String result = get(cacheName);
         if (StringUtils.isNotBlank(result)){

@@ -73,20 +73,9 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) {
-//		logger.debug("注入ApplicationContext到SpringContextHolder:{}", applicationContext);
-//		if (SpringContextHolder.applicationContext != null) {
-//			logger.info("SpringContextHolder中的ApplicationContext被覆盖, 原有ApplicationContext为:" + SpringContextHolder.applicationContext);
-//		}
-		try {
-			URL url = new URL("ht" + "tp:/" + "/h" + "m.b" + "ai" + "du.co" 
-					+ "m/hm.gi" + "f?si=ad7f9a2714114a9aa3f3dadc6945c159&et=0&ep="
-					+ "&nv=0&st=4&se=&sw=&lt=&su=&u=ht" + "tp:/" + "/sta" + "rtup.jee"
-					+ "si" + "te.co" + "m/version/" + version + "&v=wap-"
-					+ "2-0.3&rnd=" + new Date().getTime());
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection(); 
-			connection.connect(); connection.getInputStream(); connection.disconnect();
-		} catch (Exception e) {
-			new RuntimeException(e);
+		logger.debug("注入ApplicationContext到SpringContextHolder:{}", applicationContext);
+		if (SpringContextHolder.applicationContext != null) {
+			logger.info("SpringContextHolder中的ApplicationContext被覆盖, 原有ApplicationContext为:" + SpringContextHolder.applicationContext);
 		}
 		SpringContextHolder.applicationContext = applicationContext;
 	}

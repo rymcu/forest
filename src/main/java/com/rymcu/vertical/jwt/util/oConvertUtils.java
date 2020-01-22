@@ -61,8 +61,9 @@ public class oConvertUtils {
 
 	private static String code2code(String strIn, String sourceCode, String targetCode) {
 		String strOut = null;
-		if (strIn == null || (strIn.trim()).equals(""))
+		if (strIn == null || (strIn.trim()).equals("")) {
 			return strIn;
+		}
 		try {
 			byte[] b = strIn.getBytes(sourceCode);
 			for (int i = 0; i < b.length; i++) {

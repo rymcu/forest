@@ -2,6 +2,9 @@ package com.rymcu.vertical.dto;
 
 import lombok.Data;
 
+/**
+ * @author ronger
+ */
 @Data
 public class MenuDTO {
 
@@ -13,15 +16,15 @@ public class MenuDTO {
 
     private String name;
 
-    private Long sort = 50L;
+    private Long sort;
 
     private String href;
 
-    private String menuType = "0";
+    private String menuType;
 
     private String permission;
 
     private String remarks;
 
-    private String status = "0";
+    private String status;
 }
