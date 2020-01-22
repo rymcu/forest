@@ -8,6 +8,7 @@
         <result column="data_id" property="dataId"></result>
         <result column="data_summary" property="dataSummary"></result>
         <result column="has_read" property="hasRead"></result>
+        <result column="created_time" property="createdTime"></result>
     </resultMap>
     <select id="selectUnreadNotifications" resultMap="BaseResultMapper">
         select * from vertical_notification where has_read = '0' and id_user = #{idUser}

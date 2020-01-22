@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -47,4 +48,9 @@ public class Notification implements Serializable,Cloneable {
      */
     @Column(name = "has_read")
     private String hasRead;
+    /**
+     * 是否已读
+     */
+    @Column(name = "created_time")
+    private Date createdTime;
 }
