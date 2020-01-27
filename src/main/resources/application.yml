@@ -44,3 +44,9 @@ server:
 version: 1.0
 resource:
   file-path: https://abc.com/vertical
+baidu:
+  data:
+    site: https://abc.com # 百度搜索资源配置网址
+    token: xxxx # 百度搜索资源token
+reserved-words: \u7cfb\u7edf\u516c\u544a\u002c\u516c\u544a  
+
