@@ -1,5 +1,6 @@
 package com.rymcu.vertical.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -52,5 +53,6 @@ public class Notification implements Serializable,Cloneable {
      * 是否已读
      */
     @Column(name = "created_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 }

@@ -10,10 +10,7 @@ import com.rymcu.vertical.service.NotificationService;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -48,6 +45,11 @@ public class NotificationController {
         PageInfo<Notification> pageInfo = new PageInfo(list);
         Map map = Utils.getNotificationsGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PutMapping("/read/{id}")
+    public void read(@PathVariable Integer id) {
+        notificationService.readNotification(id);
     }
 
 }

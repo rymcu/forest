@@ -29,4 +29,19 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
         List<Notification> list = notificationMapper.selectNotifications(idUser);
         return list;
     }
+
+    @Override
+    public Notification findNotification(Integer idUser, Integer dataId, String dataType) {
+        return notificationMapper.selectNotification(idUser,dataId,dataType);
+    }
+
+    @Override
+    public Integer save(Integer idUser, Integer dataId, String dataType, String dataSummary) {
+        return notificationMapper.insertNotification(idUser,dataId,dataType,dataSummary);
+    }
+
+    @Override
+    public void readNotification(Integer id) {
+        notificationMapper.readNotification(id);
+    }
 }

@@ -202,4 +202,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         }
         return map;
     }
+
+    @Override
+    public Integer findRoleWeightsByUser(Integer idUser) {
+        return userMapper.selectRoleWeightsByUser(idUser);
+    }
 }

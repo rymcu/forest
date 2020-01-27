@@ -1,5 +1,6 @@
 package com.rymcu.vertical.service.impl;
 
+import com.rymcu.vertical.core.constant.NotificationConstant;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ArticleTagDTO;
@@ -11,12 +12,11 @@ import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.service.UserService;
-import com.rymcu.vertical.util.BaiDuUtils;
-import com.rymcu.vertical.util.Html2TextUtil;
-import com.rymcu.vertical.util.UserUtils;
-import com.rymcu.vertical.util.Utils;
+import com.rymcu.vertical.util.*;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +40,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private TagService tagService;
     @Resource
     private UserService userService;
+    @Value("${reserved-words}")
+    private String reservedWords;
 
     private static final String DOMAIN = "https://rymcu.com";
 
@@ -99,6 +101,17 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String articleContent = article.getArticleContent();
         String articleContentHtml = article.getArticleContentHtml();
         User user = UserUtils.getWxCurrentUser();
+        boolean checkTags = checkTags(articleTags);
+        boolean notification = false;
+        if (checkTags) {
+            Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
+            if (roleWeights > 2) {
+                map.put("message", StringEscapeUtils.unescapeJava(reservedWords) + "标签为系统保留标签!");
+                return map;
+            } else {
+                notification = true;
+            }
+        }
         Article article1;
         if(article.getIdArticle() == null || article.getIdArticle() == 0){
             article1 = new Article();
@@ -131,11 +144,39 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             article1.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(article1.getIdArticle(),articleContent,articleContentHtml);
         }
+
+        if (notification) {
+            NotificationUtils.sendAnnouncement(article1.getIdArticle(), NotificationConstant.Article, article1.getArticleTitle());
+        }
+
         tagService.saveTagArticle(article1);
         articleMapper.updateByPrimaryKeySelective(article1);
 
         map.put("id", article1.getIdArticle());
         return map;
+    }
+
+    private boolean checkTags(String articleTags) {
+        if (StringUtils.isNotBlank(reservedWords) && StringUtils.isNotBlank(articleTags)) {
+            String[] words = StringEscapeUtils.unescapeJava(reservedWords).split(",");
+            String[] tags = articleTags.split(",");
+            for(String word: words) {
+                if (StringUtils.isBlank(word)) {
+                    continue;
+                }
+                for (String tag: tags) {
+                    if (StringUtils.isBlank(tag)) {
+                        continue;
+                    }
+                    if (tag.equals(word)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
     @Override

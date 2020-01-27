@@ -93,4 +93,11 @@ public interface UserService extends Service<User> {
      * @return
      */
     Map checkNickname(Integer idUser, String nickname);
+
+    /**
+     * 获取用户权限
+     * @param idUser
+     * @return
+     */
+    Integer findRoleWeightsByUser(Integer idUser);
 }

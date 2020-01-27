@@ -18,5 +18,36 @@ public interface NotificationMapper extends Mapper<Notification> {
      */
     List<Notification> selectUnreadNotifications(@Param("idUser") Integer idUser);
 
+    /**
+     * 获取消息数据
+     * @param idUser
+     * @return
+     */
     List<Notification> selectNotifications(@Param("idUser") Integer idUser);
+
+    /**
+     * 获取消息数据
+     * @param idUser
+     * @param dataId
+     * @param dataType
+     * @return
+     */
+    Notification selectNotification(@Param("idUser") Integer idUser, @Param("dataId") Integer dataId, @Param("dataType") String dataType);
+
+    /**
+     * 创建消息通知
+     * @param idUser
+     * @param dataId
+     * @param dataType
+     * @param dataSummary
+     * @return
+     */
+    Integer insertNotification(@Param("idUser") Integer idUser, @Param("dataId") Integer dataId, @Param("dataType") String dataType, @Param("dataSummary") String dataSummary);
+
+    /**
+     * 标记消息已读
+     * @param id
+     * @return
+     */
+    Integer readNotification(@Param("id") Integer id);
 }
