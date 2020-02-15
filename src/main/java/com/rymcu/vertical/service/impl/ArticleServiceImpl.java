@@ -7,6 +7,7 @@ import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
+import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
@@ -19,6 +20,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -40,10 +42,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private TagService tagService;
     @Resource
     private UserService userService;
-    @Value("${reserved-words}")
-    private String reservedWords;
 
-    private static final String DOMAIN = "https://rymcu.com";
+    @Value("${resource.domain}")
+    private static String domain;
 
     private static final int MAX_PREVIEW = 200;
 
@@ -101,82 +102,92 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String articleContent = article.getArticleContent();
         String articleContentHtml = article.getArticleContentHtml();
         User user = UserUtils.getWxCurrentUser();
-        boolean checkTags = checkTags(articleTags);
+        String reservedTag = checkTags(articleTags);
         boolean notification = false;
-        if (checkTags) {
+        if (StringUtils.isNotBlank(reservedTag)) {
             Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
             if (roleWeights > 2) {
-                map.put("message", StringEscapeUtils.unescapeJava(reservedWords) + "标签为系统保留标签!");
+                map.put("message", StringEscapeUtils.unescapeJava(reservedTag) + "标签为系统保留标签!");
                 return map;
             } else {
                 notification = true;
             }
         }
-        Article article1;
+        Article newArticle;
         if(article.getIdArticle() == null || article.getIdArticle() == 0){
-            article1 = new Article();
-            article1.setArticleTitle(articleTitle);
-            article1.setArticleAuthorId(user.getIdUser());
-            article1.setArticleTags(articleTags);
-            article1.setCreatedTime(new Date());
-            article1.setUpdatedTime(article1.getCreatedTime());
-            articleMapper.insertSelective(article1);
-            article1.setArticlePermalink(DOMAIN + "/article/"+article1.getIdArticle());
-            article1.setArticleLink("/article/"+article1.getIdArticle());
-            articleMapper.insertArticleContent(article1.getIdArticle(),articleContent,articleContentHtml);
-            BaiDuUtils.sendSEOData(article1.getArticlePermalink());
+            newArticle = new Article();
+            newArticle.setArticleTitle(articleTitle);
+            newArticle.setArticleAuthorId(user.getIdUser());
+            newArticle.setArticleTags(articleTags);
+            newArticle.setCreatedTime(new Date());
+            newArticle.setUpdatedTime(newArticle.getCreatedTime());
+            articleMapper.insertSelective(newArticle);
+            newArticle.setArticlePermalink(domain + "/article/"+newArticle.getIdArticle());
+            newArticle.setArticleLink("/article/"+newArticle.getIdArticle());
+            articleMapper.insertArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
+            BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
         } else {
-            article1 = articleMapper.selectByPrimaryKey(article.getIdArticle());
-            if(!user.getIdUser().equals(article1.getArticleAuthorId())){
+            newArticle = articleMapper.selectByPrimaryKey(article.getIdArticle());
+            if(!user.getIdUser().equals(newArticle.getArticleAuthorId())){
                 map.put("message","非法访问！");
                 return map;
             }
-            article1.setArticleTitle(articleTitle);
-            article1.setArticleTags(articleTags);
+            newArticle.setArticleTitle(articleTitle);
+            newArticle.setArticleTags(articleTags);
             if(StringUtils.isNotBlank(articleContentHtml)){
                 Integer length = articleContentHtml.length();
                 if(length > MAX_PREVIEW){
                     length = 200;
                 }
                 String articlePreviewContent = articleContentHtml.substring(0,length);
-                article1.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
+                newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
             }
-            article1.setUpdatedTime(new Date());
-            articleMapper.updateArticleContent(article1.getIdArticle(),articleContent,articleContentHtml);
+            newArticle.setUpdatedTime(new Date());
+            articleMapper.updateArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
+            BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
         }
 
         if (notification) {
-            NotificationUtils.sendAnnouncement(article1.getIdArticle(), NotificationConstant.Article, article1.getArticleTitle());
+            NotificationUtils.sendAnnouncement(newArticle.getIdArticle(), NotificationConstant.Article, newArticle.getArticleTitle());
         }
 
-        tagService.saveTagArticle(article1);
-        articleMapper.updateByPrimaryKeySelective(article1);
+        tagService.saveTagArticle(newArticle);
+        articleMapper.updateByPrimaryKeySelective(newArticle);
 
-        map.put("id", article1.getIdArticle());
+        map.put("id", newArticle.getIdArticle());
         return map;
     }
 
-    private boolean checkTags(String articleTags) {
-        if (StringUtils.isNotBlank(reservedWords) && StringUtils.isNotBlank(articleTags)) {
-            String[] words = StringEscapeUtils.unescapeJava(reservedWords).split(",");
-            String[] tags = articleTags.split(",");
-            for(String word: words) {
-                if (StringUtils.isBlank(word)) {
+    private String checkTags(String articleTags) {
+        // 判断文章是否有标签
+        if(StringUtils.isBlank(articleTags)){
+            return "";
+        }
+        // 判断是否存在系统配置的保留标签词
+        Condition condition = new Condition(Tag.class);
+        condition.createCriteria().andEqualTo("tagReservation", "1");
+        List<Tag> tags = tagService.findByCondition(condition);
+        if (tags.isEmpty()) {
+            return "";
+        } else {
+            String[] articleTagArr = articleTags.split(",");
+            for (Tag tag : tags) {
+                if (StringUtils.isBlank(tag.getTagTitle())) {
                     continue;
                 }
-                for (String tag: tags) {
-                    if (StringUtils.isBlank(tag)) {
+
+                for (String articleTag: articleTagArr) {
+                    if (StringUtils.isBlank(articleTag)) {
                         continue;
                     }
-                    if (tag.equals(word)) {
-                        return true;
+                    if (articleTag.equals(tag.getTagTitle())) {
+                        return tag.getTagTitle();
                     }
                 }
             }
-        } else {
-            return false;
         }
-        return false;
+
+        return "";
     }
 
     @Override
