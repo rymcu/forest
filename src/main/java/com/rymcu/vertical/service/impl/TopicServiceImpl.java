@@ -13,6 +13,7 @@ import com.rymcu.vertical.service.TopicService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -59,17 +60,37 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     @Transactional(rollbackFor = Exception.class)
     public Map saveTopic(Topic topic) {
         Integer result = 0;
+        Map map = new HashMap(1);
         if (topic.getIdTopic() == null) {
-            topic.setCreatedTime(new Date());
-            topic.setUpdatedTime(topic.getCreatedTime());
-            result = topicMapper.insertSelective(topic);
+            if (StringUtils.isBlank(topic.getTopicTitle())) {
+                map.put("message","标签名不能为空!");
+                return map;
+            } else {
+                Condition topicCondition = new Condition(Topic.class);
+                topicCondition.createCriteria().andCondition("topic_title =", topic.getTopicTitle());
+                List<Topic> topics = topicMapper.selectByCondition(topicCondition);
+                if (!topics.isEmpty()) {
+                    map.put("message","专题 '" + topic.getTopicTitle() + "' 已存在!");
+                    return map;
+                }
+            }
+            Topic newTopic = new Topic();
+            newTopic.setTopicTitle(topic.getTopicTitle());
+            newTopic.setTopicUri(topic.getTopicUri());
+            newTopic.setTopicIconPath(topic.getTopicIconPath());
+            newTopic.setTopicNva(topic.getTopicNva());
+            newTopic.setTopicStatus(topic.getTopicStatus());
+            newTopic.setTopicSort(topic.getTopicSort());
+            newTopic.setTopicDescription(topic.getTopicDescription());
+            newTopic.setCreatedTime(new Date());
+            newTopic.setUpdatedTime(topic.getCreatedTime());
+            result = topicMapper.insertSelective(newTopic);
         } else {
             topic.setCreatedTime(new Date());
             result = topicMapper.update(topic.getIdTopic(),topic.getTopicTitle(),topic.getTopicUri()
                     ,topic.getTopicIconPath(),topic.getTopicNva(),topic.getTopicStatus()
                     ,topic.getTopicSort(),topic.getTopicDescription());
         }
-        Map map = new HashMap(1);
         if (result == 0) {
             map.put("message","操作失败!");
         } else {

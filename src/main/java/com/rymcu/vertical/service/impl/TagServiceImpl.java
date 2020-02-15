@@ -11,12 +11,14 @@ import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,15 +89,35 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Transactional(rollbackFor = Exception.class)
     public Map saveTag(Tag tag) {
         Integer result = 0;
+
+        Map map = new HashMap(1);
         if (tag.getIdTag() == null) {
-            tag.setCreatedTime(new Date());
-            tag.setUpdatedTime(tag.getCreatedTime());
-            result = tagMapper.insertSelective(tag);
+            if (StringUtils.isBlank(tag.getTagTitle())) {
+                map.put("message","标签名不能为空!");
+                return map;
+            } else {
+                Condition tagCondition = new Condition(Tag.class);
+                tagCondition.createCriteria().andCondition("tag_title =", tag.getTagTitle());
+                List<Tag> tags = tagMapper.selectByCondition(tagCondition);
+                if (!tags.isEmpty()) {
+                    map.put("message","标签 '" + tag.getTagTitle() + "' 已存在!");
+                    return map;
+                }
+            }
+            Tag newTag = new Tag();
+            newTag.setTagTitle(tag.getTagTitle());
+            newTag.setTagUri(tag.getTagUri());
+            newTag.setTagIconPath(tag.getTagIconPath());
+            newTag.setTagStatus(tag.getTagStatus());
+            newTag.setTagDescription(tag.getTagDescription());
+            newTag.setTagReservation(tag.getTagReservation());
+            newTag.setCreatedTime(new Date());
+            newTag.setUpdatedTime(tag.getCreatedTime());
+            result = tagMapper.insertSelective(newTag);
         } else {
             tag.setUpdatedTime(new Date());
-            result = tagMapper.update(tag.getIdTag(),tag.getTagUri(),tag.getTagIconPath(),tag.getTagStatus(),tag.getTagDescription());
+            result = tagMapper.update(tag.getIdTag(),tag.getTagUri(),tag.getTagIconPath(),tag.getTagStatus(),tag.getTagDescription(),tag.getTagReservation());
         }
-        Map map = new HashMap(1);
         if (result == 0) {
             map.put("message","操作失败!");
         } else {
