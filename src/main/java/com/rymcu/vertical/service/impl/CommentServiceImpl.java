@@ -81,19 +81,28 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
         commentSharpUrl.append("/comment/").append(comment.getIdComment());
         commentMapper.updateCommentSharpUrl(comment.getIdComment(), commentSharpUrl.toString());
 
-        // 评论者不是作者本人则进行消息通知
-        if (!article.getArticleAuthorId().equals(comment.getCommentAuthorId())) {
-            String commentContent = comment.getCommentContent();
-            if(StringUtils.isNotBlank(commentContent)){
-                Integer length = commentContent.length();
-                if(length > MAX_PREVIEW){
-                    length = 200;
-                }
-                String commentPreviewContent = commentContent.substring(0,length);
-                commentContent = Html2TextUtil.getContent(commentPreviewContent);
+        String commentContent = comment.getCommentContent();
+        if(StringUtils.isNotBlank(commentContent)){
+            Integer length = commentContent.length();
+            if(length > MAX_PREVIEW){
+                length = 200;
+            }
+            String commentPreviewContent = commentContent.substring(0,length);
+            commentContent = Html2TextUtil.getContent(commentPreviewContent);
+            // 评论者不是作者本人则进行消息通知
+            if (article.getArticleAuthorId().equals(comment.getCommentAuthorId())) {
                 NotificationUtils.saveNotification(article.getArticleAuthorId(),comment.getIdComment(), NotificationConstant.Comment, commentContent);
             }
+            // 判断是否是回复消息
+            if (comment.getCommentOriginalCommentId() != null) {
+                Comment originalComment = commentMapper.selectByPrimaryKey(comment.getCommentOriginalCommentId());
+                // 回复消息时,评论者不是上级评论作者则进行消息通知
+                if (!comment.getCommentAuthorId().equals(originalComment.getCommentAuthorId())) {
+                    NotificationUtils.saveNotification(originalComment.getCommentAuthorId(),comment.getIdComment(), NotificationConstant.Comment, commentContent);
+                }
+            }
         }
+
 
         return map;
     }
