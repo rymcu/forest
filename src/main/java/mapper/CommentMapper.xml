@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.vertical.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.Comment">
+        <id column="id" property="idComment"></id>
+        <result column="comment_content" property="commentContent"></result>
+        <result column="comment_author_id" property="commentAuthorId"></result>
+        <result column="comment_article_id" property="commentArticleId"></result>
+        <result column="comment_sharp_url" property="commentSharpUrl"></result>
+        <result column="comment_original_comment_id" property="commentOriginalCommentId"></result>
+        <result column="comment_status" property="commentStatus"></result>
+        <result column="comment_ip" property="commentIP"></result>
+        <result column="comment_ua" property="commentUA"></result>
+        <result column="comment_anonymous" property="commentAnonymous"></result>
+        <result column="comment_reply_count" property="commentReplyCount"></result>
+        <result column="comment_visible" property="commentVisible"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
+    <resultMap id="DTOResultMap" type="com.rymcu.vertical.dto.CommentDTO">
+        <id column="id" property="idComment"></id>
+        <result column="comment_content" property="commentContent"></result>
+        <result column="comment_author_id" property="commentAuthorId"></result>
+        <result column="comment_article_id" property="commentArticleId"></result>
+        <result column="comment_sharp_url" property="commentSharpUrl"></result>
+        <result column="comment_original_comment_id" property="commentOriginalCommentId"></result>
+        <result column="comment_status" property="commentStatus"></result>
+        <result column="comment_anonymous" property="commentAnonymous"></result>
+        <result column="comment_reply_count" property="commentReplyCount"></result>
+        <result column="comment_visible" property="commentVisible"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
+    <resultMap id="AuthorResultMap" type="com.rymcu.vertical.dto.Author">
+        <result column="id" property="idUser"/>
+        <result column="nickname" property="userNickname"/>
+        <result column="avatar_url" property="userAvatarURL"/>
+    </resultMap>
+    <update id="updateCommentSharpUrl">
+        update vertical_comment set comment_sharp_url = #{commentSharpUrl} where id = #{idComment}
+    </update>
+    <select id="selectArticleComments" resultMap="DTOResultMap">
+        select * from vertical_comment where comment_article_id = #{idArticle} order by created_time desc
+    </select>
+    <select id="selectAuthor" resultMap="AuthorResultMap">
+        select id,nickname,avatar_url from vertical_user where id = #{commentAuthorId}
+    </select>
+    <select id="selectCommentOriginalAuthor" resultMap="AuthorResultMap">
+        select vu.id,vu.nickname,vu.avatar_url from vertical_comment vc left join vertical_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
+    </select>
+</mapper>
