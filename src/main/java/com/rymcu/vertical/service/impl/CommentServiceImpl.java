@@ -90,7 +90,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
             String commentPreviewContent = commentContent.substring(0,length);
             commentContent = Html2TextUtil.getContent(commentPreviewContent);
             // 评论者不是作者本人则进行消息通知
-            if (article.getArticleAuthorId().equals(comment.getCommentAuthorId())) {
+            if (!article.getArticleAuthorId().equals(comment.getCommentAuthorId())) {
                 NotificationUtils.saveNotification(article.getArticleAuthorId(),comment.getIdComment(), NotificationConstant.Comment, commentContent);
             }
             // 判断是否是回复消息
