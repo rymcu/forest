@@ -23,6 +23,8 @@ public class CommentDTO {
     private Integer commentOriginalCommentId;
     /** 父评论作者头像 */
     private String commentOriginalAuthorThumbnailURL;
+    /** 父评论作者昵称 */
+    private String commentOriginalAuthorNickname;
     /** 状态 */
     private String commentStatus;
     /** 0：公开回帖，1：匿名回帖 */

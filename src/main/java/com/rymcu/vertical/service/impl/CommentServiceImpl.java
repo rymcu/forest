@@ -44,6 +44,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
                 Author commentOriginalAuthor = commentMapper.selectCommentOriginalAuthor(commentDTO.getCommentOriginalCommentId());
                 if (commentOriginalAuthor != null) {
                     commentDTO.setCommentOriginalAuthorThumbnailURL(commentOriginalAuthor.getUserAvatarURL());
+                    commentDTO.setCommentOriginalAuthorNickname(commentOriginalAuthor.getUserNickname());
                 }
             }
         });
