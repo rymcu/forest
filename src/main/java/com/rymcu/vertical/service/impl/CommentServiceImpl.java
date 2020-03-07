@@ -1,0 +1,97 @@
+package com.rymcu.vertical.service.impl;
+
+import com.rymcu.vertical.core.constant.NotificationConstant;
+import com.rymcu.vertical.core.service.AbstractService;
+import com.rymcu.vertical.dto.Author;
+import com.rymcu.vertical.dto.CommentDTO;
+import com.rymcu.vertical.entity.Article;
+import com.rymcu.vertical.entity.Comment;
+import com.rymcu.vertical.mapper.CommentMapper;
+import com.rymcu.vertical.service.ArticleService;
+import com.rymcu.vertical.service.CommentService;
+import com.rymcu.vertical.util.Html2TextUtil;
+import com.rymcu.vertical.util.NotificationUtils;
+import com.rymcu.vertical.util.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+@Service
+public class CommentServiceImpl extends AbstractService<Comment> implements CommentService {
+
+    @Resource
+    private CommentMapper commentMapper;
+    @Resource
+    private ArticleService articleService;
+
+    private static final int MAX_PREVIEW = 200;
+
+    @Override
+    public List<CommentDTO> getArticleComments(Integer idArticle) {
+        List<CommentDTO> commentDTOList = commentMapper.selectArticleComments(idArticle);
+        commentDTOList.forEach(commentDTO -> {
+            commentDTO.setTimeAgo(Utils.getTimeAgo(commentDTO.getCreatedTime()));
+            if (commentDTO.getCommentAuthorId() != null) {
+                Author author = commentMapper.selectAuthor(commentDTO.getCommentAuthorId());
+                if (author != null) {
+                    commentDTO.setCommenter(author);
+                }
+            }
+            if (commentDTO.getCommentOriginalCommentId() != null) {
+                Author commentOriginalAuthor = commentMapper.selectCommentOriginalAuthor(commentDTO.getCommentOriginalCommentId());
+                if (commentOriginalAuthor != null) {
+                    commentDTO.setCommentOriginalAuthorThumbnailURL(commentOriginalAuthor.getUserAvatarURL());
+                }
+            }
+        });
+        return commentDTOList;
+    }
+
+    @Override
+    public Map postComment(Comment comment, HttpServletRequest request) {
+        Map map = new HashMap(1);
+        if(comment.getCommentArticleId() == null){
+            map.put("message","非法访问,文章主键异常！");
+            return map;
+        }
+        if(comment.getCommentAuthorId() == null){
+            map.put("message","非法访问,用户未登录！");
+            return map;
+        }
+        if(StringUtils.isBlank(comment.getCommentContent())){
+            map.put("message","回帖内容不能为空！");
+            return map;
+        }
+        Article article = articleService.findById(comment.getCommentArticleId().toString());
+        if (article == null) {
+            map.put("message","文章不存在！");
+            return map;
+        }
+        String ip = Utils.getIpAddress(request);
+        String ua = request.getHeader("user-agent");
+        comment.setCommentIP(ip);
+        comment.setCommentUA(ua);
+        comment.setCreatedTime(new Date());
+        commentMapper.insertSelective(comment);
+        StringBuilder commentSharpUrl = new StringBuilder(article.getArticlePermalink());
+        commentSharpUrl.append("/comment/").append(comment.getIdComment());
+        commentMapper.updateCommentSharpUrl(comment.getIdComment(), commentSharpUrl.toString());
+
+        String commentContent = comment.getCommentContent();
+        if(StringUtils.isNotBlank(commentContent)){
+            Integer length = commentContent.length();
+            if(length > MAX_PREVIEW){
+                length = 200;
+            }
+            String commentPreviewContent = commentContent.substring(0,length);
+            commentContent = Html2TextUtil.getContent(commentPreviewContent);
+        }
+
+        NotificationUtils.saveNotification(article.getArticleAuthorId(),comment.getIdComment(), NotificationConstant.Comment, commentContent);
+
+        return map;
+    }
+}

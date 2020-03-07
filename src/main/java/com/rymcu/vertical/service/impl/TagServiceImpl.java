@@ -1,9 +1,11 @@
 package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
+import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.User;
+import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.mapper.TagMapper;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.util.UserUtils;
@@ -29,6 +31,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Resource
     private TagMapper tagMapper;
+    @Resource
+    private ArticleMapper articleMapper;
 
     @Override
     @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
@@ -43,6 +47,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                 Tag tag = new Tag();
                 tag.setTagTitle(tags[i]);
                 tag = tagMapper.selectOne(tag);
+                List<ArticleTagDTO> articleTagDTOList = articleMapper.selectTags(article.getIdArticle());
                 if(tag == null){
                     tag = new Tag();
                     tag.setTagTitle(tags[i]);

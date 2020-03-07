@@ -5,12 +5,14 @@ import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.Author;
+import com.rymcu.vertical.dto.CommentDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
+import com.rymcu.vertical.service.CommentService;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.*;
@@ -42,9 +44,13 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private TagService tagService;
     @Resource
     private UserService userService;
+    @Resource
+    private CommentService commentService;
 
     @Value("${resource.domain}")
-    private static String domain;
+    private String domain;
+    @Value("${env}")
+    private String env;
 
     private static final int MAX_PREVIEW = 200;
 
@@ -125,7 +131,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticlePermalink(domain + "/article/"+newArticle.getIdArticle());
             newArticle.setArticleLink("/article/"+newArticle.getIdArticle());
             articleMapper.insertArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
-            BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
+            if (!"dev".equals(env)) {
+                BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
+            }
         } else {
             newArticle = articleMapper.selectByPrimaryKey(article.getIdArticle());
             if(!user.getIdUser().equals(newArticle.getArticleAuthorId())){
@@ -144,7 +152,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             }
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
-            BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
+            if (!"dev".equals(env)) {
+                BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
+            }
         }
 
         if (notification) {
@@ -239,6 +249,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             String articlePreviewContent = articleContent.getArticleContentHtml().substring(0,length);
             article.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
+        List<CommentDTO> commentDTOList = commentService.getArticleComments(article.getIdArticle());
+        article.setArticleComments(commentDTOList);
         return article;
     }
 }

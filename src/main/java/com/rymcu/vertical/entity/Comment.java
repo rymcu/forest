@@ -19,7 +19,7 @@ public class Comment implements Serializable,Cloneable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer id;
+    private Integer idComment;
     /** 评论内容 */
     @Column(name = "comment_content")
     private String commentContent;

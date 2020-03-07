@@ -47,4 +47,6 @@ public class ArticleDTO {
     private Author articleAuthor;
 
     private List<ArticleTagDTO> tags;
+
+    private List<CommentDTO> articleComments;
 }
