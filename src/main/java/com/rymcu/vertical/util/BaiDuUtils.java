@@ -33,6 +33,29 @@ public class BaiDuUtils {
             }
             return 0;
         },executor);
+        return;
+    }
+
+    public static void sendUpdateSEOData(String permalink) {
+        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(token)) {
+            return;
+        }
+        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        CompletableFuture.supplyAsync(()-> {
+            try {
+                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/update?site=" + site + "&token=" + token).
+                        header("User-Agent", "curl/7.12.1").
+                        header("Host", "data.zz.baidu.com").
+                        header("Content-Type", "text/plain").
+                        header("Connection", "close").body(permalink.getBytes(), "text/plain").timeout(30000).send();
+                response.charset("UTF-8");
+                System.out.println(response.bodyText());
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return 0;
+        },executor);
+        return;
     }
 
     public static void updateSEOData(String permalink) {
@@ -77,7 +100,7 @@ public class BaiDuUtils {
         },executor);
     }
 
-    public static void main(String agrs[]){
-        sendSEOData("https://rymcu.com/article/31");
+    public static void main(){
+        sendUpdateSEOData("https://rymcu.com");
     }
 }
