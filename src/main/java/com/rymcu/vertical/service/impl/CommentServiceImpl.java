@@ -14,6 +14,7 @@ import com.rymcu.vertical.util.NotificationUtils;
 import com.rymcu.vertical.util.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Map postComment(Comment comment, HttpServletRequest request) {
         Map map = new HashMap(1);
         if(comment.getCommentArticleId() == null){
@@ -94,7 +96,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
                 NotificationUtils.saveNotification(article.getArticleAuthorId(),comment.getIdComment(), NotificationConstant.Comment, commentContent);
             }
             // 判断是否是回复消息
-            if (comment.getCommentOriginalCommentId() != null) {
+            if (comment.getCommentOriginalCommentId() != null && comment.getCommentOriginalCommentId() != 0) {
                 Comment originalComment = commentMapper.selectByPrimaryKey(comment.getCommentOriginalCommentId());
                 // 回复消息时,评论者不是上级评论作者则进行消息通知
                 if (!comment.getCommentAuthorId().equals(originalComment.getCommentAuthorId())) {
