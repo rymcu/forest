@@ -2,7 +2,6 @@ package com.rymcu.vertical.dto;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 /**
