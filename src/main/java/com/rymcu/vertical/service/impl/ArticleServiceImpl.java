@@ -127,6 +127,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticleTags(articleTags);
             newArticle.setCreatedTime(new Date());
             newArticle.setUpdatedTime(newArticle.getCreatedTime());
+            newArticle.setArticleStatus(article.getArticleStatus());
             articleMapper.insertSelective(newArticle);
             newArticle.setArticlePermalink(domain + "/article/"+newArticle.getIdArticle());
             newArticle.setArticleLink("/article/"+newArticle.getIdArticle());
@@ -224,6 +225,16 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         Article article = articleMapper.selectByPrimaryKey(id);
         Integer articleViewCount = article.getArticleViewCount() + 1;
         articleMapper.updateArticleViewCount(article.getIdArticle(), articleViewCount);
+    }
+
+    @Override
+    public List<ArticleDTO> findDrafts() throws BaseApiException {
+        User user = UserUtils.getWxCurrentUser();
+        List<ArticleDTO> list = articleMapper.selectDrafts(user.getIdUser());
+        list.forEach(article->{
+            genArticle(article,0);
+        });
+        return list;
     }
 
     private ArticleDTO genArticle(ArticleDTO article,Integer type) {

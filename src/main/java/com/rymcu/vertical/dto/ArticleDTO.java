@@ -41,6 +41,8 @@ public class ArticleDTO {
     private String articlePermalink;
     /** 站内链接 */
     private String articleLink;
+    /** 文章状态 */
+    private String articleStatus;
     /** 更新时间 */
     private Date updatedTime;
 

@@ -20,6 +20,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+/**
+ * @author ronger
+ */
 @Service
 public class CommentServiceImpl extends AbstractService<Comment> implements CommentService {
 

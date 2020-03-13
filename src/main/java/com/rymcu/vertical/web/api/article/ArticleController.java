@@ -1,11 +1,14 @@
 package com.rymcu.vertical.web.api.article;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.CommentDTO;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.CommentService;
+import com.rymcu.vertical.util.Utils;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +64,15 @@ public class ArticleController {
         List<CommentDTO> commentDTOList = commentService.getArticleComments(id);
         Map map = new HashMap<>(1);
         map.put("comments", commentDTOList);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/drafts")
+    public GlobalResult drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
+        PageHelper.startPage(page, rows);
+        List<ArticleDTO> list = articleService.findDrafts();
+        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
+        Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

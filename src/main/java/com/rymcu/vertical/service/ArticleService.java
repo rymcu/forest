@@ -74,4 +74,10 @@ public interface ArticleService extends Service<Article> {
      * @param id
      */
     void incrementArticleViewCount(Integer id);
+
+    /**
+     * 查询草稿文章类别
+     * @return
+     */
+    List<ArticleDTO> findDrafts() throws BaseApiException;
 }
