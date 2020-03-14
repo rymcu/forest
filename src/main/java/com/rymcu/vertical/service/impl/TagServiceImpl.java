@@ -59,7 +59,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     addTagArticle = true;
                     addUserTag = true;
                 } else {
-                    for(ArticleTagDTO articleTag : articleTagDTOList) {
+                    for(int m=0,n=articleTagDTOList.size();m<n; m++) {
+                        ArticleTagDTO articleTag = articleTagDTOList.get(m);
                         if (articleTag.getIdTag().equals(tag.getIdTag())) {
                             articleTagDTOList.remove(articleTag);
                         }
