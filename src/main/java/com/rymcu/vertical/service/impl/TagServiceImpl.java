@@ -41,13 +41,13 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         String articleTags = article.getArticleTags();
         if(StringUtils.isNotBlank(articleTags)){
             String[] tags = articleTags.split(",");
+            List<ArticleTagDTO> articleTagDTOList = articleMapper.selectTags(article.getIdArticle());
             for (int i = 0; i < tags.length; i++) {
                 boolean addTagArticle = false;
                 boolean addUserTag = false;
                 Tag tag = new Tag();
                 tag.setTagTitle(tags[i]);
                 tag = tagMapper.selectOne(tag);
-                List<ArticleTagDTO> articleTagDTOList = articleMapper.selectTags(article.getIdArticle());
                 if(tag == null){
                     tag = new Tag();
                     tag.setTagTitle(tags[i]);
@@ -59,6 +59,11 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     addTagArticle = true;
                     addUserTag = true;
                 } else {
+                    for(ArticleTagDTO articleTag : articleTagDTOList) {
+                        if (articleTag.getIdTag().equals(tag.getIdTag())) {
+                            articleTagDTOList.remove(articleTag);
+                        }
+                    }
                     Integer count = tagMapper.selectCountTagArticleById(tag.getIdTag(),article.getIdArticle());
                     if(count == 0){
                         tag.setTagArticleCount(tag.getTagArticleCount() + 1);
@@ -70,6 +75,9 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                         addUserTag = true;
                     }
                 }
+                articleTagDTOList.forEach(articleTagDTO -> {
+                    articleMapper.deleteUnusedArticleTag(articleTagDTO.getIdArticleTag());
+                });
                 if(addTagArticle){
                     tagMapper.insertTagArticle(tag.getIdTag(),article.getIdArticle());
                 }

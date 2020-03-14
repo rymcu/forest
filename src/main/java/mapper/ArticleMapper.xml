@@ -51,11 +51,13 @@
         <result column="updated_time" property="updatedTime"/>
     </resultMap>
     <resultMap id="ArticleTagDTOResultMap" type="com.rymcu.vertical.dto.ArticleTagDTO">
-        <id column="id" property="idTag"/>
-        <id column="tag_title" property="tagTitle"/>
-        <id column="tag_icon_path" property="tagIconPath"/>
-        <id column="tag_uri" property="tagUri"/>
-        <id column="tag_description" property="tagDescription"/>
+        <id column="id" property="idArticleTag"/>
+        <result column="id_tag" property="idTag"></result>
+        <result column="id_article" property="idArticle"></result>
+        <result column="tag_title" property="tagTitle"></result>
+        <result column="tag_icon_path" property="tagIconPath"></result>
+        <result column="tag_uri" property="tagUri"></result>
+        <result column="tag_description" property="tagDescription"></result>
     </resultMap>
     <insert id="insertArticleContent">
         insert into vertical_article_content (id_article,article_content,article_content_html,created_time,updated_time)
@@ -69,6 +71,9 @@
     </update>
     <delete id="deleteTagArticle">
         delete from vertical_tag_article where id_article = #{id}
+    </delete>
+    <delete id="deleteUnusedArticleTag">
+        delete from vertical_tag_article where id = #{idArticleTag}
     </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id where article_status = '0' order by updated_time desc
@@ -95,7 +100,7 @@
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on su.id = #{idUser} and art.article_author_id = su.id where article_author_id = #{idUser} order by updated_time desc
     </select>
     <select id="selectTags" resultMap="ArticleTagDTOResultMap">
-        select vt.id, vt.tag_title, vt.tag_icon_path, vt.tag_uri, vt.tag_description from vertical_tag vt left join vertical_tag_article vta on vt.id = vta.id_tag where vta.id_article = #{idArticle}
+        select vta.id, vta.id_tag, vta.id_article, vt.tag_title, vt.tag_icon_path, vt.tag_uri, vt.tag_description from vertical_tag vt left join vertical_tag_article vta on vt.id = vta.id_tag where vta.id_article = #{idArticle}
     </select>
     <select id="selectDrafts" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id where article_status = '1' and art.article_author_id = #{idUser} order by updated_time desc
