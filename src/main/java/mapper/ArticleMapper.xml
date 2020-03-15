@@ -83,6 +83,9 @@
     </select>
     <select id="selectArticleDTOById" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id where art.id = #{id}
+        <if test="type == 1">
+            and art.article_status = 0
+        </if>
     </select>
     <select id="selectArticleContent" resultMap="ArticleContentResultMap">
         select article_content,article_content_html from vertical_article_content where id_article = #{idArticle}

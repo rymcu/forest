@@ -76,4 +76,10 @@ public class ArticleController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
+    @GetMapping("/{id}/share")
+    public GlobalResult share(@PathVariable Integer id) throws BaseApiException {
+        Map map = articleService.share(id);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
 }

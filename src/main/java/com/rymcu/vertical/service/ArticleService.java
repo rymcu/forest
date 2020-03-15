@@ -76,6 +76,13 @@ public interface ArticleService extends Service<Article> {
     void incrementArticleViewCount(Integer id);
 
     /**
+     * 获取分享链接数据
+     * @param id
+     * @return
+     */
+    Map share(Integer id) throws BaseApiException;
+
+    /**
      * 查询草稿文章类别
      * @return
      */

@@ -33,9 +33,10 @@ public interface ArticleMapper extends Mapper<Article> {
     /**
      * 根据文章 ID 查询文章
      * @param id
+     * @param type
      * @return
      */
-    ArticleDTO selectArticleDTOById(@Param("id") Integer id);
+    ArticleDTO selectArticleDTOById(@Param("id") Integer id, @Param("type") int type);
 
     /**
      * 保存文章内容
