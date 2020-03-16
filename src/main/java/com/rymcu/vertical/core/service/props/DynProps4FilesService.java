@@ -1,4 +1,4 @@
-package com.rymcu.vertical.core.service.dynProps4Files;
+package com.rymcu.vertical.core.service.props;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
