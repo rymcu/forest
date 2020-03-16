@@ -19,14 +19,14 @@ import javax.xml.ws.Action;
  */
 @AllArgsConstructor
 @Controller
-@RequestMapping("/wx/redirect/{appid}")
+@RequestMapping("/wx/redirect/{appId}")
 public class WxRedirectController {
     private final WxMpService wxService;
 
     @RequestMapping("/greet")
-    public String greetUser(@PathVariable String appid, @RequestParam String code, ModelMap map) {
-        if (!this.wxService.switchover(appid)) {
-            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appid));
+    public String greetUser(@PathVariable String appId, @RequestParam String code, ModelMap map) {
+        if (!this.wxService.switchover(appId)) {
+            throw new IllegalArgumentException(String.format("未找到对应appId=[%s]的配置，请核实！", appId));
         }
 
         try {
