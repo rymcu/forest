@@ -1,16 +1,19 @@
 package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.constant.NotificationConstant;
+import com.rymcu.vertical.core.constant.ProjectConstant;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.Author;
+import com.rymcu.vertical.dto.CommentDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.service.ArticleService;
+import com.rymcu.vertical.service.CommentService;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.*;
@@ -42,11 +45,16 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private TagService tagService;
     @Resource
     private UserService userService;
+    @Resource
+    private CommentService commentService;
 
     @Value("${resource.domain}")
-    private static String domain;
+    private String domain;
+    @Value("${env}")
+    private String env;
 
     private static final int MAX_PREVIEW = 200;
+    private static final String defaultStatus = "0";
 
     @Override
     public List<ArticleDTO> findArticles(String searchText, String tag) {
@@ -59,7 +67,10 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     public ArticleDTO findArticleDTOById(Integer id, int type) {
-        ArticleDTO articleDTO = articleMapper.selectArticleDTOById(id);
+        ArticleDTO articleDTO = articleMapper.selectArticleDTOById(id,type);
+        if (articleDTO == null) {
+            return null;
+        }
         articleDTO = genArticle(articleDTO,type);
         return articleDTO;
     }
@@ -121,11 +132,12 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticleTags(articleTags);
             newArticle.setCreatedTime(new Date());
             newArticle.setUpdatedTime(newArticle.getCreatedTime());
+            newArticle.setArticleStatus(article.getArticleStatus());
             articleMapper.insertSelective(newArticle);
-            newArticle.setArticlePermalink(domain + "/article/"+newArticle.getIdArticle());
-            newArticle.setArticleLink("/article/"+newArticle.getIdArticle());
             articleMapper.insertArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
-            BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
+            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus())) {
+                BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
+            }
         } else {
             newArticle = articleMapper.selectByPrimaryKey(article.getIdArticle());
             if(!user.getIdUser().equals(newArticle.getArticleAuthorId())){
@@ -142,16 +154,27 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 String articlePreviewContent = articleContentHtml.substring(0,length);
                 newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
             }
+            newArticle.setArticleStatus(article.getArticleStatus());
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
-            BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
+            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus())) {
+                BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
+            }
         }
 
-        if (notification) {
+        if (notification && defaultStatus.equals(newArticle.getArticleStatus())) {
             NotificationUtils.sendAnnouncement(newArticle.getIdArticle(), NotificationConstant.Article, newArticle.getArticleTitle());
         }
 
         tagService.saveTagArticle(newArticle);
+
+        if (defaultStatus.equals(newArticle.getArticleStatus())) {
+            newArticle.setArticlePermalink(domain + "/article/" + newArticle.getIdArticle());
+            newArticle.setArticleLink("/article/" + newArticle.getIdArticle());
+        } else {
+            newArticle.setArticlePermalink(domain + "/draft/" + newArticle.getIdArticle());
+            newArticle.setArticleLink("/draft/" + newArticle.getIdArticle());
+        }
         articleMapper.updateByPrimaryKeySelective(newArticle);
 
         map.put("id", newArticle.getIdArticle());
@@ -216,6 +239,27 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         articleMapper.updateArticleViewCount(article.getIdArticle(), articleViewCount);
     }
 
+    @Override
+    public Map share(Integer id) throws BaseApiException {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        User user = UserUtils.getWxCurrentUser();
+        StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
+        shareUrl.append("?s=").append(user.getNickname());
+        Map map = new HashMap(1);
+        map.put("shareUrl", shareUrl);
+        return map;
+    }
+
+    @Override
+    public List<ArticleDTO> findDrafts() throws BaseApiException {
+        User user = UserUtils.getWxCurrentUser();
+        List<ArticleDTO> list = articleMapper.selectDrafts(user.getIdUser());
+        list.forEach(article->{
+            genArticle(article,0);
+        });
+        return list;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article,Integer type) {
         Author author = articleMapper.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);
@@ -239,6 +283,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             String articlePreviewContent = articleContent.getArticleContentHtml().substring(0,length);
             article.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
+        List<CommentDTO> commentDTOList = commentService.getArticleComments(article.getIdArticle());
+        article.setArticleComments(commentDTOList);
         return article;
     }
 }

@@ -1,9 +1,11 @@
 package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
+import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.User;
+import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.mapper.TagMapper;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.util.UserUtils;
@@ -29,6 +31,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Resource
     private TagMapper tagMapper;
+    @Resource
+    private ArticleMapper articleMapper;
 
     @Override
     @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
@@ -37,6 +41,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         String articleTags = article.getArticleTags();
         if(StringUtils.isNotBlank(articleTags)){
             String[] tags = articleTags.split(",");
+            List<ArticleTagDTO> articleTagDTOList = articleMapper.selectTags(article.getIdArticle());
             for (int i = 0; i < tags.length; i++) {
                 boolean addTagArticle = false;
                 boolean addUserTag = false;
@@ -54,6 +59,12 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     addTagArticle = true;
                     addUserTag = true;
                 } else {
+                    for(int m=0,n=articleTagDTOList.size()-1;m<n; m++) {
+                        ArticleTagDTO articleTag = articleTagDTOList.get(m);
+                        if (articleTag.getIdTag().equals(tag.getIdTag())) {
+                            articleTagDTOList.remove(articleTag);
+                        }
+                    }
                     Integer count = tagMapper.selectCountTagArticleById(tag.getIdTag(),article.getIdArticle());
                     if(count == 0){
                         tag.setTagArticleCount(tag.getTagArticleCount() + 1);
@@ -65,6 +76,9 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                         addUserTag = true;
                     }
                 }
+                articleTagDTOList.forEach(articleTagDTO -> {
+                    articleMapper.deleteUnusedArticleTag(articleTagDTO.getIdArticleTag());
+                });
                 if(addTagArticle){
                     tagMapper.insertTagArticle(tag.getIdTag(),article.getIdArticle());
                 }
