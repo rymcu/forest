@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @author <a href="https://github.com/007gzs">007</a>
  */
 @RestController
-@RequestMapping("/notify")
+@RequestMapping("/wx/notify")
 public class WxOpenNotifyController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
@@ -52,7 +52,7 @@ public class WxOpenNotifyController {
         return "success";
     }
 
-    @RequestMapping("{appId}/callback")
+    @RequestMapping("/{appId}/callback")
     public Object callback(@RequestBody(required = false) String requestBody,
                            @PathVariable("appId") String appId,
                            @RequestParam("signature") String signature,
