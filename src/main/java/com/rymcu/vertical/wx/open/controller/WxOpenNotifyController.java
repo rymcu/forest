@@ -1,6 +1,7 @@
 package com.rymcu.vertical.wx.open.controller;
 
 import com.rymcu.vertical.wx.open.handler.WxOpenServiceHandler;
+import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.bean.kefu.WxMpKefuMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -21,6 +22,13 @@ public class WxOpenNotifyController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     protected WxOpenServiceHandler wxOpenService;
+
+     /**全网发布官方测试小程序 AppId*/
+    private final static String testMiniProgramAppId = "wxd101a85aa106f53e";
+    /**全网发布官方测试公众号 AppId*/
+    private final static String testMpAppId = "wx570bc396a51b8ff8";
+    private final static String TESTCOMPONENT_MSG_TYPE_TEXT = "TESTCOMPONENT_MSG_TYPE_TEXT";
+    private final static String TESTCOMPONENT_MSG_TYPE_TEXT_callback = "TESTCOMPONENT_MSG_TYPE_TEXT_callback";
 
     @RequestMapping("/receive_ticket")
     public Object receiveTicket(@RequestBody(required = false) String requestBody, @RequestParam("timestamp") String timestamp,
@@ -76,12 +84,12 @@ public class WxOpenNotifyController {
                 wxOpenService.getWxOpenConfigStorage(), timestamp, nonce, msgSignature);
         this.logger.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
         // 全网发布测试用例
-        if (StringUtils.equalsAnyIgnoreCase(appId)) {
+        if (StringUtils.equalsAnyIgnoreCase(appId, testMiniProgramAppId, testMpAppId)) {
             try {
-                if (StringUtils.equals(inMessage.getMsgType(), "text")) {
-                    if (StringUtils.equals(inMessage.getContent(), "TESTCOMPONENT_MSG_TYPE_TEXT")) {
+                if (StringUtils.equals(inMessage.getMsgType(), WxConsts.XmlMsgType.TEXT)) {
+                    if (StringUtils.equals(inMessage.getContent(), TESTCOMPONENT_MSG_TYPE_TEXT)) {
                         out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(
-                                WxMpXmlOutMessage.TEXT().content("TESTCOMPONENT_MSG_TYPE_TEXT_callback")
+                                WxMpXmlOutMessage.TEXT().content(TESTCOMPONENT_MSG_TYPE_TEXT_callback)
                                         .fromUser(inMessage.getToUser())
                                         .toUser(inMessage.getFromUser())
                                         .build(),

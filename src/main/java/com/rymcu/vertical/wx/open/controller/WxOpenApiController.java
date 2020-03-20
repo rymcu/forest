@@ -37,6 +37,8 @@ public class WxOpenApiController {
 
     @GetMapping("/goto_auth_url")
     public void gotoPreAuthUrl(HttpServletRequest request, HttpServletResponse response){
+        System.out.println("===================================Host:");
+        System.out.println(request.getHeader("host"));
         String host = request.getHeader("host");
         String url = "http://"+host+"/vertical-console/wx/open/auth/jump";
         try {
