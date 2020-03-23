@@ -26,10 +26,10 @@ public interface ArticleService extends Service<Article> {
     /**
      * 查询文章详情信息
      * @param id
-     * @param i
+     * @param type
      * @return
      * */
-    ArticleDTO findArticleDTOById(Integer id, int i);
+    ArticleDTO findArticleDTOById(Integer id, Integer type);
 
     /**
      * 查询主题下文章列表

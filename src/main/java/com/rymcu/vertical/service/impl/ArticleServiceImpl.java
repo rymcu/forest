@@ -66,7 +66,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    public ArticleDTO findArticleDTOById(Integer id, int type) {
+    public ArticleDTO findArticleDTOById(Integer id, Integer type) {
         ArticleDTO articleDTO = articleMapper.selectArticleDTOById(id,type);
         if (articleDTO == null) {
             return null;
@@ -78,6 +78,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public List<ArticleDTO> findArticlesByTopicUri(String name) {
         List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTopicUri(name);
+        articleDTOS.forEach(articleDTO -> {
+            genArticle(articleDTO,0);
+        });
         return articleDTOS;
     }
 
@@ -266,16 +269,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
         List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
         article.setTags(tags);
-        if(type == 1){
-            ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
+        ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
+        if (type == 1){
             article.setArticleContent(articleContent.getArticleContentHtml());
-        } else if(type == 2){
-            ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
+        } else if (type == 2) {
             article.setArticleContent(articleContent.getArticleContent());
         }
 
         if(StringUtils.isBlank(article.getArticlePreviewContent())){
-            ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             Integer length = articleContent.getArticleContentHtml().length();
             if(length > MAX_PREVIEW){
               length = 200;
