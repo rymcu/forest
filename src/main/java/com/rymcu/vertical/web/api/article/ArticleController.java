@@ -31,11 +31,9 @@ public class ArticleController {
     @Resource
     private CommentService commentService;
 
-
-
     @GetMapping("/detail/{id}")
-    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id){
-        ArticleDTO articleDTO = articleService.findArticleDTOById(id,2);
+    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id, @RequestParam(defaultValue = "2") Integer type){
+        ArticleDTO articleDTO = articleService.findArticleDTOById(id,type);
         Map map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
