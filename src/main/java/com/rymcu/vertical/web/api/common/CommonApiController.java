@@ -9,6 +9,7 @@ import com.rymcu.vertical.core.service.log.annotation.VisitLogger;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ForgetPasswordDTO;
 import com.rymcu.vertical.dto.TokenUser;
+import com.rymcu.vertical.dto.UserRegisterInfoDTO;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.JavaMailService;
@@ -39,7 +40,7 @@ public class CommonApiController {
     private ArticleService articleService;
 
     @ApiOperation(value = "获取邮件验证码")
-    @PostMapping("/get-email-code")
+    @GetMapping("/get-email-code")
     public GlobalResult<Map<String, String>> getEmailCode(@RequestParam("email") String email) throws MessagingException {
         Map<String, String> map = new HashMap<>(1);
         map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
@@ -56,7 +57,7 @@ public class CommonApiController {
     }
 
     @ApiOperation(value = "获取找回密码邮件")
-    @PostMapping("/get-forget-password-email")
+    @GetMapping("/get-forget-password-email")
     public GlobalResult<Map<Object, Object>> getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
         Map<Object, Object> map = new HashMap<>(1);
         map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
@@ -73,14 +74,14 @@ public class CommonApiController {
     }
 
     @PostMapping("/register")
-    public GlobalResult<Map> register(@RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("code") String code){
-        Map map = userService.register(email,password,code);
+    public GlobalResult<Map> register(@RequestBody UserRegisterInfoDTO registerInfo){
+        Map map = userService.register(registerInfo.getEmail(), registerInfo.getPassword(), registerInfo.getCode());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PostMapping("/login")
-    public GlobalResult<Map> login(@RequestParam("account") String account, @RequestParam("password") String password){
-        Map map = userService.login(account,password);
+    public GlobalResult<Map> login(@RequestBody User user){
+        Map map = userService.login(user.getAccount(), user.getPassword());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
