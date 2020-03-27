@@ -1,8 +1,11 @@
 package com.rymcu.vertical.mapper;
 
 import com.rymcu.vertical.core.mapper.Mapper;
+import com.rymcu.vertical.dto.LabelModel;
 import com.rymcu.vertical.entity.Tag;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface TagMapper extends Mapper<Tag> {
     Integer insertTagArticle(@Param("idTag") Integer idTag, @Param("idArticle") Integer idArticle);
@@ -16,4 +19,9 @@ public interface TagMapper extends Mapper<Tag> {
     Integer deleteUnusedTag();
 
     Integer update(@Param("idTag") Integer idTag, @Param("tagUri") String tagUri, @Param("tagIconPath") String tagIconPath, @Param("tagStatus") String tagStatus, @Param("tagDescription") String tagDescription, @Param("tagReservation") String tagReservation);
+
+    /**
+     * @return
+     */
+    List<LabelModel> selectTagLabels();
 }

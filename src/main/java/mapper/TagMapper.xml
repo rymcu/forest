@@ -18,6 +18,10 @@
         <id column="created_time" property="createdTime"/>
         <id column="updated_time" property="updatedTime"/>
     </resultMap>
+    <resultMap id="TagLabelResultMap" type="com.rymcu.vertical.dto.LabelModel">
+        <result column="tag_title" property="label"></result>
+        <result column="tag_title" property="value"></result>
+    </resultMap>
     <insert id="insertTagArticle">
         insert into vertical_tag_article (id_tag,id_article,created_time,updated_time) values (#{idTag},#{idArticle},sysdate(),sysdate())
     </insert>
@@ -35,5 +39,8 @@
     </select>
     <select id="selectCountUserTagById" resultType="java.lang.Integer">
         select count(*) from vertical_user_tag where id_tag = #{idTag} and id_user = #{idUser}
+    </select>
+    <select id="selectTagLabels" resultMap="TagLabelResultMap">
+        select tag_title from vertical_tag where tag_status = 0
     </select>
 </mapper>
