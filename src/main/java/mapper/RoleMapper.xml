@@ -17,7 +17,7 @@
         update vertical_role set status = #{status},updated_time = sysdate() where id = #{idRole}
     </update>
     <update id="update">
-        update vertical_role set name = #{name}, input_code = #{inputCode}, weights = #{weights}, updated_time = sysdate() where id = #{idRole}
+        update vertical_role set name = #{name}, input_code = ${inputCode}, weights = #{weights}, updated_time = sysdate() where id = #{idRole}
     </update>
 
     <select id="selectRoleByIdUser" resultMap="BaseResultMap">

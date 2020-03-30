@@ -42,7 +42,7 @@ public class NotificationUtils {
         },executor);
     }
 
-    public static void saveNotification(Integer idUser, Integer dataId, String dataType, String dataSummary) {
+    private static void saveNotification(Integer idUser, Integer dataId, String dataType, String dataSummary) {
         ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         CompletableFuture.supplyAsync(()-> {
             try {
