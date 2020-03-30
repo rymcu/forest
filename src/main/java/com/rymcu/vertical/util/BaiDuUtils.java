@@ -100,7 +100,7 @@ public class BaiDuUtils {
         },executor);
     }
 
-    public static void main(){
+    public static void main(String[] args){
         sendUpdateSEOData("https://rymcu.com");
     }
 }

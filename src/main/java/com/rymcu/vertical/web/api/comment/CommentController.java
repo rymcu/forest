@@ -2,7 +2,6 @@ package com.rymcu.vertical.web.api.comment;
 
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
-import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.entity.Comment;
 import com.rymcu.vertical.service.CommentService;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
