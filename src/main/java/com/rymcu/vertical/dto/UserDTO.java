@@ -2,6 +2,9 @@ package com.rymcu.vertical.dto;
 
 import lombok.Data;
 
+/**
+ * @author ronger
+ */
 @Data
 public class UserDTO {
 
@@ -14,4 +17,6 @@ public class UserDTO {
     private String avatarUrl;
 
     private String nickname;
+
+    private String signature;
 }
