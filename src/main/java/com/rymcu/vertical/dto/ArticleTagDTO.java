@@ -7,12 +7,7 @@ import lombok.Data;
  */
 @Data
 public class ArticleTagDTO {
-
-    private Integer idArticleTag;
-
     private Integer idTag;
-
-    private Integer idArticle;
 
     private String tagTitle;
 

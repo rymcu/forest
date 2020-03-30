@@ -46,6 +46,4 @@ public class Article implements Serializable,Cloneable {
     private Date createdTime;
     /** 更新时间 */
     private Date updatedTime;
-    /** 文章状态 */
-    private String articleStatus;
 }

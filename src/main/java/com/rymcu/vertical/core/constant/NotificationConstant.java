@@ -10,6 +10,4 @@ public class NotificationConstant {
 
     public static String Follow = "1";
 
-    public static String Comment = "2";
-
 }
