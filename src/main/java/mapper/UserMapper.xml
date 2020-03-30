@@ -39,6 +39,7 @@
         <result column="nickname" property="nickname"/>
         <result column="avatar_type" property="avatarType"/>
         <result column="avatar_url" property="avatarUrl"/>
+        <result column="signature" property="signature"/>
     </resultMap>
     <insert id="insertUserRole">
         insert into vertical_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
@@ -67,7 +68,7 @@
         select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where account = #{account}
     </select>
     <select id="selectUserDTOByNickname" resultMap="DTOResultMapper">
-        select id, nickname, avatar_type, avatar_url, account from vertical_user where nickname = #{nickname} and status = 0
+        select id, nickname, avatar_type, avatar_url, account, signature from vertical_user where nickname = #{nickname} and status = 0
     </select>
     <select id="selectRoleWeightsByUser" resultType="java.lang.Integer">
         select vr.weights from vertical_role vr left join vertical_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}

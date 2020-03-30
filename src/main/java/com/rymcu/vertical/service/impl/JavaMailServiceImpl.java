@@ -63,7 +63,8 @@ public class JavaMailServiceImpl implements JavaMailService {
     private Integer sendCode(String to, Integer type) throws MessagingException {
         Properties props = new Properties();
         // 表示SMTP发送邮件，需要进行身份验证
-        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.auth", true);
+        props.put("mail.smtp.ssl.enable", true);
         props.put("mail.smtp.host", SERVER_HOST);
         props.put("mail.smtp.port", SERVER_PORT);
         // 如果使用ssl，则去掉使用25端口的配置，进行如下配置,

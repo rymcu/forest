@@ -26,10 +26,10 @@ public interface ArticleService extends Service<Article> {
     /**
      * 查询文章详情信息
      * @param id
-     * @param i
+     * @param type
      * @return
      * */
-    ArticleDTO findArticleDTOById(Integer id, int i);
+    ArticleDTO findArticleDTOById(Integer id, Integer type);
 
     /**
      * 查询主题下文章列表
@@ -74,4 +74,17 @@ public interface ArticleService extends Service<Article> {
      * @param id
      */
     void incrementArticleViewCount(Integer id);
+
+    /**
+     * 获取分享链接数据
+     * @param id
+     * @return
+     */
+    Map share(Integer id) throws BaseApiException;
+
+    /**
+     * 查询草稿文章类别
+     * @return
+     */
+    List<ArticleDTO> findDrafts() throws BaseApiException;
 }

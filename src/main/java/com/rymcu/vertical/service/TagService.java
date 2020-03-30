@@ -1,11 +1,13 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.LabelModel;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,4 +36,10 @@ public interface TagService extends Service<Tag> {
      * @return
      */
     Map saveTag(Tag tag);
+
+    /**
+     * 获取标签列表
+     * @return
+     */
+    List<LabelModel> findTagLabels();
 }
