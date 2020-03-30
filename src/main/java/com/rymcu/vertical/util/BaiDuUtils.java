@@ -77,7 +77,7 @@ public class BaiDuUtils {
         },executor);
     }
 
-    public static void main(String agrs[]){
-        sendSEOData("https://rymcu.com/article/31");
+    public static void main(String[] args){
+        sendSEOData("https://rymcu.com");
     }
 }
