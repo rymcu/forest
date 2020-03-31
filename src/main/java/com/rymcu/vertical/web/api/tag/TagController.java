@@ -6,7 +6,6 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.LabelModel;
-import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.TagService;
 import com.rymcu.vertical.util.Utils;
