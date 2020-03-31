@@ -11,8 +11,9 @@ import java.util.concurrent.*;
  */
 public class BaiDuUtils {
 
-    private static String token = "9cdKR6bVCJzxDEJS";
-    private static String site = "https://rymcu.com";
+    private final static String token = "9cdKR6bVCJzxDEJS";
+
+    private final static String site = "https://rymcu.com";
 
     public static void sendSEOData(String permalink) {
         if (StringUtils.isBlank(permalink) || StringUtils.isBlank(token)) {
