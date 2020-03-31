@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class BaiduCronTask {
+public class BaiDuCronTask {
 
     @Value("${resource.domain}")
     private String domain;
@@ -25,7 +25,7 @@ public class BaiduCronTask {
     @Scheduled(cron = "0 0 10,14,18 * * ?")
     public void pushHome() {
         if (!ProjectConstant.ENV.equals(env)) {
-            BaiDuUtils.updateSEOData(domain);
+            BaiDuUtils.sendUpdateSEOData(domain);
         }
     }
 
