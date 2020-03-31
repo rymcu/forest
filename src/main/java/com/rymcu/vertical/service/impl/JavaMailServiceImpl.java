@@ -48,7 +48,8 @@ public class JavaMailServiceImpl implements JavaMailService {
     private String USERNAME;
     @Value("${spring.mail.password}")
     private String PASSWORD;
-    private final static String BASE_URL = "https://rymcu.com";
+    @Value("${resource.domain}")
+    private String BASE_URL;
 
     @Override
     public Integer sendEmailCode(String email) throws MessagingException {
