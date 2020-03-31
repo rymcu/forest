@@ -161,7 +161,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
             if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus())) {
-                BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
+                BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
             }
         }
 
