@@ -8,7 +8,6 @@ import me.chanjar.weixin.common.util.http.URIUtil;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,16 +27,22 @@ public class WxoAuthController {
     @Value("${resource.domain}")
     private String domain;
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
     @GetMapping
     public String wxAuth(@PathVariable String appId, @RequestParam(name = "redirectUrl") String redirectUrl) {
+        StringBuilder baseUrl;
         wxMpService.switchoverTo(appId);
+        // 测试号
         if ("wxa49093339a5a822b".equals(appId)) {
-            domain = "http://oae.nat300.top/vertical";
+            baseUrl = new StringBuilder("http://1wx.rymcu.com").append(contextPath);
         } else {
-            domain += "/vertical-console";
+            baseUrl = new StringBuilder(domain).append(contextPath);
         }
-        StringBuilder accessTokenUrl = new StringBuilder(domain).append("/wx/oauth/" + appId + "/getAccessToken?redirectUrl=").append(URIUtil.encodeURIComponent(domain + redirectUrl));
+        StringBuilder accessTokenUrl = baseUrl.append("/wx/oauth/" + appId + "/getAccessToken?redirectUrl=").append(URIUtil.encodeURIComponent(redirectUrl));
         String oauth2Url = wxMpService.oauth2buildAuthorizationUrl(accessTokenUrl.toString(), WxConsts.OAuth2Scope.SNSAPI_BASE, null);
+
         return "redirect:" + oauth2Url;
     }
 
