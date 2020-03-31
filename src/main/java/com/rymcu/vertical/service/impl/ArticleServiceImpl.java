@@ -100,7 +100,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
+    @Transactional(rollbackFor = { UnsupportedEncodingException.class, BaseApiException.class })
     public Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException {
         Map map = new HashMap(1);
         if(StringUtils.isBlank(article.getArticleTitle())){
@@ -161,7 +161,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
             if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus())) {
-                BaiDuUtils.updateSEOData(newArticle.getArticlePermalink());
+                BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
             }
         }
 
@@ -263,7 +263,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return list;
     }
 
-    private ArticleDTO genArticle(ArticleDTO article,Integer type) {
+    private ArticleDTO genArticle(ArticleDTO article, Integer type) {
         Author author = articleMapper.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);
         article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
