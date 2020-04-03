@@ -1,5 +1,6 @@
 package com.rymcu.vertical.wx.mp.controller;
 
+import com.rymcu.vertical.service.WxUserService;
 import com.rymcu.vertical.util.ContextHolderUtils;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
@@ -23,6 +24,8 @@ public class WxoAuthController {
 
     @Resource
     private WxMpService wxMpService;
+    @Resource
+    private WxUserService wxUserService;
 
     @Value("${resource.domain}")
     private String domain;
@@ -56,6 +59,7 @@ public class WxoAuthController {
         }
 
         WxMpUser wxMpUser =wxMpService.getUserService().userInfo(oAuth2AccessToken.getOpenId());
+        wxUserService.saveUser(wxMpUser,appId);
         ContextHolderUtils.getSession2().setAttribute("wxUser", wxMpUser);
         return "redirect:" + redirectUrl;
     }

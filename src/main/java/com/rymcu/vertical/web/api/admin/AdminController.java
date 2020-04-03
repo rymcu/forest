@@ -6,14 +6,8 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.admin.TopicTagDTO;
 import com.rymcu.vertical.dto.admin.UserRoleDTO;
-import com.rymcu.vertical.entity.Role;
-import com.rymcu.vertical.entity.Tag;
-import com.rymcu.vertical.entity.Topic;
-import com.rymcu.vertical.entity.User;
-import com.rymcu.vertical.service.RoleService;
-import com.rymcu.vertical.service.TagService;
-import com.rymcu.vertical.service.TopicService;
-import com.rymcu.vertical.service.UserService;
+import com.rymcu.vertical.entity.*;
+import com.rymcu.vertical.service.*;
 import com.rymcu.vertical.util.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +33,8 @@ public class AdminController {
     private TopicService topicService;
     @Resource
     private TagService tagService;
+    @Resource
+    private SpecialDayService specialDayService;
 
     @GetMapping("/users")
     public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
@@ -47,10 +43,7 @@ public class AdminController {
         PageInfo<User> pageInfo = new PageInfo<>(list);
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("users", pageInfo.getList());
-        Map<String, Number> pagination = new HashMap<>(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        Map pagination = Utils.getPagination(pageInfo);
         map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);
     }
@@ -201,6 +194,18 @@ public class AdminController {
     @PutMapping("/tag/post")
     public GlobalResult<Map> updateTag(@RequestBody Tag tag){
         Map map = tagService.saveTag(tag);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/special-days")
+    public GlobalResult<Map> specialDays(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+        PageHelper.startPage(page, rows);
+        List<SpecialDay> list = specialDayService.findAll();
+        PageInfo<SpecialDay> pageInfo = new PageInfo<>(list);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("specialDays", pageInfo.getList());
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

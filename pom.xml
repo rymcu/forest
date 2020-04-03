@@ -180,6 +180,11 @@
             <artifactId>weixin-java-open</artifactId>
             <version>3.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>java-emoji-converter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
