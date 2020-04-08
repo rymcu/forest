@@ -107,7 +107,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map saveTag(Tag tag) {
-        Integer result = 0;
+        Integer result;
 
         Map map = new HashMap(1);
         if (tag.getIdTag() == null) {

@@ -111,4 +111,11 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     Integer deleteUnusedArticleTag(@Param("idArticleTag") Integer idArticleTag);
+
+    /**
+     * 查询作品集下文章
+     * @param idPortfolio
+     * @return
+     */
+    List<ArticleDTO> selectArticlesByIdPortfolio(@Param("idPortfolio") Integer idPortfolio);
 }

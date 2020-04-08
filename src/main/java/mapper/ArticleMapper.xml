@@ -101,4 +101,8 @@
     <select id="selectDrafts" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id where article_status = '1' and art.article_author_id = #{idUser} order by updated_time desc
     </select>
+    <select id="selectArticlesByIdPortfolio" resultMap="DTOResultMap">
+        select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on  art.article_author_id = su.id where art.article_status = 0
+        and art.id in (select id_vertical_article from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio}) order by updated_time desc
+    </select>
 </mapper>

@@ -10,4 +10,21 @@
         <result column="created_time" property="createdTime"></result>
         <result column="updated_time" property="updatedTime"></result>
     </resultMap>
+    <resultMap id="DTOResultMap" type="com.rymcu.vertical.dto.PortfolioDTO">
+        <result column="id" property="idPortfolio"></result>
+        <result column="head_img_url" property="headImgUrl"></result>
+        <result column="name" property="name"></result>
+        <result column="portfolio_author_id" property="portfolioAuthorId"></result>
+        <result column="description" property="description"></result>
+        <result column="updated_time" property="updatedTime"></result>
+    </resultMap>
+    <select id="selectUserPortfoliosByIdUser" resultMap="DTOResultMap">
+        select id, head_img_url, name, portfolio_author_id, description, updated_time from vertical_portfolio where portfolio_author_id = #{idUser}
+    </select>
+    <select id="selectPortfolioDTOById" resultMap="DTOResultMap">
+        select id, head_img_url, name, portfolio_author_id, description, updated_time from vertical_portfolio where id = #{id}
+    </select>
+    <select id="selectCountArticleNumber" resultType="java.lang.Integer">
+        select count(*) from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio}
+    </select>
 </mapper>

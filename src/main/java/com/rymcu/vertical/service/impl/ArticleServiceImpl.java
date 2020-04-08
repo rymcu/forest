@@ -263,6 +263,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return list;
     }
 
+    @Override
+    public List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio) {
+        List<ArticleDTO> list = articleMapper.selectArticlesByIdPortfolio(idPortfolio);
+        list.forEach(article->{
+            genArticle(article,0);
+        });
+        return list;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {
         Author author = userService.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);
