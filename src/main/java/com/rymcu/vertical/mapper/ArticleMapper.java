@@ -3,7 +3,6 @@ package com.rymcu.vertical.mapper;
 import com.rymcu.vertical.core.mapper.Mapper;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ArticleTagDTO;
-import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import org.apache.ibatis.annotations.Param;
@@ -22,13 +21,6 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     List<ArticleDTO> selectArticles(@Param("searchText") String searchText, @Param("tag") String tag);
-
-    /**
-     * 根据用户 ID 获取作者信息
-     * @param id
-     * @return
-     */
-    Author selectAuthor(@Param("id") Integer id);
 
     /**
      * 根据文章 ID 查询文章

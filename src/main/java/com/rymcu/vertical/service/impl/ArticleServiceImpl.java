@@ -264,7 +264,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {
-        Author author = articleMapper.selectAuthor(article.getArticleAuthorId());
+        Author author = userService.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);
         article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
         List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());

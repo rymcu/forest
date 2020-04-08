@@ -38,11 +38,6 @@
         <result column="article_status" property="articleStatus"></result>
         <result column="updated_time" property="updatedTime"></result>
     </resultMap>
-    <resultMap id="AuthorResultMap" type="com.rymcu.vertical.dto.Author">
-        <result column="id" property="idUser"/>
-        <result column="nickname" property="userNickname"/>
-        <result column="avatar_url" property="userAvatarURL"/>
-    </resultMap>
     <resultMap id="ArticleContentResultMap" type="com.rymcu.vertical.entity.ArticleContent">
         <result column="id_article" property="idArticle"/>
         <result column="article_content" property="articleContent"/>
@@ -77,9 +72,6 @@
     </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id where article_status = '0' order by updated_time desc
-    </select>
-    <select id="selectAuthor" resultMap="AuthorResultMap">
-        select * from vertical_user where id = #{id}
     </select>
     <select id="selectArticleDTOById" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art left join vertical_user su on art.article_author_id = su.id where art.id = #{id}
