@@ -20,13 +20,14 @@ public class Portfolio {
     @Column(name = "id")
     private Integer idPortfolio;
     /** 作品集头像 */
+    @Column(name = "portfolio_head_img_url")
     private String headImgUrl;
     /** 作品集名称 */
-    private String name;
+    private String portfolioTitle;
     /** 作品集作者 */
     private Integer portfolioAuthorId;
     /** 作品集介绍 */
-    private String description;
+    private String portfolioDescription;
     /** 创建时间 */
     private Date createdTime;
     /** 更新时间 */

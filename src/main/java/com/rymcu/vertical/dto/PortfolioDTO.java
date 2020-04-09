@@ -20,9 +20,9 @@ public class PortfolioDTO {
     /** 作品集作者头像 */
     private String portfolioAuthorAvatarUrl;
     /** 作品集名称 */
-    private String name;
+    private String portfolioTitle;
     /** 作品集介绍 */
-    private String description;
+    private String portfolioDescription;
     /** 更新时间 */
     private Date updatedTime;
     /** 过去时长 */
