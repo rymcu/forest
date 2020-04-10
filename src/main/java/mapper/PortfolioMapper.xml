@@ -18,6 +18,9 @@
         <result column="portfolio_description" property="portfolioDescription"></result>
         <result column="updated_time" property="updatedTime"></result>
     </resultMap>
+    <insert id="insertPortfolioArticle">
+        insert into vertical_portfolio_article (id_vertical_portfolio, id_vertical_article, sort_no) values (#{idPortfolio}, #{idArticle}, #{maxSortNo})
+    </insert>
     <select id="selectUserPortfoliosByIdUser" resultMap="DTOResultMap">
         select id, portfolio_head_img_url, portfolio_title, portfolio_author_id, portfolio_description, updated_time from vertical_portfolio where portfolio_author_id = #{idUser}
     </select>
@@ -26,5 +29,11 @@
     </select>
     <select id="selectCountArticleNumber" resultType="java.lang.Integer">
         select count(*) from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio}
+    </select>
+    <select id="selectCountPortfolioArticle" resultType="java.lang.Integer">
+        select count(*) from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio} and id_vertical_article = #{idArticle}
+    </select>
+    <select id="selectMaxSortNo" resultType="java.lang.Integer">
+        select ifnull(max(sort_no),0) + 1 from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio}
     </select>
 </mapper>

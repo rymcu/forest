@@ -1,6 +1,7 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.PortfolioArticleDTO;
 import com.rymcu.vertical.dto.PortfolioDTO;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Portfolio;
@@ -22,15 +23,35 @@ public interface PortfolioService extends Service<Portfolio> {
     List<PortfolioDTO> findUserPortfoliosByUser(UserDTO userDTO);
 
     /** 查询作品集
-     * @param id
+     * @param idPortfolio
      * @return
      */
-    PortfolioDTO findPortfolioDTOById(Integer id);
+    PortfolioDTO findPortfolioDTOById(Integer idPortfolio);
 
     /**
      * 保持/更新作品集
      * @param portfolio
+     * @throws BaseApiException
      * @return
      */
     Portfolio postPortfolio(Portfolio portfolio) throws BaseApiException;
+
+    /**
+     * 查询作品集下未绑定文章
+     *
+     * @param page
+     * @param rows
+     * @param searchText
+     * @param idPortfolio
+     * @throws BaseApiException
+     * @return
+     */
+    Map findUnbindArticles(Integer page, Integer rows, String searchText, Integer idPortfolio) throws BaseApiException;
+
+    /**
+     * 绑定文章
+     * @param portfolioArticle
+     * @return
+     */
+    Map bindArticle(PortfolioArticleDTO portfolioArticle);
 }

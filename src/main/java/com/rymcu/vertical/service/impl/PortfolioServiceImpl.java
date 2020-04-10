@@ -1,15 +1,17 @@
 package com.rymcu.vertical.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.service.AbstractService;
-import com.rymcu.vertical.dto.Author;
-import com.rymcu.vertical.dto.PortfolioDTO;
-import com.rymcu.vertical.dto.UserDTO;
+import com.rymcu.vertical.dto.*;
 import com.rymcu.vertical.entity.Portfolio;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.PortfolioMapper;
+import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.PortfolioService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.UserUtils;
+import com.rymcu.vertical.util.Utils;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     private PortfolioMapper portfolioMapper;
     @Resource
     private UserService userService;
+    @Resource
+    private ArticleService articleService;
 
     @Override
     public List<PortfolioDTO> findUserPortfoliosByUser(UserDTO userDTO) {
@@ -44,8 +48,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public PortfolioDTO findPortfolioDTOById(Integer id) {
-        PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(id);
+    public PortfolioDTO findPortfolioDTOById(Integer idPortfolio) {
+        PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio);
         Author author = userService.selectAuthor(portfolio.getPortfolioAuthorId());
         genPortfolioAuthor(portfolio,author);
         Integer articleNumber = portfolioMapper.selectCountArticleNumber(portfolio.getIdPortfolio());
@@ -66,6 +70,40 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolioMapper.updateByPrimaryKeySelective(portfolio);
         }
         return portfolio;
+    }
+
+    @Override
+    public Map findUnbindArticles(Integer page, Integer rows, String searchText, Integer idPortfolio) throws BaseApiException {
+        Map map = new HashMap(1);
+        User user = UserUtils.getWxCurrentUser();
+        Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
+        if (portfolio == null) {
+            map.put("message", "该作品集不存在或已被删除!");
+        } else {
+            if (!user.getIdUser().equals(portfolio.getPortfolioAuthorId())) {
+                map.put("message", "非法操作!");
+            } else {
+                PageHelper.startPage(page, rows);
+                List<ArticleDTO> articles = articleService.selectUnbindArticles(idPortfolio,searchText,user.getIdUser());
+                PageInfo<ArticleDTO> pageInfo = new PageInfo(articles);
+                map = Utils.getArticlesGlobalResult(pageInfo);
+            }
+        }
+        return map;
+    }
+
+    @Override
+    public Map bindArticle(PortfolioArticleDTO portfolioArticle) {
+        Map map = new HashMap(1);
+        Integer count = portfolioMapper.selectCountPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio());
+        if (count == 0) {
+            Integer maxSortNo = portfolioMapper.selectMaxSortNo(portfolioArticle.getIdPortfolio());
+            portfolioMapper.insertPortfolioArticle(portfolioArticle.getIdArticle(),portfolioArticle.getIdPortfolio(),maxSortNo);
+            map.put("message", "绑定成功!");
+        } else {
+            map.put("message", "该文章已经在作品集下!!");
+        }
+        return map;
     }
 
     private PortfolioDTO genPortfolioAuthor(PortfolioDTO portfolioDTO, Author author) {

@@ -31,4 +31,28 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @return
      */
     Integer selectCountArticleNumber(@Param("idPortfolio") Integer idPortfolio);
+
+    /**
+     * 查询文章是否已绑定
+     * @param idArticle
+     * @param idPortfolio
+     * @return
+     */
+    Integer selectCountPortfolioArticle(@Param("idArticle") Integer idArticle, @Param("idPortfolio") Integer idPortfolio);
+
+    /**
+     * 插入文章与作品集绑定数据
+     * @param idArticle
+     * @param idPortfolio
+     * @param maxSortNo
+     * @return
+     */
+    Integer insertPortfolioArticle(@Param("idArticle") Integer idArticle, @Param("idPortfolio") Integer idPortfolio, @Param("maxSortNo") Integer maxSortNo);
+
+    /**
+     * 查询作品集下最大排序号
+     * @param idPortfolio
+     * @return
+     */
+    Integer selectMaxSortNo(@Param("idPortfolio") Integer idPortfolio);
 }

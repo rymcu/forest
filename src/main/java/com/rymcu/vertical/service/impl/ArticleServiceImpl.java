@@ -3,10 +3,7 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.constant.NotificationConstant;
 import com.rymcu.vertical.core.constant.ProjectConstant;
 import com.rymcu.vertical.core.service.AbstractService;
-import com.rymcu.vertical.dto.ArticleDTO;
-import com.rymcu.vertical.dto.ArticleTagDTO;
-import com.rymcu.vertical.dto.Author;
-import com.rymcu.vertical.dto.CommentDTO;
+import com.rymcu.vertical.dto.*;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import com.rymcu.vertical.entity.Tag;
@@ -272,6 +269,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return list;
     }
 
+    @Override
+    public List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser) {
+        List<ArticleDTO> list = articleMapper.selectUnbindArticlesByIdPortfolio(idPortfolio,searchText,idUser);
+        list.forEach(article->{
+            genArticle(article,0);
+        });
+        return list;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {
         Author author = userService.selectAuthor(article.getArticleAuthorId());
         article.setArticleAuthor(author);
@@ -295,6 +301,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
         List<CommentDTO> commentDTOList = commentService.getArticleComments(article.getIdArticle());
         article.setArticleComments(commentDTOList);
+
+        List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
+        article.setPortfolios(portfolioArticleDTOList);
         return article;
     }
 }

@@ -96,4 +96,13 @@ public interface ArticleService extends Service<Article> {
      * @return
      */
     List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio);
+
+    /**
+     * 查询作品集下未绑定文章
+     * @param idPortfolio
+     * @param searchText
+     * @param idUser
+     * @return
+     */
+    List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser);
 }

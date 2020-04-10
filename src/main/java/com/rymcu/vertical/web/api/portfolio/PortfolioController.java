@@ -2,6 +2,7 @@ package com.rymcu.vertical.web.api.portfolio;
 
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.dto.PortfolioArticleDTO;
 import com.rymcu.vertical.dto.PortfolioDTO;
 import com.rymcu.vertical.entity.Portfolio;
 import com.rymcu.vertical.service.PortfolioService;
@@ -40,6 +41,18 @@ public class PortfolioController {
     public GlobalResult update(@RequestBody Portfolio portfolio) throws BaseApiException {
         portfolio = portfolioService.postPortfolio(portfolio);
         return GlobalResultGenerator.genSuccessResult(portfolio);
+    }
+
+    @GetMapping("/{id}/unbind-articles")
+    public GlobalResult unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText,@PathVariable Integer id) throws BaseApiException {
+        Map map = portfolioService.findUnbindArticles(page, rows, searchText, id);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PostMapping("/bind-article")
+    public GlobalResult bindArticle(@RequestBody PortfolioArticleDTO portfolioArticle) {
+        Map map = portfolioService.bindArticle(portfolioArticle);
+        return GlobalResultGenerator.genSuccessResult(map);
     }
 
 }
