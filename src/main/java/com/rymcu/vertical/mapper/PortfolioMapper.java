@@ -21,9 +21,10 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
     /**
      * 查询作品集
      * @param id
+     * @param type
      * @return
      */
-    PortfolioDTO selectPortfolioDTOById(@Param("id") Integer id);
+    PortfolioDTO selectPortfolioDTOById(@Param("id") Integer id, @Param("type") Integer type);
 
     /**
      * 统计作品集下文章数
@@ -55,4 +56,13 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @return
      */
     Integer selectMaxSortNo(@Param("idPortfolio") Integer idPortfolio);
+
+    /**
+     * 更新文章排序号
+     * @param idPortfolio
+     * @param idArticle
+     * @param sortNo
+     * @return
+     */
+    Integer updateArticleSortNo(@Param("idPortfolio") Integer idPortfolio, @Param("idArticle") Integer idArticle, @Param("sortNo") Integer sortNo);
 }

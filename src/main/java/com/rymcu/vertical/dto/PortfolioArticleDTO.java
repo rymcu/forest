@@ -18,4 +18,6 @@ public class PortfolioArticleDTO {
 
     private String portfolioTitle;
 
+    private Integer sortNo;
+
 }

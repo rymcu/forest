@@ -48,8 +48,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public PortfolioDTO findPortfolioDTOById(Integer idPortfolio) {
-        PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio);
+    public PortfolioDTO findPortfolioDTOById(Integer idPortfolio, Integer type) {
+        PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio,type);
         Author author = userService.selectAuthor(portfolio.getPortfolioAuthorId());
         genPortfolioAuthor(portfolio,author);
         Integer articleNumber = portfolioMapper.selectCountArticleNumber(portfolio.getIdPortfolio());
@@ -102,6 +102,27 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             map.put("message", "绑定成功!");
         } else {
             map.put("message", "该文章已经在作品集下!!");
+        }
+        return map;
+    }
+
+    @Override
+    public Map updateArticleSortNo(PortfolioArticleDTO portfolioArticle) {
+        Map map = new HashMap(1);
+        if (portfolioArticle.getIdPortfolio() == null || portfolioArticle.getIdPortfolio() == 0) {
+            map.put("message", "作品集数据异常!");
+        }
+        if (portfolioArticle.getIdArticle() == null || portfolioArticle.getIdArticle() == 0) {
+            map.put("message", "文章数据异常!");
+        }
+        if (portfolioArticle.getSortNo() == null) {
+            map.put("message", "排序号不能为空!");
+        }
+        Integer result = portfolioMapper.updateArticleSortNo(portfolioArticle.getIdPortfolio(),portfolioArticle.getIdArticle(),portfolioArticle.getSortNo());
+        if (result > 0) {
+            map.put("message", "更新成功!");
+        } else {
+            map.put("message", "更新失败!");
         }
         return map;
     }

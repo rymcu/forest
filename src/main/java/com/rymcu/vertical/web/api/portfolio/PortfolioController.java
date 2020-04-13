@@ -24,8 +24,8 @@ public class PortfolioController {
     private PortfolioService portfolioService;
 
     @GetMapping("/detail/{id}")
-    public GlobalResult detail(@PathVariable Integer id) {
-        PortfolioDTO portfolio = portfolioService.findPortfolioDTOById(id);
+    public GlobalResult detail(@PathVariable Integer id,@RequestParam(defaultValue = "0") Integer type) {
+        PortfolioDTO portfolio = portfolioService.findPortfolioDTOById(id, type);
         Map map = new HashMap<>(1);
         map.put("portfolio", portfolio);
         return GlobalResultGenerator.genSuccessResult(map);
@@ -52,6 +52,12 @@ public class PortfolioController {
     @PostMapping("/bind-article")
     public GlobalResult bindArticle(@RequestBody PortfolioArticleDTO portfolioArticle) {
         Map map = portfolioService.bindArticle(portfolioArticle);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PutMapping("/update-article-sort-no")
+    public GlobalResult updateArticleSortNo(@RequestBody PortfolioArticleDTO portfolioArticle) {
+        Map map = portfolioService.updateArticleSortNo(portfolioArticle);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

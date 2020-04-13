@@ -21,11 +21,23 @@
     <insert id="insertPortfolioArticle">
         insert into vertical_portfolio_article (id_vertical_portfolio, id_vertical_article, sort_no) values (#{idPortfolio}, #{idArticle}, #{maxSortNo})
     </insert>
+    <update id="updateArticleSortNo">
+        update vertical_portfolio_article set sort_no = #{sortNo} where id_vertical_portfolio = #{idPortfolio} and id_vertical_article = #{idArticle}
+    </update>
     <select id="selectUserPortfoliosByIdUser" resultMap="DTOResultMap">
         select id, portfolio_head_img_url, portfolio_title, portfolio_author_id, portfolio_description, updated_time from vertical_portfolio where portfolio_author_id = #{idUser}
     </select>
     <select id="selectPortfolioDTOById" resultMap="DTOResultMap">
-        select id, portfolio_head_img_url, portfolio_title, portfolio_author_id, portfolio_description, updated_time from vertical_portfolio where id = #{id}
+        select id, portfolio_head_img_url, portfolio_title, portfolio_author_id,
+        <choose>
+            <when test="type == 1">
+                portfolio_description_html as portfolio_description,
+            </when>
+            <otherwise>
+                portfolio_description,
+            </otherwise>
+        </choose>
+        updated_time from vertical_portfolio where id = #{id}
     </select>
     <select id="selectCountArticleNumber" resultType="java.lang.Integer">
         select count(*) from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio}

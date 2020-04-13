@@ -124,7 +124,7 @@ public class CommonApiController {
     @GetMapping("/portfolio/{id}")
     @VisitLogger
     public GlobalResult<Map<String, Object>> portfolio(@PathVariable Integer id){
-        PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id);
+        PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id,1);
         Map<String, Object> map = new HashMap<>(1);
         map.put("portfolio", portfolioDTO);
         return GlobalResultGenerator.genSuccessResult(map);

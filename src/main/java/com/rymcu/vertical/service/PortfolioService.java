@@ -24,9 +24,10 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /** 查询作品集
      * @param idPortfolio
+     * @param type
      * @return
      */
-    PortfolioDTO findPortfolioDTOById(Integer idPortfolio);
+    PortfolioDTO findPortfolioDTOById(Integer idPortfolio, Integer type);
 
     /**
      * 保持/更新作品集
@@ -54,4 +55,11 @@ public interface PortfolioService extends Service<Portfolio> {
      * @return
      */
     Map bindArticle(PortfolioArticleDTO portfolioArticle);
+
+    /**
+     * 更新文章排序号
+     * @param portfolioArticle
+     * @return
+     */
+    Map updateArticleSortNo(PortfolioArticleDTO portfolioArticle);
 }

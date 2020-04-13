@@ -28,6 +28,8 @@ public class Portfolio {
     private Integer portfolioAuthorId;
     /** 作品集介绍 */
     private String portfolioDescription;
+    /** 作品集介绍 Html */
+    private String portfolioDescriptionHtml;
     /** 创建时间 */
     private Date createdTime;
     /** 更新时间 */
