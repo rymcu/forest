@@ -65,4 +65,12 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @return
      */
     Integer updateArticleSortNo(@Param("idPortfolio") Integer idPortfolio, @Param("idArticle") Integer idArticle, @Param("sortNo") Integer sortNo);
+
+    /**
+     * 取消绑定文章
+     * @param idPortfolio
+     * @param idArticle
+     * @return
+     */
+    Integer unbindArticle(@Param("idPortfolio") Integer idPortfolio, @Param("idArticle") Integer idArticle);
 }

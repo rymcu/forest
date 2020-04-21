@@ -62,4 +62,19 @@ public interface PortfolioService extends Service<Portfolio> {
      * @return
      */
     Map updateArticleSortNo(PortfolioArticleDTO portfolioArticle);
+
+    /**
+     * 取消绑定文章
+     * @param idPortfolio
+     * @param idArticle
+     * @return
+     */
+    Map unbindArticle(Integer idPortfolio, Integer idArticle);
+
+    /**
+     * 删除作品集
+     * @param idPortfolio
+     * @return
+     */
+    Map deletePortfolio(Integer idPortfolio);
 }

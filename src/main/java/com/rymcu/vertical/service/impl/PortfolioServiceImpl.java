@@ -50,6 +50,9 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     @Override
     public PortfolioDTO findPortfolioDTOById(Integer idPortfolio, Integer type) {
         PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio,type);
+        if (portfolio == null) {
+            return new PortfolioDTO();
+        }
         Author author = userService.selectAuthor(portfolio.getPortfolioAuthorId());
         genPortfolioAuthor(portfolio,author);
         Integer articleNumber = portfolioMapper.selectCountArticleNumber(portfolio.getIdPortfolio());
@@ -96,7 +99,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     public Map bindArticle(PortfolioArticleDTO portfolioArticle) {
         Map map = new HashMap(1);
         Integer count = portfolioMapper.selectCountPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio());
-        if (count == 0) {
+        if (count.equals(0)) {
             Integer maxSortNo = portfolioMapper.selectMaxSortNo(portfolioArticle.getIdPortfolio());
             portfolioMapper.insertPortfolioArticle(portfolioArticle.getIdArticle(),portfolioArticle.getIdPortfolio(),maxSortNo);
             map.put("message", "绑定成功!");
@@ -109,10 +112,10 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     @Override
     public Map updateArticleSortNo(PortfolioArticleDTO portfolioArticle) {
         Map map = new HashMap(1);
-        if (portfolioArticle.getIdPortfolio() == null || portfolioArticle.getIdPortfolio() == 0) {
+        if (portfolioArticle.getIdPortfolio() == null || portfolioArticle.getIdPortfolio().equals(0)) {
             map.put("message", "作品集数据异常!");
         }
-        if (portfolioArticle.getIdArticle() == null || portfolioArticle.getIdArticle() == 0) {
+        if (portfolioArticle.getIdArticle() == null || portfolioArticle.getIdArticle().equals(0)) {
             map.put("message", "文章数据异常!");
         }
         if (portfolioArticle.getSortNo() == null) {
@@ -124,6 +127,44 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         } else {
             map.put("message", "更新失败!");
         }
+        return map;
+    }
+
+    @Override
+    public Map unbindArticle(Integer idPortfolio, Integer idArticle) {
+        Map map = new HashMap(1);
+        if (idPortfolio == null || idPortfolio.equals(0)) {
+            map.put("message", "作品集数据异常");
+        }
+        if (idArticle == null || idArticle.equals(0)) {
+            map.put("message", "文章数据异常");
+        }
+        Integer result = portfolioMapper.unbindArticle(idPortfolio,idArticle);
+        if (result > 0) {
+            map.put("message", "操作成功!");
+        } else {
+            map.put("message", "操作失败!");
+        }
+        return map;
+    }
+
+    @Override
+    public Map deletePortfolio(Integer idPortfolio) {
+        Map map = new HashMap(1);
+        if (idPortfolio == null || idPortfolio.equals(0)) {
+            map.put("message", "作品集数据异常");
+        }
+
+        Integer articleNumber = portfolioMapper.selectCountArticleNumber(idPortfolio);
+        if (articleNumber > 0) {
+            map.put("message", "该作品集已绑定文章不允许删除!");
+        } else {
+            Integer result = portfolioMapper.deleteByPrimaryKey(idPortfolio);
+            if (result.equals(0)) {
+                map.put("message", "操作失败!");
+            }
+        }
+
         return map;
     }
 

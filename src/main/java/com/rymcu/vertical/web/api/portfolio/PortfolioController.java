@@ -61,4 +61,16 @@ public class PortfolioController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
+    @DeleteMapping("/unbind-article")
+    public GlobalResult unbindArticle(Integer idArticle,Integer idPortfolio) {
+        Map map = portfolioService.unbindArticle(idPortfolio,idArticle);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @DeleteMapping("/delete")
+    public GlobalResult delete(Integer idPortfolio){
+        Map map = portfolioService.deletePortfolio(idPortfolio);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
 }
