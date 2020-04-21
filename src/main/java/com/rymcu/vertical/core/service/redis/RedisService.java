@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * Redis 服务接口
- * Jimersy Lee
+ * @author Jimersy Lee
  * 2017-09-18 14:58:21
  */
 public interface RedisService {
