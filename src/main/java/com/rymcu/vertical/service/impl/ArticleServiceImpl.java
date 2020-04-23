@@ -285,9 +285,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
         article.setTags(tags);
         ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
-        if (type == 1){
+        if (type.equals(1) || type.equals(0)){
             article.setArticleContent(articleContent.getArticleContentHtml());
-        } else if (type == 2) {
+        } else if (type.equals(2)) {
             article.setArticleContent(articleContent.getArticleContent());
         }
 
