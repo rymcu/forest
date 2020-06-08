@@ -2,6 +2,7 @@ package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.core.service.redis.RedisService;
+import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.dto.UserInfoDTO;
@@ -206,5 +207,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Integer findRoleWeightsByUser(Integer idUser) {
         return userMapper.selectRoleWeightsByUser(idUser);
+    }
+
+    @Override
+    public Author selectAuthor(Integer idUser) {
+        return userMapper.selectAuthor(idUser);
     }
 }

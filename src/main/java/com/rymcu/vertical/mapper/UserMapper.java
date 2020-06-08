@@ -1,6 +1,7 @@
 package com.rymcu.vertical.mapper;
 
 import com.rymcu.vertical.core.mapper.Mapper;
+import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.User;
@@ -106,4 +107,10 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     Integer checkNicknameByIdUser(@Param("idUser") Integer idUser, @Param("nickname") String nickname);
+    /**
+     * 根据用户 ID 获取作者信息
+     * @param id
+     * @return
+     */
+    Author selectAuthor(@Param("id") Integer id);
 }
