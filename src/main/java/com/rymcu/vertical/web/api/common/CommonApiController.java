@@ -6,13 +6,11 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.core.result.GlobalResultMessage;
 import com.rymcu.vertical.core.service.log.annotation.VisitLogger;
-import com.rymcu.vertical.dto.ArticleDTO;
-import com.rymcu.vertical.dto.ForgetPasswordDTO;
-import com.rymcu.vertical.dto.TokenUser;
-import com.rymcu.vertical.dto.UserRegisterInfoDTO;
+import com.rymcu.vertical.dto.*;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.JavaMailService;
+import com.rymcu.vertical.service.PortfolioService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
@@ -38,6 +36,8 @@ public class CommonApiController {
     private UserService userService;
     @Resource
     private ArticleService articleService;
+    @Resource
+    private PortfolioService portfolioService;
 
     @ApiOperation(value = "获取邮件验证码")
     @GetMapping("/get-email-code")
@@ -118,6 +118,24 @@ public class CommonApiController {
     @PatchMapping("/forget-password")
     public GlobalResult<Map> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword){
         Map map = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/portfolio/{id}")
+    @VisitLogger
+    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Integer id){
+        PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id,1);
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("portfolio", portfolioDTO);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/portfolio/{id}/articles")
+    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Integer id) {
+        PageHelper.startPage(page, rows);
+        List<ArticleDTO> list = articleService.findArticlesByIdPortfolio(id);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
+        Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 }

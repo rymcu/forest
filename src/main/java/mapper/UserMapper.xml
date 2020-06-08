@@ -41,6 +41,11 @@
         <result column="avatar_url" property="avatarUrl"/>
         <result column="signature" property="signature"/>
     </resultMap>
+    <resultMap id="AuthorResultMap" type="com.rymcu.vertical.dto.Author">
+        <result column="id" property="idUser"/>
+        <result column="nickname" property="userNickname"/>
+        <result column="avatar_url" property="userAvatarURL"/>
+    </resultMap>
     <insert id="insertUserRole">
         insert into vertical_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
     </insert>
@@ -81,6 +86,9 @@
     </select>
     <select id="checkNicknameByIdUser" resultType="java.lang.Integer">
         select count(*) from vertical_user where nickname = #{nickname} and id != #{idUser}
+    </select>
+    <select id="selectAuthor" resultMap="AuthorResultMap">
+        select * from vertical_user where id = #{id}
     </select>
 
 </mapper>

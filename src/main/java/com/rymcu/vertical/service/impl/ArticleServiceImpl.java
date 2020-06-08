@@ -3,10 +3,7 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.constant.NotificationConstant;
 import com.rymcu.vertical.core.constant.ProjectConstant;
 import com.rymcu.vertical.core.service.AbstractService;
-import com.rymcu.vertical.dto.ArticleDTO;
-import com.rymcu.vertical.dto.ArticleTagDTO;
-import com.rymcu.vertical.dto.Author;
-import com.rymcu.vertical.dto.CommentDTO;
+import com.rymcu.vertical.dto.*;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import com.rymcu.vertical.entity.Tag;
@@ -149,14 +146,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             }
             newArticle.setArticleTitle(articleTitle);
             newArticle.setArticleTags(articleTags);
-            if(StringUtils.isNotBlank(articleContentHtml)){
-                Integer length = articleContentHtml.length();
-                if(length > MAX_PREVIEW){
-                    length = 200;
-                }
-                String articlePreviewContent = articleContentHtml.substring(0,length);
-                newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
-            }
             newArticle.setArticleStatus(article.getArticleStatus());
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(),articleContent,articleContentHtml);
@@ -177,6 +166,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         } else {
             newArticle.setArticlePermalink(domain + "/draft/" + newArticle.getIdArticle());
             newArticle.setArticleLink("/draft/" + newArticle.getIdArticle());
+        }
+
+        if(StringUtils.isNotBlank(articleContentHtml)){
+            Integer length = articleContentHtml.length();
+            if(length > MAX_PREVIEW){
+                length = MAX_PREVIEW;
+            }
+            String articlePreviewContent = articleContentHtml.substring(0,length);
+            newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
         articleMapper.updateByPrimaryKeySelective(newArticle);
 
@@ -263,29 +261,55 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return list;
     }
 
+    @Override
+    public List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio) {
+        List<ArticleDTO> list = articleMapper.selectArticlesByIdPortfolio(idPortfolio);
+        list.forEach(article->{
+            genArticle(article,0);
+        });
+        return list;
+    }
+
+    @Override
+    public List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser) {
+        List<ArticleDTO> list = articleMapper.selectUnbindArticlesByIdPortfolio(idPortfolio,searchText,idUser);
+        list.forEach(article->{
+            genArticle(article,0);
+        });
+        return list;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {
-        Author author = articleMapper.selectAuthor(article.getArticleAuthorId());
+        Integer ARTICLE_LIST = 0;
+        Integer ARTICLE_VIEW = 1;
+        Integer ARTICLE_EDIT = 2;
+        Author author = genAuthor(article);
         article.setArticleAuthor(author);
         article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
         List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
         article.setTags(tags);
-        ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
-        if (type == 1){
-            article.setArticleContent(articleContent.getArticleContentHtml());
-        } else if (type == 2) {
-            article.setArticleContent(articleContent.getArticleContent());
-        }
-
-        if(StringUtils.isBlank(article.getArticlePreviewContent())){
-            Integer length = articleContent.getArticleContentHtml().length();
-            if(length > MAX_PREVIEW){
-              length = 200;
+        if (!type.equals(ARTICLE_LIST)) {
+            ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
+            if (type.equals(ARTICLE_VIEW)){
+                article.setArticleContent(articleContent.getArticleContentHtml());
+                // 获取评论列表数据
+                List<CommentDTO> commentDTOList = commentService.getArticleComments(article.getIdArticle());
+                article.setArticleComments(commentDTOList);
+                // 获取所属作品集列表数据
+                List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
+                article.setPortfolios(portfolioArticleDTOList);
+            } else if (type.equals(ARTICLE_EDIT)) {
+                article.setArticleContent(articleContent.getArticleContent());
             }
-            String articlePreviewContent = articleContent.getArticleContentHtml().substring(0,length);
-            article.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
-        List<CommentDTO> commentDTOList = commentService.getArticleComments(article.getIdArticle());
-        article.setArticleComments(commentDTOList);
         return article;
+    }
+
+    private Author genAuthor(ArticleDTO article) {
+        Author author = new Author();
+        author.setUserNickname(article.getArticleAuthorName());
+        author.setUserAvatarURL(article.getArticleAuthorAvatarUrl());
+        author.setIdUser(article.getArticleAuthorId());
+        return author;
     }
 }

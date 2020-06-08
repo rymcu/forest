@@ -1,7 +1,6 @@
 package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
-import com.rymcu.vertical.core.service.redis.RedisService;
 import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.LabelModel;
 import com.rymcu.vertical.entity.Article;
@@ -36,8 +35,6 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     private TagMapper tagMapper;
     @Resource
     private ArticleMapper articleMapper;
-    @Resource
-    private RedisService redisService;
 
     @Override
     @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
@@ -107,7 +104,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map saveTag(Tag tag) {
-        Integer result = 0;
+        Integer result;
 
         Map map = new HashMap(1);
         if (tag.getIdTag() == null) {

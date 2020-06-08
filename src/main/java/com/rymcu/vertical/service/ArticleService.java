@@ -78,13 +78,31 @@ public interface ArticleService extends Service<Article> {
     /**
      * 获取分享链接数据
      * @param id
+     * @throws BaseApiException
      * @return
      */
     Map share(Integer id) throws BaseApiException;
 
     /**
      * 查询草稿文章类别
+     * @throws BaseApiException
      * @return
      */
     List<ArticleDTO> findDrafts() throws BaseApiException;
+
+    /**
+     * 查询作品集下文章
+     * @param idPortfolio
+     * @return
+     */
+    List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio);
+
+    /**
+     * 查询作品集下未绑定文章
+     * @param idPortfolio
+     * @param searchText
+     * @param idUser
+     * @return
+     */
+    List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser);
 }

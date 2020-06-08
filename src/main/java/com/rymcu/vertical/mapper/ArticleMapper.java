@@ -3,7 +3,7 @@ package com.rymcu.vertical.mapper;
 import com.rymcu.vertical.core.mapper.Mapper;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.ArticleTagDTO;
-import com.rymcu.vertical.dto.Author;
+import com.rymcu.vertical.dto.PortfolioArticleDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.ArticleContent;
 import org.apache.ibatis.annotations.Param;
@@ -22,13 +22,6 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     List<ArticleDTO> selectArticles(@Param("searchText") String searchText, @Param("tag") String tag);
-
-    /**
-     * 根据用户 ID 获取作者信息
-     * @param id
-     * @return
-     */
-    Author selectAuthor(@Param("id") Integer id);
 
     /**
      * 根据文章 ID 查询文章
@@ -119,4 +112,27 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     Integer deleteUnusedArticleTag(@Param("idArticleTag") Integer idArticleTag);
+
+    /**
+     * 查询作品集下文章
+     * @param idPortfolio
+     * @return
+     */
+    List<ArticleDTO> selectArticlesByIdPortfolio(@Param("idPortfolio") Integer idPortfolio);
+
+    /**
+     * 查询作品集未绑定文章
+     * @param idPortfolio
+     * @param searchText
+     * @param idUser
+     * @return
+     */
+    List<ArticleDTO> selectUnbindArticlesByIdPortfolio(@Param("idPortfolio") Integer idPortfolio, @Param("searchText") String searchText, @Param("idUser") Integer idUser);
+
+    /**
+     * 查询文章所属作品集列表
+     * @param idArticle
+     * @return
+     */
+    List<PortfolioArticleDTO> selectPortfolioArticles(@Param("idArticle") Integer idArticle);
 }

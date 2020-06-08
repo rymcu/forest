@@ -1,6 +1,7 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.User;
@@ -100,4 +101,11 @@ public interface UserService extends Service<User> {
      * @return
      */
     Integer findRoleWeightsByUser(Integer idUser);
+
+    /**
+     * 查询作者信息
+     * @param idUser
+     * @return
+     */
+    Author selectAuthor(Integer idUser);
 }

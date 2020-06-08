@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 public class Author {
 
-    private String idUser;
+    private Integer idUser;
 
     private String userNickname;
 
     private String userAvatarURL;
 
-    private Integer userArticleCount;
+    private String userArticleCount;
 
 }

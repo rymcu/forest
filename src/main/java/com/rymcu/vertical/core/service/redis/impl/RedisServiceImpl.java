@@ -3,19 +3,16 @@ package com.rymcu.vertical.core.service.redis.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
-import com.rymcu.vertical.core.service.props.DynProps4FilesService;
+import com.rymcu.vertical.config.RedisProperties;
 import com.rymcu.vertical.core.service.redis.RedisResult;
 import com.rymcu.vertical.core.service.redis.RedisService;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -34,14 +31,10 @@ public class RedisServiceImpl implements RedisService {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisServiceImpl.class);
 
-
     private static JedisPool pool = null;
 
     @Resource
-    private DynProps4FilesService dynProps4Files;
-
-    @Resource
-    private Environment env;
+    private RedisProperties redisProperties;
 
 
     /**
@@ -53,25 +46,23 @@ public class RedisServiceImpl implements RedisService {
         if (pool != null) {
             return;
         }
-        /*JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxIdle(dynProps4Files.getInt("REDIS_MAX_IDLE", JedisPoolConfig.DEFAULT_MAX_IDLE));
-        config.setMaxTotal(dynProps4Files.getInt("REDIS_MAX_TOTAL", JedisPoolConfig.DEFAULT_MAX_TOTAL));
-        config.setMaxWaitMillis(dynProps4Files.getLong("REDIS_MAX_WAIT", JedisPoolConfig.DEFAULT_MAX_WAIT_MILLIS));
-        config.setTestOnBorrow(true);
-        pool = new JedisPool(config, dynProps4Files.getProperty("REDIS_HOST"),
-                             dynProps4Files.getInt("REDIS_PORT", 6379), dynProps4Files.getInt(
-                "REDIS_MAX_WAIT", 1000), dynProps4Files.getProperty("REDIS_PASSWORD", null));*/
+        pool = getJedisPool();
+    }
 
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxIdle(dynProps4Files.getInt("REDIS_MAX_IDLE", JedisPoolConfig.DEFAULT_MAX_IDLE));
-        config.setMaxTotal(dynProps4Files.getInt("REDIS_MAX_TOTAL", JedisPoolConfig.DEFAULT_MAX_TOTAL));
-        config.setMaxWaitMillis(dynProps4Files.getLong("REDIS_MAX_WAIT", JedisPoolConfig.DEFAULT_MAX_WAIT_MILLIS));
-        config.setTestOnBorrow(true);
-        pool = new JedisPool(config, env.getProperty("spring.redis.host"),
-                dynProps4Files.getInt("REDIS_PORT", 6379), dynProps4Files.getInt(
-                "REDIS_MAX_WAIT", 1000), dynProps4Files.getProperty("REDIS_PASSWORD", env.getProperty("spring.redis.password")));
-
-
+    private JedisPool getJedisPool() {
+        if (pool == null) {
+            synchronized (RedisServiceImpl.class) {
+                if (pool == null) {
+                    pool = new JedisPool(redisProperties, redisProperties.getHost(),
+                            redisProperties.getPort(), redisProperties.getConnectionTimeout(),
+                            redisProperties.getSoTimeout(), redisProperties.getPassword(),
+                            redisProperties.getDatabase(), redisProperties.getClientName(),
+                            redisProperties.isSsl(), redisProperties.getSslSocketFactory(),
+                            redisProperties.getSslParameters(), redisProperties.getHostnameVerifier());
+                }
+            }
+        }
+        return pool;
     }
 
     @Override
@@ -106,7 +97,7 @@ public class RedisServiceImpl implements RedisService {
         if (jedis == null) {
             return;
         }
-        IOUtils.closeQuietly(jedis);
+        jedis.close();
     }
 
     /**
