@@ -9,6 +9,7 @@ import com.rymcu.vertical.core.service.redis.RedisService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
@@ -27,6 +28,7 @@ import java.util.*;
  *         16/10/30 下午5:28
  */
 @Component("redisService")
+@EnableConfigurationProperties({RedisProperties.class})
 public class RedisServiceImpl implements RedisService {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisServiceImpl.class);
