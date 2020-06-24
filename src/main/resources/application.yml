@@ -1,0 +1,52 @@
+spring:
+  #  profiles:
+  #    active: pord
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: # redis 密码
+    database: 1
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 500
+        min-idle: 0
+  datasource:
+    url: jdbc:mysql://localhost:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    username: root
+    password: # 数据库密码
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    resources:
+      add-mappings: true
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: # 邮箱
+    password: # 密码
+env: dev
+logging:
+  file:
+    path: /logs/vertical
+server:
+  port: 8099
+  servlet:
+    context-path: /vertical
+version: 1.0
+resource:
+  file-path: https://abc.com/vertical
+baidu:
+  data:
+    site: https://abc.com # 百度搜索资源配置网址
+    token: xxxx # 百度搜索资源token
+reserved-words: \u7cfb\u7edf\u516c\u544a\u002c\u516c\u544a
+
