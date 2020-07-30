@@ -32,6 +32,7 @@ public interface TopicMapper extends Mapper<Topic> {
     List<TagDTO> selectTopicTag(@Param("idTopic") Integer idTopic);
 
     /**
+     * 更新
      * @param idTopic
      * @param topicTitle
      * @param topicUri
@@ -40,9 +41,10 @@ public interface TopicMapper extends Mapper<Topic> {
      * @param topicStatus
      * @param topicSort
      * @param topicDescription
+     * @param topicDescriptionHtml
      * @return
      */
-    Integer update(@Param("idTopic") Integer idTopic, @Param("topicTitle") String topicTitle, @Param("topicUri") String topicUri, @Param("topicIconPath") String topicIconPath, @Param("topicNva") String topicNva, @Param("topicStatus") String topicStatus, @Param("topicSort") Integer topicSort, @Param("topicDescription") String topicDescription);
+    Integer update(@Param("idTopic") Integer idTopic, @Param("topicTitle") String topicTitle, @Param("topicUri") String topicUri, @Param("topicIconPath") String topicIconPath, @Param("topicNva") String topicNva, @Param("topicStatus") String topicStatus, @Param("topicSort") Integer topicSort, @Param("topicDescription") String topicDescription, @Param("topicDescriptionHtml") String topicDescriptionHtml);
 
     /**
      * @param idTopic
