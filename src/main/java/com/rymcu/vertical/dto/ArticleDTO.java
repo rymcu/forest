@@ -50,8 +50,6 @@ public class ArticleDTO {
 
     private List<ArticleTagDTO> tags;
 
-    private List<CommentDTO> articleComments;
-
     private List<PortfolioArticleDTO> portfolios;
 
     private Integer sortNo;

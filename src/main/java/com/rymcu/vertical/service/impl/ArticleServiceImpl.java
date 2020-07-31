@@ -52,10 +52,16 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     private static final int MAX_PREVIEW = 200;
     private static final String defaultStatus = "0";
+    private static final String defaultTopicUri = "news";
 
     @Override
-    public List<ArticleDTO> findArticles(String searchText, String tag) {
-        List<ArticleDTO> list = articleMapper.selectArticles(searchText, tag);
+    public List<ArticleDTO> findArticles(ArticleSearchDTO searchDTO) {
+        List<ArticleDTO> list;
+        if (StringUtils.isNotBlank(searchDTO.getTopicUri()) && !defaultTopicUri.equals(searchDTO.getTopicUri())) {
+            list = articleMapper.selectArticlesByTopicUri(searchDTO.getTopicUri());
+        } else {
+            list = articleMapper.selectArticles(searchDTO.getSearchText(), searchDTO.getTag(), searchDTO.getTopicUri());
+        }
         list.forEach(article->{
             genArticle(article,0);
         });
@@ -292,9 +298,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             if (type.equals(ARTICLE_VIEW)){
                 article.setArticleContent(articleContent.getArticleContentHtml());
-                // 获取评论列表数据
-                List<CommentDTO> commentDTOList = commentService.getArticleComments(article.getIdArticle());
-                article.setArticleComments(commentDTOList);
                 // 获取所属作品集列表数据
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
                 article.setPortfolios(portfolioArticleDTOList);
