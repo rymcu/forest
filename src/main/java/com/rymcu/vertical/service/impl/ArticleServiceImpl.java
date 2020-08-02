@@ -303,6 +303,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 article.setPortfolios(portfolioArticleDTOList);
             } else if (type.equals(ARTICLE_EDIT)) {
                 article.setArticleContent(articleContent.getArticleContent());
+            } else {
+                article.setArticleContent(articleContent.getArticleContentHtml());
             }
         }
         return article;
