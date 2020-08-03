@@ -1,6 +1,6 @@
 spring:
-  #  profiles:
-  #    active: pord
+#  profiles:
+#    active: dev
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
