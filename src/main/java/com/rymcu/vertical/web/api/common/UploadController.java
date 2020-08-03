@@ -33,7 +33,7 @@ public class UploadController {
 
     private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";
     private final static String UPLOAD_URL = "/api/upload/file/batch";
-    public static final String ctxHeadPicPath = "/usr/local/src/tomcat-hp/webapps/vertical";
+    public static final String ctxHeadPicPath = "/usr/local/src/nebula/static";
 
     @PostMapping("/file")
     public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile,@RequestParam(defaultValue = "1")Integer type, HttpServletRequest request){

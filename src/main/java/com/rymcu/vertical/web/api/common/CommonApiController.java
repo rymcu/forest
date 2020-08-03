@@ -43,14 +43,14 @@ public class CommonApiController {
     @GetMapping("/get-email-code")
     public GlobalResult<Map<String, String>> getEmailCode(@RequestParam("email") String email) throws MessagingException {
         Map<String, String> map = new HashMap<>(1);
-        map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
+        map.put("message", GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
             map.put("message","该邮箱已被注册！");
         } else {
             Integer result = javaMailService.sendEmailCode(email);
             if(result == 0){
-                map.put("message",GlobalResultMessage.SEND_FAIL.getMessage());
+                map.put("message", GlobalResultMessage.SEND_FAIL.getMessage());
             }
         }
         return GlobalResultGenerator.genSuccessResult(map);
@@ -60,12 +60,12 @@ public class CommonApiController {
     @GetMapping("/get-forget-password-email")
     public GlobalResult<Map<Object, Object>> getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
         Map<Object, Object> map = new HashMap<>(1);
-        map.put("message",GlobalResultMessage.SEND_SUCCESS.getMessage());
+        map.put("message", GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
             Integer result = javaMailService.sendForgetPasswordEmail(email);
             if(result == 0){
-                map.put("message",GlobalResultMessage.SEND_FAIL.getMessage());
+                map.put("message", GlobalResultMessage.SEND_FAIL.getMessage());
             }
         } else {
             map.put("message","该邮箱未注册！");
@@ -92,9 +92,9 @@ public class CommonApiController {
 
     @GetMapping("/articles")
     @VisitLogger
-    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText, @RequestParam(defaultValue = "") String tag){
+    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO){
         PageHelper.startPage(page, rows);
-        List<ArticleDTO> list = articleService.findArticles(searchText,tag);
+        List<ArticleDTO> list = articleService.findArticles(searchDTO);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
         Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);

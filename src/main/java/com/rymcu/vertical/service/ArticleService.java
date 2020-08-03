@@ -2,6 +2,7 @@ package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
 import com.rymcu.vertical.dto.ArticleDTO;
+import com.rymcu.vertical.dto.ArticleSearchDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 
@@ -17,11 +18,10 @@ public interface ArticleService extends Service<Article> {
 
     /**
      * 根据检索内容/标签查询文章列表
-     * @param searchText
-     * @param tag
+     * @param searchDTO
      * @return
      * */
-    List<ArticleDTO> findArticles(String searchText, String tag);
+    List<ArticleDTO> findArticles(ArticleSearchDTO searchDTO);
 
     /**
      * 查询文章详情信息
