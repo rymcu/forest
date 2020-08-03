@@ -19,9 +19,10 @@ public interface ArticleMapper extends Mapper<Article> {
      * 获取文章列表
      * @param searchText
      * @param tag
+     * @param topicUri
      * @return
      */
-    List<ArticleDTO> selectArticles(@Param("searchText") String searchText, @Param("tag") String tag);
+    List<ArticleDTO> selectArticles(@Param("searchText") String searchText, @Param("tag") String tag, @Param("topicUri") String topicUri);
 
     /**
      * 根据文章 ID 查询文章
