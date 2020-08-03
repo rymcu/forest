@@ -48,8 +48,12 @@ public class NotificationController {
     }
 
     @PutMapping("/read/{id}")
-    public void read(@PathVariable Integer id) {
-        notificationService.readNotification(id);
+    public GlobalResult read(@PathVariable Integer id) {
+        Integer result = notificationService.readNotification(id);
+        if (result == 0) {
+            return GlobalResultGenerator.genErrorResult("标记已读失败");
+        }
+        return GlobalResultGenerator.genSuccessResult("标记已读成功");
     }
 
 }

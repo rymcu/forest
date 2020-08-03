@@ -48,5 +48,5 @@ public interface NotificationService extends Service<Notification> {
      * 标记消息已读
      * @param id
      */
-    void readNotification(Integer id);
+    Integer readNotification(Integer id);
 }

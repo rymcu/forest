@@ -5,6 +5,7 @@ import com.rymcu.vertical.entity.Notification;
 import com.rymcu.vertical.mapper.NotificationMapper;
 import com.rymcu.vertical.service.NotificationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -36,12 +37,14 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer save(Integer idUser, Integer dataId, String dataType, String dataSummary) {
         return notificationMapper.insertNotification(idUser,dataId,dataType,dataSummary);
     }
 
     @Override
-    public void readNotification(Integer id) {
-        notificationMapper.readNotification(id);
+    @Transactional(rollbackFor = Exception.class)
+    public Integer readNotification(Integer id) {
+        return notificationMapper.readNotification(id);
     }
 }
