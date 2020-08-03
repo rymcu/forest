@@ -82,6 +82,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             newTopic.setTopicStatus(topic.getTopicStatus());
             newTopic.setTopicSort(topic.getTopicSort());
             newTopic.setTopicDescription(topic.getTopicDescription());
+            newTopic.setTopicDescriptionHtml(topic.getTopicDescriptionHtml());
             newTopic.setCreatedTime(new Date());
             newTopic.setUpdatedTime(topic.getCreatedTime());
             result = topicMapper.insertSelective(newTopic);
@@ -89,7 +90,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             topic.setCreatedTime(new Date());
             result = topicMapper.update(topic.getIdTopic(),topic.getTopicTitle(),topic.getTopicUri()
                     ,topic.getTopicIconPath(),topic.getTopicNva(),topic.getTopicStatus()
-                    ,topic.getTopicSort(),topic.getTopicDescription());
+                    ,topic.getTopicSort(),topic.getTopicDescription(),topic.getTopicDescriptionHtml());
         }
         if (result == 0) {
             map.put("message","操作失败!");
