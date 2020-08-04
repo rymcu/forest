@@ -1,8 +1,8 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.NotificationDTO;
 import com.rymcu.vertical.entity.Notification;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public interface NotificationService extends Service<Notification> {
      * @param idUser
      * @return
      */
-    List<Notification> findNotifications(Integer idUser);
+    List<NotificationDTO> findNotifications(Integer idUser);
 
     /**
      * 获取消息数据

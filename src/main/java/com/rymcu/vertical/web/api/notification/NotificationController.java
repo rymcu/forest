@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.dto.NotificationDTO;
 import com.rymcu.vertical.entity.Notification;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.service.NotificationService;
@@ -31,9 +32,9 @@ public class NotificationController {
     public GlobalResult notifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         User user = UserUtils.getWxCurrentUser();
         PageHelper.startPage(page, rows);
-        List<Notification> list = notificationService.findNotifications(user.getIdUser());
-        PageInfo<Notification> pageInfo = new PageInfo(list);
-        Map map = Utils.getNotificationsGlobalResult(pageInfo);
+        List<NotificationDTO> list = notificationService.findNotifications(user.getIdUser());
+        PageInfo<NotificationDTO> pageInfo = new PageInfo(list);
+        Map map = Utils.getNotificationDTOsGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

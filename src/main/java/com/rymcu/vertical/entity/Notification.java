@@ -43,7 +43,7 @@ public class Notification implements Serializable,Cloneable {
      * 数据摘要
      */
     @Column(name = "data_summary")
-    private String dataSummary ;
+    private String dataSummary;
     /**
      * 是否已读
      */
