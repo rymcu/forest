@@ -67,7 +67,7 @@ public class WxMenuController {
         WxMenuButton button31 = new WxMenuButton();
         button31.setType(MenuButtonType.VIEW);
         button31.setName("51单片机");
-        button31.setUrl("https://rymcu.com/vertical/portfolio/8");
+        button31.setUrl("https://rymcu.com/portfolio/8");
 
 //        WxMenuButton button34 = new WxMenuButton();
 //        button34.setType(MenuButtonType.VIEW);
