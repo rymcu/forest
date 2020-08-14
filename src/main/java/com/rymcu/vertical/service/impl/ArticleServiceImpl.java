@@ -141,7 +141,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticleStatus(article.getArticleStatus());
             articleMapper.insertSelective(newArticle);
             articleMapper.insertArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
-            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus())) {
+            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus()) && articleContent.length() > MAX_PREVIEW * 3) {
                 BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
             }
         } else {
@@ -155,7 +155,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticleStatus(article.getArticleStatus());
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
-            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus())) {
+            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus()) && articleContent.length() > MAX_PREVIEW * 3) {
                 BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
             }
         }
