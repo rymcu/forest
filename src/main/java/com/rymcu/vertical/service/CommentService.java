@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author ronger
+ */
 public interface CommentService extends Service<Comment> {
 
     List<CommentDTO> getArticleComments(Integer idArticle);

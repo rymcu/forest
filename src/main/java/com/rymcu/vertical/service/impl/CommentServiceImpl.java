@@ -83,7 +83,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
         comment.setCreatedTime(new Date());
         commentMapper.insertSelective(comment);
         StringBuilder commentSharpUrl = new StringBuilder(article.getArticlePermalink());
-        commentSharpUrl.append("/comment/").append(comment.getIdComment());
+        commentSharpUrl.append("#comment-").append(comment.getIdComment());
         commentMapper.updateCommentSharpUrl(comment.getIdComment(), commentSharpUrl.toString());
 
         String commentContent = comment.getCommentContent();
