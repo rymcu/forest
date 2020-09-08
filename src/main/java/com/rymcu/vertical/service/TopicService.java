@@ -22,11 +22,9 @@ public interface TopicService extends Service<Topic> {
     /**
      * 根据 topicUri 获取主题信息及旗下标签数据
      * @param topicUri 主题 URI
-     * @param page
-     * @param rows
      * @return
      * */
-    Map findTopicByTopicUri(String topicUri, Integer page, Integer rows);
+    Topic findTopicByTopicUri(String topicUri);
 
     /**
      * 新增/更新主题信息
@@ -56,4 +54,13 @@ public interface TopicService extends Service<Topic> {
      * @return
      */
     Map unbindTopicTag(TopicTagDTO topicTag);
+
+    /**
+     * 获取主题下标签列表
+     * @param topicUri
+     * @param page
+     * @param rows
+     * @return
+     */
+    Map findTagsByTopicUri(String topicUri, Integer page, Integer rows);
 }

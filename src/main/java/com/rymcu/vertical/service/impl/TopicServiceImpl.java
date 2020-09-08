@@ -37,23 +37,10 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     }
 
     @Override
-    public Map findTopicByTopicUri(String topicUri, Integer page, Integer rows) {
-        Map map = new HashMap(2);
-        TopicDTO topic = topicMapper.selectTopicByTopicUri(topicUri);
-        if (topic == null) {
-            return map;
-        }
-        PageHelper.startPage(page, rows);
-        List<TagDTO> list = topicMapper.selectTopicTag(topic.getIdTopic());
-        PageInfo pageInfo = new PageInfo(list);
-        topic.setTags(pageInfo.getList());
-        map.put("topic", topic);
-        Map pagination = new HashMap(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
-        map.put("pagination", pagination);
-        return map;
+    public Topic findTopicByTopicUri(String topicUri) {
+        Topic searchTopic = new Topic();
+        searchTopic.setTopicUri(topicUri);
+        return topicMapper.selectOne(searchTopic);
     }
 
     @Override
@@ -131,6 +118,25 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
         } else {
             map.put("topicTag", topicTag);
         }
+        return map;
+    }
+
+    @Override
+    public Map findTagsByTopicUri(String topicUri, Integer page, Integer rows) {
+        Map map = new HashMap(2);
+        TopicDTO topic = topicMapper.selectTopicByTopicUri(topicUri);
+        if (topic == null) {
+            return map;
+        }
+        PageHelper.startPage(page, rows);
+        List<TagDTO> list = topicMapper.selectTopicTag(topic.getIdTopic());
+        PageInfo pageInfo = new PageInfo(list);
+        map.put("tags", pageInfo.getList());
+        Map pagination = new HashMap(3);
+        pagination.put("pageSize",pageInfo.getPageSize());
+        pagination.put("total",pageInfo.getTotal());
+        pagination.put("currentPage",pageInfo.getPageNum());
+        map.put("pagination", pagination);
         return map;
     }
 }

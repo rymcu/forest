@@ -73,7 +73,7 @@
     <select id="selectUnbindTagsById" resultMap="TagResultMap">
         select * from vertical_tag vt where not exists(select * from vertical_topic_tag vtt where vtt.id_topic = #{idTopic} and vtt.id_tag = vt.id)
         <if test="tagTitle != '' and tagTitle != null">
-            and vt.tag_title = #{tagTitle}
+            and LOCATE(#{tagTitle}, vt.tag_title) > 0
         </if>
         order by vt.created_time desc
     </select>
