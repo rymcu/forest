@@ -55,7 +55,7 @@
     </insert>
     <update id="update">
         update vertical_topic set topic_title = #{topicTitle},topic_uri = #{topicUri},topic_icon_path = #{topicIconPath}, updated_time = sysdate(),
-        ,topic_nva = #{topicNva},topic_status = #{topicStatus},topic_sort = #{topicSort},topic_description = #{topicDescription},topic_description_html = #{topicDescriptionHtml}
+        topic_nva = #{topicNva},topic_status = #{topicStatus},topic_sort = #{topicSort},topic_description = #{topicDescription},topic_description_html = #{topicDescriptionHtml}
         where id = #{idTopic}
     </update>
     <delete id="deleteTopicTag">
