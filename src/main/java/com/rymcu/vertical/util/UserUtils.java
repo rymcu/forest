@@ -25,7 +25,7 @@ public class UserUtils {
      * 通过token获取当前用户的信息
      * @return
      */
-    public static User getWxCurrentUser() throws BaseApiException {
+    public static User getCurrentUserByToken() throws BaseApiException {
         String authHeader = ContextHolderUtils.getRequest().getHeader(JwtConstants.AUTHORIZATION);
         if (authHeader == null) {
             return null;
