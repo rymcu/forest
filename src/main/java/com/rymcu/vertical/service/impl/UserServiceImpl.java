@@ -182,6 +182,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         if (StringUtils.isNotBlank(user.getAvatarType()) && avatarSvgType.equals(user.getAvatarType())) {
             String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), 0);
             user.setAvatarUrl(avatarUrl);
+            user.setAvatarType("0");
         }
         Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),
                 user.getEmail(),user.getPhone(),user.getSignature(), user.getSex());
