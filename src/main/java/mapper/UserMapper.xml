@@ -66,7 +66,7 @@
         where id = #{idUser}
     </update>
     <update id="updateLastLoginTime">
-        update vertical_user set last_login_time = sysdate where id = #{idUser}
+        update vertical_user set last_login_time = sysdate() where id = #{idUser}
     </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
