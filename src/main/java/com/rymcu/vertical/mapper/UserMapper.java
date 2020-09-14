@@ -113,4 +113,11 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     Author selectAuthor(@Param("id") Integer id);
+
+    /**
+     * 更新用户最后登录时间
+     * @param idUser
+     * @return
+     */
+    Integer updateLastLoginTime(@Param("idUser") Integer idUser);
 }

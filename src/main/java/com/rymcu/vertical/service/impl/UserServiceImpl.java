@@ -100,8 +100,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         user = userMapper.selectOne(user);
         if(user != null){
             if(Utils.comparePwd(password, user.getPassword())){
-                user.setLastLoginTime(new Date());
-                userMapper.updateByPrimaryKeySelective(user);
+                userMapper.updateLastLoginTime(user.getIdUser());
                 TokenUser tokenUser = new TokenUser();
                 BeanCopierUtil.copy(user, tokenUser);
                 tokenUser.setToken(tokenManager.createToken(account));
