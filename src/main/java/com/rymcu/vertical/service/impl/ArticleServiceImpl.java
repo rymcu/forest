@@ -118,7 +118,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String articleTags = article.getArticleTags();
         String articleContent = article.getArticleContent();
         String articleContentHtml = article.getArticleContentHtml();
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         String reservedTag = checkTags(articleTags);
         boolean notification = false;
         if (StringUtils.isNotBlank(reservedTag)) {
@@ -249,7 +249,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public Map share(Integer id) throws BaseApiException {
         Article article = articleMapper.selectByPrimaryKey(id);
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
         shareUrl.append("?s=").append(user.getNickname());
         Map map = new HashMap(1);
@@ -259,7 +259,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     public List<ArticleDTO> findDrafts() throws BaseApiException {
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         List<ArticleDTO> list = articleMapper.selectDrafts(user.getIdUser());
         list.forEach(article -> {
             genArticle(article, 0);

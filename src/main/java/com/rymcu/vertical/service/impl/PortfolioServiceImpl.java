@@ -62,7 +62,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
 
     @Override
     public Portfolio postPortfolio(Portfolio portfolio) throws BaseApiException {
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
             portfolio.setPortfolioAuthorId(user.getIdUser());
             portfolio.setCreatedTime(new Date());
@@ -78,7 +78,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     @Override
     public Map findUnbindArticles(Integer page, Integer rows, String searchText, Integer idPortfolio) throws BaseApiException {
         Map map = new HashMap(1);
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
         if (portfolio == null) {
             map.put("message", "该作品集不存在或已被删除!");

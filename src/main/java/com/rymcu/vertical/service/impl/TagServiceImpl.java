@@ -39,7 +39,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Override
     @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
     public Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException {
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         String articleTags = article.getArticleTags();
         if(StringUtils.isNotBlank(articleTags)){
             String[] tags = articleTags.split(",");
