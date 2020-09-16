@@ -114,6 +114,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             map.put("message", "正文不能为空！");
             return map;
         }
+        boolean isUpdate = false;
         String articleTitle = article.getArticleTitle();
         String articleTags = article.getArticleTags();
         String articleContent = article.getArticleContent();
@@ -141,10 +142,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticleStatus(article.getArticleStatus());
             articleMapper.insertSelective(newArticle);
             articleMapper.insertArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
-            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus()) && articleContent.length() >= MAX_PREVIEW) {
-                BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
-            }
         } else {
+            isUpdate = true;
             newArticle = articleMapper.selectByPrimaryKey(article.getIdArticle());
             if (!user.getIdUser().equals(newArticle.getArticleAuthorId())) {
                 map.put("message", "非法访问！");
@@ -155,9 +154,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticleStatus(article.getArticleStatus());
             newArticle.setUpdatedTime(new Date());
             articleMapper.updateArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
-            if (!ProjectConstant.ENV.equals(env) && defaultStatus.equals(newArticle.getArticleStatus()) && articleContent.length() >= MAX_PREVIEW) {
-                BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
-            }
         }
 
         if (notification && defaultStatus.equals(newArticle.getArticleStatus())) {
@@ -183,6 +179,17 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
         articleMapper.updateByPrimaryKeySelective(newArticle);
+
+        // 推送百度 SEO
+        if (!ProjectConstant.ENV.equals(env)
+                && defaultStatus.equals(newArticle.getArticleStatus())
+                && articleContent.length() >= MAX_PREVIEW) {
+            if (isUpdate) {
+                BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
+            } else {
+                BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
+            }
+        }
 
         map.put("id", newArticle.getIdArticle());
         return map;
