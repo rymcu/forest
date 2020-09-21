@@ -232,9 +232,11 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     public Map delete(Integer id) {
         Map<String, String> map = new HashMap(1);
         Integer result;
+        Article article = articleMapper.selectByPrimaryKey(id);
         // 删除引用标签记录
         result = articleMapper.deleteTagArticle(id);
-        if (result > 0) {
+        // 无标签情况下无法删除文章问题修复
+        if (result > 0 || StringUtils.isBlank(article.getArticleTags())) {
             result = articleMapper.deleteByPrimaryKey(id);
             if (result < 1) {
                 map.put("message", "删除失败!");
