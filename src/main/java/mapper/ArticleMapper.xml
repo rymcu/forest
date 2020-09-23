@@ -78,7 +78,13 @@
         delete from vertical_tag_article where id = #{idArticleTag}
     </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id where article_status = '0' order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
+        where article_status = '0'
+        <if test="topicUri != 'news'">
+            and art.id not in (select id_article from vertical_tag_article vta
+            join vertical_tag vt on vta.id_tag = vt.id where vt.tag_title = '划水')
+        </if>
+        order by updated_time desc
     </select>
     <select id="selectArticleDTOById" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id where art.id = #{id}
