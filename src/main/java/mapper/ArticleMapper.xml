@@ -71,6 +71,9 @@
     <update id="updateArticleViewCount">
         update vertical_article set article_view_count = #{articleViewCount} where id = #{id}
     </update>
+    <update id="updateArticleTags">
+        update vertical_article set article_tags = #{tags} where id = #{idArticle}
+    </update>
     <delete id="deleteTagArticle">
         delete from vertical_tag_article where id_article = #{id}
     </delete>

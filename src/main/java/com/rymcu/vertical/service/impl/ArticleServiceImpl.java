@@ -25,10 +25,7 @@ import tk.mybatis.mapper.entity.Condition;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ronger
@@ -292,6 +289,23 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             genArticle(article, 0);
         });
         return list;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map updateTags(Integer idArticle, String tags) throws UnsupportedEncodingException, BaseApiException {
+        Map map = new HashMap(2);
+        Article article = articleMapper.selectByPrimaryKey(idArticle);
+        if (Objects.nonNull(article)) {
+            article.setArticleTags(tags);
+            articleMapper.updateArticleTags(idArticle, tags);
+            tagService.saveTagArticle(article);
+            map.put("success", true);
+        } else {
+            map.put("success", false);
+            map.put("message", "更新失败,文章不存在!");
+        }
+        return map;
     }
 
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {

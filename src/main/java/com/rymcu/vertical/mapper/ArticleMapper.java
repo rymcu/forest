@@ -136,4 +136,12 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     List<PortfolioArticleDTO> selectPortfolioArticles(@Param("idArticle") Integer idArticle);
+
+    /**
+     * 更新文章标签
+     * @param idArticle
+     * @param tags
+     * @return
+     */
+    Integer updateArticleTags(@Param("idArticle") Integer idArticle, @Param("tags") String tags);
 }
