@@ -22,6 +22,7 @@ spring:
         max-idle: 500
         min-idle: 0
   datasource:
+    drud:
     url: jdbc:mysql://localhost:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
     username: root
     password: # 数据库密码
