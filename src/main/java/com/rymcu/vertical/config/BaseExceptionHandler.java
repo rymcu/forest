@@ -23,6 +23,8 @@ import java.util.Map;
 
 /**
  * 全局异常处理器
+ *
+ * @author ronger
  * */
 @RestControllerAdvice
 public class BaseExceptionHandler {
@@ -46,7 +48,8 @@ public class BaseExceptionHandler {
                 result.setCode(1000002);
                 result.setMessage("用户无权限");
                 logger.info("用户无权限");
-            }else if (ex instanceof ServiceException) {//业务失败的异常，如“账号或密码错误”
+            }else if (ex instanceof ServiceException) {
+                //业务失败的异常，如“账号或密码错误”
                 result.setCode(((ServiceException) ex).getCode());
                 result.setMessage(ex.getMessage());
                 logger.info(ex.getMessage());
@@ -88,7 +91,8 @@ public class BaseExceptionHandler {
             } else if (ex instanceof UnauthorizedException) {
                 attributes.put("code", "1000002");
                 attributes.put("message", "用户无权限");
-            } else if (ex instanceof ServiceException) {//业务失败的异常，如“账号或密码错误”
+            } else if (ex instanceof ServiceException) {
+                //业务失败的异常，如“账号或密码错误”
                 attributes.put("code",((ServiceException) ex).getCode());
                 attributes.put("message",ex.getMessage());
                 logger.info(ex.getMessage());

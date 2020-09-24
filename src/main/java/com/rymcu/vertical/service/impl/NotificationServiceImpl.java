@@ -5,20 +5,20 @@ import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.dto.NotificationDTO;
 import com.rymcu.vertical.entity.Comment;
+import com.rymcu.vertical.entity.Follow;
 import com.rymcu.vertical.entity.Notification;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.NotificationMapper;
-import com.rymcu.vertical.service.ArticleService;
-import com.rymcu.vertical.service.CommentService;
-import com.rymcu.vertical.service.NotificationService;
-import com.rymcu.vertical.service.UserService;
+import com.rymcu.vertical.service.*;
 import com.rymcu.vertical.util.BeanCopierUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author ronger
@@ -34,6 +34,10 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     private CommentService commentService;
     @Resource
     private UserService userService;
+    @Resource
+    private FollowService followService;
+    @Value("${resource.domain}")
+    private String domain;
 
     @Override
     public List<Notification> findUnreadNotifications(Integer idUser) {
@@ -58,6 +62,7 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
         ArticleDTO article;
         Comment comment;
         User user;
+        Follow follow;
         switch (notification.getDataType()) {
             case "0":
                 // 系统公告/帖子
@@ -69,6 +74,11 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
                 break;
             case "1":
                 // 关注
+                follow = followService.findById(notification.getDataId().toString());
+                notificationDTO.setDataTitle("关注提醒");
+                user = userService.findById(follow.getFollowerId().toString());
+                notificationDTO.setDataUrl(getFollowLink(follow.getFollowingType(), user.getNickname()));
+                notificationDTO.setAuthor(genAuthor(user));
                 break;
             case "2":
                 // 回帖
@@ -79,8 +89,23 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
                 user = userService.findById(comment.getCommentAuthorId().toString());
                 notificationDTO.setAuthor(genAuthor(user));
                 break;
+            default:
+                break;
         }
         return notificationDTO;
+    }
+
+    private String getFollowLink(String followingType, String id) {
+        StringBuilder url = new StringBuilder();
+        url.append(domain);
+        switch (followingType) {
+            case "0":
+                url = url.append("/user/").append(id);
+                break;
+            default:
+                url.append("/notification");
+        }
+        return url.toString();
     }
 
     private Author genAuthor(User user) {

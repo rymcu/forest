@@ -9,26 +9,23 @@
         select count(*) from vertical_user
     </select>
     <select id="selectNewUserCount" resultType="java.lang.Integer">
-        select count(*) from vertical_user where created_time between date_sub(sysdate(),interval 1 day)
-            and date_sub(sysdate(),interval - 1 day)
+        select count(*) from vertical_user where created_time > str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d')
     </select>
     <select id="selectArticleCount" resultType="java.lang.Integer">
         select count(*) from vertical_article
     </select>
     <select id="selectNewArticleCount" resultType="java.lang.Integer">
-        select count(*) from vertical_article where created_time between date_sub(sysdate(),interval 1 day)
-            and date_sub(sysdate(),interval - 1 day)
+        select count(*) from vertical_article where created_time > str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d') and article_status = 0
     </select>
     <select id="selectCountViewNum" resultType="java.lang.Integer">
         select count(*) from vertical_visit
     </select>
     <select id="selectTodayViewNum" resultType="java.lang.Integer">
-        select count(*) from vertical_visit where created_time between str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d')
-            and str_to_date(date_format(date_sub(sysdate(),interval - 1 day),'%Y-%m-%d'),'%Y-%m-%d')
+        select count(*) from vertical_visit where created_time > str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d')
     </select>
     <select id="selectLastThirtyDaysArticleData" resultMap="DashboardDataResultMap">
         select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label from vertical_article
-        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 30 day),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m-%d')
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 30 day),'%Y-%m-%d'),'%Y-%m-%d') and article_status = 0 GROUP BY date_format(created_time, '%Y-%m-%d')
     </select>
     <select id="selectLastThirtyDaysUserData" resultMap="DashboardDataResultMap">
         select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label from vertical_user
@@ -40,7 +37,7 @@
     </select>
     <select id="selectHistoryArticleData" resultMap="DashboardDataResultMap">
         select COUNT(*) as value, date_format(created_time, '%Y-%m') as label from vertical_article
-        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 1 year),'%Y-%m-%d'),'%Y-%m-%d') GROUP BY date_format(created_time, '%Y-%m')
+        where created_time > str_to_date(date_format(date_sub(sysdate(),interval + 1 year),'%Y-%m-%d'),'%Y-%m-%d') and article_status = 0 GROUP BY date_format(created_time, '%Y-%m')
     </select>
     <select id="selectHistoryUserData" resultMap="DashboardDataResultMap">
         select COUNT(*) as value, date_format(created_time, '%Y-%m') as label from vertical_user

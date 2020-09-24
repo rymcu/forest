@@ -37,11 +37,11 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     private ArticleMapper articleMapper;
 
     @Override
-    @Transactional(rollbackFor = { UnsupportedEncodingException.class,BaseApiException.class })
+    @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
     public Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException {
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         String articleTags = article.getArticleTags();
-        if(StringUtils.isNotBlank(articleTags)){
+        if (StringUtils.isNotBlank(articleTags)) {
             String[] tags = articleTags.split(",");
             List<ArticleTagDTO> articleTagDTOList = articleMapper.selectTags(article.getIdArticle());
             for (int i = 0; i < tags.length; i++) {
@@ -50,10 +50,10 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                 Tag tag = new Tag();
                 tag.setTagTitle(tags[i]);
                 tag = tagMapper.selectOne(tag);
-                if(tag == null){
+                if (tag == null) {
                     tag = new Tag();
                     tag.setTagTitle(tags[i]);
-                    tag.setTagUri(URLEncoder.encode(tag.getTagTitle(),"UTF-8"));
+                    tag.setTagUri(URLEncoder.encode(tag.getTagTitle(), "UTF-8"));
                     tag.setCreatedTime(new Date());
                     tag.setUpdatedTime(tag.getCreatedTime());
                     tag.setTagArticleCount(1);
@@ -61,31 +61,34 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     addTagArticle = true;
                     addUserTag = true;
                 } else {
-                    for(int m=0,n=articleTagDTOList.size()-1;m<n; m++) {
+                    int n = articleTagDTOList.size();
+                    for (int m = 0; m < n; m++) {
                         ArticleTagDTO articleTag = articleTagDTOList.get(m);
                         if (articleTag.getIdTag().equals(tag.getIdTag())) {
                             articleTagDTOList.remove(articleTag);
+                            m--;
+                            n--;
                         }
                     }
-                    Integer count = tagMapper.selectCountTagArticleById(tag.getIdTag(),article.getIdArticle());
-                    if(count == 0){
+                    Integer count = tagMapper.selectCountTagArticleById(tag.getIdTag(), article.getIdArticle());
+                    if (count == 0) {
                         tag.setTagArticleCount(tag.getTagArticleCount() + 1);
                         tagMapper.updateByPrimaryKeySelective(tag);
                         addTagArticle = true;
                     }
-                    Integer countUserTag = tagMapper.selectCountUserTagById(user.getIdUser(),tag.getIdTag());
-                    if(countUserTag == 0){
+                    Integer countUserTag = tagMapper.selectCountUserTagById(user.getIdUser(), tag.getIdTag());
+                    if (countUserTag == 0) {
                         addUserTag = true;
                     }
                 }
                 articleTagDTOList.forEach(articleTagDTO -> {
                     articleMapper.deleteUnusedArticleTag(articleTagDTO.getIdArticleTag());
                 });
-                if(addTagArticle){
-                    tagMapper.insertTagArticle(tag.getIdTag(),article.getIdArticle());
+                if (addTagArticle) {
+                    tagMapper.insertTagArticle(tag.getIdTag(), article.getIdArticle());
                 }
-                if(addUserTag){
-                    tagMapper.insertUserTag(tag.getIdTag(),user.getIdUser(),1);
+                if (addUserTag) {
+                    tagMapper.insertUserTag(tag.getIdTag(), user.getIdUser(), 1);
                 }
             }
             return 1;
@@ -109,14 +112,14 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         Map map = new HashMap(1);
         if (tag.getIdTag() == null) {
             if (StringUtils.isBlank(tag.getTagTitle())) {
-                map.put("message","标签名不能为空!");
+                map.put("message", "标签名不能为空!");
                 return map;
             } else {
                 Condition tagCondition = new Condition(Tag.class);
                 tagCondition.createCriteria().andCondition("tag_title =", tag.getTagTitle());
                 List<Tag> tags = tagMapper.selectByCondition(tagCondition);
                 if (!tags.isEmpty()) {
-                    map.put("message","标签 '" + tag.getTagTitle() + "' 已存在!");
+                    map.put("message", "标签 '" + tag.getTagTitle() + "' 已存在!");
                     return map;
                 }
             }
@@ -132,10 +135,10 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             result = tagMapper.insertSelective(newTag);
         } else {
             tag.setUpdatedTime(new Date());
-            result = tagMapper.update(tag.getIdTag(),tag.getTagUri(),tag.getTagIconPath(),tag.getTagStatus(),tag.getTagDescription(),tag.getTagReservation());
+            result = tagMapper.update(tag.getIdTag(), tag.getTagUri(), tag.getTagIconPath(), tag.getTagStatus(), tag.getTagDescription(), tag.getTagReservation());
         }
         if (result == 0) {
-            map.put("message","操作失败!");
+            map.put("message", "操作失败!");
         } else {
             map.put("tag", tag);
         }

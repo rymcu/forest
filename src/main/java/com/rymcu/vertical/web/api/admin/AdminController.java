@@ -109,11 +109,20 @@ public class AdminController {
     }
 
     @GetMapping("/topic/{topicUri}")
-    public GlobalResult topic(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows,@PathVariable String topicUri){
+    public GlobalResult topic(@PathVariable String topicUri){
         if (StringUtils.isBlank(topicUri)) {
             return GlobalResultGenerator.genErrorResult("数据异常!");
         }
-        Map map = topicService.findTopicByTopicUri(topicUri,page,rows);
+        Topic topic = topicService.findTopicByTopicUri(topicUri);
+        return GlobalResultGenerator.genSuccessResult(topic);
+    }
+
+    @GetMapping("/topic/{topicUri}/tags")
+    public GlobalResult topicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows,@PathVariable String topicUri){
+        if (StringUtils.isBlank(topicUri)) {
+            return GlobalResultGenerator.genErrorResult("数据异常!");
+        }
+        Map map = topicService.findTagsByTopicUri(topicUri,page,rows);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

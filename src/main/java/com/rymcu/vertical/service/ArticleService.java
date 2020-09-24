@@ -105,4 +105,12 @@ public interface ArticleService extends Service<Article> {
      * @return
      */
     List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser);
+
+    /**
+     * 更新文章标签
+     * @param idArticle
+     * @param tags
+     * @return
+     */
+    Map updateTags(Integer idArticle, String tags) throws UnsupportedEncodingException, BaseApiException;
 }

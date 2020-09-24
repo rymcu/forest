@@ -25,6 +25,7 @@ import java.util.Set;
 
 /**
  * 文件上传控制器
+ *
  * @author ronger
  */
 @RestController
@@ -36,22 +37,22 @@ public class UploadController {
     public static final String ctxHeadPicPath = "/usr/local/src/nebula/static";
 
     @PostMapping("/file")
-    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile,@RequestParam(defaultValue = "1")Integer type, HttpServletRequest request){
+    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
         if (multipartFile == null) {
             return GlobalResultGenerator.genErrorResult("请选择要上传的文件");
         }
         String typePath = getTypePath(type);
         //图片存储路径
-        String dir = ctxHeadPicPath+"/"+typePath;
+        String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
 
-        String localPath = Utils.getProperty("resource.file-path")+"/"+typePath+"/";
+        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
 
         String orgName = multipartFile.getOriginalFilename();
-        String fileName = System.currentTimeMillis()+"."+ FileUtils.getExtend(orgName).toLowerCase();
+        String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(orgName).toLowerCase();
 
         String savePath = file.getPath() + File.separator + fileName;
 
@@ -59,7 +60,7 @@ public class UploadController {
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
-            data.put("url", localPath+fileName);
+            data.put("url", localPath + fileName);
         } catch (IOException e) {
             data.put("message", "上传失败!");
         }
@@ -68,43 +69,43 @@ public class UploadController {
     }
 
     @PostMapping("/file/batch")
-    public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false)MultipartFile[] multipartFiles,@RequestParam(defaultValue = "1")Integer type,HttpServletRequest request){
+    public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
         String typePath = getTypePath(type);
         //图片存储路径
-        String dir = ctxHeadPicPath+"/"+typePath;
+        String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
 
-        String localPath = Utils.getProperty("resource.file-path")+"/"+typePath+"/";
+        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
         Map succMap = new HashMap(10);
         Set errFiles = new HashSet();
 
-        for(int i=0,len=multipartFiles.length;i<len;i++){
+        for (int i = 0, len = multipartFiles.length; i < len; i++) {
             MultipartFile multipartFile = multipartFiles[i];
             String orgName = multipartFile.getOriginalFilename();
-            String fileName = System.currentTimeMillis()+"."+FileUtils.getExtend(orgName).toLowerCase();
+            String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(orgName).toLowerCase();
 
             String savePath = file.getPath() + File.separator + fileName;
 
             File saveFile = new File(savePath);
             try {
                 FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
-                succMap.put(orgName,localPath+fileName);
+                succMap.put(orgName, localPath + fileName);
             } catch (IOException e) {
                 errFiles.add(orgName);
             }
         }
         Map data = new HashMap(2);
-        data.put("errFiles",errFiles);
-        data.put("succMap",succMap);
+        data.put("errFiles", errFiles);
+        data.put("succMap", succMap);
         return GlobalResultGenerator.genSuccessResult(data);
     }
 
     private static String getTypePath(Integer type) {
         String typePath;
-        switch (type){
+        switch (type) {
             case 0:
                 typePath = "avatar";
                 break;
@@ -123,7 +124,7 @@ public class UploadController {
     @GetMapping("/simple/token")
     public GlobalResult uploadSimpleToken(HttpServletRequest request) throws BaseApiException {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
-        if(StringUtils.isBlank(authHeader)){
+        if (StringUtils.isBlank(authHeader)) {
             throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
         TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
@@ -136,7 +137,7 @@ public class UploadController {
     @GetMapping("/token")
     public GlobalResult uploadToken(HttpServletRequest request) throws BaseApiException {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
-        if(StringUtils.isBlank(authHeader)){
+        if (StringUtils.isBlank(authHeader)) {
             throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
         TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
@@ -152,19 +153,19 @@ public class UploadController {
         }
         String typePath = getTypePath(type);
         //图片存储路径
-        String dir = ctxHeadPicPath+"/"+typePath;
+        String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
 
-        String localPath = Utils.getProperty("resource.file-path")+"/"+typePath+"/";
-        String fileName = System.currentTimeMillis()+".png";
+        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
+        String fileName = System.currentTimeMillis() + ".png";
         String savePath = file.getPath() + File.separator + fileName;
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(Base64.decodeBase64(fileStr.substring(fileStr.indexOf(",") + 1)), saveFile);
-            fileStr = localPath+fileName;
+            fileStr = localPath + fileName;
         } catch (IOException e) {
             fileStr = "上传失败!";
         }

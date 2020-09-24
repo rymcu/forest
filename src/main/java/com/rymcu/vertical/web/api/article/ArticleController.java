@@ -6,6 +6,7 @@ import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.CommentDTO;
+import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.CommentService;
 import com.rymcu.vertical.util.Utils;
@@ -77,6 +78,12 @@ public class ArticleController {
     @GetMapping("/{id}/share")
     public GlobalResult share(@PathVariable Integer id) throws BaseApiException {
         Map map = articleService.share(id);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PostMapping("/{id}/update-tags")
+    public GlobalResult updateTags(@PathVariable Integer id, @RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
+        Map map = articleService.updateTags(id, article.getArticleTags());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

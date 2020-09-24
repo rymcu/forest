@@ -54,8 +54,8 @@
         insert into vertical_topic_tag (id_topic, id_tag, created_time, updated_time) values (#{idTopic}, #{idTag}, sysdate(), sysdate())
     </insert>
     <update id="update">
-        update vertical_topic set topic_title = #{topicTitle},topic_uri = #{topicUri},topic_icon_path = #{topicIconPath}
-        ,topic_nva = #{topicNva},topic_status = #{topicStatus},topic_sort = #{topicSort},topic_description = #{topicDescription}
+        update vertical_topic set topic_title = #{topicTitle},topic_uri = #{topicUri},topic_icon_path = #{topicIconPath}, updated_time = sysdate(),
+        topic_nva = #{topicNva},topic_status = #{topicStatus},topic_sort = #{topicSort},topic_description = #{topicDescription},topic_description_html = #{topicDescriptionHtml}
         where id = #{idTopic}
     </update>
     <delete id="deleteTopicTag">
@@ -73,7 +73,7 @@
     <select id="selectUnbindTagsById" resultMap="TagResultMap">
         select * from vertical_tag vt where not exists(select * from vertical_topic_tag vtt where vtt.id_topic = #{idTopic} and vtt.id_tag = vt.id)
         <if test="tagTitle != '' and tagTitle != null">
-            and vt.tag_title = #{tagTitle}
+            and LOCATE(#{tagTitle}, vt.tag_title) > 0
         </if>
         order by vt.created_time desc
     </select>

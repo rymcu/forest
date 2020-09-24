@@ -30,7 +30,7 @@ public class NotificationController {
 
     @GetMapping("/all")
     public GlobalResult notifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         PageHelper.startPage(page, rows);
         List<NotificationDTO> list = notificationService.findNotifications(user.getIdUser());
         PageInfo<NotificationDTO> pageInfo = new PageInfo(list);
@@ -40,7 +40,7 @@ public class NotificationController {
 
     @GetMapping("/unread")
     public GlobalResult unreadNotification(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
-        User user = UserUtils.getWxCurrentUser();
+        User user = UserUtils.getCurrentUserByToken();
         PageHelper.startPage(page, rows);
         List<Notification> list = notificationService.findUnreadNotifications(user.getIdUser());
         PageInfo<Notification> pageInfo = new PageInfo(list);

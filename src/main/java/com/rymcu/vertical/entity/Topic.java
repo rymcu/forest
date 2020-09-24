@@ -42,5 +42,7 @@ public class Topic {
     private Date createdTime;
     /** 更新时间 */
     private Date updatedTime;
+    /** 专题描述 Html */
+    private String topicDescriptionHtml;
 
 }

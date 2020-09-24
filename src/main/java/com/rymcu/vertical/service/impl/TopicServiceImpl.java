@@ -37,23 +37,10 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     }
 
     @Override
-    public Map findTopicByTopicUri(String topicUri, Integer page, Integer rows) {
-        Map map = new HashMap(2);
-        TopicDTO topic = topicMapper.selectTopicByTopicUri(topicUri);
-        if (topic == null) {
-            return map;
-        }
-        PageHelper.startPage(page, rows);
-        List<TagDTO> list = topicMapper.selectTopicTag(topic.getIdTopic());
-        PageInfo pageInfo = new PageInfo(list);
-        topic.setTags(pageInfo.getList());
-        map.put("topic", topic);
-        Map pagination = new HashMap(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
-        map.put("pagination", pagination);
-        return map;
+    public Topic findTopicByTopicUri(String topicUri) {
+        Topic searchTopic = new Topic();
+        searchTopic.setTopicUri(topicUri);
+        return topicMapper.selectOne(searchTopic);
     }
 
     @Override
@@ -82,6 +69,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             newTopic.setTopicStatus(topic.getTopicStatus());
             newTopic.setTopicSort(topic.getTopicSort());
             newTopic.setTopicDescription(topic.getTopicDescription());
+            newTopic.setTopicDescriptionHtml(topic.getTopicDescriptionHtml());
             newTopic.setCreatedTime(new Date());
             newTopic.setUpdatedTime(topic.getCreatedTime());
             result = topicMapper.insertSelective(newTopic);
@@ -89,7 +77,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             topic.setCreatedTime(new Date());
             result = topicMapper.update(topic.getIdTopic(),topic.getTopicTitle(),topic.getTopicUri()
                     ,topic.getTopicIconPath(),topic.getTopicNva(),topic.getTopicStatus()
-                    ,topic.getTopicSort(),topic.getTopicDescription());
+                    ,topic.getTopicSort(),topic.getTopicDescription(),topic.getTopicDescriptionHtml());
         }
         if (result == 0) {
             map.put("message","操作失败!");
@@ -130,6 +118,25 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
         } else {
             map.put("topicTag", topicTag);
         }
+        return map;
+    }
+
+    @Override
+    public Map findTagsByTopicUri(String topicUri, Integer page, Integer rows) {
+        Map map = new HashMap(2);
+        TopicDTO topic = topicMapper.selectTopicByTopicUri(topicUri);
+        if (topic == null) {
+            return map;
+        }
+        PageHelper.startPage(page, rows);
+        List<TagDTO> list = topicMapper.selectTopicTag(topic.getIdTopic());
+        PageInfo pageInfo = new PageInfo(list);
+        map.put("tags", pageInfo.getList());
+        Map pagination = new HashMap(3);
+        pagination.put("pageSize",pageInfo.getPageSize());
+        pagination.put("total",pageInfo.getTotal());
+        pagination.put("currentPage",pageInfo.getPageNum());
+        map.put("pagination", pagination);
         return map;
     }
 }
