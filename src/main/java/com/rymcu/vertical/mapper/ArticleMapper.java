@@ -144,4 +144,18 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     Integer updateArticleTags(@Param("idArticle") Integer idArticle, @Param("tags") String tags);
+
+    /**
+     * 判断是否有评论
+     * @param id
+     * @return
+     */
+    boolean existsCommentWithPrimaryKey(@Param("id") Integer id);
+
+    /**
+     * 删除关联作品集数据
+     * @param id
+     * @return
+     */
+    Integer deleteLinkedPortfolioData(@Param("id") Integer id);
 }

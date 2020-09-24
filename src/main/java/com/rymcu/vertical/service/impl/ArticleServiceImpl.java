@@ -229,19 +229,27 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     public Map delete(Integer id) {
         Map<String, String> map = new HashMap(1);
         Integer result;
-        Article article = articleMapper.selectByPrimaryKey(id);
-        // 删除引用标签记录
-        result = articleMapper.deleteTagArticle(id);
-        // 无标签情况下无法删除文章问题修复
-        if (result > 0 || StringUtils.isBlank(article.getArticleTags())) {
+        // 判断是否有评论
+        boolean isHavComment = articleMapper.existsCommentWithPrimaryKey(id);
+        if (isHavComment) {
+            map.put("message", "已有评论的文章不允许删除!");
+        } else {
+            // 删除关联数据(作品集关联关系,标签关联关系)
+            deleteLinkedData(id);
+            // 删除文章
             result = articleMapper.deleteByPrimaryKey(id);
             if (result < 1) {
                 map.put("message", "删除失败!");
             }
-        } else {
-            map.put("message", "删除失败!");
         }
         return map;
+    }
+
+    private void deleteLinkedData(Integer id) {
+        // 删除关联作品集
+        articleMapper.deleteLinkedPortfolioData(id);
+        // 删除引用标签记录
+        articleMapper.deleteTagArticle(id);
     }
 
     @Override
