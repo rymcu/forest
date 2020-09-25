@@ -87,12 +87,13 @@
         select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
         where article_status = '0'
         <if test="topicUri != 'news'">
-            and FIND_IN_SET("划水",art.article_tags) = 0
+            and FIND_IN_SET('划水',art.article_tags) = 0
         </if>
         order by updated_time desc
     </select>
     <select id="selectArticleDTOById" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id where art.id = #{id}
+        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id
+        = su.id where art.id = #{id}
         <if test="type == 1">
             and art.article_status = 0
         </if>
@@ -117,7 +118,7 @@
         select vta.id, vta.id_tag, vta.id_article, vt.tag_title, vt.tag_icon_path, vt.tag_uri, vt.tag_description from vertical_tag vt join vertical_tag_article vta on vt.id = vta.id_tag where vta.id_article = #{idArticle}
     </select>
     <select id="selectDrafts" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article asdfasd  art join vertical_user su on art.article_author_id = su.id where article_status = '1' and art.article_author_id = #{idUser} order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id where article_status = '1' and art.article_author_id = #{idUser} order by updated_time desc
     </select>
     <select id="selectArticlesByIdPortfolio" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url,vpa.sort_no from vertical_article art join vertical_portfolio_article vpa on vpa.id_vertical_article = art.id and vpa.id_vertical_portfolio = #{idPortfolio}
