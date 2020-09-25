@@ -87,8 +87,7 @@
         select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
         where article_status = '0'
         <if test="topicUri != 'news'">
-            and not exists (select * from vertical_tag_article vta where vta.id_article = art.id
-            and exists (select * from vertical_tag vt where vta.id_tag = vt.id and vt.tag_title = '划水'))
+            and FIND_IN_SET("划水",art.article_tags) = 0
         </if>
         order by updated_time desc
     </select>
