@@ -87,7 +87,7 @@
         select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
         where article_status = '0'
         <if test="topicUri != 'news'">
-            and FIND_IN_SET("划水",art.article_tags) = 0
+            and FIND_IN_SET('划水',art.article_tags) = 0
         </if>
         order by updated_time desc
     </select>
