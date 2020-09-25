@@ -1,0 +1,93 @@
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKRz2GbHzAzGJYAqsHFWwmYaROlXuNZAQdsXMdIaAXPg45bKSVMUwvZyaoTJQY5EOUcrmcmIJkRxODmwtv+cSPkCAwEAAQ==
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: #
+    database: 1
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 500
+        min-idle: 0
+  datasource:
+    druid:
+      url: jdbc:mysql://120.26.175.127:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
+      username: root
+      password: CPIStU9MEt7EGOdjSZzxbHk1iZvN1xQA+AlIjOx0H0dQj84f0SILF7RolIxXB/FRFtYhDLO4nO3TjA/SY29hcg==
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      log-slow-sql: true
+      connection-properties: config.decrypt=true;config.decrypt.key=${publickey}
+      filters: config,stat,wall
+      max-pool-prepared-statement-per-connection-size: 100
+      stat-view-servlet:
+        enabled: true
+        allow:
+        login-username: admin
+        login-password: rymcu.Test1
+  resources:
+    add-mappings: true
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: 123123@163.com
+    password: 123123
+wx:
+  open:
+    componentAppId: #
+    componentSecret: #
+    componentToken: #
+    componentAesKey: #
+  mp:
+    configs:
+      - appId: #
+        secret: #
+        token: #
+        aesKey: #
+      - appId: #
+        secret: #
+        token: #
+        aesKey:
+  miniapp:
+    configs:
+      - appid: #
+        secret: #
+        token: #微信小程序消息服务器配置的token
+        aesKey: #微信小程序消息服务器配置的EncodingAESKey
+        msgDataFormat: JSON
+env: dev
+logging:
+  file:
+    path: /logs/vertical
+server:
+  port: 8092
+  servlet:
+    context-path: /vertical
+  max-http-header-size: 1048576
+version: 1.0
+resource:
+  domain: http://baudi.com
+  file-path: http://baidu.com/vertical
+baidu:
+  data:
+    site: https://baidu.com
+    token: #
+reserved-words: \u7cfb\u7edf\u516c\u544a\u002c\u516c\u544a
