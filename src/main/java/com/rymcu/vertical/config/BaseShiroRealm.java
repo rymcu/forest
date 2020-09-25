@@ -42,8 +42,6 @@ public class BaseShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        //Principal principal = (Principal) getAvailablePrincipal(principals);
-//        System.out.println("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         Principal principal =  (Principal)principals.getPrimaryPrincipal();
         User user = new User();
@@ -55,7 +53,7 @@ public class BaseShiroRealm extends AuthorizingRealm {
                     authorizationInfo.addRole(role.getInputCode());
                 }
             }
-            List<Permission> permissions = permissionService.selectMenuByUser(user);
+            List<Permission> permissions = permissionService.selectPermissionByUser(user);
             for (Permission perm : permissions) {
                 if (perm.getPermissionCategory() != null) {
                     authorizationInfo.addStringPermission(perm.getPermissionCategory());

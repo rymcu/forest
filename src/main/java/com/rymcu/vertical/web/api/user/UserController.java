@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.core.service.log.annotation.VisitLogger;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.PortfolioDTO;
 import com.rymcu.vertical.dto.UserDTO;
@@ -33,6 +34,7 @@ public class UserController {
     private PortfolioService portfolioService;
 
     @GetMapping("/{nickname}")
+    @VisitLogger
     public GlobalResult detail(@PathVariable String nickname){
         UserDTO userDTO = userService.findUserDTOByNickname(nickname);
         return GlobalResultGenerator.genSuccessResult(userDTO);

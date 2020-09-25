@@ -2,6 +2,7 @@ package com.rymcu.vertical.util;
 
 import com.github.pagehelper.PageInfo;
 import com.rymcu.vertical.dto.ArticleDTO;
+import com.rymcu.vertical.dto.NotificationDTO;
 import com.rymcu.vertical.entity.Notification;
 import com.rymcu.vertical.entity.User;
 import org.apache.shiro.SecurityUtils;
@@ -181,5 +182,16 @@ public class Utils {
         }
 
         return ip;
+    }
+
+    public static Map getNotificationDTOsGlobalResult(PageInfo<NotificationDTO> pageInfo) {
+        Map map = new HashMap(2);
+        map.put("notifications", pageInfo.getList());
+        Map pagination = new HashMap(4);
+        pagination.put("pageSize",pageInfo.getPageSize());
+        pagination.put("total",pageInfo.getTotal());
+        pagination.put("currentPage",pageInfo.getPageNum());
+        map.put("pagination", pagination);
+        return map;
     }
 }

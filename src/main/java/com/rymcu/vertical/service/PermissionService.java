@@ -14,5 +14,10 @@ import java.util.List;
  */
 public interface PermissionService extends Service<Permission> {
 
-    List<Permission> selectMenuByUser(User sysUser);
+    /**
+     * 获取用户权限
+     * @param sysUser
+     * @return
+     */
+    List<Permission> selectPermissionByUser(User sysUser);
 }

@@ -23,6 +23,7 @@ import java.util.List;
 
 /**
  * Spring MVC 配置
+ *
  * @author ronger
  */
 @Configuration
@@ -49,7 +50,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
     /**
      * 解决跨域问题
-     * */
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -65,17 +66,18 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
     /**
      * 添加拦截器
-     * */
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(restAuthTokenInterceptor()).addPathPatterns("/api/**")
-                .excludePathPatterns("/api/v1/console/**","/api/v1/article/articles/**","/api/v1/article/detail/**","/api/v1/topic/**","/api/v1/user/**");
+                .excludePathPatterns("/api/v1/console/**", "/api/v1/article/articles/**", "/api/v1/article/detail/**"
+                        , "/api/v1/topic/**", "/api/v1/user/**", "/api/v1/article/*/comments");
 
     }
 
     /**
      * 访问静态资源
-     * */
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         /**
@@ -89,7 +91,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
         //将所有/static/** 访问都映射到classpath:/static/ 目录下
-        registry.addResourceHandler("/static/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX +"/static/");
+        registry.addResourceHandler("/static/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
         super.addResourceHandlers(registry);
     }
 }

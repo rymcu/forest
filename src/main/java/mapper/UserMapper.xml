@@ -65,6 +65,9 @@
         </if>
         where id = #{idUser}
     </update>
+    <update id="updateLastLoginTime">
+        update vertical_user set last_login_time = sysdate() where id = #{idUser}
+    </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
         select id, nickname, account, password, status from vertical_user where account = #{account} and status = 0

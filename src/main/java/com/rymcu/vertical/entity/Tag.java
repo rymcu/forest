@@ -44,4 +44,6 @@ public class Tag implements Serializable,Cloneable {
     private Date updatedTime;
     /** 保留标签 */
     private String tagReservation;
+    /** 描述 */
+    private String tagDescriptionHtml;
 }

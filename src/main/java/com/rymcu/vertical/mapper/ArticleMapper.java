@@ -19,9 +19,10 @@ public interface ArticleMapper extends Mapper<Article> {
      * 获取文章列表
      * @param searchText
      * @param tag
+     * @param topicUri
      * @return
      */
-    List<ArticleDTO> selectArticles(@Param("searchText") String searchText, @Param("tag") String tag);
+    List<ArticleDTO> selectArticles(@Param("searchText") String searchText, @Param("tag") String tag, @Param("topicUri") String topicUri);
 
     /**
      * 根据文章 ID 查询文章
@@ -135,4 +136,26 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     List<PortfolioArticleDTO> selectPortfolioArticles(@Param("idArticle") Integer idArticle);
+
+    /**
+     * 更新文章标签
+     * @param idArticle
+     * @param tags
+     * @return
+     */
+    Integer updateArticleTags(@Param("idArticle") Integer idArticle, @Param("tags") String tags);
+
+    /**
+     * 判断是否有评论
+     * @param id
+     * @return
+     */
+    boolean existsCommentWithPrimaryKey(@Param("id") Integer id);
+
+    /**
+     * 删除关联作品集数据
+     * @param id
+     * @return
+     */
+    Integer deleteLinkedPortfolioData(@Param("id") Integer id);
 }

@@ -17,10 +17,11 @@ import java.util.List;
 
 
 /**
- * Created by CodeGenerator on 2018/05/29.
+ *
+ * @author CodeGenerator
+ * @date 2018/05/29
  */
 @Service
-@Transactional
 public class PermissionServiceImpl extends AbstractService<Permission> implements PermissionService {
     @Resource
     private PermissionMapper permissionMapper;
@@ -29,7 +30,7 @@ public class PermissionServiceImpl extends AbstractService<Permission> implement
     private RoleService roleService;
 
     @Override
-    public List<Permission> selectMenuByUser(User sysUser) {
+    public List<Permission> selectPermissionByUser(User sysUser) {
         List<Permission> list = new ArrayList<Permission>();
         List<Role> roles = roleService.selectRoleByUser(sysUser);
         roles.forEach(role -> list.addAll(permissionMapper.selectMenuByIdRole(role.getIdRole())));
