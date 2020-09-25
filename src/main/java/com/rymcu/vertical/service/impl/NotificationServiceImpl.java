@@ -89,6 +89,16 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
                 user = userService.findById(comment.getCommentAuthorId().toString());
                 notificationDTO.setAuthor(genAuthor(user));
                 break;
+            case "3":
+                // 关注用户发布文章
+            case "4":
+                // 关注文章更新
+                article = articleService.findArticleDTOById(notification.getDataId(), 0);
+                notificationDTO.setDataTitle("关注通知");
+                notificationDTO.setDataUrl(article.getArticlePermalink());
+                user = userService.findById(article.getArticleAuthorId().toString());
+                notificationDTO.setAuthor(genAuthor(user));
+                break;
             default:
                 break;
         }

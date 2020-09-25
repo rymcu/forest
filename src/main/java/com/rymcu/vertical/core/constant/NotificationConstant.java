@@ -12,4 +12,8 @@ public class NotificationConstant {
 
     public static String Comment = "2";
 
+    public static String PostArticle = "3";
+
+    public static String UpdateArticle = "4";
+
 }

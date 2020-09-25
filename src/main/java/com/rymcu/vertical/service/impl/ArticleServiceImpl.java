@@ -140,8 +140,13 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             articleMapper.insertSelective(newArticle);
             articleMapper.insertArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
         } else {
-            isUpdate = true;
             newArticle = articleMapper.selectByPrimaryKey(article.getIdArticle());
+            // 如果文章之前状态为草稿则应视为新发布文章
+            if (defaultStatus.equals(newArticle.getArticleStatus())) {
+                isUpdate = true;
+            } else {
+                isUpdate = false;
+            }
             if (!user.getIdUser().equals(newArticle.getArticleAuthorId())) {
                 map.put("message", "非法访问！");
                 return map;
@@ -153,8 +158,22 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             articleMapper.updateArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
         }
 
-        if (notification && defaultStatus.equals(newArticle.getArticleStatus())) {
-            NotificationUtils.sendAnnouncement(newArticle.getIdArticle(), NotificationConstant.Article, newArticle.getArticleTitle());
+        // 发送相关通知
+        if (defaultStatus.equals(newArticle.getArticleStatus())) {
+            // 发送系统通知
+            if (notification) {
+                NotificationUtils.sendAnnouncement(newArticle.getIdArticle(), NotificationConstant.Article, newArticle.getArticleTitle());
+            } else {
+                // 发送关注通知
+                StringBuffer dataSummary = new StringBuffer();
+                if (isUpdate) {
+                    dataSummary.append(user.getNickname()).append("更新了文章: ").append(newArticle.getArticleTitle());
+                    NotificationUtils.sendArticlePush(newArticle.getIdArticle(), NotificationConstant.UpdateArticle, dataSummary.toString(), newArticle.getArticleAuthorId());
+                } else {
+                    dataSummary.append(user.getNickname()).append("发布了文章: ").append(newArticle.getArticleTitle());
+                    NotificationUtils.sendArticlePush(newArticle.getIdArticle(), NotificationConstant.PostArticle, dataSummary.toString(), newArticle.getArticleAuthorId());
+                }
+            }
         }
 
         tagService.saveTagArticle(newArticle);
@@ -175,7 +194,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             String articlePreviewContent = articleContentHtml.substring(0, length);
             newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
-        articleMapper.updateByPrimaryKeySelective(newArticle);
+        articleMapper.updateArticleLinkAndPreviewContent(newArticle.getIdArticle(), newArticle.getArticleLink(), newArticle.getArticlePermalink(), newArticle.getArticlePreviewContent());
 
         // 推送百度 SEO
         if (!ProjectConstant.ENV.equals(env)

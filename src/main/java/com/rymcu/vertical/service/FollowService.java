@@ -4,6 +4,8 @@ import com.rymcu.vertical.core.service.Service;
 import com.rymcu.vertical.entity.Follow;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 
+import java.util.List;
+
 /**
  * @author ronger
  */
@@ -32,4 +34,12 @@ public interface FollowService extends Service<Follow> {
      * @throws BaseApiException
      */
     Boolean cancelFollow(Follow follow) throws BaseApiException;
+
+    /**
+     * 获取关注用户者数据
+     * @param followType
+     * @param followingId
+     * @return
+     */
+    List<Follow> findByFollowingId(String followType, Integer followingId);
 }

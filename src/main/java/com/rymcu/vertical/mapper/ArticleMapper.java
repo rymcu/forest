@@ -158,4 +158,14 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     Integer deleteLinkedPortfolioData(@Param("id") Integer id);
+
+    /**
+     * 更新文章连接及预览内容
+     * @param idArticle
+     * @param articleLink
+     * @param articlePermalink
+     * @param articlePreviewContent
+     * @return
+     */
+    Integer updateArticleLinkAndPreviewContent(@Param("idArticle") Integer idArticle, @Param("articleLink") String articleLink, @Param("articlePermalink") String articlePermalink, @Param("articlePreviewContent") String articlePreviewContent);
 }

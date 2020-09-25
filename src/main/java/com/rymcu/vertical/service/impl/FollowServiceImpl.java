@@ -12,6 +12,7 @@ import com.rymcu.vertical.web.api.exception.BaseApiException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author ronger
@@ -46,5 +47,13 @@ public class FollowServiceImpl extends AbstractService<Follow> implements Follow
         follow.setFollowerId(tokenUser.getIdUser());
         int result = followMapper.delete(follow);
         return result == 0;
+    }
+
+    @Override
+    public List<Follow> findByFollowingId(String followType, Integer followingId) {
+        Follow follow = new Follow();
+        follow.setFollowingType(followType);
+        follow.setFollowingId(followingId);
+        return followMapper.select(follow);
     }
 }
