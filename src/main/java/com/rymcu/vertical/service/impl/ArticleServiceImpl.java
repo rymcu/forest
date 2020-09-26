@@ -194,7 +194,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             String articlePreviewContent = articleContentHtml.substring(0, length);
             newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
         }
-        articleMapper.updateArticleLinkAndPreviewContent(newArticle.getIdArticle(), newArticle.getArticleLink(), newArticle.getArticlePermalink(), newArticle.getArticlePreviewContent());
+        articleMapper.updateByPrimaryKeySelective(newArticle);
 
         // 推送百度 SEO
         if (!ProjectConstant.ENV.equals(env)
