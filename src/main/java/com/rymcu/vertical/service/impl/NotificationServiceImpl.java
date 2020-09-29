@@ -39,6 +39,8 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     @Value("${resource.domain}")
     private String domain;
 
+    private final static String unRead = "0";
+
     @Override
     public List<Notification> findUnreadNotifications(Integer idUser) {
         List<Notification> list = notificationMapper.selectUnreadNotifications(idUser);
@@ -51,8 +53,20 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
         List<NotificationDTO> notifications = new ArrayList<>();
         list.forEach(notification -> {
             NotificationDTO notificationDTO = genNotification(notification);
+            // 判断关联数据是否已删除
             if (Objects.nonNull(notificationDTO.getAuthor())) {
                 notifications.add(notificationDTO);
+            } else {
+                // 关联数据已删除,且未读
+                if (unRead.equals(notification.getHasRead())) {
+                    notificationMapper.readNotification(notification.getIdNotification());
+                }
+                NotificationDTO dto = new NotificationDTO();
+                dto.setDataSummary("该消息已被撤销!");
+                dto.setDataType("-1");
+                dto.setHasRead("1");
+                dto.setCreatedTime(notification.getCreatedTime());
+                notifications.add(dto);
             }
         });
         return notifications;
