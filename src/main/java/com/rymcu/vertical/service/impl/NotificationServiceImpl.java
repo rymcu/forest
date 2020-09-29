@@ -51,7 +51,9 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
         List<NotificationDTO> notifications = new ArrayList<>();
         list.forEach(notification -> {
             NotificationDTO notificationDTO = genNotification(notification);
-            notifications.add(notificationDTO);
+            if (Objects.nonNull(notificationDTO.getAuthor())) {
+                notifications.add(notificationDTO);
+            }
         });
         return notifications;
     }
@@ -67,37 +69,45 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
             case "0":
                 // 系统公告/帖子
                 article = articleService.findArticleDTOById(notification.getDataId(), 0);
-                notificationDTO.setDataTitle("系统公告");
-                notificationDTO.setDataUrl(article.getArticlePermalink());
-                user = userService.findById(article.getArticleAuthorId().toString());
-                notificationDTO.setAuthor(genAuthor(user));
+                if (Objects.nonNull(article)) {
+                    notificationDTO.setDataTitle("系统公告");
+                    notificationDTO.setDataUrl(article.getArticlePermalink());
+                    user = userService.findById(article.getArticleAuthorId().toString());
+                    notificationDTO.setAuthor(genAuthor(user));
+                }
                 break;
             case "1":
                 // 关注
                 follow = followService.findById(notification.getDataId().toString());
                 notificationDTO.setDataTitle("关注提醒");
-                user = userService.findById(follow.getFollowerId().toString());
-                notificationDTO.setDataUrl(getFollowLink(follow.getFollowingType(), user.getNickname()));
-                notificationDTO.setAuthor(genAuthor(user));
+                if (Objects.nonNull(follow)) {
+                    user = userService.findById(follow.getFollowerId().toString());
+                    notificationDTO.setDataUrl(getFollowLink(follow.getFollowingType(), user.getNickname()));
+                    notificationDTO.setAuthor(genAuthor(user));
+                }
                 break;
             case "2":
                 // 回帖
                 comment = commentService.findById(notification.getDataId().toString());
                 article = articleService.findArticleDTOById(comment.getCommentArticleId(), 0);
-                notificationDTO.setDataTitle(article.getArticleTitle());
-                notificationDTO.setDataUrl(comment.getCommentSharpUrl());
-                user = userService.findById(comment.getCommentAuthorId().toString());
-                notificationDTO.setAuthor(genAuthor(user));
+                if (Objects.nonNull(article)) {
+                    notificationDTO.setDataTitle(article.getArticleTitle());
+                    notificationDTO.setDataUrl(comment.getCommentSharpUrl());
+                    user = userService.findById(comment.getCommentAuthorId().toString());
+                    notificationDTO.setAuthor(genAuthor(user));
+                }
                 break;
             case "3":
                 // 关注用户发布文章
             case "4":
                 // 关注文章更新
                 article = articleService.findArticleDTOById(notification.getDataId(), 0);
-                notificationDTO.setDataTitle("关注通知");
-                notificationDTO.setDataUrl(article.getArticlePermalink());
-                user = userService.findById(article.getArticleAuthorId().toString());
-                notificationDTO.setAuthor(genAuthor(user));
+                if (Objects.nonNull(article)) {
+                    notificationDTO.setDataTitle("关注通知");
+                    notificationDTO.setDataUrl(article.getArticlePermalink());
+                    user = userService.findById(article.getArticleAuthorId().toString());
+                    notificationDTO.setAuthor(genAuthor(user));
+                }
                 break;
             default:
                 break;
