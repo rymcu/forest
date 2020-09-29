@@ -44,12 +44,14 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
                     commentDTO.setCommenter(author);
                 }
             }
-            if (commentDTO.getCommentOriginalCommentId() != null) {
+            if (commentDTO.getCommentOriginalCommentId() != null && commentDTO.getCommentOriginalCommentId() > 0) {
                 Author commentOriginalAuthor = commentMapper.selectCommentOriginalAuthor(commentDTO.getCommentOriginalCommentId());
                 if (commentOriginalAuthor != null) {
                     commentDTO.setCommentOriginalAuthorThumbnailURL(commentOriginalAuthor.getUserAvatarURL());
                     commentDTO.setCommentOriginalAuthorNickname(commentOriginalAuthor.getUserNickname());
                 }
+                Comment comment = commentMapper.selectByPrimaryKey(commentDTO.getCommentOriginalCommentId());
+                commentDTO.setCommentOriginalContent(comment.getCommentContent());
             }
         });
         return commentDTOList;

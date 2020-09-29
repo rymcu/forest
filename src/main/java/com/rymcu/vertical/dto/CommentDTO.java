@@ -24,6 +24,8 @@ public class CommentDTO {
     private String commentOriginalAuthorThumbnailURL;
     /** 父评论作者昵称 */
     private String commentOriginalAuthorNickname;
+    /** 父评论作者昵称 */
+    private String commentOriginalContent;
     /** 状态 */
     private String commentStatus;
     /** 0：公开回帖，1：匿名回帖 */
