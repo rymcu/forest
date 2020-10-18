@@ -2,6 +2,7 @@ package com.rymcu.vertical.web.api.common;
 
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
+import com.rymcu.vertical.dto.LinkToImageUrlDTO;
 import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.jwt.def.JwtConstants;
 import com.rymcu.vertical.util.FileUtils;
@@ -16,12 +17,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * 文件上传控制器
@@ -34,6 +39,7 @@ public class UploadController {
 
     private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";
     private final static String UPLOAD_URL = "/api/upload/file/batch";
+    private final static String LINK_TO_IMAGE_URL = "/api/upload/file/link";
     public static final String ctxHeadPicPath = "/usr/local/src/nebula/static";
 
     @PostMapping("/file")
@@ -131,6 +137,7 @@ public class UploadController {
         Map map = new HashMap(2);
         map.put("uploadToken", tokenUser.getToken());
         map.put("uploadURL", UPLOAD_SIMPLE_URL);
+        map.put("linkToImageURL", LINK_TO_IMAGE_URL);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
@@ -144,7 +151,55 @@ public class UploadController {
         Map map = new HashMap(2);
         map.put("uploadToken", tokenUser.getToken());
         map.put("uploadURL", UPLOAD_URL);
+        map.put("linkToImageURL", LINK_TO_IMAGE_URL);
         return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PostMapping("/file/link")
+    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO) throws IOException {
+        String url = linkToImageUrlDTO.getUrl();
+        URL link = new URL(url);
+        HttpURLConnection conn = (HttpURLConnection)link.openConnection();
+        //设置超时间为3秒
+        conn.setConnectTimeout(3*1000);
+        //防止屏蔽程序抓取而返回403错误
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
+        conn.setRequestProperty("referer", "");
+
+        //得到输入流
+        InputStream inputStream = conn.getInputStream();
+        //获取自己数组
+        byte[] getData = readInputStream(inputStream);
+        Integer type = linkToImageUrlDTO.getType();
+        if (Objects.isNull(type)) {
+            type = 1;
+        }
+        String typePath = getTypePath(type);
+        //图片存储路径
+        String dir = ctxHeadPicPath + "/" + typePath;
+        File file = new File(dir);
+        if (!file.exists()) {
+            file.mkdirs();// 创建文件根目录
+        }
+
+        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
+
+        String orgName = url.substring(url.lastIndexOf("."));
+        String fileName = System.currentTimeMillis() + FileUtils.getExtend(orgName).toLowerCase();
+
+        String savePath = file.getPath() + File.separator + fileName;
+
+        Map data = new HashMap(2);
+        File saveFile = new File(savePath);
+        try {
+            FileCopyUtils.copy(getData, saveFile);
+            data.put("originalURL", url);
+            data.put("url", localPath + fileName);
+        } catch (IOException e) {
+            data.put("message", "上传失败!");
+        }
+        return GlobalResultGenerator.genSuccessResult(data);
+
     }
 
     public static String uploadBase64File(String fileStr, Integer type) {
@@ -170,5 +225,22 @@ public class UploadController {
             fileStr = "上传失败!";
         }
         return fileStr;
+    }
+
+    /**
+     * 从输入流中获取字节数组
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static  byte[] readInputStream(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        while((len = inputStream.read(buffer)) != -1) {
+            bos.write(buffer, 0, len);
+        }
+        bos.close();
+        return bos.toByteArray();
     }
 }
