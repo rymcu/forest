@@ -138,6 +138,6 @@
         select exists (select * from vertical_comment where comment_article_id = #{id})
     </select>
     <select id="selectPortfolioArticlesByIdPortfolioAndSortNo" resultMap="DTOResultMap">
-        select va.article_title, va.id, va.article_permalink from vertical_portfolio_article vpa join vertical_article va on va.id = vpa.id_vertical_article where id_vertical_portfolio = #{idPortfolio} and sort_no > (#{sortNo} - 2) order by sort_no limit 20
+        select va.article_title, va.id, va.article_permalink from vertical_portfolio_article vpa join vertical_article va on va.id = vpa.id_vertical_article where id_vertical_portfolio = #{idPortfolio} order by sort_no
     </select>
 </mapper>

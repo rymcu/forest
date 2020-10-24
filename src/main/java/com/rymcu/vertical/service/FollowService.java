@@ -1,6 +1,7 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
+import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Follow;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
 
@@ -42,4 +43,20 @@ public interface FollowService extends Service<Follow> {
      * @return
      */
     List<Follow> findByFollowingId(String followType, Integer followingId);
+
+
+
+    /**
+     * 查询用户粉丝
+     * @param userDTO
+     * @return
+     */
+    List<UserDTO> findUserFollowersByUser(UserDTO userDTO);
+
+    /**
+     * 查询用户关注用户
+     * @param userDTO
+     * @return
+     */
+    List<UserDTO> findUserFollowingsByUser(UserDTO userDTO);
 }

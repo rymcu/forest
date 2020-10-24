@@ -9,6 +9,7 @@ import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.PortfolioDTO;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.service.ArticleService;
+import com.rymcu.vertical.service.FollowService;
 import com.rymcu.vertical.service.PortfolioService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.Utils;
@@ -32,6 +33,8 @@ public class UserController {
     private ArticleService articleService;
     @Resource
     private PortfolioService portfolioService;
+    @Resource
+    private FollowService followService;
 
     @GetMapping("/{nickname}")
     @VisitLogger
@@ -64,6 +67,38 @@ public class UserController {
         PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
         Map map = new HashMap(2);
         map.put("portfolios", list);
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/{nickname}/followers")
+    public GlobalResult userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
+        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+        if (userDTO == null){
+            return GlobalResultGenerator.genErrorResult("用户不存在！");
+        }
+        PageHelper.startPage(page, rows);
+        List<UserDTO> list = followService.findUserFollowersByUser(userDTO);
+        PageInfo<UserDTO> pageInfo = new PageInfo(list);
+        Map map = new HashMap(2);
+        map.put("users", list);
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/{nickname}/followings")
+    public GlobalResult userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
+        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+        if (userDTO == null){
+            return GlobalResultGenerator.genErrorResult("用户不存在！");
+        }
+        PageHelper.startPage(page, rows);
+        List<UserDTO> list = followService.findUserFollowingsByUser(userDTO);
+        PageInfo<UserDTO> pageInfo = new PageInfo(list);
+        Map map = new HashMap(2);
+        map.put("users", list);
         Map pagination = Utils.getPagination(pageInfo);
         map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);

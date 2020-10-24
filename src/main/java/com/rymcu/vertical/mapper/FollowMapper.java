@@ -1,8 +1,11 @@
 package com.rymcu.vertical.mapper;
 
 import com.rymcu.vertical.core.mapper.Mapper;
+import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Follow;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author ronger
@@ -16,4 +19,18 @@ public interface FollowMapper extends Mapper<Follow> {
      * @return
      */
     Boolean isFollow(@Param("followingId") Integer followingId, @Param("followerId") Integer followerId, @Param("followingType") String followingType);
+
+    /**
+     * 查询用户粉丝
+     * @param idUser
+     * @return
+     */
+    List<UserDTO> selectUserFollowersByUser(@Param("idUser") Integer idUser);
+
+    /**
+     * 查询用户关注用户
+     * @param idUser
+     * @return
+     */
+    List<UserDTO> selectUserFollowingsByUser(@Param("idUser") Integer idUser);
 }

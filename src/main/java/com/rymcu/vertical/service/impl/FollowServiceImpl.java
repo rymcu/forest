@@ -2,6 +2,7 @@ package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.constant.NotificationConstant;
 import com.rymcu.vertical.core.service.AbstractService;
+import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.entity.Follow;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.FollowMapper;
@@ -55,5 +56,17 @@ public class FollowServiceImpl extends AbstractService<Follow> implements Follow
         follow.setFollowingType(followType);
         follow.setFollowingId(followingId);
         return followMapper.select(follow);
+    }
+
+    @Override
+    public List<UserDTO> findUserFollowersByUser(UserDTO userDTO) {
+        List<UserDTO> list = followMapper.selectUserFollowersByUser(userDTO.getIdUser());
+        return list;
+    }
+
+    @Override
+    public List<UserDTO> findUserFollowingsByUser(UserDTO userDTO) {
+        List<UserDTO> list = followMapper.selectUserFollowingsByUser(userDTO.getIdUser());
+        return list;
     }
 }
