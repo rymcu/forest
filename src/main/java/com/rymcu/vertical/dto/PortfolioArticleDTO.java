@@ -2,6 +2,8 @@ package com.rymcu.vertical.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author ronger
  */
@@ -19,5 +21,7 @@ public class PortfolioArticleDTO {
     private String portfolioTitle;
 
     private Integer sortNo;
+
+    private List<ArticleDTO> articles;
 
 }

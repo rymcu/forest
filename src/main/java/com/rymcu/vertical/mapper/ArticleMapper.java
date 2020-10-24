@@ -168,4 +168,12 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     Integer updateArticleLinkAndPreviewContent(@Param("idArticle") Integer idArticle, @Param("articleLink") String articleLink, @Param("articlePermalink") String articlePermalink, @Param("articlePreviewContent") String articlePreviewContent);
+
+    /**
+     * 根据专题主键及当前文章排序号获取专题下文章大纲
+     * @param idPortfolio
+     * @param sortNo
+     * @return
+     */
+    List<ArticleDTO> selectPortfolioArticlesByIdPortfolioAndSortNo(@Param("idPortfolio") Integer idPortfolio, @Param("sortNo") Integer sortNo);
 }

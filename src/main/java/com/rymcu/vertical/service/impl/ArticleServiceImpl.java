@@ -350,6 +350,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 article.setArticleContent(articleContent.getArticleContentHtml());
                 // 获取所属作品集列表数据
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
+                portfolioArticleDTOList.forEach(portfolioArticleDTO -> genPortfolioArticles(portfolioArticleDTO));
                 article.setPortfolios(portfolioArticleDTOList);
             } else if (type.equals(ARTICLE_EDIT)) {
                 article.setArticleContent(articleContent.getArticleContent());
@@ -358,6 +359,12 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             }
         }
         return article;
+    }
+
+    private PortfolioArticleDTO genPortfolioArticles(PortfolioArticleDTO portfolioArticleDTO) {
+        List<ArticleDTO> articles = articleMapper.selectPortfolioArticlesByIdPortfolioAndSortNo(portfolioArticleDTO.getIdPortfolio(), portfolioArticleDTO.getSortNo());
+        portfolioArticleDTO.setArticles(articles);
+        return portfolioArticleDTO;
     }
 
     private Author genAuthor(ArticleDTO article) {
