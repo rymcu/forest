@@ -19,6 +19,6 @@
     </select>
     <select id="selectUserFollowingsByUser" resultMap="DTOResultMapper">
         select id, nickname, avatar_type, avatar_url, account, signature from vertical_user vu
-        where id = #{idUser} and exists (select * from vertical_follow vf where following_type = 0 and follower_id = #{idUser} and following_id = vu.id limit 1)
+        where exists (select * from vertical_follow vf where following_type = 0 and follower_id = #{idUser} and following_id = vu.id limit 1)
     </select>
 </mapper>
