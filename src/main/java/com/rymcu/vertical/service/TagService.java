@@ -18,11 +18,12 @@ public interface TagService extends Service<Tag> {
     /**
      * 保存文章标签
      * @param article
+     * @param articleContentHtml
      * @throws UnsupportedEncodingException
      * @throws BaseApiException
      * @return
      * */
-    Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException;
+    Integer saveTagArticle(Article article, String articleContentHtml) throws UnsupportedEncodingException, BaseApiException;
 
     /**
      * 清除未使用标签

@@ -176,7 +176,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             }
         }
 
-        tagService.saveTagArticle(newArticle);
+        tagService.saveTagArticle(newArticle, articleContentHtml);
 
         if (defaultStatus.equals(newArticle.getArticleStatus())) {
             newArticle.setArticlePermalink(domain + "/article/" + newArticle.getIdArticle());
@@ -187,12 +187,11 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
-            Integer length = articleContentHtml.length();
-            if (length > MAX_PREVIEW) {
-                length = MAX_PREVIEW;
+            String previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
+            if (previewContent.length() > MAX_PREVIEW) {
+                previewContent = previewContent.substring(0, MAX_PREVIEW);
             }
-            String articlePreviewContent = articleContentHtml.substring(0, length);
-            newArticle.setArticlePreviewContent(Html2TextUtil.getContent(articlePreviewContent));
+            newArticle.setArticlePreviewContent(previewContent);
         }
         articleMapper.updateByPrimaryKeySelective(newArticle);
 
@@ -326,7 +325,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         if (Objects.nonNull(article)) {
             article.setArticleTags(tags);
             articleMapper.updateArticleTags(idArticle, tags);
-            tagService.saveTagArticle(article);
+            tagService.saveTagArticle(article, "");
             map.put("success", true);
         } else {
             map.put("success", false);

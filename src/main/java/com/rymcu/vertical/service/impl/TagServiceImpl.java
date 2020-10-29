@@ -3,12 +3,14 @@ package com.rymcu.vertical.service.impl;
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.dto.ArticleTagDTO;
 import com.rymcu.vertical.dto.LabelModel;
+import com.rymcu.vertical.dto.baidu.TagNlpDTO;
 import com.rymcu.vertical.entity.Article;
 import com.rymcu.vertical.entity.Tag;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.mapper.ArticleMapper;
 import com.rymcu.vertical.mapper.TagMapper;
 import com.rymcu.vertical.service.TagService;
+import com.rymcu.vertical.util.BaiDuAipUtils;
 import com.rymcu.vertical.util.CacheUtils;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
@@ -38,7 +40,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
-    public Integer saveTagArticle(Article article) throws UnsupportedEncodingException, BaseApiException {
+    public Integer saveTagArticle(Article article, String articleContentHtml) throws UnsupportedEncodingException, BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
         String articleTags = article.getArticleTags();
         if (StringUtils.isNotBlank(articleTags)) {
@@ -92,6 +94,18 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                 }
             }
             return 1;
+        } else {
+            if (StringUtils.isNotBlank(articleContentHtml)) {
+                List<TagNlpDTO> list = BaiDuAipUtils.getKeywords(article.getArticleTitle(), articleContentHtml);
+                if (list.size() > 0) {
+                    StringBuffer tags = new StringBuffer();
+                    for (TagNlpDTO tagNlpDTO : list) {
+                        tags.append(tagNlpDTO.getTag()).append(",");
+                    }
+                    article.setArticleTags(tags.toString());
+                    saveTagArticle(article, articleContentHtml);
+                }
+            }
         }
         return 0;
     }
