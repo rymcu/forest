@@ -8,6 +8,7 @@ import com.rymcu.vertical.core.service.log.annotation.VisitLogger;
 import com.rymcu.vertical.dto.ArticleDTO;
 import com.rymcu.vertical.dto.PortfolioDTO;
 import com.rymcu.vertical.dto.UserDTO;
+import com.rymcu.vertical.entity.UserExtend;
 import com.rymcu.vertical.service.ArticleService;
 import com.rymcu.vertical.service.FollowService;
 import com.rymcu.vertical.service.PortfolioService;
@@ -102,6 +103,12 @@ public class UserController {
         Map pagination = Utils.getPagination(pageInfo);
         map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/{nickname}/user-extend")
+    public GlobalResult userExtend(@PathVariable String nickname) {
+        UserExtend userExtend = userService.selectUserExtendByNickname(nickname);
+        return GlobalResultGenerator.genSuccessResult(userExtend);
     }
 
 }

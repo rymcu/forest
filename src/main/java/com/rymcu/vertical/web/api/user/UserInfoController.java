@@ -3,6 +3,7 @@ package com.rymcu.vertical.web.api.user;
 import com.rymcu.vertical.core.result.GlobalResult;
 import com.rymcu.vertical.core.result.GlobalResultGenerator;
 import com.rymcu.vertical.dto.UserInfoDTO;
+import com.rymcu.vertical.entity.UserExtend;
 import com.rymcu.vertical.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,12 @@ public class UserInfoController {
     @PatchMapping("/update")
     public GlobalResult updateUserInfo(@RequestBody UserInfoDTO user) {
         Map map = userService.updateUserInfo(user);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PatchMapping("/update-extend")
+    public GlobalResult updateUserExtend(@RequestBody UserExtend userExtend) {
+        Map map = userService.updateUserExtend(userExtend);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

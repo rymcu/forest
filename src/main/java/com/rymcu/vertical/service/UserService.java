@@ -5,6 +5,7 @@ import com.rymcu.vertical.dto.Author;
 import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.User;
+import com.rymcu.vertical.entity.UserExtend;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
 import java.util.Map;
@@ -108,4 +109,18 @@ public interface UserService extends Service<User> {
      * @return
      */
     Author selectAuthor(Integer idUser);
+
+    /**
+     * 更新用户扩展信息
+     * @param userExtend
+     * @return
+     */
+    Map updateUserExtend(UserExtend userExtend);
+
+    /**
+     * 获取用户扩展信息
+     * @param nickname
+     * @return
+     */
+    UserExtend selectUserExtendByNickname(String nickname);
 }

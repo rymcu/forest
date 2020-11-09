@@ -8,8 +8,10 @@ import com.rymcu.vertical.dto.UserDTO;
 import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
+import com.rymcu.vertical.entity.UserExtend;
 import com.rymcu.vertical.jwt.service.TokenManager;
 import com.rymcu.vertical.mapper.RoleMapper;
+import com.rymcu.vertical.mapper.UserExtendMapper;
 import com.rymcu.vertical.mapper.UserMapper;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.BeanCopierUtil;
@@ -24,6 +26,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -41,6 +44,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private RedisService redisService;
     @Resource
     private TokenManager tokenManager;
+    @Resource
+    private UserExtendMapper userExtendMapper;
 
     private final static String avatarSvgType = "1";
 
@@ -165,7 +170,14 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         if (user == null) {
             map.put("message", "用户不存在!");
         } else {
+            UserExtend userExtend = userExtendMapper.selectByPrimaryKey(user.getIdUser());
+            if (Objects.isNull(userExtend)) {
+                userExtend = new UserExtend();
+                userExtend.setIdUser(user.getIdUser());
+                userExtendMapper.insertSelective(userExtend);
+            }
             map.put("user", user);
+            map.put("userExtend", userExtend);
         }
         return map;
     }
@@ -212,5 +224,22 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Author selectAuthor(Integer idUser) {
         return userMapper.selectAuthor(idUser);
+    }
+
+    @Override
+    public Map updateUserExtend(UserExtend userExtend) {
+        Map map = new HashMap(1);
+        int result = userExtendMapper.updateByPrimaryKeySelective(userExtend);
+        if (result == 0) {
+            map.put("message", "操作失败!");
+            return map;
+        }
+        map.put("userExtend", userExtend);
+        return map;
+    }
+
+    @Override
+    public UserExtend selectUserExtendByNickname(String nickname) {
+        return userExtendMapper.selectUserExtendByNickname(nickname);
     }
 }
