@@ -29,10 +29,29 @@ spring:
     resources:
       add-mappings: true
   mail:
-    host: smtp.163.com
+    host: smtp.163.com # 网站发送邮件邮箱服务 host
     port: 465
     username: # 邮箱
     password: # 密码
+wx:
+  open:
+    componentAppId: wx9c4a7dfb3238d5f6
+    componentSecret: e32a6f75ab6b746ec3ae38a39a79ba22
+    componentToken: rymcu
+    componentAesKey: NWIwMDQyZjU0YWI2NGFlZThkOWZhZTg3NTg4NzQwN2E
+  mp:
+    configs:
+      - appId: xxx #微信公众号消息服务器配置的 appId
+        secret: xxx #微信公众号消息服务器配置的 secret
+        token: xxx #微信公众号消息服务器配置的 token
+        aesKey: xxx #微信公众号消息服务器配置的 aesKey
+  miniapp:
+    configs:
+      - appid: #微信小程序消息服务器配置的 appid
+        secret: #微信小程序消息服务器配置的 secret
+        token: #微信小程序消息服务器配置的 token
+        aesKey: #微信小程序消息服务器配置的 EncodingAESKey
+        msgDataFormat: JSON
 env: dev
 logging:
   file:
@@ -43,10 +62,15 @@ server:
     context-path: /vertical
 version: 1.0
 resource:
-  file-path: https://abc.com/vertical
+  domain: http://yourdomain.com # 网站域名
+  file-path: http://yourdomain.com # 上传文件前缀域名
+  pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址
 baidu:
   data:
-    site: https://abc.com # 百度搜索资源配置网址
-    token: xxxx # 百度搜索资源token
-reserved-words: \u7cfb\u7edf\u516c\u544a\u002c\u516c\u544a  
+    site: https://yourdomain.com # 百度搜索绑定网站域名
+    token: xxxx
+  ai:
+    appId: xxx # 百度AI-文字识别 应用 appId
+    appKey: xxxx # 百度AI-文字识别 应用 appKey
+    secretKey: xxxx # 百度AI-文字识别 应用 secretKey
 
