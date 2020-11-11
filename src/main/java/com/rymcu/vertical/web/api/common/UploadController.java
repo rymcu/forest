@@ -6,12 +6,14 @@ import com.rymcu.vertical.dto.LinkToImageUrlDTO;
 import com.rymcu.vertical.dto.TokenUser;
 import com.rymcu.vertical.jwt.def.JwtConstants;
 import com.rymcu.vertical.util.FileUtils;
+import com.rymcu.vertical.util.SpringContextHolder;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
-import com.rymcu.vertical.web.api.exception.ErrorCode;
 import com.rymcu.vertical.web.api.exception.BaseApiException;
+import com.rymcu.vertical.web.api.exception.ErrorCode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,10 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -40,7 +39,8 @@ public class UploadController {
     private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";
     private final static String UPLOAD_URL = "/api/upload/file/batch";
     private final static String LINK_TO_IMAGE_URL = "/api/upload/file/link";
-    public static final String ctxHeadPicPath = "/usr/local/src/nebula/static";
+
+    private static Environment env = SpringContextHolder.getBean(Environment.class);
 
     @PostMapping("/file")
     public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
@@ -49,6 +49,7 @@ public class UploadController {
         }
         String typePath = getTypePath(type);
         //图片存储路径
+        String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
@@ -78,6 +79,7 @@ public class UploadController {
     public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
         String typePath = getTypePath(type);
         //图片存储路径
+        String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
@@ -176,6 +178,7 @@ public class UploadController {
         }
         String typePath = getTypePath(type);
         //图片存储路径
+        String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
@@ -208,6 +211,7 @@ public class UploadController {
         }
         String typePath = getTypePath(type);
         //图片存储路径
+        String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
