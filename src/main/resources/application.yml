@@ -56,6 +56,9 @@ env: dev
 logging:
   file:
     path: /logs/vertical
+  level:
+    com:
+      rymcu: info
 server:
   port: 8099
   servlet:
