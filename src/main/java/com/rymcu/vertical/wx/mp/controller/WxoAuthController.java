@@ -44,7 +44,7 @@ public class WxoAuthController {
             baseUrl = new StringBuilder(domain).append(contextPath);
         }
         StringBuilder accessTokenUrl = baseUrl.append("/wx/oauth/" + appId + "/getAccessToken?redirectUrl=").append(URIUtil.encodeURIComponent(redirectUrl));
-        String oauth2Url = wxMpService.oauth2buildAuthorizationUrl(accessTokenUrl.toString(), WxConsts.OAuth2Scope.SNSAPI_BASE, null);
+        String oauth2Url = wxMpService.getOAuth2Service().buildAuthorizationUrl(accessTokenUrl.toString(), WxConsts.OAuth2Scope.SNSAPI_BASE, null);
 
         return "redirect:" + oauth2Url;
     }
@@ -52,8 +52,8 @@ public class WxoAuthController {
     @GetMapping("getAccessToken")
     public String getAccessToken(@PathVariable String appId, @RequestParam(name = "code") String code, @RequestParam(name = "redirectUrl") String redirectUrl) throws Exception {
         wxMpService.switchoverTo(appId);
-        WxMpOAuth2AccessToken oAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
-        boolean valid = wxMpService.oauth2validateAccessToken(oAuth2AccessToken);
+        WxMpOAuth2AccessToken oAuth2AccessToken = wxMpService.getOAuth2Service().getAccessToken(code);
+        boolean valid = wxMpService.getOAuth2Service().validateAccessToken(oAuth2AccessToken);
         if (!valid) {
             throw new Exception("无权限");
         }

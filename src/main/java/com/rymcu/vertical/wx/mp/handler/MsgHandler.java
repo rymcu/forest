@@ -20,7 +20,7 @@ public class MsgHandler extends AbstractHandler {
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
-                                    Map<String, Object> context, WxMpService weixinService,
+                                    Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) {
 
         if (!wxMessage.getMsgType().equals(XmlMsgType.EVENT)) {
@@ -33,9 +33,12 @@ public class MsgHandler extends AbstractHandler {
                     .toUser(wxMessage.getFromUser()).build();
         }
 
+        logger.info("\n接收到 {} 公众号请求消息，内容：{}", wxMpService.getWxMpConfigStorage().getAppId(), wxMessage);
+
+
         String content = "我们已经收到您的留言,稍后客服将会联系您!";
 
-        return new TextBuilder().build(content, wxMessage, weixinService);
+        return new TextBuilder().build(content, wxMessage, wxMpService);
 
     }
 

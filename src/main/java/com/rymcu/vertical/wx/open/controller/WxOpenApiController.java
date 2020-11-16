@@ -40,7 +40,7 @@ public class WxOpenApiController {
         System.out.println("===================================Host:");
         System.out.println(request.getHeader("host"));
         String host = request.getHeader("host");
-        String url = "http://"+host+"/vertical-console/wx/open/auth/jump";
+        String url = "http://"+host+"/open/auth/jump";
         try {
             url = wxOpenServiceHandler.getWxOpenComponentService().getPreAuthUrl(url);
             // 添加来源，解决302跳转来源丢失的问题

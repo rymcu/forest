@@ -23,9 +23,13 @@ public class WxOpenNotifyController {
     @Autowired
     protected WxOpenServiceHandler wxOpenService;
 
-     /**全网发布官方测试小程序 AppId*/
+    /**
+     * 全网发布官方测试小程序 AppId
+     */
     private final static String testMiniProgramAppId = "wxd101a85aa106f53e";
-    /**全网发布官方测试公众号 AppId*/
+    /**
+     * 全网发布官方测试公众号 AppId
+     */
     private final static String testMpAppId = "wx570bc396a51b8ff8";
     private final static String TESTCOMPONENT_MSG_TYPE_TEXT = "TESTCOMPONENT_MSG_TYPE_TEXT";
     private final static String TESTCOMPONENT_MSG_TYPE_TEXT_callback = "TESTCOMPONENT_MSG_TYPE_TEXT_callback";
@@ -107,9 +111,9 @@ public class WxOpenNotifyController {
             } catch (WxErrorException e) {
                 logger.error("callback", e);
             }
-        }else{
+        } else {
             WxMpXmlOutMessage outMessage = wxOpenService.getWxOpenMessageRouter().route(inMessage, appId);
-            if(outMessage != null){
+            if (outMessage != null) {
                 out = WxOpenXmlMessage.wxMpOutXmlMessageToEncryptedXml(outMessage, wxOpenService.getWxOpenConfigStorage());
             }
         }
