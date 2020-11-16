@@ -68,9 +68,15 @@
     <update id="updateLastLoginTime">
         update vertical_user set last_login_time = sysdate() where id = #{idUser}
     </update>
+    <update id="updateEmail">
+        update vertical_user set email = #{email} where id = #{idUser}
+    </update>
+    <update id="updatePasswordById">
+        update vertical_user set password = #{password} where id = #{idUser}
+    </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
-        select id, nickname, account, password, status from vertical_user where account = #{account} and status = 0
+        select id, nickname, account, password, status, avatar_type, avatar_url from vertical_user where (account = #{account} or email = #{account} ) and status = 0
     </select>
     <select id="findUserInfoByAccount" resultMap="UserInfoResultMapper">
         select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where account = #{account}

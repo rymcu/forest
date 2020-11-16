@@ -1,9 +1,7 @@
 package com.rymcu.vertical.service;
 
 import com.rymcu.vertical.core.service.Service;
-import com.rymcu.vertical.dto.Author;
-import com.rymcu.vertical.dto.UserDTO;
-import com.rymcu.vertical.dto.UserInfoDTO;
+import com.rymcu.vertical.dto.*;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.entity.UserExtend;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -123,4 +121,18 @@ public interface UserService extends Service<User> {
      * @return
      */
     UserExtend selectUserExtendByNickname(String nickname);
+
+    /**
+     * 更换邮箱
+     * @param changeEmailDTO
+     * @return
+     */
+    Map updateEmail(ChangeEmailDTO changeEmailDTO);
+
+    /**
+     * 更新密码
+     * @param updatePasswordDTO
+     * @return
+     */
+    Map updatePassword(UpdatePasswordDTO updatePasswordDTO);
 }

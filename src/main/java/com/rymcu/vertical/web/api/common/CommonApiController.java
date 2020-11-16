@@ -14,7 +14,6 @@ import com.rymcu.vertical.service.PortfolioService;
 import com.rymcu.vertical.service.UserService;
 import com.rymcu.vertical.util.UserUtils;
 import com.rymcu.vertical.util.Utils;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -39,7 +38,6 @@ public class CommonApiController {
     @Resource
     private PortfolioService portfolioService;
 
-    @ApiOperation(value = "获取邮件验证码")
     @GetMapping("/get-email-code")
     public GlobalResult<Map<String, String>> getEmailCode(@RequestParam("email") String email) throws MessagingException {
         Map<String, String> map = new HashMap<>(1);
@@ -56,7 +54,6 @@ public class CommonApiController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @ApiOperation(value = "获取找回密码邮件")
     @GetMapping("/get-forget-password-email")
     public GlobalResult<Map<Object, Object>> getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
         Map<Object, Object> map = new HashMap<>(1);

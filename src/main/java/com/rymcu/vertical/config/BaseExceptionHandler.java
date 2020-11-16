@@ -81,7 +81,7 @@ public class BaseExceptionHandler {
         }else {
             ModelAndView mv = new ModelAndView();
             FastJsonJsonView view = new FastJsonJsonView();
-            Map<String, Object> attributes = new HashMap();
+            Map<String, Object> attributes = new HashMap(2);
             if (ex instanceof BaseApiException){
                 attributes.put("code", "401");
                 attributes.put("message", "用户未登录");
@@ -128,7 +128,7 @@ public class BaseExceptionHandler {
 
     private boolean isAjax(HttpServletRequest request) {
         String requestedWith = request.getHeader("x-requested-with");
-        if (requestedWith != null && requestedWith.equalsIgnoreCase("XMLHttpRequest")) {
+        if (requestedWith != null && "XMLHttpRequest".equalsIgnoreCase(requestedWith)) {
             return true;
         } else {
             return false;

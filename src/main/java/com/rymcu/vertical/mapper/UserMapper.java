@@ -7,6 +7,8 @@ import com.rymcu.vertical.dto.UserInfoDTO;
 import com.rymcu.vertical.entity.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Map;
+
 /**
  * @author ronger
  */
@@ -120,4 +122,20 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     Integer updateLastLoginTime(@Param("idUser") Integer idUser);
+
+    /**
+     * 更换邮箱
+     * @param idUser
+     * @param email
+     * @return
+     */
+    Integer updateEmail(@Param("idUser") Integer idUser, @Param("email") String email);
+
+    /**
+     * 更新密码
+     * @param idUser
+     * @param password
+     * @return
+     */
+    Integer updatePasswordById(@Param("idUser") Integer idUser, @Param("password") String password);
 }

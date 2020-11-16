@@ -4,7 +4,8 @@ import org.apache.shiro.authc.AuthenticationException;
 
 /**
  * 验证码错误异常类
- * 
+ *
+ * @author ronger
  */
 public class CaptchaException extends AuthenticationException
 {

@@ -9,6 +9,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.Serializable;
 
+/**
+ * @author ronger
+ */
 public class BaseSessionManager extends DefaultWebSessionManager {
     private static final String AUTHORIZATION = "Authorization";
 

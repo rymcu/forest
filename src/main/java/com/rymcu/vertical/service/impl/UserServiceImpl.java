@@ -2,10 +2,7 @@ package com.rymcu.vertical.service.impl;
 
 import com.rymcu.vertical.core.service.AbstractService;
 import com.rymcu.vertical.core.service.redis.RedisService;
-import com.rymcu.vertical.dto.Author;
-import com.rymcu.vertical.dto.TokenUser;
-import com.rymcu.vertical.dto.UserDTO;
-import com.rymcu.vertical.dto.UserInfoDTO;
+import com.rymcu.vertical.dto.*;
 import com.rymcu.vertical.entity.Role;
 import com.rymcu.vertical.entity.User;
 import com.rymcu.vertical.entity.UserExtend;
@@ -47,7 +44,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Resource
     private UserExtendMapper userExtendMapper;
 
-    private final static String avatarSvgType = "1";
+    private final static String AVATAR_SVG_TYPE = "1";
+    private final static String DEFAULT_AVATAR = "https://static.rymcu.com/article/1578475481946.png";
 
     @Override
     public User findByAccount(String account) throws TooManyResultsException{
@@ -59,22 +57,23 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public Map register(String email, String password, String code) {
         Map map = new HashMap(2);
         map.put("message","验证码无效！");
-        String vcode = redisService.get(email);
-        if(StringUtils.isNotBlank(vcode)){
-            if(vcode.equals(code)){
+        String vCode = redisService.get(email);
+        if(StringUtils.isNotBlank(vCode)){
+            if(vCode.equals(code)){
                 User user = userMapper.findByAccount(email);
                 if(user != null){
                     map.put("message","该邮箱已被注册！");
                 } else {
                     user = new User();
-                    user.setAccount(email);
                     String nickname = email.split("@")[0];
                     nickname = checkNickname(nickname);
                     user.setNickname(nickname);
+                    user.setAccount(nickname);
                     user.setEmail(email);
                     user.setPassword(Utils.entryptPassword(password));
                     user.setCreatedTime(new Date());
                     user.setUpdatedTime(user.getCreatedTime());
+                    user.setAvatarUrl(DEFAULT_AVATAR);
                     userMapper.insertSelective(user);
                     user = userMapper.findByAccount(email);
                     Role role = roleMapper.selectRoleByInputCode("user");
@@ -100,9 +99,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Map login(String account, String password) {
         Map map = new HashMap(1);
-        User user = new User();
-        user.setAccount(account);
-        user = userMapper.selectOne(user);
+        User user = userMapper.findByAccount(account);
         if(user != null){
             if(Utils.comparePwd(password, user.getPassword())){
                 userMapper.updateLastLoginTime(user.getIdUser());
@@ -191,7 +188,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             map.put("message", "该昵称已使用!");
             return map;
         }
-        if (StringUtils.isNotBlank(user.getAvatarType()) && avatarSvgType.equals(user.getAvatarType())) {
+        if (StringUtils.isNotBlank(user.getAvatarType()) && AVATAR_SVG_TYPE.equals(user.getAvatarType())) {
             String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), 0);
             user.setAvatarUrl(avatarUrl);
             user.setAvatarType("0");
@@ -241,5 +238,32 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public UserExtend selectUserExtendByNickname(String nickname) {
         return userExtendMapper.selectUserExtendByNickname(nickname);
+    }
+
+    @Override
+    public Map updateEmail(ChangeEmailDTO changeEmailDTO) {
+        Map map = new HashMap(2);
+        map.put("message","验证码无效！");
+        Integer idUser = changeEmailDTO.getIdUser();
+        String email = changeEmailDTO.getEmail();
+        String code = changeEmailDTO.getCode();
+        String vCode = redisService.get(email);
+        if(StringUtils.isNotBlank(vCode)){
+            if(vCode.equals(code)){
+                userMapper.updateEmail(idUser, email);
+                map.put("message","更新成功！");
+                map.put("email", email);
+            }
+        }
+        return map;
+    }
+
+    @Override
+    public Map updatePassword(UpdatePasswordDTO updatePasswordDTO) {
+        Map map = new HashMap(1);
+        String password = Utils.entryptPassword(updatePasswordDTO.getPassword());
+        userMapper.updatePasswordById(updatePasswordDTO.getIdUser(), password);
+        map.put("message", "更新成功!");
+        return map;
     }
 }
