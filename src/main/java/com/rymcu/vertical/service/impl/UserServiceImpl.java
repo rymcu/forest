@@ -53,7 +53,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Map register(String email, String password, String code) {
         Map map = new HashMap(2);
         map.put("message","验证码无效！");
@@ -88,6 +88,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     private String checkNickname(String nickname) {
+        nickname = formatNickname(nickname);
         Integer result = userMapper.selectCountByNickName(nickname);
         if (result > 0) {
             StringBuilder stringBuilder = new StringBuilder(nickname);
@@ -183,6 +184,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Transactional(rollbackFor = Exception.class)
     public Map updateUserInfo(UserInfoDTO user) {
         Map map = new HashMap(1);
+        user.setNickname(formatNickname(user.getNickname()));
         Integer number = userMapper.checkNicknameByIdUser(user.getIdUser(), user.getNickname());
         if (number > 0) {
             map.put("message", "该昵称已使用!");
@@ -201,6 +203,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         }
         map.put("user",user);
         return map;
+    }
+
+    private String formatNickname(String nickname) {
+        return nickname.replaceAll(".", "");
     }
 
     @Override
