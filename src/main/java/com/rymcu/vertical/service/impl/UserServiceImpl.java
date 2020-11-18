@@ -206,7 +206,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     private String formatNickname(String nickname) {
-        return nickname.replaceAll(".", "");
+        return nickname.replaceAll("\\.", "");
     }
 
     @Override
