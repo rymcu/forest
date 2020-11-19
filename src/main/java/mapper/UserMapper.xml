@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rymcu.vertical.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.User">
+<mapper namespace="com.rymcu.forest.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.User">
         <!--
           WARNING - @mbg.generated
         -->
@@ -20,7 +20,7 @@
         <result column="created_time" property="createdTime"/>
         <result column="updated_time" property="updatedTime"/>
     </resultMap>
-    <resultMap id="UserInfoResultMapper" type="com.rymcu.vertical.dto.UserInfoDTO">
+    <resultMap id="UserInfoResultMapper" type="com.rymcu.forest.dto.UserInfoDTO">
         <result column="id" property="idUser"/>
         <result column="account" property="account"/>
         <result column="nickname" property="nickname"/>
@@ -33,7 +33,7 @@
         <result column="last_login_time" property="lastLoginTime"/>
         <result column="signature" property="signature"/>
     </resultMap>
-    <resultMap id="DTOResultMapper" type="com.rymcu.vertical.dto.UserDTO">
+    <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.UserDTO">
         <result column="id" property="idUser"/>
         <result column="account" property="account"/>
         <result column="nickname" property="nickname"/>
@@ -41,7 +41,7 @@
         <result column="avatar_url" property="avatarUrl"/>
         <result column="signature" property="signature"/>
     </resultMap>
-    <resultMap id="AuthorResultMap" type="com.rymcu.vertical.dto.Author">
+    <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
         <result column="id" property="idUser"/>
         <result column="nickname" property="userNickname"/>
         <result column="avatar_url" property="userAvatarURL"/>
@@ -68,9 +68,15 @@
     <update id="updateLastLoginTime">
         update vertical_user set last_login_time = sysdate() where id = #{idUser}
     </update>
+    <update id="updateEmail">
+        update vertical_user set email = #{email} where id = #{idUser}
+    </update>
+    <update id="updatePasswordById">
+        update vertical_user set password = #{password} where id = #{idUser}
+    </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
-        select id, nickname, account, password, status from vertical_user where account = #{account} and status = 0
+        select id, nickname, account, password, status, avatar_type, avatar_url from vertical_user where (account = #{account} or email = #{account} ) and status = 0
     </select>
     <select id="findUserInfoByAccount" resultMap="UserInfoResultMapper">
         select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where account = #{account}

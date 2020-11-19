@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.rymcu.vertical.mapper.PortfolioMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.Portfolio">
+<mapper namespace="com.rymcu.forest.mapper.PortfolioMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Portfolio">
         <id column="id" property="idPortfolio"></id>
         <result column="portfolio_head_img_url" property="headImgUrl"></result>
         <result column="portfolio_title" property="portfolioTitle"></result>
@@ -10,7 +10,7 @@
         <result column="created_time" property="createdTime"></result>
         <result column="updated_time" property="updatedTime"></result>
     </resultMap>
-    <resultMap id="DTOResultMap" type="com.rymcu.vertical.dto.PortfolioDTO">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.PortfolioDTO">
         <result column="id" property="idPortfolio"></result>
         <result column="portfolio_head_img_url" property="headImgUrl"></result>
         <result column="portfolio_title" property="portfolioTitle"></result>
