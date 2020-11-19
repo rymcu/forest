@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rymcu.vertical.mapper.DashboardMapper">
-    <resultMap id="DashboardDataResultMap" type="com.rymcu.vertical.dto.admin.DashboardData">
+<mapper namespace="com.rymcu.forest.mapper.DashboardMapper">
+    <resultMap id="DashboardDataResultMap" type="com.rymcu.forest.dto.admin.DashboardData">
         <result column="label" property="label"></result>
         <result column="value" property="value"></result>
     </resultMap>

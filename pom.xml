@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.rymcu</groupId>
-    <artifactId>vertical</artifactId>
+    <artifactId>forest</artifactId>
     <version>0.0.1</version>
     <packaging>war</packaging>
-    <name>vertical</name>
-    <description>一个用 Java 实现的现代化社区（论坛 / BBS / 社交网络 / 博客）平台，“下一代的社区系统，为未来而构建”。</description>
+    <name>forest</name>
+    <description>forest(森林) —— 一款现代化的知识社区后台项目，使用 SpringBoot + Shrio + MyBatis + JWT + Redis 实现。</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.60</version>
+            <version>1.2.67</version>
         </dependency>
         <!-- shiro权限控制框架 -->
         <dependency>

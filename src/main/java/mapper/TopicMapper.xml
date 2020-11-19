@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rymcu.vertical.mapper.TopicMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.Topic">
+<mapper namespace="com.rymcu.forest.mapper.TopicMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Topic">
         <!--
           WARNING - @mbg.generated
         -->
@@ -18,7 +18,7 @@
         <id column="created_time" property="createdTime"/>
         <id column="updated_time" property="updatedTime"/>
     </resultMap>
-    <resultMap id="DTOResultMap" type="com.rymcu.vertical.dto.admin.TopicDTO">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.admin.TopicDTO">
         <id column="id" property="idTopic"/>
         <id column="topic_title" property="topicTitle"/>
         <id column="topic_uri" property="topicUri"/>
@@ -27,14 +27,14 @@
         <id column="topic_tag_count" property="topicTagCount"/>
         <id column="topic_status" property="topicStatus"/>
     </resultMap>
-    <resultMap id="TagDTOResultMap" type="com.rymcu.vertical.dto.admin.TagDTO">
+    <resultMap id="TagDTOResultMap" type="com.rymcu.forest.dto.admin.TagDTO">
         <id column="id" property="idTag"/>
         <id column="tag_title" property="tagTitle"/>
         <id column="tag_uri" property="tagUri"/>
         <id column="tag_description" property="tagDescription"/>
         <id column="tag_icon_path" property="tagIconPath"/>
     </resultMap>
-    <resultMap id="TagResultMap" type="com.rymcu.vertical.entity.Tag">
+    <resultMap id="TagResultMap" type="com.rymcu.forest.entity.Tag">
         <!--
           WARNING - @mbg.generated
         -->

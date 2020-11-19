@@ -1,6 +1,6 @@
 spring:
-#  profiles:
-#    active: pord
+  profiles:
+    active: dev
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -22,7 +22,7 @@ spring:
         max-idle: 500
         min-idle: 0
   datasource:
-    url: jdbc:mysql://localhost:3306/vertical?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
     username: root
     password: # 数据库密码
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -55,14 +55,14 @@ wx:
 env: dev
 logging:
   file:
-    path: /logs/vertical
+    path: /logs/forest
   level:
     com:
       rymcu: info
 server:
   port: 8099
   servlet:
-    context-path: /vertical
+    context-path: /forest
 version: 1.0
 resource:
   domain: http://yourdomain.com # 网站域名

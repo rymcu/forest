@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.rymcu.vertical.mapper.WxUserMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.WxUser">
+<mapper namespace="com.rymcu.forest.mapper.WxUserMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.WxUser">
         <id column="id" property="idWxUser"></id>
         <result column="nickname" property="nickname"></result>
         <result column="nickname" property="unionId"></result>

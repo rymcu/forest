@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rymcu.vertical.mapper.ArticleMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.Article">
+<mapper namespace="com.rymcu.forest.mapper.ArticleMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Article">
         <!--
           WARNING - @mbg.generated
         -->
@@ -19,7 +19,7 @@
         <result column="created_time" property="createdTime"></result>
         <result column="updated_time" property="updatedTime"></result>
     </resultMap>
-    <resultMap id="DTOResultMap" type="com.rymcu.vertical.dto.ArticleDTO">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.ArticleDTO">
         <result column="id" property="idArticle"></result>
         <result column="article_title" property="articleTitle"></result>
         <result column="article_thumbnail_url" property="articleThumbnailUrl"></result>
@@ -39,14 +39,14 @@
         <result column="updated_time" property="updatedTime"></result>
         <result column="sort_no" property="sortNo"></result>
     </resultMap>
-    <resultMap id="ArticleContentResultMap" type="com.rymcu.vertical.entity.ArticleContent">
+    <resultMap id="ArticleContentResultMap" type="com.rymcu.forest.entity.ArticleContent">
         <result column="id_article" property="idArticle"/>
         <result column="article_content" property="articleContent"/>
         <result column="article_content_html" property="articleContentHtml"/>
         <result column="created_time" property="createdTime"/>
         <result column="updated_time" property="updatedTime"/>
     </resultMap>
-    <resultMap id="ArticleTagDTOResultMap" type="com.rymcu.vertical.dto.ArticleTagDTO">
+    <resultMap id="ArticleTagDTOResultMap" type="com.rymcu.forest.dto.ArticleTagDTO">
         <id column="id" property="idArticleTag"/>
         <result column="id_tag" property="idTag"></result>
         <result column="id_article" property="idArticle"></result>
@@ -55,7 +55,7 @@
         <result column="tag_uri" property="tagUri"></result>
         <result column="tag_description" property="tagDescription"></result>
     </resultMap>
-    <resultMap id="PortfolioArticleResultMap" type="com.rymcu.vertical.dto.PortfolioArticleDTO">
+    <resultMap id="PortfolioArticleResultMap" type="com.rymcu.forest.dto.PortfolioArticleDTO">
         <result column="id_vertical_portfolio" property="idPortfolio"></result>
         <result column="id_vertical_article" property="idArticle"></result>
         <result column="portfolio_title" property="portfolioTitle"></result>

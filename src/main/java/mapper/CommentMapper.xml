@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.rymcu.vertical.mapper.CommentMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.Comment">
+<mapper namespace="com.rymcu.forest.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Comment">
         <id column="id" property="idComment"></id>
         <result column="comment_content" property="commentContent"></result>
         <result column="comment_author_id" property="commentAuthorId"></result>
@@ -16,7 +16,7 @@
         <result column="comment_visible" property="commentVisible"></result>
         <result column="created_time" property="createdTime"></result>
     </resultMap>
-    <resultMap id="DTOResultMap" type="com.rymcu.vertical.dto.CommentDTO">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.CommentDTO">
         <id column="id" property="idComment"></id>
         <result column="comment_content" property="commentContent"></result>
         <result column="comment_author_id" property="commentAuthorId"></result>
@@ -29,7 +29,7 @@
         <result column="comment_visible" property="commentVisible"></result>
         <result column="created_time" property="createdTime"></result>
     </resultMap>
-    <resultMap id="AuthorResultMap" type="com.rymcu.vertical.dto.Author">
+    <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
         <result column="id" property="idUser"/>
         <result column="nickname" property="userNickname"/>
         <result column="avatar_url" property="userAvatarURL"/>

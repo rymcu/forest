@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.rymcu.vertical.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="com.rymcu.vertical.entity.User">
+<mapper namespace="com.rymcu.forest.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.User">
         <!--
           WARNING - @mbg.generated
         -->
@@ -20,7 +20,7 @@
         <result column="created_time" property="createdTime"/>
         <result column="updated_time" property="updatedTime"/>
     </resultMap>
-    <resultMap id="UserInfoResultMapper" type="com.rymcu.vertical.dto.UserInfoDTO">
+    <resultMap id="UserInfoResultMapper" type="com.rymcu.forest.dto.UserInfoDTO">
         <result column="id" property="idUser"/>
         <result column="account" property="account"/>
         <result column="nickname" property="nickname"/>
@@ -33,7 +33,7 @@
         <result column="last_login_time" property="lastLoginTime"/>
         <result column="signature" property="signature"/>
     </resultMap>
-    <resultMap id="DTOResultMapper" type="com.rymcu.vertical.dto.UserDTO">
+    <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.UserDTO">
         <result column="id" property="idUser"/>
         <result column="account" property="account"/>
         <result column="nickname" property="nickname"/>
@@ -41,7 +41,7 @@
         <result column="avatar_url" property="avatarUrl"/>
         <result column="signature" property="signature"/>
     </resultMap>
-    <resultMap id="AuthorResultMap" type="com.rymcu.vertical.dto.Author">
+    <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
         <result column="id" property="idUser"/>
         <result column="nickname" property="userNickname"/>
         <result column="avatar_url" property="userAvatarURL"/>
