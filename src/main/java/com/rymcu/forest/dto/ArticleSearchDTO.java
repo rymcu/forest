@@ -1,4 +1,4 @@
-package com.rymcu.vertical.dto;
+package com.rymcu.forest.dto;
 
 import lombok.Data;
 

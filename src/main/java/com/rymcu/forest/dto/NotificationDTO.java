@@ -1,6 +1,6 @@
-package com.rymcu.vertical.dto;
+package com.rymcu.forest.dto;
 
-import com.rymcu.vertical.entity.Notification;
+import com.rymcu.forest.entity.Notification;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
