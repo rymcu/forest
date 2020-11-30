@@ -45,7 +45,6 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 注册
 	用户名
 	Email
-	邀请链接
 	验证码
 	邮件验证
 	新手向导
@@ -74,9 +73,7 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 		默认“待分类”
 	发布后
 		可更新
-			历史版本
 		可删除
-	Sandbox 机制
 回帖
 	内容编辑器
 	本地存储
@@ -91,8 +88,6 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 	分享
 		微信
 		QQ
-		微博
-		Twitter
 		分享链接（带用户标识）
 	相关帖子
 	缩略摘要
@@ -107,7 +102,7 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 		创建者
 		贡献者
 		关注/引用/回帖数
-		所属领域
+		所属专题
 		关注
 	排序
 		默认（按发布时间降序）
@@ -118,7 +113,6 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 	实时热度
 	最新回复
 	回帖数
-	是否查浏览过该帖（前端样式）
 	创建时间
 后台管理
 	后台首页
@@ -128,10 +122,9 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 			最高在线
 			会员
 			帖子
-			领域
+			专题
 			标签
 			回帖
-		版本检查
 	用户管理
 		按用户名/邮件搜索
 		添加新用户
@@ -145,11 +138,6 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 			高级更新
 				用户名
 				邮箱地址
-			积分充值
-			积分提现
-			活动积分奖励
-			违规积分扣除
-			补偿初始化积分
 	帖子管理
 		按 id 搜索帖子
 		重建所有帖子搜索索引
@@ -157,10 +145,10 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 		帖子数据维护
 			锁定帖子
 			删除帖子
-	领域管理
-		按名称搜索领域
-		添加领域
-		领域数据维护
+	专题管理
+		按名称搜索专题
+		添加专题
+		专题数据维护
 			添加/移除相关标签
 			名称
 			URI
@@ -173,7 +161,7 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 				title
 				keywords
 				description
-			删除领域
+			删除专题
 	标签管理
 		按名称搜索标签
 		添加标签
@@ -231,13 +219,9 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 	专题、发帖、通知、个人等入口
 	专题导航列表
 	对搜索引擎爬虫友好
-邮件
-	邮件服务
-		本地 JavaMail
 用户设置
 	基本信息
 		昵称
-		自我标签
 		URL
 		个性签名
 		个人主页背景图
@@ -253,11 +237,8 @@ forest 在很多方面受到了 [Symphony](https://github.com/88250/symphony) �
 		更新密码
 		更新用户名
 		永久停用账号
-	邀请
-		邀请链接
-		兑换邀请码
 	钱包
-		转账记录
+		交易记录
 	帮助
 		使用入门
 		基础知识
