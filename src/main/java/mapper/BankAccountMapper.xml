@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.BankAccountMapper">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.BankAccountDTO">
+        <result column="id" property="idBankAccount"></result>
+        <result column="id_bank" property="idBank"></result>
+        <result column="bank_name" property="bankName"></result>
+        <result column="bank_account" property="bankAccount"></result>
+        <result column="account_balance" property="accountBalance"></result>
+        <result column="account_owner" property="accountOwner"></result>
+        <result column="account_owner_name" property="accountOwnerName"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
+    <select id="selectBankAccounts" resultMap="DTOResultMap">
+        select vb.bank_name, vu.nickname as account_owner_name, vba.* from vertical_bank_account vba
+        join vertical_bank vb on vba.id_bank = vb.id
+        join vertical_user vu on vba.account_owner = vu.id where vba.account_type = 0
+        <if test="bankName != null and bankName != ''">
+            and vb.bank_name = #{bankName}
+        </if>
+        <if test="accountOwnerName != null and accountOwnerName != ''">
+            and vu.nickname = #{accountOwnerName}
+        </if>
+        <if test="bankAccount != null and bankAccount != ''">
+            and vba.bank_account = #{bankAccount}
+        </if>
+    </select>
+    <select id="selectBankAccount" resultMap="DTOResultMap">
+        select vb.bank_name, vba.* from vertical_bank_account vba
+        join vertical_bank vb on vba.id_bank = vb.id where vba.id = #{idBank}
+    </select>
+    <select id="selectMaxBankAccount" resultType="java.lang.String">
+        select max(bank_account) as max_bank_account from vertical_bank_account where account_type = 0
+    </select>
+</mapper>
