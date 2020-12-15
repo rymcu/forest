@@ -89,7 +89,7 @@
     </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
-        where article_status = '0'
+        where article_status = 0
         <if test="topicUri != 'news'">
             and FIND_IN_SET('划水',art.article_tags) = 0
         </if>
@@ -106,7 +106,7 @@
     </select>
     <select id="selectArticlesByTopicUri" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
-        where exists(select * from vertical_tag_article vta where vta.id_article = art.id and exists(select * from vertical_topic_tag vtt
+        where art.article_status = 0 and exists(select * from vertical_tag_article vta where vta.id_article = art.id and exists(select * from vertical_topic_tag vtt
         join vertical_tag vt on vtt.id_tag = vt.id where vt.id = vta.id_tag and exists(select * from vertical_topic topic
         where topic.id = vtt.id_topic and topic.topic_uri = #{topicName}))) order by updated_time desc
     </select>
