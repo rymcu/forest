@@ -53,4 +53,6 @@ public class ArticleDTO {
     private List<PortfolioArticleDTO> portfolios;
 
     private Integer sortNo;
+    /** 0:非优选1：优选;0 */
+    private String articlePerfect;
 }

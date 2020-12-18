@@ -334,24 +334,37 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return map;
     }
 
+    @Override
+    public Map updatePerfect(Integer idArticle, String articlePerfect) {
+        Map map = new HashMap(2);
+        int result = articleMapper.updatePerfect(idArticle, articlePerfect);
+        if (result == 0) {
+            map.put("success", false);
+            map.put("message", "设置优选文章失败!");
+        } else {
+            map.put("success", true);
+        }
+        return map;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {
-        Integer ARTICLE_LIST = 0;
-        Integer ARTICLE_VIEW = 1;
-        Integer ARTICLE_EDIT = 2;
+        Integer articleList = 0;
+        Integer articleView = 1;
+        Integer articleEdit = 2;
         Author author = genAuthor(article);
         article.setArticleAuthor(author);
         article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
         List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
         article.setTags(tags);
-        if (!type.equals(ARTICLE_LIST)) {
+        if (!type.equals(articleList)) {
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
-            if (type.equals(ARTICLE_VIEW)) {
+            if (type.equals(articleView)) {
                 article.setArticleContent(articleContent.getArticleContentHtml());
                 // 获取所属作品集列表数据
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
                 portfolioArticleDTOList.forEach(portfolioArticleDTO -> genPortfolioArticles(portfolioArticleDTO));
                 article.setPortfolios(portfolioArticleDTOList);
-            } else if (type.equals(ARTICLE_EDIT)) {
+            } else if (type.equals(articleEdit)) {
                 article.setArticleContent(articleContent.getArticleContent());
             } else {
                 article.setArticleContent(articleContent.getArticleContentHtml());

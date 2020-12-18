@@ -87,4 +87,10 @@ public class ArticleController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
+    @PatchMapping("/update-perfect")
+    public GlobalResult updatePerfect(@RequestBody Article article) {
+        Map map = articleService.updatePerfect(article.getIdArticle(), article.getArticlePerfect());
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
 }

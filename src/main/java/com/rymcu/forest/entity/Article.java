@@ -36,7 +36,7 @@ public class Article implements Serializable,Cloneable {
     private String articlePreviewContent;
     /** 评论总数 */
     private Integer articleCommentCount;
-    /** 0:非优选1：优选;0 */
+    /** 0:非优选1：优选; */
     private String articlePerfect;
     /** 文章永久链接 */
     private String articlePermalink;

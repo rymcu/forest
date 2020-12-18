@@ -176,4 +176,12 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     List<ArticleDTO> selectPortfolioArticlesByIdPortfolioAndSortNo(@Param("idPortfolio") Integer idPortfolio, @Param("sortNo") Integer sortNo);
+
+    /**
+     * 更新文章优选状态
+     * @param idArticle
+     * @param articlePerfect
+     * @return
+     */
+    int updatePerfect(@Param("idArticle") Integer idArticle, @Param("articlePerfect") String articlePerfect);
 }

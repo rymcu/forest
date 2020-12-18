@@ -38,6 +38,7 @@
         <result column="article_status" property="articleStatus"></result>
         <result column="updated_time" property="updatedTime"></result>
         <result column="sort_no" property="sortNo"></result>
+        <result column="article_perfect" property="articlePerfect"></result>
     </resultMap>
     <resultMap id="ArticleContentResultMap" type="com.rymcu.forest.entity.ArticleContent">
         <result column="id_article" property="idArticle"/>
@@ -77,6 +78,9 @@
     </update>
     <update id="updateArticleLinkAndPreviewContent">
         update vertical_article set article_link = #{articleLink}, article_permalink = #{articlePermalink}, article_preview_content = #{articlePreviewContent} where id = #{idArticle}
+    </update>
+    <update id="updatePerfect">
+        update vertical_article set article_perfect = #{articlePerfect} where id = #{idArticle}
     </update>
     <delete id="deleteTagArticle">
         delete from vertical_tag_article where id_article = #{id}
