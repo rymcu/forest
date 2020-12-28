@@ -13,11 +13,15 @@
         <result column="article_tags" property="articleTags"></result>
         <result column="article_view_count" property="articleViewCount"></result>
         <result column="article_preview_content" property="articlePreviewContent"></result>
-        <result column="comment_count" property="articleCommentCount"></result>
+        <result column="article_comment_count" property="articleCommentCount"></result>
         <result column="article_permalink" property="articlePermalink"></result>
         <result column="article_link" property="articleLink"></result>
         <result column="created_time" property="createdTime"></result>
         <result column="updated_time" property="updatedTime"></result>
+        <result column="article_thumbs_up_count" property="articleThumbsUpCount"></result>
+        <result column="article_status" property="articleStatus"></result>
+        <result column="article_perfect" property="articlePerfect"></result>
+        <result column="article_sponsor_count" property="articleSponsorCount"></result>
     </resultMap>
     <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.ArticleDTO">
         <result column="id" property="idArticle"></result>
@@ -39,6 +43,8 @@
         <result column="updated_time" property="updatedTime"></result>
         <result column="sort_no" property="sortNo"></result>
         <result column="article_perfect" property="articlePerfect"></result>
+        <result column="article_thumbs_up_count" property="articleThumbsUpCount"></result>
+        <result column="article_sponsor_count" property="articleSponsorCount"></result>
     </resultMap>
     <resultMap id="ArticleContentResultMap" type="com.rymcu.forest.entity.ArticleContent">
         <result column="id_article" property="idArticle"/>

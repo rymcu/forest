@@ -3,6 +3,7 @@ package com.rymcu.forest.service.impl;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
+import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
@@ -35,7 +36,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public TransactionRecord transfer(TransactionRecord transactionRecord) {
+    public TransactionRecord transfer(TransactionRecord transactionRecord) throws Exception {
         // 判断发起者账户状态
         boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
         if (formAccountStatus) {
@@ -45,6 +46,8 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
                 transactionRecord.setTransactionTime(new Date());
                 transactionRecordMapper.insertSelective(transactionRecord);
             }
+        } else {
+            throw new Exception("余额不足");
         }
         return transactionRecord;
     }
@@ -52,6 +55,18 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     @Override
     public List<TransactionRecordDTO> findTransactionRecords(String bankAccount) {
         return transactionRecordMapper.selectTransactionRecords(bankAccount);
+    }
+
+    @Override
+    public TransactionRecord transferByUserId(Integer toUserId, Integer formUserId, BigDecimal money) throws Exception {
+        BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(toUserId);
+        BankAccountDTO formBankAccount = bankAccountService.findBankAccountByIdUser(formUserId);
+        TransactionRecord transactionRecord = new TransactionRecord();
+        transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
+        transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
+        transactionRecord.setMoney(money);
+        transactionRecord.setFunds("赞赏");
+        return transfer(transactionRecord);
     }
 
     private String nextTransactionNo() {

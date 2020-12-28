@@ -48,4 +48,8 @@ public class Article implements Serializable,Cloneable {
     private Date updatedTime;
     /** 文章状态 */
     private String articleStatus;
+    /** 点赞总数 */
+    private Integer articleThumbsUpCount;
+    /** 赞赏总数 */
+    private Integer articleSponsorCount;
 }

@@ -1,6 +1,5 @@
 package com.rymcu.forest.web.api.bank;
 
-import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.entity.TransactionRecord;
@@ -23,7 +22,7 @@ public class TransactionRecordController {
     private TransactionRecordService transactionRecordService;
 
     @PostMapping("/transfer")
-    public GlobalResult transfer(@RequestBody TransactionRecord transactionRecord) {
+    public GlobalResult transfer(@RequestBody TransactionRecord transactionRecord) throws Exception {
         transactionRecord = transactionRecordService.transfer(transactionRecord);
         return GlobalResultGenerator.genSuccessResult(transactionRecord);
     }
