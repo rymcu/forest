@@ -2,10 +2,7 @@ package com.rymcu.forest.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -34,4 +31,6 @@ public class Portfolio {
     private Date createdTime;
     /** 更新时间 */
     private Date updatedTime;
+    @Transient
+    private String headImgType;
 }
