@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author ronger
  */
 @Data
-@Table(name="vertical_follow")
+@Table(name="forest_follow")
 public class Follow implements Serializable,Cloneable {
     /** 主键 */
     @Id

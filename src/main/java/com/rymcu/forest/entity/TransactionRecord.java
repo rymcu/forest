@@ -13,7 +13,7 @@ import java.util.Date;
  * 交易记录
  * @author ronger
  */
-@Table(name = "vertical_transaction_record")
+@Table(name = "forest_transaction_record")
 @Data
 public class TransactionRecord {
     /** 主键 */

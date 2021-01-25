@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_permission")
+@Table(name = "forest_permission")
 public class Permission implements Serializable,Cloneable {
 
     @Id

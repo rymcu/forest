@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 /**
  * @author ronger
  */
-@Table(name="vertical_currency_rule")
+@Table(name="forest_currency_rule")
 @Data
 public class CurrencyRule implements Serializable, Cloneable {
     /**

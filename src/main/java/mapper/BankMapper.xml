@@ -13,7 +13,7 @@
         <result column="bank_description" property="bankDescription"></result>
     </resultMap>
     <select id="selectBanks" resultMap="DTOResultMap">
-        select vb.*, vba.bank_account, vba.account_balance from vertical_bank_account vba
-        join vertical_bank vb on vba.account_owner = vb.id where vba.account_type = 1
+        select vb.*, vba.bank_account, vba.account_balance from forest_bank_account vba
+        join forest_bank vb on vba.account_owner = vb.id where vba.account_type = 1
     </select>
 </mapper>

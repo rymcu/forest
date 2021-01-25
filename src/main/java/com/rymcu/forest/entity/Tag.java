@@ -13,7 +13,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_tag")
+@Table(name = "forest_tag")
 public class Tag implements Serializable,Cloneable {
     /** 主键 */
     @Id

@@ -15,7 +15,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="vertical_visit")
+@Table(name="forest_visit")
 public class Visit implements Serializable,Cloneable {
 
     /** 主键 */

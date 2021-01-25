@@ -12,7 +12,7 @@ import java.util.Date;
  * 货币发行记录
  * @author ronger
  */
-@Table(name = "vertical_currency_issue")
+@Table(name = "forest_currency_issue")
 @Data
 public class CurrencyIssue {
     /** 主键 */

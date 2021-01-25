@@ -15,7 +15,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="vertical_notification")
+@Table(name="forest_notification")
 public class Notification implements Serializable,Cloneable {
     /**
      * 主键

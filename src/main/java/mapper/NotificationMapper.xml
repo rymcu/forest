@@ -11,18 +11,18 @@
         <result column="created_time" property="createdTime"></result>
     </resultMap>
     <insert id="insertNotification">
-        insert into vertical_notification (id_user, data_type, data_id, data_summary, created_time) values (#{idUser}, #{dataType}, #{dataId}, #{dataSummary}, sysdate())
+        insert into forest_notification (id_user, data_type, data_id, data_summary, created_time) values (#{idUser}, #{dataType}, #{dataId}, #{dataSummary}, sysdate())
     </insert>
     <update id="readNotification">
-        update vertical_notification set has_read = '1' where id = #{id}
+        update forest_notification set has_read = '1' where id = #{id}
     </update>
     <select id="selectUnreadNotifications" resultMap="BaseResultMapper">
-        select * from vertical_notification where has_read = '0' and id_user = #{idUser} order by created_time desc
+        select * from forest_notification where has_read = '0' and id_user = #{idUser} order by created_time desc
     </select>
     <select id="selectNotifications" resultMap="BaseResultMapper">
-        select * from vertical_notification where id_user = #{idUser} order by created_time desc
+        select * from forest_notification where id_user = #{idUser} order by created_time desc
     </select>
     <select id="selectNotification" resultMap="BaseResultMapper">
-        select * from vertical_notification where id_user = #{idUser} and data_id = #{dataId} and data_type = #{dataType}
+        select * from forest_notification where id_user = #{idUser} and data_id = #{dataId} and data_type = #{dataType}
     </select>
 </mapper>

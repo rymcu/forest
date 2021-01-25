@@ -9,7 +9,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_portfolio")
+@Table(name = "forest_portfolio")
 public class Portfolio {
     /** 主键 */
     @Id

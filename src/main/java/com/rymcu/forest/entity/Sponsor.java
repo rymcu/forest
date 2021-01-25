@@ -13,7 +13,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="vertical_sponsor")
+@Table(name="forest_sponsor")
 public class Sponsor implements Serializable, Cloneable {
     /**
      * 主键

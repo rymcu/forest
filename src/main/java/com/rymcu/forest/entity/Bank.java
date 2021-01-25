@@ -13,7 +13,7 @@ import java.util.Date;
  * 银行
  * @author ronger
  */
-@Table(name = "vertical_bank")
+@Table(name = "forest_bank")
 @Data
 public class Bank {
 

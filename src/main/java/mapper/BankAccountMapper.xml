@@ -12,9 +12,9 @@
         <result column="created_time" property="createdTime"></result>
     </resultMap>
     <select id="selectBankAccounts" resultMap="DTOResultMap">
-        select vb.bank_name, vu.nickname as account_owner_name, vba.* from vertical_bank_account vba
-        join vertical_bank vb on vba.id_bank = vb.id
-        join vertical_user vu on vba.account_owner = vu.id where vba.account_type = 0
+        select vb.bank_name, vu.nickname as account_owner_name, vba.* from forest_bank_account vba
+        join forest_bank vb on vba.id_bank = vb.id
+        join forest_user vu on vba.account_owner = vu.id where vba.account_type = 0
         <if test="bankName != null and bankName != ''">
             and vb.bank_name = #{bankName}
         </if>
@@ -26,10 +26,10 @@
         </if>
     </select>
     <select id="selectBankAccount" resultMap="DTOResultMap">
-        select vb.bank_name, vba.* from vertical_bank_account vba
-        join vertical_bank vb on vba.id_bank = vb.id where vba.id = #{idBank}
+        select vb.bank_name, vba.* from forest_bank_account vba
+        join forest_bank vb on vba.id_bank = vb.id where vba.id = #{idBank}
     </select>
     <select id="selectMaxBankAccount" resultType="java.lang.String">
-        select max(bank_account) as max_bank_account from vertical_bank_account where account_type = 0
+        select max(bank_account) as max_bank_account from forest_bank_account where account_type = 0
     </select>
 </mapper>

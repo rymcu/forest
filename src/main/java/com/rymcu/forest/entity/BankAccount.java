@@ -14,7 +14,7 @@ import java.util.Date;
  * 银行账户
  * @author ronger
  */
-@Table(name = "vertical_bank_account")
+@Table(name = "forest_bank_account")
 @Data
 public class BankAccount {
     /** 主键 */

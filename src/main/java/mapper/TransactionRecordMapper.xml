@@ -12,10 +12,10 @@
         <result column="transaction_time" property="transactionTime"></result>
     </resultMap>
     <update id="transfer">
-        update vertical_bank_account set account_balance = account_balance - #{money} where bank_account = #{formBankAccount};
-        update vertical_bank_account set account_balance = account_balance + #{money} where bank_account = #{toBankAccount};
+        update forest_bank_account set account_balance = account_balance - #{money} where bank_account = #{formBankAccount};
+        update forest_bank_account set account_balance = account_balance + #{money} where bank_account = #{toBankAccount};
     </update>
     <select id="selectTransactionRecords" resultMap="DTOResultMap">
-        select * from vertical_transaction_record where form_bank_account = #{bankAccount} or to_bank_account = #{bankAccount}
+        select * from forest_transaction_record where form_bank_account = #{bankAccount} or to_bank_account = #{bankAccount}
     </select>
 </mapper>

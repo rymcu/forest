@@ -13,7 +13,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="vertical_article_thumbs_up")
+@Table(name="forest_article_thumbs_up")
 public class ArticleThumbsUp implements Serializable, Cloneable {
     /**
      * 主键

@@ -14,7 +14,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_role")
+@Table(name = "forest_role")
 public class Role implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
