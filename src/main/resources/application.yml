@@ -35,10 +35,10 @@ spring:
     password: # 密码
 wx:
   open:
-    componentAppId: wx9c4a7dfb3238d5f6
-    componentSecret: e32a6f75ab6b746ec3ae38a39a79ba22
-    componentToken: rymcu
-    componentAesKey: NWIwMDQyZjU0YWI2NGFlZThkOWZhZTg3NTg4NzQwN2E
+    componentAppId: #
+    componentSecret: #
+    componentToken: #
+    componentAesKey: #
   mp:
     configs:
       - appId: xxx #微信公众号消息服务器配置的 appId

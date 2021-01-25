@@ -80,6 +80,7 @@ public class BaiDuUtils {
     }
 
     public static void main(String[] args){
-        sendUpdateSEOData("https://rymcu.com");
+//        sendUpdateSEOData("https://rymcu.com");
+        sendSEOData("https://rymcu.com/article/98");
     }
 }
