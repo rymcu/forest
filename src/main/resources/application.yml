@@ -22,7 +22,7 @@ spring:
         max-idle: 500
         min-idle: 0
   datasource:
-    url: jdbc:mysql://localhost:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
     username: root
     password: # 数据库密码
     driver-class-name: com.mysql.cj.jdbc.Driver
