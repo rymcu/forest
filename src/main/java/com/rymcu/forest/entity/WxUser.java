@@ -11,7 +11,7 @@ import javax.persistence.Table;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_wx_user")
+@Table(name = "forest_wx_user")
 public class WxUser {
 
     @Id

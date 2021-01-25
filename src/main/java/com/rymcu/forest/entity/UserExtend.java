@@ -9,7 +9,7 @@ import javax.persistence.Table;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_user_extend")
+@Table(name = "forest_user_extend")
 public class UserExtend {
 
     @Id

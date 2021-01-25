@@ -13,11 +13,15 @@
         <result column="article_tags" property="articleTags"></result>
         <result column="article_view_count" property="articleViewCount"></result>
         <result column="article_preview_content" property="articlePreviewContent"></result>
-        <result column="comment_count" property="articleCommentCount"></result>
+        <result column="article_comment_count" property="articleCommentCount"></result>
         <result column="article_permalink" property="articlePermalink"></result>
         <result column="article_link" property="articleLink"></result>
         <result column="created_time" property="createdTime"></result>
         <result column="updated_time" property="updatedTime"></result>
+        <result column="article_thumbs_up_count" property="articleThumbsUpCount"></result>
+        <result column="article_status" property="articleStatus"></result>
+        <result column="article_perfect" property="articlePerfect"></result>
+        <result column="article_sponsor_count" property="articleSponsorCount"></result>
     </resultMap>
     <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.ArticleDTO">
         <result column="id" property="idArticle"></result>
@@ -38,6 +42,9 @@
         <result column="article_status" property="articleStatus"></result>
         <result column="updated_time" property="updatedTime"></result>
         <result column="sort_no" property="sortNo"></result>
+        <result column="article_perfect" property="articlePerfect"></result>
+        <result column="article_thumbs_up_count" property="articleThumbsUpCount"></result>
+        <result column="article_sponsor_count" property="articleSponsorCount"></result>
     </resultMap>
     <resultMap id="ArticleContentResultMap" type="com.rymcu.forest.entity.ArticleContent">
         <result column="id_article" property="idArticle"/>
@@ -56,88 +63,91 @@
         <result column="tag_description" property="tagDescription"></result>
     </resultMap>
     <resultMap id="PortfolioArticleResultMap" type="com.rymcu.forest.dto.PortfolioArticleDTO">
-        <result column="id_vertical_portfolio" property="idPortfolio"></result>
-        <result column="id_vertical_article" property="idArticle"></result>
+        <result column="id_portfolio" property="idPortfolio"></result>
+        <result column="id_article" property="idArticle"></result>
         <result column="portfolio_title" property="portfolioTitle"></result>
         <result column="portfolio_head_img_url" property="headImgUrl"></result>
         <result column="sort_no" property="sortNo"></result>
     </resultMap>
     <insert id="insertArticleContent">
-        insert into vertical_article_content (id_article,article_content,article_content_html,created_time,updated_time)
+        insert into forest_article_content (id_article,article_content,article_content_html,created_time,updated_time)
         values (#{idArticle},#{articleContent},#{articleContentHtml},sysdate(),sysdate())
     </insert>
     <update id="updateArticleContent">
-        update vertical_article_content set article_content = #{articleContent},article_content_html = #{articleContentHtml},updated_time = sysdate() where id_article = #{idArticle}
+        update forest_article_content set article_content = #{articleContent},article_content_html = #{articleContentHtml},updated_time = sysdate() where id_article = #{idArticle}
     </update>
     <update id="updateArticleViewCount">
-        update vertical_article set article_view_count = #{articleViewCount} where id = #{id}
+        update forest_article set article_view_count = #{articleViewCount} where id = #{id}
     </update>
     <update id="updateArticleTags">
-        update vertical_article set article_tags = #{tags} where id = #{idArticle}
+        update forest_article set article_tags = #{tags} where id = #{idArticle}
     </update>
     <update id="updateArticleLinkAndPreviewContent">
-        update vertical_article set article_link = #{articleLink}, article_permalink = #{articlePermalink}, article_preview_content = #{articlePreviewContent} where id = #{idArticle}
+        update forest_article set article_link = #{articleLink}, article_permalink = #{articlePermalink}, article_preview_content = #{articlePreviewContent} where id = #{idArticle}
+    </update>
+    <update id="updatePerfect">
+        update forest_article set article_perfect = #{articlePerfect} where id = #{idArticle}
     </update>
     <delete id="deleteTagArticle">
-        delete from vertical_tag_article where id_article = #{id}
+        delete from forest_tag_article where id_article = #{id}
     </delete>
     <delete id="deleteUnusedArticleTag">
-        delete from vertical_tag_article where id = #{idArticleTag}
+        delete from forest_tag_article where id = #{idArticleTag}
     </delete>
     <delete id="deleteLinkedPortfolioData">
-        delete from vertical_portfolio_article where id_vertical_article = #{id}
+        delete from forest_portfolio_article where id_article = #{id}
     </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
-        where article_status = '0'
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id
+        where article_status = 0
         <if test="topicUri != 'news'">
             and FIND_IN_SET('划水',art.article_tags) = 0
         </if>
         order by updated_time desc
     </select>
     <select id="selectArticleDTOById" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id where art.id = #{id}
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id where art.id = #{id}
         <if test="type == 1">
             and art.article_status = 0
         </if>
     </select>
     <select id="selectArticleContent" resultMap="ArticleContentResultMap">
-        select article_content,article_content_html from vertical_article_content where id_article = #{idArticle}
+        select article_content,article_content_html from forest_article_content where id_article = #{idArticle}
     </select>
     <select id="selectArticlesByTopicUri" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id
-        where exists(select * from vertical_tag_article vta where vta.id_article = art.id and exists(select * from vertical_topic_tag vtt
-        join vertical_tag vt on vtt.id_tag = vt.id where vt.id = vta.id_tag and exists(select * from vertical_topic topic
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id
+        where art.article_status = 0 and exists(select * from forest_tag_article vta where vta.id_article = art.id and exists(select * from forest_topic_tag vtt
+        join forest_tag vt on vtt.id_tag = vt.id where vt.id = vta.id_tag and exists(select * from forest_topic topic
         where topic.id = vtt.id_topic and topic.topic_uri = #{topicName}))) order by updated_time desc
     </select>
     <select id="selectArticlesByTagName" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id order by updated_time desc
     </select>
     <select id="selectUserArticles" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on su.id = #{idUser}
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on su.id = #{idUser}
         and art.article_author_id = su.id where article_author_id = #{idUser} and art.article_status = 0 order by updated_time desc
     </select>
     <select id="selectTags" resultMap="ArticleTagDTOResultMap">
-        select vta.id, vta.id_tag, vta.id_article, vt.tag_title, vt.tag_icon_path, vt.tag_uri, vt.tag_description from vertical_tag vt join vertical_tag_article vta on vt.id = vta.id_tag where vta.id_article = #{idArticle}
+        select vta.id, vta.id_tag, vta.id_article, vt.tag_title, vt.tag_icon_path, vt.tag_uri, vt.tag_description from forest_tag vt join forest_tag_article vta on vt.id = vta.id_tag where vta.id_article = #{idArticle}
     </select>
     <select id="selectDrafts" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on art.article_author_id = su.id where article_status = '1' and art.article_author_id = #{idUser} order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id where article_status = '1' and art.article_author_id = #{idUser} order by updated_time desc
     </select>
     <select id="selectArticlesByIdPortfolio" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url,vpa.sort_no from vertical_article art join vertical_portfolio_article vpa on vpa.id_vertical_article = art.id and vpa.id_vertical_portfolio = #{idPortfolio}
-        join vertical_user su on art.article_author_id = su.id where art.article_status = 0 and vpa.id_vertical_portfolio = #{idPortfolio} order by sort_no
+        select art.*,su.nickname,su.avatar_url,vpa.sort_no from forest_article art join forest_portfolio_article vpa on vpa.id_article = art.id and vpa.id_portfolio = #{idPortfolio}
+        join forest_user su on art.article_author_id = su.id where art.article_status = 0 and vpa.id_portfolio = #{idPortfolio} order by sort_no
     </select>
     <select id="selectUnbindArticlesByIdPortfolio" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from vertical_article art join vertical_user su on su.id = #{idUser} and art.article_author_id = su.id where art.article_author_id = #{idUser} and art.article_status = 0
-        and instr(art.article_title, #{searchText}) > 0 and art.id not in (select id_vertical_article from vertical_portfolio_article where id_vertical_portfolio = #{idPortfolio}) order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on su.id = #{idUser} and art.article_author_id = su.id where art.article_author_id = #{idUser} and art.article_status = 0
+        and instr(art.article_title, #{searchText}) > 0 and art.id not in (select id_article from forest_portfolio_article where id_portfolio = #{idPortfolio}) order by updated_time desc
     </select>
     <select id="selectPortfolioArticles" resultMap="PortfolioArticleResultMap">
-        select vp.portfolio_title,vp.portfolio_head_img_url,vpa.id_vertical_portfolio,vpa.id_vertical_article,vpa.sort_no from vertical_portfolio vp join vertical_portfolio_article vpa on vp.id = vpa.id_vertical_portfolio where vpa.id_vertical_article = #{idArticle}
+        select vp.portfolio_title,vp.portfolio_head_img_url,vpa.id_portfolio,vpa.id_article,vpa.sort_no from forest_portfolio vp join forest_portfolio_article vpa on vp.id = vpa.id_portfolio where vpa.id_article = #{idArticle}
     </select>
     <select id="existsCommentWithPrimaryKey" resultType="java.lang.Boolean">
-        select exists (select * from vertical_comment where comment_article_id = #{id})
+        select exists (select * from forest_comment where comment_article_id = #{id})
     </select>
     <select id="selectPortfolioArticlesByIdPortfolioAndSortNo" resultMap="DTOResultMap">
-        select va.article_title, va.id, va.article_permalink from vertical_portfolio_article vpa join vertical_article va on va.id = vpa.id_vertical_article where id_vertical_portfolio = #{idPortfolio} order by sort_no
+        select va.article_title, va.id, va.article_permalink from forest_portfolio_article vpa join forest_article va on va.id = vpa.id_article where id_portfolio = #{idPortfolio} order by sort_no
     </select>
 </mapper>

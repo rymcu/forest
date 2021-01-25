@@ -10,7 +10,7 @@
         <result column="blog" property="blog"></result>
     </resultMap>
     <select id="selectUserExtendByNickname" resultMap="BaseResultMap">
-        select vue.* from vertical_user_extend vue join vertical_user vu on vue.id_user = vu.id
+        select vue.* from forest_user_extend vue join forest_user vu on vue.id_user = vu.id
         where vu.nickname = #{nickname} limit 1
     </select>
 </mapper>

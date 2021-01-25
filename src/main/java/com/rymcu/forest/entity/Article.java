@@ -13,7 +13,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_article")
+@Table(name = "forest_article")
 public class Article implements Serializable,Cloneable {
     /** 主键 */
     @Id
@@ -36,7 +36,7 @@ public class Article implements Serializable,Cloneable {
     private String articlePreviewContent;
     /** 评论总数 */
     private Integer articleCommentCount;
-    /** 0:非优选1：优选;0 */
+    /** 0:非优选1：优选; */
     private String articlePerfect;
     /** 文章永久链接 */
     private String articlePermalink;
@@ -48,4 +48,8 @@ public class Article implements Serializable,Cloneable {
     private Date updatedTime;
     /** 文章状态 */
     private String articleStatus;
+    /** 点赞总数 */
+    private Integer articleThumbsUpCount;
+    /** 赞赏总数 */
+    private Integer articleSponsorCount;
 }

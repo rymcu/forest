@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Comparator.comparing;
+
 /**
  * @author ronger
  * */
@@ -40,6 +42,8 @@ public class AdminController {
     public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
         PageHelper.startPage(page, rows);
         List<User> list = userService.findAll();
+        // 按最后登录时间进行倒序排序
+        list.sort(comparing(User::getLastLoginTime).reversed());
         PageInfo<User> pageInfo = new PageInfo<>(list);
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("users", pageInfo.getList());

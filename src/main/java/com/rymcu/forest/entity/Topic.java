@@ -12,7 +12,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_topic")
+@Table(name = "forest_topic")
 public class Topic {
 
     /** 主键 */

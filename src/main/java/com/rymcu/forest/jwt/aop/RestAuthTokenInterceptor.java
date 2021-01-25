@@ -1,13 +1,11 @@
 package com.rymcu.forest.jwt.aop;
 
 
-
 import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.jwt.model.TokenModel;
 import com.rymcu.forest.jwt.service.TokenManager;
-import com.rymcu.forest.jwt.util.oConvertUtils;
-import com.rymcu.forest.web.api.exception.ErrorCode;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import com.rymcu.forest.web.api.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
@@ -18,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * Restful请求， Token校验规则拦截器（JWT）
@@ -55,7 +54,7 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 		}
 		
 		Object username = claims.getId();
-		if (oConvertUtils.isEmpty(username)) {
+		if (Objects.isNull(username)) {
 			throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
 		TokenModel model = manager.getToken(authHeader,username.toString());

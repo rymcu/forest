@@ -8,10 +8,7 @@ import com.rymcu.forest.core.result.GlobalResultMessage;
 import com.rymcu.forest.core.service.log.annotation.VisitLogger;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.User;
-import com.rymcu.forest.service.ArticleService;
-import com.rymcu.forest.service.JavaMailService;
-import com.rymcu.forest.service.PortfolioService;
-import com.rymcu.forest.service.UserService;
+import com.rymcu.forest.service.*;
 import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.Utils;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +34,8 @@ public class CommonApiController {
     private ArticleService articleService;
     @Resource
     private PortfolioService portfolioService;
+    @Resource
+    private SearchService SearchService;
 
     @GetMapping("/get-email-code")
     public GlobalResult<Map<String, String>> getEmailCode(@RequestParam("email") String email) throws MessagingException {
@@ -134,5 +133,11 @@ public class CommonApiController {
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
         Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/initial-search")
+    public GlobalResult initialSearch() {
+        List<SearchModel> list = SearchService.initialSearch();
+        return GlobalResultGenerator.genSuccessResult(list);
     }
 }

@@ -103,8 +103,10 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                         tags.append(tagNlpDTO.getTag()).append(",");
                     }
                     article.setArticleTags(tags.toString());
-                    saveTagArticle(article, articleContentHtml);
+                } else {
+                    article.setArticleTags("待分类");
                 }
+                saveTagArticle(article, articleContentHtml);
             }
         }
         return 0;

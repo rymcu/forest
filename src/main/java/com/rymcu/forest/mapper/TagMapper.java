@@ -13,7 +13,7 @@ import java.util.List;
 public interface TagMapper extends Mapper<Tag> {
 
     /**
-     * 插入标签文章表(vertical_tag_article)相关信息
+     * 插入标签文章表(forest_tag_article)相关信息
      * @param idTag
      * @param idArticle
      * @return

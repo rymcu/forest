@@ -7,8 +7,12 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.CommentDTO;
 import com.rymcu.forest.entity.Article;
+import com.rymcu.forest.entity.ArticleThumbsUp;
+import com.rymcu.forest.entity.Sponsor;
 import com.rymcu.forest.service.ArticleService;
+import com.rymcu.forest.service.ArticleThumbsUpService;
 import com.rymcu.forest.service.CommentService;
+import com.rymcu.forest.service.SponsorService;
 import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +35,14 @@ public class ArticleController {
     private ArticleService articleService;
     @Resource
     private CommentService commentService;
+    @Resource
+    private ArticleThumbsUpService articleThumbsUpService;
+    @Resource
+    private SponsorService sponsorService;
 
     @GetMapping("/detail/{id}")
-    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id, @RequestParam(defaultValue = "2") Integer type){
-        ArticleDTO articleDTO = articleService.findArticleDTOById(id,type);
+    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id, @RequestParam(defaultValue = "2") Integer type) {
+        ArticleDTO articleDTO = articleService.findArticleDTOById(id, type);
         Map map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
@@ -42,24 +50,24 @@ public class ArticleController {
 
     @PostMapping("/post")
     public GlobalResult postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.postArticle(article,request);
+        Map map = articleService.postArticle(article, request);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PutMapping("/post")
     public GlobalResult updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.postArticle(article,request);
+        Map map = articleService.postArticle(article, request);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @DeleteMapping("/delete/{id}")
-    public GlobalResult delete(@PathVariable Integer id){
+    public GlobalResult delete(@PathVariable Integer id) {
         Map map = articleService.delete(id);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @GetMapping("/{id}/comments")
-    public GlobalResult<Map<String, Object>> commons(@PathVariable Integer id){
+    public GlobalResult<Map<String, Object>> commons(@PathVariable Integer id) {
         List<CommentDTO> commentDTOList = commentService.getArticleComments(id);
         Map map = new HashMap<>(1);
         map.put("comments", commentDTOList);
@@ -84,6 +92,24 @@ public class ArticleController {
     @PostMapping("/{id}/update-tags")
     public GlobalResult updateTags(@PathVariable Integer id, @RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
         Map map = articleService.updateTags(id, article.getArticleTags());
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PatchMapping("/update-perfect")
+    public GlobalResult updatePerfect(@RequestBody Article article) {
+        Map map = articleService.updatePerfect(article.getIdArticle(), article.getArticlePerfect());
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PostMapping("/thumbs-up")
+    public GlobalResult thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws BaseApiException {
+        Map map = articleThumbsUpService.thumbsUp(articleThumbsUp);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @PostMapping("/sponsor")
+    public GlobalResult sponsor(@RequestBody Sponsor sponsor) throws Exception {
+        Map map = sponsorService.sponsorship(sponsor);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

@@ -130,10 +130,7 @@ public class Utils {
     }
 
     public static void main(String[] args){
-        LocalDate localDate = LocalDate.parse("2019-11-15");
-        ZoneId zone = ZoneId.systemDefault();
-        Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
-        String s = getTimeAgo(Date.from(instant));
+        String s = entryptPassword("admin");
         System.out.println(s);
     }
 

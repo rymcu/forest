@@ -12,7 +12,9 @@ import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.Utils;
+import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -63,6 +65,10 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     @Override
     public Portfolio postPortfolio(Portfolio portfolio) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
+        if (StringUtils.isNotBlank(portfolio.getHeadImgType())) {
+            String headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), 0);
+            portfolio.setHeadImgUrl(headImgUrl);
+        }
         if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
             portfolio.setPortfolioAuthorId(user.getIdUser());
             portfolio.setCreatedTime(new Date());

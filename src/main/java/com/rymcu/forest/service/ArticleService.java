@@ -111,6 +111,16 @@ public interface ArticleService extends Service<Article> {
      * @param idArticle
      * @param tags
      * @return
+     * @throws UnsupportedEncodingException
+     * @throws BaseApiException
      */
     Map updateTags(Integer idArticle, String tags) throws UnsupportedEncodingException, BaseApiException;
+
+    /**
+     * 更新文章优选状态
+     * @param idArticle
+     * @param articlePerfect
+     * @return
+     */
+    Map updatePerfect(Integer idArticle, String articlePerfect);
 }

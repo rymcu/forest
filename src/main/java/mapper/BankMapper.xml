@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.BankMapper">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.BankDTO">
+        <result column="id" property="idBank"></result>
+        <result column="bank_name" property="bankName"></result>
+        <result column="bank_owner" property="bankOwner"></result>
+        <result column="bank_owner_name" property="bankOwnerName"></result>
+        <result column="bank_account" property="bankAccount"></result>
+        <result column="account_balance" property="accountBalance"></result>
+        <result column="created_by" property="createdBy"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="bank_description" property="bankDescription"></result>
+    </resultMap>
+    <select id="selectBanks" resultMap="DTOResultMap">
+        select vb.*, vba.bank_account, vba.account_balance from forest_bank_account vba
+        join forest_bank vb on vba.account_owner = vb.id where vba.account_type = 1
+    </select>
+</mapper>

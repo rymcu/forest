@@ -13,7 +13,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="vertical_special_day")
+@Table(name="forest_special_day")
 public class SpecialDay implements Serializable,Cloneable{
     /**  */
     @Id

@@ -47,57 +47,57 @@
         <result column="avatar_url" property="userAvatarURL"/>
     </resultMap>
     <insert id="insertUserRole">
-        insert into vertical_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
+        insert into forest_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
     </insert>
     <update id="updatePasswordByAccount">
-        update vertical_user set password = #{password} where account = #{account}
+        update forest_user set password = #{password} where account = #{account}
     </update>
     <update id="updateUserRole">
-        update vertical_user_role set id_role = #{idRole},created_time = sysdate() where id_user = #{idUser}
+        update forest_user_role set id_role = #{idRole},created_time = sysdate() where id_user = #{idUser}
     </update>
     <update id="updateStatus">
-        update vertical_user set status = #{status} where id = #{idUser}
+        update forest_user set status = #{status} where id = #{idUser}
     </update>
     <update id="updateUserInfo">
-        update vertical_user set nickname = #{nickname},email = #{email},signature = #{signature},avatar_type = #{avatarType},avatar_url = #{avatarUrl},sex = #{sex}
+        update forest_user set nickname = #{nickname},email = #{email},signature = #{signature},avatar_type = #{avatarType},avatar_url = #{avatarUrl},sex = #{sex}
         <if test="phone != null and phone != ''">
             ,phone = #{phone}
         </if>
         where id = #{idUser}
     </update>
     <update id="updateLastLoginTime">
-        update vertical_user set last_login_time = sysdate() where id = #{idUser}
+        update forest_user set last_login_time = sysdate() where id = #{idUser}
     </update>
     <update id="updateEmail">
-        update vertical_user set email = #{email} where id = #{idUser}
+        update forest_user set email = #{email} where id = #{idUser}
     </update>
     <update id="updatePasswordById">
-        update vertical_user set password = #{password} where id = #{idUser}
+        update forest_user set password = #{password} where id = #{idUser}
     </update>
 
     <select id="findByAccount" resultMap="BaseResultMap">
-        select id, nickname, account, password, status, avatar_type, avatar_url from vertical_user where (account = #{account} or email = #{account} ) and status = 0
+        select id, nickname, account, password, status, avatar_type, avatar_url from forest_user where (account = #{account} or email = #{account} ) and status = 0
     </select>
     <select id="findUserInfoByAccount" resultMap="UserInfoResultMapper">
-        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where account = #{account}
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from forest_user where account = #{account}
     </select>
     <select id="selectUserDTOByNickname" resultMap="DTOResultMapper">
-        select id, nickname, avatar_type, avatar_url, account, signature from vertical_user where nickname = #{nickname} and status = 0
+        select id, nickname, avatar_type, avatar_url, account, signature from forest_user where nickname = #{nickname} and status = 0
     </select>
     <select id="selectRoleWeightsByUser" resultType="java.lang.Integer">
-        select vr.weights from vertical_role vr left join vertical_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}
+        select vr.weights from forest_role vr left join forest_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}
     </select>
     <select id="selectCountByNickName" resultType="java.lang.Integer">
-        select count(*) from vertical_user where nickname = #{nickname}
+        select count(*) from forest_user where nickname = #{nickname}
     </select>
     <select id="selectUserInfo" resultMap="UserInfoResultMapper">
-        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from vertical_user where id = #{idUser}
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time from forest_user where id = #{idUser}
     </select>
     <select id="checkNicknameByIdUser" resultType="java.lang.Integer">
-        select count(*) from vertical_user where nickname = #{nickname} and id != #{idUser}
+        select count(*) from forest_user where nickname = #{nickname} and id != #{idUser}
     </select>
     <select id="selectAuthor" resultMap="AuthorResultMap">
-        select * from vertical_user where id = #{id}
+        select * from forest_user where id = #{id}
     </select>
 
 </mapper>

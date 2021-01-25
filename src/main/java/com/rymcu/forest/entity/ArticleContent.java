@@ -12,7 +12,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name = "vertical_article_content")
+@Table(name = "forest_article_content")
 public class ArticleContent {
 
     @Id

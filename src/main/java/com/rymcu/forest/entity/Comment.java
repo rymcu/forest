@@ -13,7 +13,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="vertical_comment")
+@Table(name="forest_comment")
 public class Comment implements Serializable,Cloneable {
     /** 主键 */
     @Id
