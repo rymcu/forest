@@ -219,7 +219,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-        <finalName>vertical-console</finalName>
+        <finalName>forest</finalName>
     </build>
 
 </project>
