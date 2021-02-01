@@ -1,11 +1,13 @@
 package com.rymcu.forest.service.impl;
 
+import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.entity.Sponsor;
 import com.rymcu.forest.entity.TransactionRecord;
 import com.rymcu.forest.entity.User;
-import com.rymcu.forest.enumerate.SponsorEnum;
+import com.rymcu.forest.enumerate.TransactionCode;
+import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.mapper.SponsorMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.SponsorService;
@@ -39,7 +41,7 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
             map.put("success", false);
             map.put("message", "数据异常");
         } else {
-            SponsorEnum result = Arrays.stream(SponsorEnum.values()).filter(sponsorEnum -> sponsorEnum.getDataType().equals(sponsor.getDataType())).findFirst().orElse(SponsorEnum.Article);
+            TransactionEnum result = TransactionEnum.valueOf(sponsor.getDataType());
             BigDecimal money = BigDecimal.valueOf(result.getMoney());
             sponsor.setSponsorshipMoney(money);
             User user = UserUtils.getCurrentUserByToken();
@@ -47,11 +49,11 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
             sponsor.setSponsorshipTime(new Date());
             sponsorMapper.insertSelective(sponsor);
             // 赞赏金额划转
-            if (result.isArticle()) {
+            if (result.isArticleSponsor()) {
                 ArticleDTO articleDTO = articleService.findArticleDTOById(sponsor.getDataId(), 1);
                 TransactionRecord transactionRecord = transactionRecordService.transferByUserId(articleDTO.getArticleAuthorId(), user.getIdUser(), money);
                 if (Objects.isNull(transactionRecord.getIdTransactionRecord())) {
-                    throw new Exception("余额不足");
+                    throw new TransactionException(TransactionCode.InsufficientBalance);
                 }
                 // 更新文章赞赏数
                 sponsorMapper.updateArticleSponsorCount(articleDTO.getIdArticle());

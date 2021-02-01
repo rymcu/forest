@@ -4,14 +4,16 @@ package com.rymcu.forest.enumerate;
  * @author ronger
  */
 
-public enum SponsorEnum {
-    Article("0", 20);
+public enum TransactionEnum {
+    ArticleSponsor("0", 20),
+    Answer("1", 30),
+    CorrectAnswer("2", 50);
 
     private String dataType;
 
     private Integer money;
 
-    SponsorEnum(String dataType, Integer money) {
+    TransactionEnum(String dataType, Integer money) {
         this.dataType = dataType;
         this.money = money;
     }
@@ -24,7 +26,7 @@ public enum SponsorEnum {
         return this.money;
     }
 
-    public boolean isArticle() {
-        return Article.equals(this);
+    public boolean isArticleSponsor() {
+        return ArticleSponsor.equals(this);
     }
 }
