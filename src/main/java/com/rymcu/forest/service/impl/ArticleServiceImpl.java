@@ -268,6 +268,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         articleMapper.deleteLinkedPortfolioData(id);
         // 删除引用标签记录
         articleMapper.deleteTagArticle(id);
+        // 删除文章内容表
+        articleMapper.deleteArticleContent(id);
     }
 
     @Override

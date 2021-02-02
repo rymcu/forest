@@ -97,6 +97,9 @@
     <delete id="deleteLinkedPortfolioData">
         delete from forest_portfolio_article where id_article = #{id}
     </delete>
+    <delete id="deleteArticleContent">
+        delete from forest_article_content where id_article = #{idArticle}
+    </delete>
     <select id="selectArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id
         where article_status = 0
