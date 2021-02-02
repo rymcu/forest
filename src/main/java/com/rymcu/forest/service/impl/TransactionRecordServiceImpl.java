@@ -1,12 +1,14 @@
 package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.exception.ServiceException;
+import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
+import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
 import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.TransactionRecordService;
@@ -47,7 +49,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
                 transactionRecordMapper.insertSelective(transactionRecord);
             }
         } else {
-            throw new Exception("余额不足");
+            throw new TransactionException(TransactionCode.InsufficientBalance);
         }
         return transactionRecord;
     }

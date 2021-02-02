@@ -1,5 +1,7 @@
 package com.rymcu.forest.enumerate;
 
+import java.util.Arrays;
+
 /**
  * @author ronger
  */
@@ -16,6 +18,10 @@ public enum TransactionEnum {
     TransactionEnum(String dataType, Integer money) {
         this.dataType = dataType;
         this.money = money;
+    }
+
+    public static TransactionEnum findTransactionEnum(String dataType) {
+        return Arrays.stream(TransactionEnum.values()).filter(transactionEnum -> transactionEnum.getDataType().equals(dataType)).findFirst().orElse(TransactionEnum.ArticleSponsor);
     }
 
     public String getDataType() {

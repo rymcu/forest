@@ -41,7 +41,7 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
             map.put("success", false);
             map.put("message", "数据异常");
         } else {
-            TransactionEnum result = TransactionEnum.valueOf(sponsor.getDataType());
+            TransactionEnum result = TransactionEnum.findTransactionEnum(sponsor.getDataType());
             BigDecimal money = BigDecimal.valueOf(result.getMoney());
             sponsor.setSponsorshipMoney(money);
             User user = UserUtils.getCurrentUserByToken();
