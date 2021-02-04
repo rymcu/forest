@@ -8,9 +8,9 @@ import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.util.Utils;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -26,11 +26,9 @@ public class LuceneSearchController {
 
   @Resource private LuceneService luceneService;
 
-  @GetMapping("/createIndex")
-  public GlobalResult createIndex(
-      @RequestParam(required = false, defaultValue = "0") Integer limit,
-      @RequestParam(required = false, defaultValue = "1000") Integer offset) {
-    // 拉取数据
+  @PostConstruct
+  public GlobalResult createIndex() {
+    System.out.println(">>>>>>>>>init index<<<<<<<<<<<");
     luceneService.writeArticle(luceneService.getAllArticleLucene());
     return GlobalResultGenerator.genSuccessResult("创建索引成功");
   }
