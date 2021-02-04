@@ -27,17 +27,6 @@ public class LuceneSearchController {
 
   @Resource private LuceneService luceneService;
 
-  @GetMapping("/getArticles")
-  public GlobalResult createIndex() {
-    return GlobalResultGenerator.genSuccessResult(luceneService.getAllArticleLucene());
-  }
-
-  @GetMapping("/getArticlesByIds")
-  public GlobalResult getArticlesByIds() {
-    return GlobalResultGenerator.genSuccessResult(
-        luceneService.getArticlesByIds(new String[] {"1", "2", "3"}));
-  }
-
   @GetMapping("/createIndex")
   public GlobalResult createIndex(
       @RequestParam(required = false, defaultValue = "0") Integer limit,
