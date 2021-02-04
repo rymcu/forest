@@ -23,10 +23,7 @@ import com.rymcu.forest.lucene.cfg.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +49,9 @@ public class Dictionary {
    * 量词词典
    */
   private DictSegment _QuantifierDict;
+
+  private static final String PATH_USER_DIC =
+      System.getProperty("user.dir") + "/lucene/userDic/userDic.dic";
 
   /** 配置对象 */
   private Configuration cfg;
@@ -217,7 +217,11 @@ public class Dictionary {
         is = this.getClass().getClassLoader().getResourceAsStream(extDictName);
         // 如果找不到扩展的字典，则忽略
         if (is == null) {
-          continue;
+          try {
+            is = new FileInputStream(extDictName);
+          } catch (FileNotFoundException e) {
+            continue;
+          }
         }
         try {
           BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), 512);
@@ -226,7 +230,7 @@ public class Dictionary {
             theWord = br.readLine();
             if (theWord != null && !"".equals(theWord.trim())) {
               // 加载扩展词典数据到主内存词典中
-              // System.out.println(theWord);
+              System.out.println(theWord);
               _MainDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
             }
           } while (theWord != null);
@@ -325,6 +329,42 @@ public class Dictionary {
           is.close();
           is = null;
         }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /** 加载用户配置的自定义扩展词典到主词库表 */
+  public void updateUserDict() {
+    // 加载扩展词典配置
+    InputStream is;
+    // 读取扩展词典文件
+    System.out.println("更新加载扩展词典：" + PATH_USER_DIC);
+    try {
+      is = new FileInputStream(PATH_USER_DIC);
+    } catch (FileNotFoundException e) {
+      return;
+    }
+    try {
+      BufferedReader br =
+          new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8), 512);
+      String theWord = null;
+      do {
+        theWord = br.readLine();
+        if (theWord != null && !"".equals(theWord.trim())) {
+          // 加载扩展词典数据到主内存词典中
+          System.out.println(theWord);
+          _MainDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
+        }
+      } while (theWord != null);
+    } catch (IOException ioe) {
+      System.err.println("Extension Dictionary loading exception.");
+      ioe.printStackTrace();
+    } finally {
+      try {
+        is.close();
+        is = null;
       } catch (IOException e) {
         e.printStackTrace();
       }

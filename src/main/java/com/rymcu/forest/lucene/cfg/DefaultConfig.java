@@ -28,23 +28,21 @@ import java.util.List;
 @Component
 public class DefaultConfig implements Configuration {
 
-  /**
-   * 分词器默认字典路径
-   */
+  /** 分词器默认字典路径 */
   private static final String PATH_DIC_MAIN = "lucene/main2012.dic";
+
   private static final String PATH_DIC_QUANTIFIER = "lucene/quantifier.dic";
+  private static final String PATH_USER_DIC =
+      System.getProperty("user.dir") + "/lucene/userDic/userDic.dic";
 
-
-  /**
-   * 分词器配置文件路径
-   */
+  /** 分词器配置文件路径 */
   private static final String FILE_NAME = "IKAnalyzer.cfg.xml";
   // 配置属性——扩展字典
   private static final String EXT_DICT = "ext_dic";
   // 配置属性——扩展停止词典
   private static final String EXT_STOP = "ext_stopword";
 
-  private String extDic = "lucene/ext.dic";
+  private String extDic = "lucene/ext.dic;" + PATH_USER_DIC;
 
   private String extStopword = "lucene/stopword.dic";
   /*
@@ -141,19 +139,4 @@ public class DefaultConfig implements Configuration {
     return extStopWordDictFiles;
   }
 
-  public String getExtDic() {
-    return extDic;
-  }
-
-  public void setExtDic(String extDic) {
-    this.extDic = extDic;
-  }
-
-  public String getExtStopword() {
-    return extStopword;
-  }
-
-  public void setExtStopword(String extStopword) {
-    this.extStopword = extStopword;
-  }
 }

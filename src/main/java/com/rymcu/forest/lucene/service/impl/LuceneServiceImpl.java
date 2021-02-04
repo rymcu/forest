@@ -44,7 +44,7 @@ public class LuceneServiceImpl implements LuceneService {
   @Resource private ArticleLuceneMapper luceneMapper;
 
   /** Lucene索引文件路径 */
-  private final String indexPath = System.getProperty("user.dir") + "/index";
+  private final String indexPath = System.getProperty("user.dir") + "/lucene/index";
 
   /**
    * 将文章的数据解析为一个个关键字词存储到索引文件中
@@ -66,7 +66,7 @@ public class LuceneServiceImpl implements LuceneService {
         int end = Math.min((i + 1) * perThreadCount, totalCount);
         List<ArticleLucene> subList = list.subList(start, end);
         Runnable runnable =
-            new ArticleBeanIndex("index", i, countDownLatch1, countDownLatch2, subList);
+            new ArticleBeanIndex("lucene/index", i, countDownLatch1, countDownLatch2, subList);
         // 子线程交给线程池管理
         pool.execute(runnable);
       }

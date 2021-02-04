@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.FileNotFoundException;
 
 /**
  * UserDicController
@@ -34,8 +35,14 @@ public class UserDicController {
     return GlobalResultGenerator.genSuccessResult(dicService.getAllDic());
   }
 
-  @PostMapping("/addDic")
-  public GlobalResult addDic(@RequestBody String dic) {
+  @GetMapping("/loadUserDic")
+  public GlobalResult loadUserDic() throws FileNotFoundException {
+    dicService.writeUserDic();
+    return GlobalResultGenerator.genSuccessResult("加载用户自定义字典成功");
+  }
+
+  @PostMapping("/addDic/{dic}")
+  public GlobalResult addDic(@PathVariable String dic) {
     dicService.addDic(dic);
     return GlobalResultGenerator.genSuccessResult("新增字典成功");
   }
