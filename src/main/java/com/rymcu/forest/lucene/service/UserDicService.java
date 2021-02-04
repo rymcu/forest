@@ -47,10 +47,4 @@ public interface UserDicService {
    * @param userDic
    */
   void updateDic(UserDic userDic);
-
-  /**
-   * 写入字典至内存
-   *
-   */
-  void writeUserDic() throws FileNotFoundException;
 }

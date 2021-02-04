@@ -20,7 +20,6 @@ import java.util.List;
  * @author suwen
  * @date 2021/2/3 10:41
  */
-@Log4j2
 @RestController
 @RequestMapping("/api/v1/lucene")
 public class LuceneSearchController {

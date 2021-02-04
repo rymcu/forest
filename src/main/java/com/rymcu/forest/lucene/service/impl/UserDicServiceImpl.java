@@ -54,8 +54,7 @@ public class UserDicServiceImpl implements UserDicService {
     writeUserDic();
   }
 
-  @Override
-  public void writeUserDic() {
+  private void writeUserDic() {
     try {
       File file = new File(dicPath);
       FileOutputStream stream = new FileOutputStream(file, false);

@@ -340,6 +340,18 @@ create table forest_visit
 )
     comment '浏览表' collate = utf8mb4_unicode_ci;
 
+create table lucene_user_dic
+(
+    id  int auto_increment comment '字典编号',
+    dic char(32) null comment '字典',
+    constraint lucene_user_dic_id_uindex
+        unique (id)
+)
+    comment '用户扩展字典';
+
+alter table lucene_user_dic
+    add primary key (id);
+
 insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (1, '管理员', 'admin', '0', '2019-11-16 04:22:45', '2019-11-16 04:22:45', 1);
 insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (2, '社区管理员', 'blog_admin', '0', '2019-12-05 03:10:05', '2019-12-05 17:11:35', 2);
 insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (3, '作者', 'zz', '0', '2020-03-12 15:07:27', '2020-03-12 15:07:27', 3);
