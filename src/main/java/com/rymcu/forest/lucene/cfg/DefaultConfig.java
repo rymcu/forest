@@ -30,24 +30,16 @@ public class DefaultConfig implements Configuration {
 
   /** 分词器默认字典路径 */
   private static final String PATH_DIC_MAIN = "lucene/main2012.dic";
-
+  /** 题词字典路径 */
   private static final String PATH_DIC_QUANTIFIER = "lucene/quantifier.dic";
+  /** 用户自定义字典路径 */
   private static final String PATH_USER_DIC =
       System.getProperty("user.dir") + "/lucene/userDic/userDic.dic";
-
-  /** 分词器配置文件路径 */
-  private static final String FILE_NAME = "IKAnalyzer.cfg.xml";
-  // 配置属性——扩展字典
-  private static final String EXT_DICT = "ext_dic";
-  // 配置属性——扩展停止词典
-  private static final String EXT_STOP = "ext_stopword";
-
+  /** 配置属性——扩展字典 */
   private String extDic = "lucene/ext.dic;" + PATH_USER_DIC;
-
+  /** 配置属性——扩展停止词典 */
   private String extStopword = "lucene/stopword.dic";
-  /*
-   * 是否使用smart方式分词
-   */
+  /** 是否使用smart方式分词 */
   private boolean useSmart;
 
   /**
@@ -138,5 +130,4 @@ public class DefaultConfig implements Configuration {
     }
     return extStopWordDictFiles;
   }
-
 }

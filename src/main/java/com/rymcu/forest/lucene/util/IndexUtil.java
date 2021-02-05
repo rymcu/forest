@@ -28,7 +28,7 @@ public class IndexUtil {
      * @throws IOException
      */
     public static IndexWriter getIndexWriter(String indexPath,boolean create) throws IOException{
-        Directory dir = FSDirectory.open(Paths.get(indexPath, new String[0]));
+        Directory dir = FSDirectory.open(Paths.get(indexPath));
         Analyzer analyzer = new IKAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
         LogMergePolicy mergePolicy = new LogByteSizeMergePolicy();

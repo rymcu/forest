@@ -1,25 +1,21 @@
 /**
- * IK 中文分词  版本 5.0
- * IK Analyzer release 5.0
- * 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * IK 中文分词 版本 5.0 IK Analyzer release 5.0
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * 源代码由林良益(linliangyi2005@gmail.com)提供
- * 版权声明 2012，乌龙茶工作室
- * provided by Linliangyi and copyright 2012 by Oolong studio
+ * <p>源代码由林良益(linliangyi2005@gmail.com)提供 版权声明 2012，乌龙茶工作室 provided by Linliangyi and copyright 2012
+ * by Oolong studio
  */
 package com.rymcu.forest.lucene.core;
 
@@ -32,30 +28,26 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * IK分词器主类
- *
- */
+/** IK分词器主类 */
 public final class IKSegmenter {
 
-  // 字符窜reader
+  /** 字符窜reader */
   private Reader input;
-  // 分词器配置项
+  /** 分词器配置项 */
   private Configuration cfg;
-  // 分词器上下文
+  /** 分词器上下文 */
   private AnalyzeContext context;
-  // 分词处理器列表
+  /** 分词处理器列表 */
   private List<ISegmenter> segmenters;
-  // 分词歧义裁决器
+  /** 分词歧义裁决器 */
   private IKArbitrator arbitrator;
 
   /**
    * IK分词器构造函数
-   * @param input 
+   *
+   * @param input
    * @param useSmart 为true，使用智能分词策略
-   * 
-   * 非智能分词：细粒度输出所有可能的切分结果
-   * 智能分词： 合并数词和量词，对分词结果进行歧义判断
+   *     <p>非智能分词：细粒度输出所有可能的切分结果 智能分词： 合并数词和量词，对分词结果进行歧义判断
    */
   public IKSegmenter(Reader input, boolean useSmart) {
     this.input = input;
@@ -66,9 +58,9 @@ public final class IKSegmenter {
 
   /**
    * IK分词器构造函数
+   *
    * @param input
    * @param cfg 使用自定义的Configuration构造分词器
-   * 
    */
   public IKSegmenter(Reader input, Configuration cfg) {
     this.input = input;
@@ -76,9 +68,7 @@ public final class IKSegmenter {
     this.init();
   }
 
-  /**
-   * 初始化
-   */
+  /** 初始化 */
   private void init() {
     // 初始化词典单例
     Dictionary.initial(this.cfg);
@@ -92,6 +82,7 @@ public final class IKSegmenter {
 
   /**
    * 初始化词典，加载子分词器实现
+   *
    * @return List<ISegmenter>
    */
   private List<ISegmenter> loadSegmenters() {
@@ -107,6 +98,7 @@ public final class IKSegmenter {
 
   /**
    * 分词，获取下一个词元
+   *
    * @return Lexeme 词元对象
    * @throws IOException
    */
@@ -152,9 +144,10 @@ public final class IKSegmenter {
   }
 
   /**
-     * 重置分词器到初始状态
-     * @param input
-     */
+   * 重置分词器到初始状态
+   *
+   * @param input
+   */
   public synchronized void reset(Reader input) {
     this.input = input;
     context.reset();

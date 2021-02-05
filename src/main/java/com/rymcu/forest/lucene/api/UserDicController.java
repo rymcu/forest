@@ -7,7 +7,6 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.lucene.model.UserDic;
 import com.rymcu.forest.lucene.service.UserDicService;
 import com.rymcu.forest.util.Utils;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

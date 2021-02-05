@@ -22,9 +22,6 @@ public class UserDicServiceImpl implements UserDicService {
 
   @Resource private UserDicMapper userDicMapper;
 
-  /** Lucene索引文件路径 */
-  private final String dicPath = System.getProperty("user.dir") + "/lucene/userDic/userDic.dic";
-
   @Override
   public List<String> getAllDic() {
 
@@ -56,8 +53,12 @@ public class UserDicServiceImpl implements UserDicService {
 
   private void writeUserDic() {
     try {
-      File file = new File(dicPath);
-      FileOutputStream stream = new FileOutputStream(file, false);
+      String filePath = "lucene/userDic/";
+      File file = new File(filePath);
+      if (!file.exists()) {
+        file.mkdirs();
+      }
+      FileOutputStream stream = new FileOutputStream(file + "/userDic.dic", false);
       OutputStreamWriter outfw = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
       PrintWriter fw = new PrintWriter(new BufferedWriter(outfw));
       userDicMapper
@@ -70,7 +71,7 @@ public class UserDicServiceImpl implements UserDicService {
       fw.flush();
       fw.close();
       Dictionary.getSingleton().updateUserDict();
-    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }

@@ -39,7 +39,7 @@ public class SearchUtil {
       IndexReader[] readers = new IndexReader[files.length];
       for (int i = 0; i < files.length; i++) {
         readers[i] =
-            DirectoryReader.open(FSDirectory.open(Paths.get(files[i].getPath(), new String[0])));
+            DirectoryReader.open(FSDirectory.open(Paths.get(files[i].getPath())));
       }
       reader = new MultiReader(readers);
     } catch (IOException e) {
@@ -55,7 +55,7 @@ public class SearchUtil {
    * @throws IOException
    */
   public static DirectoryReader getIndexReader(String indexPath) throws IOException {
-    return DirectoryReader.open(FSDirectory.open(Paths.get(indexPath, new String[0])));
+    return DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
   }
   /**
    * 根据索引路径获取IndexSearcher

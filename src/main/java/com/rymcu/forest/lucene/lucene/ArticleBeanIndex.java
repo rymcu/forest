@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * BaiKeBeanIndex
+ * ArticleBeanIndex
  *
  * @author suwen
  * @date 2021/2/2 14:10

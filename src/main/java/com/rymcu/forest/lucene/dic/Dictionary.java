@@ -28,33 +28,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
-/** 词典管理类,单子模式 */
+/** 词典管理类,单例模式 */
 public class Dictionary {
 
-  /*
-   * 词典单子实例
-   */
+  /** 词典单例 */
   private static Dictionary singleton;
-
-  /*
-   * 主词典对象
-   */
+  /** 主词典对象 */
   private DictSegment _MainDict;
-
-  /*
-   * 停止词词典
-   */
+  /** 停止词词典 */
   private DictSegment _StopWordDict;
-  /*
-   * 量词词典
-   */
+  /** 量词词典 */
   private DictSegment _QuantifierDict;
-
+  /** 用户自定义词典路径 */
   private static final String PATH_USER_DIC =
       System.getProperty("user.dir") + "/lucene/userDic/userDic.dic";
-
   /** 配置对象 */
-  private Configuration cfg;
+  private final Configuration cfg;
 
   private Dictionary(Configuration cfg) {
     this.cfg = cfg;
@@ -190,7 +179,7 @@ public class Dictionary {
       InputStream is = resource.getInputStream();
       BufferedReader br =
           new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8), 512);
-      String theWord = null;
+      String theWord;
       do {
         theWord = br.readLine();
         if (theWord != null && !"".equals(theWord.trim())) {
@@ -210,7 +199,7 @@ public class Dictionary {
     // 加载扩展词典配置
     List<String> extDictFiles = cfg.getExtDictionary();
     if (extDictFiles != null) {
-      InputStream is = null;
+      InputStream is;
       for (String extDictName : extDictFiles) {
         // 读取扩展词典文件
         System.out.println("加载扩展词典：" + extDictName);
@@ -224,8 +213,9 @@ public class Dictionary {
           }
         }
         try {
-          BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), 512);
-          String theWord = null;
+          BufferedReader br =
+              new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8), 512);
+          String theWord;
           do {
             theWord = br.readLine();
             if (theWord != null && !"".equals(theWord.trim())) {
@@ -234,17 +224,12 @@ public class Dictionary {
               _MainDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
             }
           } while (theWord != null);
-
         } catch (IOException ioe) {
           System.err.println("Extension Dictionary loading exception.");
           ioe.printStackTrace();
-
         } finally {
           try {
-            if (is != null) {
-              is.close();
-              is = null;
-            }
+            is.close();
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -271,26 +256,20 @@ public class Dictionary {
         }
         try {
           BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), 512);
-          String theWord = null;
+          String theWord;
           do {
             theWord = br.readLine();
             if (theWord != null && !"".equals(theWord.trim())) {
-              // System.out.println(theWord);
               // 加载扩展停止词典数据到内存中
               _StopWordDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
             }
           } while (theWord != null);
-
         } catch (IOException ioe) {
           System.err.println("Extension Stop word Dictionary loading exception.");
           ioe.printStackTrace();
-
         } finally {
           try {
-            if (is != null) {
-              is.close();
-              is = null;
-            }
+            is.close();
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -310,25 +289,21 @@ public class Dictionary {
       throw new RuntimeException("Quantifier Dictionary not found!!!");
     }
     try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"), 512);
-      String theWord = null;
+      BufferedReader br =
+          new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8), 512);
+      String theWord;
       do {
         theWord = br.readLine();
         if (theWord != null && !"".equals(theWord.trim())) {
           _QuantifierDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
         }
       } while (theWord != null);
-
     } catch (IOException ioe) {
       System.err.println("Quantifier Dictionary loading exception.");
       ioe.printStackTrace();
-
     } finally {
       try {
-        if (is != null) {
-          is.close();
-          is = null;
-        }
+        is.close();
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -349,7 +324,7 @@ public class Dictionary {
     try {
       BufferedReader br =
           new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8), 512);
-      String theWord = null;
+      String theWord;
       do {
         theWord = br.readLine();
         if (theWord != null && !"".equals(theWord.trim())) {
@@ -364,7 +339,6 @@ public class Dictionary {
     } finally {
       try {
         is.close();
-        is = null;
       } catch (IOException e) {
         e.printStackTrace();
       }
