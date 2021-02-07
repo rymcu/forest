@@ -7,12 +7,17 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import com.rymcu.forest.lucene.service.LuceneService;
+import com.rymcu.forest.lucene.service.UserDicService;
 import com.rymcu.forest.util.Utils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * LuceneSearchController
@@ -25,12 +30,27 @@ import java.util.List;
 public class LuceneSearchController {
 
   @Resource private LuceneService luceneService;
+  @Resource private UserDicService dicService;
 
   @PostConstruct
-  public GlobalResult createIndex() {
-    System.out.println(">>>>>>>>>init index<<<<<<<<<<<");
-    luceneService.writeArticle(luceneService.getAllArticleLucene());
-    return GlobalResultGenerator.genSuccessResult("创建索引成功");
+  public void createIndex() {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    CompletableFuture<String> future =
+        CompletableFuture.supplyAsync(
+            () -> {
+              System.out.println(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
+              luceneService.writeArticle(luceneService.getAllArticleLucene());
+              System.out.println(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
+              System.out.println("加载用户配置的自定义扩展词典到主词库表");
+              try {
+                dicService.writeUserDic();
+              } catch (FileNotFoundException e) {
+                System.out.println("加载用户词典失败，未成功创建用户词典");
+              }
+              return "索引成功创建";
+            },
+            executor);
+    future.thenAccept(System.out::println);
   }
 
   /**

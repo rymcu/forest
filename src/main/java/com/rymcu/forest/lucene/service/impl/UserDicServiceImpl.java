@@ -51,7 +51,8 @@ public class UserDicServiceImpl implements UserDicService {
     writeUserDic();
   }
 
-  private void writeUserDic() {
+  @Override
+  public void writeUserDic() {
     try {
       String filePath = "lucene/userDic/";
       File file = new File(filePath);
