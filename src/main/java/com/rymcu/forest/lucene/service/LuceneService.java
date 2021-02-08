@@ -18,7 +18,28 @@ public interface LuceneService {
    *
    * @param list
    */
-   void writeArticle(List<ArticleLucene> list);
+  void writeArticle(List<ArticleLucene> list);
+
+  /**
+   * 写入单个文章索引
+   *
+   * @param id
+   */
+  void writeArticle(String id) throws Exception;
+
+  /**
+   * 更新单个文章索引
+   *
+   * @param id
+   */
+  void updateArticle(String id) throws Exception;
+
+  /**
+   * 删除单个文章索引
+   *
+   * @param id
+   */
+  void deleteArticle(String id);
 
   /**
    * 关键词搜索
@@ -27,20 +48,20 @@ public interface LuceneService {
    * @return
    * @throws Exception
    */
-   List<ArticleLucene> searchArticle(String value);
+  List<ArticleLucene> searchArticle(String value);
 
-    /**
-     * 加载所有文章内容
-     *
-     * @return
-     */
-    List<ArticleLucene> getAllArticleLucene();
+  /**
+   * 加载所有文章内容
+   *
+   * @return
+   */
+  List<ArticleLucene> getAllArticleLucene();
 
-    /**
-     * 加载所有文章内容
-     *
-     * @param ids 文章id(半角逗号分隔)
-     * @return
-     */
-    List<ArticleDTO> getArticlesByIds(String[] ids);
+  /**
+   * 加载所有文章内容
+   *
+   * @param ids 文章id(半角逗号分隔)
+   * @return
+   */
+  List<ArticleDTO> getArticlesByIds(String[] ids);
 }

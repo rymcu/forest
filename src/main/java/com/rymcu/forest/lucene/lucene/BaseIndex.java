@@ -29,6 +29,18 @@ public abstract class BaseIndex<T> implements Runnable {
   /** 对象列表 */
   private List<T> list;
 
+  public BaseIndex(String parentIndexPath, int subIndex) {
+    this.parentIndexPath = parentIndexPath;
+    this.subIndex = subIndex;
+    try {
+      this.writer = IndexUtil.getIndexWriter(parentIndexPath + "/index" + subIndex, true);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    this.countDownLatch1 = null;
+    this.countDownLatch2 = null;
+  }
+
   public BaseIndex(
       IndexWriter writer,
       CountDownLatch countDownLatch1,
@@ -60,7 +72,7 @@ public abstract class BaseIndex<T> implements Runnable {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    ;
+
     this.subIndex = subIndex;
     this.countDownLatch1 = countDownLatch1;
     this.countDownLatch2 = countDownLatch2;
@@ -105,6 +117,12 @@ public abstract class BaseIndex<T> implements Runnable {
     for (T t2 : t) {
       indexDoc(writer, t2);
     }
+  }
+
+  public abstract void deleteDoc(String id) throws IOException;
+
+  public IndexWriter getWriter() {
+    return writer;
   }
 
   @Override

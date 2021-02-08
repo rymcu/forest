@@ -21,13 +21,11 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +42,7 @@ public class LuceneServiceImpl implements LuceneService {
   @Resource private ArticleLuceneMapper luceneMapper;
 
   /** Lucene索引文件路径 */
-  private final String indexPath = System.getProperty("user.dir") + "/lucene/index";
+  private final String indexPath = "lucene/index";
 
   /**
    * 将文章的数据解析为一个个关键字词存储到索引文件中
@@ -66,7 +64,7 @@ public class LuceneServiceImpl implements LuceneService {
         int end = Math.min((i + 1) * perThreadCount, totalCount);
         List<ArticleLucene> subList = list.subList(start, end);
         Runnable runnable =
-            new ArticleBeanIndex("lucene/index", i, countDownLatch1, countDownLatch2, subList);
+            new ArticleBeanIndex(indexPath, i, countDownLatch1, countDownLatch2, subList);
         // 子线程交给线程池管理
         pool.execute(runnable);
       }
@@ -81,6 +79,31 @@ public class LuceneServiceImpl implements LuceneService {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  @Override
+  public void writeArticle(String id) throws Exception {
+    writeArticle(luceneMapper.getById(id), true);
+  }
+
+  @Override
+  public void updateArticle(String id) throws Exception {
+    writeArticle(luceneMapper.getById(id), false);
+  }
+
+  @Override
+  public void deleteArticle(String id) {}
+
+  private void writeArticle(ArticleLucene article, boolean create) throws Exception {
+    if (!create) {
+      int size = Objects.requireNonNull(new File(indexPath).listFiles()).length;
+      while (size-- >= 0) {
+        ArticleBeanIndex index = new ArticleBeanIndex(indexPath, size);
+        index.deleteDoc(article.getIdArticle());
+      }
+    }
+    ArticleBeanIndex index = new ArticleBeanIndex(indexPath, 0x0);
+    index.indexDoc(article);
   }
 
   /**

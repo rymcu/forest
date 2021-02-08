@@ -30,4 +30,14 @@ public interface ArticleLuceneMapper {
    * @return
    */
   List<ArticleDTO> getArticlesByIds(@Param("ids") String[] ids);
+
+
+  /**
+   * 加载文章内容
+   *
+   * @param id 文章id
+   * @return
+   */
+  ArticleLucene getById(@Param("id") String id);
+
 }

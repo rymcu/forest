@@ -61,4 +61,11 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="getById" resultMap="DTOResultMap">
+        select art.id, art.article_title, content.article_content
+        from forest_article art
+                 left join forest_article_content content on art.id = content.id_article
+        where id = #{id};
+    </select>
 </mapper>
