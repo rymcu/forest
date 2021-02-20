@@ -7,17 +7,20 @@ import java.util.Arrays;
  */
 
 public enum TransactionEnum {
-    ArticleSponsor("0", 20),
-    Answer("1", 30),
-    CorrectAnswer("2", 50);
+    ArticleSponsor("0", 20, "文章赞赏"),
+    Answer("1", 30, "答题奖励"),
+    CorrectAnswer("2", 50, "答题奖励");
 
     private String dataType;
 
     private Integer money;
 
-    TransactionEnum(String dataType, Integer money) {
+    private String description;
+
+    TransactionEnum(String dataType, Integer money, String description) {
         this.dataType = dataType;
         this.money = money;
+        this.description = description;
     }
 
     public static TransactionEnum findTransactionEnum(String dataType) {
@@ -30,6 +33,10 @@ public enum TransactionEnum {
 
     public Integer getMoney() {
         return this.money;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     public boolean isArticleSponsor() {

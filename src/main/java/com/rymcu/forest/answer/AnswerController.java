@@ -3,8 +3,10 @@ package com.rymcu.forest.answer;
 import com.alibaba.fastjson.JSONObject;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.core.service.log.annotation.TransactionLogger;
 import com.rymcu.forest.dto.AnswerDTO;
 import com.rymcu.forest.entity.User;
+import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.util.HttpUtils;
 import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
@@ -30,6 +32,7 @@ public class AnswerController {
     }
 
     @PostMapping("/answer")
+    @TransactionLogger(transactionType = TransactionEnum.Answer)
     public GlobalResult answer(@RequestBody AnswerDTO answerDTO) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
         Map params = new HashMap<>(3);

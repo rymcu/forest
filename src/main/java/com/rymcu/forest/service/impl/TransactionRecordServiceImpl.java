@@ -1,6 +1,5 @@
 package com.rymcu.forest.service.impl;
 
-import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
@@ -9,6 +8,7 @@ import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
 import com.rymcu.forest.enumerate.TransactionCode;
+import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
 import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.TransactionRecordService;
@@ -60,15 +60,40 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord transferByUserId(Integer toUserId, Integer formUserId, BigDecimal money) throws Exception {
+    public TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception {
         BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(toUserId);
         BankAccountDTO formBankAccount = bankAccountService.findBankAccountByIdUser(formUserId);
         TransactionRecord transactionRecord = new TransactionRecord();
         transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
         transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
-        transactionRecord.setMoney(money);
-        transactionRecord.setFunds("赞赏");
+        transactionRecord.setMoney(new BigDecimal(transactionType.getMoney()));
+        transactionRecord.setFunds(transactionType.getDescription());
         return transfer(transactionRecord);
+    }
+
+    @Override
+    public TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception {
+        BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(idUser);
+        Boolean isTrue;
+        // 校验货币规则
+        switch (transactionType) {
+            case Answer:
+            case CorrectAnswer:
+                isTrue = transactionRecordMapper.existsWithBankAccountAndFunds(toBankAccount.getBankAccount(), transactionType.getDescription());
+                break;
+            default:
+                isTrue = true;
+        }
+        if (isTrue) {
+            BankAccount formBankAccount = bankAccountService.findSystemBankAccount();
+            TransactionRecord transactionRecord = new TransactionRecord();
+            transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
+            transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
+            transactionRecord.setMoney(new BigDecimal(transactionType.getMoney()));
+            transactionRecord.setFunds(transactionType.getDescription());
+            return transfer(transactionRecord);
+        }
+        return null;
     }
 
     private String nextTransactionNo() {

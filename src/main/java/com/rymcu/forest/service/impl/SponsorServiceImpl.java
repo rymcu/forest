@@ -1,5 +1,6 @@
 package com.rymcu.forest.service.impl;
 
+
 import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleDTO;
@@ -51,7 +52,7 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
             // 赞赏金额划转
             if (result.isArticleSponsor()) {
                 ArticleDTO articleDTO = articleService.findArticleDTOById(sponsor.getDataId(), 1);
-                TransactionRecord transactionRecord = transactionRecordService.transferByUserId(articleDTO.getArticleAuthorId(), user.getIdUser(), money);
+                TransactionRecord transactionRecord = transactionRecordService.userTransfer(articleDTO.getArticleAuthorId(), user.getIdUser(), result);
                 if (Objects.isNull(transactionRecord.getIdTransactionRecord())) {
                     throw new TransactionException(TransactionCode.InsufficientBalance);
                 }

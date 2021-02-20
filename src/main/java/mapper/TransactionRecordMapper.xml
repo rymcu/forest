@@ -18,4 +18,8 @@
     <select id="selectTransactionRecords" resultMap="DTOResultMap">
         select * from forest_transaction_record where form_bank_account = #{bankAccount} or to_bank_account = #{bankAccount}
     </select>
+    <select id="existsWithBankAccountAndFunds" resultType="java.lang.Boolean">
+        select ifnull((select false from forest_transaction_record where to_bank_account = #{bankAccount}
+             and funds = #{funds} and transaction_time > str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d') limit 1), true)
+    </select>
 </mapper>
