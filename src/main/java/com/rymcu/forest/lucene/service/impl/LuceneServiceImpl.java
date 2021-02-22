@@ -83,7 +83,8 @@ public class LuceneServiceImpl implements LuceneService {
 
   @Override
   public void writeArticle(String id) throws Exception {
-    writeArticle(luceneMapper.getById(id), true);
+    // TODO 做新增或更新判断
+    writeArticle(luceneMapper.getById(id), false);
   }
 
   @Override
@@ -92,18 +93,28 @@ public class LuceneServiceImpl implements LuceneService {
   }
 
   @Override
-  public void deleteArticle(String id) {}
+  public void deleteArticle(String id) {
+    try {
+      deleteIndex(id);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   private void writeArticle(ArticleLucene article, boolean create) throws Exception {
     if (!create) {
-      int size = Objects.requireNonNull(new File(indexPath).listFiles()).length;
-      while (size-- >= 0) {
-        ArticleBeanIndex index = new ArticleBeanIndex(indexPath, size);
-        index.deleteDoc(article.getIdArticle());
-      }
+      deleteIndex(article.getIdArticle());
     }
-    ArticleBeanIndex index = new ArticleBeanIndex(indexPath, 0x0);
+    ArticleBeanIndex index = new ArticleBeanIndex(indexPath, 777);
     index.indexDoc(article);
+  }
+
+  private void deleteIndex(String id) throws IOException {
+    int size = Objects.requireNonNull(new File(indexPath).listFiles()).length;
+    while (size-- >= 0) {
+      ArticleBeanIndex index = new ArticleBeanIndex(indexPath, size);
+      index.deleteDoc(id);
+    }
   }
 
   /**

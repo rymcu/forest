@@ -62,7 +62,7 @@
         </foreach>
     </select>
 
-    <select id="getById" resultMap="DTOResultMap">
+    <select id="getById" resultMap="ResultMapWithBLOBs">
         select art.id, art.article_title, content.article_content
         from forest_article art
                  left join forest_article_content content on art.id = content.id_article
