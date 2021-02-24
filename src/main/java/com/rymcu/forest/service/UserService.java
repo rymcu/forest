@@ -6,6 +6,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -135,4 +136,11 @@ public interface UserService extends Service<User> {
      * @return
      */
     Map updatePassword(UpdatePasswordDTO updatePasswordDTO);
+
+    /**
+     * 查询用户列表
+     * @param searchDTO
+     * @return
+     */
+    List<User> findUsers(UserSearchDTO searchDTO);
 }

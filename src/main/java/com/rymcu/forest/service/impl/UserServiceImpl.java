@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -271,5 +268,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         userMapper.updatePasswordById(updatePasswordDTO.getIdUser(), password);
         map.put("message", "更新成功!");
         return map;
+    }
+
+    @Override
+    public List<User> findUsers(UserSearchDTO searchDTO) {
+        return userMapper.selectUsers(searchDTO);
     }
 }

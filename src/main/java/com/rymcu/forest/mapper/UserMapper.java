@@ -4,8 +4,11 @@ import com.rymcu.forest.core.mapper.Mapper;
 import com.rymcu.forest.dto.Author;
 import com.rymcu.forest.dto.UserDTO;
 import com.rymcu.forest.dto.UserInfoDTO;
+import com.rymcu.forest.dto.UserSearchDTO;
 import com.rymcu.forest.entity.User;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author ronger
@@ -136,4 +139,11 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     Integer updatePasswordById(@Param("idUser") Integer idUser, @Param("password") String password);
+
+    /**
+     * 查询用户数据
+     * @param searchDTO
+     * @return
+     */
+    List<User> selectUsers(@Param("searchDTO") UserSearchDTO searchDTO);
 }
