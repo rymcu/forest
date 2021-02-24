@@ -187,9 +187,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
-            String previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
-            if (previewContent.length() > MAX_PREVIEW) {
-                previewContent = previewContent.substring(0, MAX_PREVIEW);
+            String previewContent;
+            if (articleContentHtml.length() > MAX_PREVIEW) {
+                previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
+                if (previewContent.length() > MAX_PREVIEW) {
+                    previewContent = previewContent.substring(0, MAX_PREVIEW);
+                }
+            } else {
+                previewContent = Html2TextUtil.getContent(articleContentHtml);
             }
             newArticle.setArticlePreviewContent(previewContent);
         }
