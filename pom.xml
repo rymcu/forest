@@ -227,6 +227,14 @@
             <version>${lucene.version}</version>
         </dependency>
 
+        <!-- hutool 核心工具包 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.5.9</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

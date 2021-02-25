@@ -6,6 +6,7 @@ import com.rymcu.forest.lucene.lucene.IKAnalyzer;
 import com.rymcu.forest.lucene.mapper.ArticleLuceneMapper;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import com.rymcu.forest.lucene.service.LuceneService;
+import com.rymcu.forest.lucene.util.ArticleIndexUtil;
 import com.rymcu.forest.lucene.util.SearchUtil;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -21,11 +22,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -82,39 +85,23 @@ public class LuceneServiceImpl implements LuceneService {
   }
 
   @Override
-  public void writeArticle(String id) throws Exception {
-    // TODO 做新增或更新判断
-    writeArticle(luceneMapper.getById(id), false);
+  public void writeArticle(String id) {
+    writeArticle(luceneMapper.getById(id));
   }
 
   @Override
-  public void updateArticle(String id) throws Exception {
-    writeArticle(luceneMapper.getById(id), false);
+  public void writeArticle(ArticleLucene articleLucene) {
+    ArticleIndexUtil.addIndex(articleLucene);
+  }
+
+  @Override
+  public void updateArticle(String id) {
+    ArticleIndexUtil.updateIndex(luceneMapper.getById(id));
   }
 
   @Override
   public void deleteArticle(String id) {
-    try {
-      deleteIndex(id);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void writeArticle(ArticleLucene article, boolean create) throws Exception {
-    if (!create) {
-      deleteIndex(article.getIdArticle());
-    }
-    ArticleBeanIndex index = new ArticleBeanIndex(indexPath, 777);
-    index.indexDoc(article);
-  }
-
-  private void deleteIndex(String id) throws IOException {
-    int size = Objects.requireNonNull(new File(indexPath).listFiles()).length;
-    while (size-- >= 0) {
-      ArticleBeanIndex index = new ArticleBeanIndex(indexPath, size);
-      index.deleteDoc(id);
-    }
+    ArticleIndexUtil.deleteIndex(id);
   }
 
   /**
@@ -147,7 +134,7 @@ public class LuceneServiceImpl implements LuceneService {
       Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
 
       // 获取搜索的结果，指定返回document返回的个数
-      // 默认搜索结果为显示第一页，1000 条，可以优化
+      // TODO 默认搜索结果为显示第一页，1000 条，可以优化
       TopDocs results = SearchUtil.getScoreDocsByPerPage(1, 100, searcher, query);
       ScoreDoc[] hits = results.scoreDocs;
 

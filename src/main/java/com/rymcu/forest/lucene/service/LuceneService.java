@@ -25,14 +25,22 @@ public interface LuceneService {
    *
    * @param id
    */
-  void writeArticle(String id) throws Exception;
+  void writeArticle(String id);
+
+
+  /**
+   * 写入单个文章索引
+   *
+   * @param articleLucene
+   */
+  void writeArticle(ArticleLucene articleLucene);
 
   /**
    * 更新单个文章索引
    *
    * @param id
    */
-  void updateArticle(String id) throws Exception;
+  void updateArticle(String id);
 
   /**
    * 删除单个文章索引
