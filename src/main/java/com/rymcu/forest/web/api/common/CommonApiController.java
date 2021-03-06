@@ -34,8 +34,6 @@ public class CommonApiController {
     private ArticleService articleService;
     @Resource
     private PortfolioService portfolioService;
-    @Resource
-    private SearchService SearchService;
 
     @GetMapping("/get-email-code")
     public GlobalResult<Map<String, String>> getEmailCode(@RequestParam("email") String email) throws MessagingException {
@@ -133,11 +131,5 @@ public class CommonApiController {
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
         Map map = Utils.getArticlesGlobalResult(pageInfo);
         return GlobalResultGenerator.genSuccessResult(map);
-    }
-
-    @GetMapping("/initial-search")
-    public GlobalResult initialSearch() {
-        List<SearchModel> list = SearchService.initialSearch();
-        return GlobalResultGenerator.genSuccessResult(list);
     }
 }
