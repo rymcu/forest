@@ -119,12 +119,6 @@ public abstract class BaseIndex<T> implements Runnable {
     }
   }
 
-  public abstract void deleteDoc(String id) throws IOException;
-
-  public IndexWriter getWriter() {
-    return writer;
-  }
-
   @Override
   public void run() {
     try {

@@ -8,7 +8,9 @@ import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.lucene.service.UserDicService;
+import com.rymcu.forest.lucene.service.UserLuceneService;
 import com.rymcu.forest.lucene.util.ArticleIndexUtil;
+import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.util.Utils;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,18 +33,21 @@ import java.util.concurrent.Executors;
 public class LuceneSearchController {
 
   @Resource private LuceneService luceneService;
+  @Resource private UserLuceneService userLuceneService;
   @Resource private UserDicService dicService;
 
   @PostConstruct
   public void createIndex() {
     // 删除系统运行时保存的索引，重新创建索引
     ArticleIndexUtil.deleteAllIndex();
+    UserIndexUtil.deleteAllIndex();
     ExecutorService executor = Executors.newSingleThreadExecutor();
     CompletableFuture<String> future =
         CompletableFuture.supplyAsync(
             () -> {
               System.out.println(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
-              luceneService.writeArticle(luceneService.getAllArticleLucene());
+              //              luceneService.writeArticle(luceneService.getAllArticleLucene());
+              userLuceneService.writeUser(userLuceneService.getAllUserLucene());
               System.out.println(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
               System.out.println("加载用户配置的自定义扩展词典到主词库表");
               try {
