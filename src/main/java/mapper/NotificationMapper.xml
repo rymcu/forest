@@ -29,7 +29,7 @@
         select * from forest_notification where has_read = '0' and id_user = #{idUser} order by created_time desc
     </select>
     <select id="selectNotifications" resultMap="DTOResultMapper">
-        select * from forest_notification where id_user = #{idUser} order by created_time desc
+        select * from forest_notification where id_user = #{idUser} order by has_read,created_time desc
     </select>
     <select id="selectNotification" resultMap="BaseResultMapper">
         select * from forest_notification where id_user = #{idUser} and data_id = #{dataId} and data_type = #{dataType}
