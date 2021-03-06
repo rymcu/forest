@@ -145,12 +145,14 @@
         and instr(art.article_title, #{searchText}) > 0 and art.id not in (select id_article from forest_portfolio_article where id_portfolio = #{idPortfolio}) order by updated_time desc
     </select>
     <select id="selectPortfolioArticles" resultMap="PortfolioArticleResultMap">
-        select vp.portfolio_title,vp.portfolio_head_img_url,vpa.id_portfolio,vpa.id_article,vpa.sort_no from forest_portfolio vp join forest_portfolio_article vpa on vp.id = vpa.id_portfolio where vpa.id_article = #{idArticle}
+        select vp.portfolio_title,vp.portfolio_head_img_url,vpa.id_portfolio,vpa.id_article,vpa.sort_no from forest_portfolio vp
+            join forest_portfolio_article vpa on vp.id = vpa.id_portfolio where vpa.id_article = #{idArticle}
     </select>
     <select id="existsCommentWithPrimaryKey" resultType="java.lang.Boolean">
         select exists (select * from forest_comment where comment_article_id = #{id})
     </select>
     <select id="selectPortfolioArticlesByIdPortfolioAndSortNo" resultMap="DTOResultMap">
-        select va.article_title, va.id, va.article_permalink from forest_portfolio_article vpa join forest_article va on va.id = vpa.id_article where id_portfolio = #{idPortfolio} order by sort_no
+        select va.article_title, va.id, va.article_permalink from forest_portfolio_article vpa
+            join forest_article va on va.id = vpa.id_article where va.article_status = '0' and id_portfolio = #{idPortfolio} order by sort_no
     </select>
 </mapper>
