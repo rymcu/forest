@@ -174,6 +174,11 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         return map;
     }
 
+    @Override
+    public List<Portfolio> findPortfolios() {
+        return portfolioMapper.selectPortfolios();
+    }
+
     private PortfolioDTO genPortfolioAuthor(PortfolioDTO portfolioDTO, Author author) {
         portfolioDTO.setPortfolioAuthorAvatarUrl(author.getUserAvatarURL());
         portfolioDTO.setPortfolioAuthorName(author.getUserNickname());

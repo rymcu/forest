@@ -73,4 +73,10 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @return
      */
     Integer unbindArticle(@Param("idPortfolio") Integer idPortfolio, @Param("idArticle") Integer idArticle);
+
+    /**
+     * 获取作品集列表数据
+     * @return
+     */
+    List<Portfolio> selectPortfolios();
 }

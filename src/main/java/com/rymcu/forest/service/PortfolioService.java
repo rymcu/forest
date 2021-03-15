@@ -77,4 +77,10 @@ public interface PortfolioService extends Service<Portfolio> {
      * @return
      */
     Map deletePortfolio(Integer idPortfolio);
+
+    /**
+     * 获取作品集列表数据
+     * @return
+     */
+    List<Portfolio> findPortfolios();
 }
