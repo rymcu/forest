@@ -172,7 +172,7 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-open</artifactId>
-            <version>3.9.0</version>
+            <version>4.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>
@@ -182,7 +182,16 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.15</version>
         </dependency>
         <dependency>
             <groupId>com.github.jedis-lock</groupId>
