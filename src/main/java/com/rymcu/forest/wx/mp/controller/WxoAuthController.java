@@ -4,10 +4,10 @@ import com.rymcu.forest.service.WxUserService;
 import com.rymcu.forest.util.ContextHolderUtils;
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.bean.WxJsapiSignature;
+import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.util.http.URIUtil;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -52,7 +52,7 @@ public class WxoAuthController {
     @GetMapping("getAccessToken")
     public String getAccessToken(@PathVariable String appId, @RequestParam(name = "code") String code, @RequestParam(name = "redirectUrl") String redirectUrl) throws Exception {
         wxMpService.switchoverTo(appId);
-        WxMpOAuth2AccessToken oAuth2AccessToken = wxMpService.getOAuth2Service().getAccessToken(code);
+        WxOAuth2AccessToken oAuth2AccessToken = wxMpService.getOAuth2Service().getAccessToken(code);
         boolean valid = wxMpService.getOAuth2Service().validateAccessToken(oAuth2AccessToken);
         if (!valid) {
             throw new Exception("无权限");
