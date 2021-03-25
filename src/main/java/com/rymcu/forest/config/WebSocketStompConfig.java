@@ -30,7 +30,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
 
         // 订阅Broker名称 user点对点 topic广播即群发
-        registry.enableSimpleBroker("/user","/public");
+        registry.enableSimpleBroker("/topic", "/user");
         // 全局(客户端)使用的消息前缀
         registry.setApplicationDestinationPrefixes("/app");
         // 点对点使用的前缀 无需配置 默认/user
