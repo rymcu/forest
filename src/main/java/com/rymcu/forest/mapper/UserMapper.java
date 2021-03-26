@@ -39,10 +39,10 @@ public interface UserMapper extends Mapper<User> {
 
     /**
      * 根据用户昵称获取用户信息
-     * @param nickname
+     * @param account
      * @return
      */
-    UserDTO selectUserDTOByNickname(@Param("nickname") String nickname);
+    UserDTO selectUserDTOByAccount(@Param("account") String account);
 
     /**
      * 修改用户密码

@@ -44,7 +44,7 @@ public class WxoAuthController {
             baseUrl = new StringBuilder(domain).append(contextPath);
         }
         StringBuilder accessTokenUrl = baseUrl.append("/wx/oauth/" + appId + "/getAccessToken?redirectUrl=").append(URIUtil.encodeURIComponent(redirectUrl));
-        String oauth2Url = wxMpService.getOAuth2Service().buildAuthorizationUrl(accessTokenUrl.toString(), WxConsts.OAuth2Scope.SNSAPI_BASE, null);
+        String oauth2Url = wxMpService.getOAuth2Service().buildAuthorizationUrl(accessTokenUrl.toString(), WxConsts.OAuth2Scope.SNSAPI_USERINFO, null);
 
         return "redirect:" + oauth2Url;
     }
@@ -58,8 +58,8 @@ public class WxoAuthController {
             throw new Exception("无权限");
         }
 
-        WxMpUser wxMpUser =wxMpService.getUserService().userInfo(oAuth2AccessToken.getOpenId());
-        wxUserService.saveUser(wxMpUser,appId);
+        WxMpUser wxMpUser = wxMpService.getUserService().userInfo(oAuth2AccessToken.getOpenId());
+        wxUserService.saveUser(wxMpUser, appId);
         ContextHolderUtils.getSession2().setAttribute("wxUser", wxMpUser);
         return "redirect:" + redirectUrl;
     }

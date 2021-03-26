@@ -43,11 +43,11 @@ public interface UserService extends Service<User> {
     Map login(String account, String password);
 
     /**
-     * 通过 nickname 获取用户信息接口
-     * @param nickname 昵称
+     * 通过 account 获取用户信息接口
+     * @param account 昵称
      * @return  UserDTO
      * */
-    UserDTO findUserDTOByNickname(String nickname);
+    UserDTO findUserDTOByAccount(String account);
 
     /**
      * 找回密码接口
@@ -118,10 +118,10 @@ public interface UserService extends Service<User> {
 
     /**
      * 获取用户扩展信息
-     * @param nickname
+     * @param account
      * @return
      */
-    UserExtend selectUserExtendByNickname(String nickname);
+    UserExtend selectUserExtendByAccount(String account);
 
     /**
      * 更换邮箱

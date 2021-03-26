@@ -388,9 +388,11 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     private Author genAuthor(ArticleDTO article) {
         Author author = new Author();
+        User user = userService.findById(String.valueOf(article.getArticleAuthorId()));
         author.setUserNickname(article.getArticleAuthorName());
         author.setUserAvatarURL(article.getArticleAuthorAvatarUrl());
         author.setIdUser(article.getArticleAuthorId());
+        author.setUserAccount(user.getAccount());
         return author;
     }
 }

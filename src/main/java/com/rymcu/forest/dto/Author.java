@@ -12,6 +12,8 @@ public class Author {
 
     private String userNickname;
 
+    private String userAccount;
+
     private String userAvatarURL;
 
     private String userArticleCount;

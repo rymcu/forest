@@ -7,6 +7,11 @@
         "url": "https://rymcu.com"
       },
       {
+        "type": "view",
+        "name": "交流群",
+        "url": "https://mp.weixin.qq.com/s/0XDVL3mgrSpeGEALOQz-4Q"
+      },
+      {
         "name": "学习教程",
         "sub_button": [
           {

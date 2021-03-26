@@ -116,8 +116,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public UserDTO findUserDTOByNickname(String nickname) {
-        UserDTO user = userMapper.selectUserDTOByNickname(nickname);
+    public UserDTO findUserDTOByAccount(String account) {
+        UserDTO user = userMapper.selectUserDTOByAccount(account);
         return user;
     }
 
@@ -239,7 +239,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public UserExtend selectUserExtendByNickname(String nickname) {
+    public UserExtend selectUserExtendByAccount(String nickname) {
         return userExtendMapper.selectUserExtendByNickname(nickname);
     }
 
