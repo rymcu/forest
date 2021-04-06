@@ -187,9 +187,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
-            String previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
-            if (previewContent.length() > MAX_PREVIEW) {
-                previewContent = previewContent.substring(0, MAX_PREVIEW);
+            String previewContent;
+            if (articleContentHtml.length() > MAX_PREVIEW) {
+                previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
+                if (previewContent.length() > MAX_PREVIEW) {
+                    previewContent = previewContent.substring(0, MAX_PREVIEW);
+                }
+            } else {
+                previewContent = Html2TextUtil.getContent(articleContentHtml);
             }
             newArticle.setArticlePreviewContent(previewContent);
         }
@@ -268,6 +273,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         articleMapper.deleteLinkedPortfolioData(id);
         // 删除引用标签记录
         articleMapper.deleteTagArticle(id);
+        // 删除文章内容表
+        articleMapper.deleteArticleContent(id);
     }
 
     @Override
@@ -381,9 +388,11 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     private Author genAuthor(ArticleDTO article) {
         Author author = new Author();
+        User user = userService.findById(String.valueOf(article.getArticleAuthorId()));
         author.setUserNickname(article.getArticleAuthorName());
         author.setUserAvatarURL(article.getArticleAuthorAvatarUrl());
         author.setIdUser(article.getArticleAuthorId());
+        author.setUserAccount(user.getAccount());
         return author;
     }
 }

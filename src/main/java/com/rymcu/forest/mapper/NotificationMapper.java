@@ -1,6 +1,7 @@
 package com.rymcu.forest.mapper;
 
 import com.rymcu.forest.core.mapper.Mapper;
+import com.rymcu.forest.dto.NotificationDTO;
 import com.rymcu.forest.entity.Notification;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,7 +24,7 @@ public interface NotificationMapper extends Mapper<Notification> {
      * @param idUser
      * @return
      */
-    List<Notification> selectNotifications(@Param("idUser") Integer idUser);
+    List<NotificationDTO> selectNotifications(@Param("idUser") Integer idUser);
 
     /**
      * 获取消息数据

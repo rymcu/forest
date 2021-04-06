@@ -37,16 +37,16 @@ public class UserController {
     @Resource
     private FollowService followService;
 
-    @GetMapping("/{nickname}")
+    @GetMapping("/{account}")
     @VisitLogger
-    public GlobalResult detail(@PathVariable String nickname){
-        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+    public GlobalResult detail(@PathVariable String account){
+        UserDTO userDTO = userService.findUserDTOByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userDTO);
     }
 
-    @GetMapping("/{nickname}/articles")
-    public GlobalResult userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
-        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+    @GetMapping("/{account}/articles")
+    public GlobalResult userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+        UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
@@ -57,9 +57,9 @@ public class UserController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{nickname}/portfolios")
-    public GlobalResult userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
-        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+    @GetMapping("/{account}/portfolios")
+    public GlobalResult userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+        UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
@@ -73,9 +73,9 @@ public class UserController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{nickname}/followers")
-    public GlobalResult userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
-        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+    @GetMapping("/{account}/followers")
+    public GlobalResult userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+        UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
@@ -89,9 +89,9 @@ public class UserController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{nickname}/followings")
-    public GlobalResult userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String nickname){
-        UserDTO userDTO = userService.findUserDTOByNickname(nickname);
+    @GetMapping("/{account}/followings")
+    public GlobalResult userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+        UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
@@ -105,9 +105,9 @@ public class UserController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{nickname}/user-extend")
-    public GlobalResult userExtend(@PathVariable String nickname) {
-        UserExtend userExtend = userService.selectUserExtendByNickname(nickname);
+    @GetMapping("/{account}/user-extend")
+    public GlobalResult userExtend(@PathVariable String account) {
+        UserExtend userExtend = userService.selectUserExtendByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userExtend);
     }
 

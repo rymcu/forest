@@ -3,6 +3,7 @@ package com.rymcu.forest.service;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.TransactionRecord;
+import com.rymcu.forest.enumerate.TransactionEnum;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,9 +31,18 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
      * 根据用户主键进行交易
      * @param toUserId
      * @param formUserId
-     * @param money
+     * @param transactionType
      * @return
      * @throws Exception
      */
-    TransactionRecord transferByUserId(Integer toUserId, Integer formUserId, BigDecimal money) throws Exception;
+    TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception;
+
+    /**
+     * 社区银行转账/奖励发放
+     * @param idUser
+     * @param transactionType
+     * @return
+     * @throws Exception
+     */
+    TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception;
 }

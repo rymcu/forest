@@ -27,4 +27,12 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
      * @return
      */
     List<TransactionRecordDTO> selectTransactionRecords(@Param("bankAccount") String bankAccount);
+
+    /**
+     * 校验今日是否已发放答题奖励
+     * @param bankAccount
+     * @param funds
+     * @return
+     */
+    Boolean existsWithBankAccountAndFunds(@Param("bankAccount") String bankAccount, @Param("funds") String funds);
 }

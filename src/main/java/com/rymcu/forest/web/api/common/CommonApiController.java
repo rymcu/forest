@@ -7,6 +7,7 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.result.GlobalResultMessage;
 import com.rymcu.forest.core.service.log.annotation.VisitLogger;
 import com.rymcu.forest.dto.*;
+import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.*;
 import com.rymcu.forest.util.UserUtils;
@@ -139,5 +140,17 @@ public class CommonApiController {
     public GlobalResult initialSearch() {
         List<SearchModel> list = SearchService.initialSearch();
         return GlobalResultGenerator.genSuccessResult(list);
+    }
+
+    @GetMapping("/portfolios")
+    public GlobalResult portfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
+        PageHelper.startPage(page, rows);
+        List<Portfolio> list = portfolioService.findPortfolios();
+        PageInfo<Portfolio> pageInfo = new PageInfo(list);
+        Map map = new HashMap(2);
+        map.put("portfolios", pageInfo.getList());
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
     }
 }

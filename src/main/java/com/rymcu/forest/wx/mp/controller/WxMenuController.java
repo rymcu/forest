@@ -1,5 +1,6 @@
 package com.rymcu.forest.wx.mp.controller;
 
+import com.rymcu.forest.wx.mp.service.WxMenuService;
 import lombok.AllArgsConstructor;
 import me.chanjar.weixin.common.bean.menu.WxMenu;
 import me.chanjar.weixin.common.bean.menu.WxMenuButton;
@@ -7,8 +8,11 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.menu.WxMpGetSelfMenuInfoResult;
 import me.chanjar.weixin.mp.bean.menu.WxMpMenu;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import static me.chanjar.weixin.common.api.WxConsts.MenuButtonType;
@@ -21,7 +25,8 @@ import static me.chanjar.weixin.common.api.WxConsts.MenuButtonType;
 @RequestMapping("/wx/menu/{appId}")
 public class WxMenuController {
     private final WxMpService wxService;
-
+    @Resource
+    private WxMenuService wxMenuService;
     /**
      * <pre>
      * 自定义菜单创建接口
@@ -38,52 +43,9 @@ public class WxMenuController {
     }
 
     @GetMapping("/create")
-    public String menuCreateSample(@PathVariable String appId) throws WxErrorException, MalformedURLException {
-        WxMenu menu = new WxMenu();
-        WxMenuButton button1 = new WxMenuButton();
-        button1.setType(MenuButtonType.VIEW);
-        button1.setName("官方网站");
-        button1.setUrl("https://rymcu.com");
-
-//        WxMenuButton button2 = new WxMenuButton();
-//        button2.setType(WxConsts.BUTTON_MINIPROGRAM);
-//        button2.setName("小程序");
-//        button2.setAppId("wx286b93c14bbf93aa");
-//        button2.setPagePath("pages/lunar/index.html");
-//        button2.setUrl("http://mp.weixin.qq.com");
-
-        WxMenuButton button3 = new WxMenuButton();
-        button3.setName("学习教程");
-
-        menu.getButtons().add(button1);
-//        menu.getButtons().add(button2);
-        menu.getButtons().add(button3);
-
-        WxMenuButton button31 = new WxMenuButton();
-        button31.setType(MenuButtonType.VIEW);
-        button31.setName("51单片机入门教程");
-        button31.setUrl("https://mp.weixin.qq.com/mp/homepage?__biz=MzA3NjMzMzM1Mw==&hid=1&sn=672df75323f9976d990f6be14355070b");
-
-//        WxMenuButton button34 = new WxMenuButton();
-//        button34.setType(MenuButtonType.VIEW);
-//        button34.setName("获取用户信息");
-//
-//        ServletRequestAttributes servletRequestAttributes =
-//            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-//        if (servletRequestAttributes != null) {
-//            HttpServletRequest request = servletRequestAttributes.getRequest();
-//            URL requestURL = new URL(request.getRequestURL().toString());
-//            String url = this.wxService.switchoverTo(appId).oauth2buildAuthorizationUrl(
-//                String.format("%s://%s/wx/redirect/%s/greet", requestURL.getProtocol(), requestURL.getHost(), appId),
-//                WxConsts.OAuth2Scope.SNSAPI_USERINFO, null);
-//            button34.setUrl(url);
-//        }
-
-        button3.getSubButtons().add(button31);
-//        button3.getSubButtons().add(button34);
-
+    public String menuCreateSample(@PathVariable String appId) throws WxErrorException, IOException {
         this.wxService.switchover(appId);
-        return this.wxService.getMenuService().menuCreate(menu);
+        return this.wxService.getMenuService().menuCreate(wxMenuService.getMenus());
     }
 
     /**

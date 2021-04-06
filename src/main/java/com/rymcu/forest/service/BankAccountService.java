@@ -32,4 +32,10 @@ public interface BankAccountService extends Service<BankAccount> {
      * @return
      */
     BankAccount findByBankAccount(String bankAccount);
+
+    /**
+     * 查询系统社区银行
+     * @return
+     */
+    BankAccount findSystemBankAccount();
 }

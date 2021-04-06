@@ -39,10 +39,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     @Override
     public List<PortfolioDTO> findUserPortfoliosByUser(UserDTO userDTO) {
         List<PortfolioDTO> list = portfolioMapper.selectUserPortfoliosByIdUser(userDTO.getIdUser());
-        Author author = new Author();
-        author.setIdUser(userDTO.getIdUser());
-        author.setUserAvatarURL(userDTO.getAvatarUrl());
-        author.setUserNickname(userDTO.getNickname());
+        Author author = userService.selectAuthor(userDTO.getIdUser());
         list.forEach(portfolioDTO -> {
             genPortfolioAuthor(portfolioDTO,author);
         });
@@ -172,6 +169,11 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         }
 
         return map;
+    }
+
+    @Override
+    public List<Portfolio> findPortfolios() {
+        return portfolioMapper.selectPortfolios();
     }
 
     private PortfolioDTO genPortfolioAuthor(PortfolioDTO portfolioDTO, Author author) {

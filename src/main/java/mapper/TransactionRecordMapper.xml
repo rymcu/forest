@@ -16,6 +16,10 @@
         update forest_bank_account set account_balance = account_balance + #{money} where bank_account = #{toBankAccount};
     </update>
     <select id="selectTransactionRecords" resultMap="DTOResultMap">
-        select * from forest_transaction_record where form_bank_account = #{bankAccount} or to_bank_account = #{bankAccount}
+        select * from forest_transaction_record where form_bank_account = #{bankAccount} or to_bank_account = #{bankAccount} order by transaction_time desc
+    </select>
+    <select id="existsWithBankAccountAndFunds" resultType="java.lang.Boolean">
+        select ifnull((select false from forest_transaction_record where to_bank_account = #{bankAccount}
+             and funds = #{funds} and transaction_time > str_to_date(date_format(sysdate(),'%Y-%m-%d'),'%Y-%m-%d') limit 1), true)
     </select>
 </mapper>

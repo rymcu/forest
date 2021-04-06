@@ -84,7 +84,7 @@ create table forest_comment
     comment_original_comment_id bigint           null comment '父评论 id',
     comment_status              char default '0' null comment '状态',
     comment_ip                  varchar(128)     null comment '评论 IP',
-    comment_ua                  varchar(128)     null comment 'User-Agent',
+    comment_ua                  varchar(512)     null comment 'User-Agent',
     comment_anonymous           char             null comment '0：公开回帖，1：匿名回帖',
     comment_reply_count         int              null comment '回帖计数',
     comment_visible             char             null comment '0：所有人可见，1：仅楼主和自己可见',

@@ -49,13 +49,12 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
 
     @Override
     public List<NotificationDTO> findNotifications(Integer idUser) {
-        List<Notification> list = notificationMapper.selectNotifications(idUser);
-        List<NotificationDTO> notifications = new ArrayList<>();
+        List<NotificationDTO> list = notificationMapper.selectNotifications(idUser);
         list.forEach(notification -> {
             NotificationDTO notificationDTO = genNotification(notification);
             // 判断关联数据是否已删除
             if (Objects.nonNull(notificationDTO.getAuthor())) {
-                notifications.add(notificationDTO);
+                BeanCopierUtil.copy(notificationDTO, notification);
             } else {
                 // 关联数据已删除,且未读
                 if (unRead.equals(notification.getHasRead())) {
@@ -66,10 +65,10 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
                 dto.setDataType("-1");
                 dto.setHasRead("1");
                 dto.setCreatedTime(notification.getCreatedTime());
-                notifications.add(dto);
+                BeanCopierUtil.copy(dto, notification);
             }
         });
-        return notifications;
+        return list;
     }
 
     private NotificationDTO genNotification(Notification notification) {

@@ -29,7 +29,7 @@ import java.util.List;
  * @author ronger
  * @since 2018/05/28 11:00
  * 自定义权限匹配和账号密码匹配
- * */
+ */
 public class BaseShiroRealm extends AuthorizingRealm {
     @Resource
     private RoleService roleService;
@@ -43,13 +43,13 @@ public class BaseShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        Principal principal =  (Principal)principals.getPrimaryPrincipal();
+        Principal principal = (Principal) principals.getPrimaryPrincipal();
         User user = new User();
         user.setIdUser(principal.getId());
         try {
             List<Role> roles = roleService.selectRoleByUser(user);
             for (Role role : roles) {
-                if(StringUtils.isNotBlank(role.getInputCode())){
+                if (StringUtils.isNotBlank(role.getInputCode())) {
                     authorizationInfo.addRole(role.getInputCode());
                 }
             }
@@ -70,7 +70,7 @@ public class BaseShiroRealm extends AuthorizingRealm {
 
     /**
      * 认证回调函数, 登录时调用，主要是用来进行身份认证的，也就是说验证用户输入的账号和密码是否正确。
-     * */
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
@@ -90,10 +90,11 @@ public class BaseShiroRealm extends AuthorizingRealm {
         if (user == null) {
             return null;
         }
-        if (!"0".equals(user.getStatus())) { //账户冻结(是否允许登陆)
+        // 账户冻结(是否允许登陆)
+        if (!"0".equals(user.getStatus())) {
             throw new LockedAccountException();
         }
-        byte[] salt = Encodes.decodeHex(user.getPassword().substring(0,16));
+        byte[] salt = Encodes.decodeHex(user.getPassword().substring(0, 16));
         return new SimpleAuthenticationInfo(new Principal(user, token.isMobileLogin()),
                 user.getPassword().substring(16), ByteSource.Util.bytes(salt), getName());
     }
@@ -101,7 +102,7 @@ public class BaseShiroRealm extends AuthorizingRealm {
     /**
      * 授权用户信息
      */
-    public static class Principal  implements Serializable {
+    public static class Principal implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
@@ -139,9 +140,9 @@ public class BaseShiroRealm extends AuthorizingRealm {
          * 获取SESSIONID
          */
         public String getSessionid() {
-            try{
+            try {
                 return (String) Utils.getSession().getId();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 return "";
             }
         }
