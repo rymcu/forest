@@ -3,6 +3,7 @@ package com.rymcu.forest.util;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.NotificationDTO;
+import com.rymcu.forest.dto.PortfolioDTO;
 import com.rymcu.forest.dto.UserDTO;
 import com.rymcu.forest.entity.Notification;
 import com.rymcu.forest.entity.User;
@@ -149,6 +150,17 @@ public class Utils {
     public static Map getUserGlobalResult(PageInfo<UserDTO> pageInfo) {
         Map map = new HashMap(2);
         map.put("users", pageInfo.getList());
+        Map pagination = new HashMap(4);
+        pagination.put("pageSize",pageInfo.getPageSize());
+        pagination.put("total",pageInfo.getTotal());
+        pagination.put("currentPage",pageInfo.getPageNum());
+        map.put("pagination", pagination);
+        return map;
+    }
+
+    public static Map getPortfolioGlobalResult(PageInfo<PortfolioDTO> pageInfo) {
+        Map map = new HashMap(2);
+        map.put("portfolios", pageInfo.getList());
         Map pagination = new HashMap(4);
         pagination.put("pageSize",pageInfo.getPageSize());
         pagination.put("total",pageInfo.getTotal());

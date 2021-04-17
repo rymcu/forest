@@ -16,6 +16,8 @@ import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.*;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,7 @@ import java.util.*;
  * @author ronger
  */
 @Service
+@Slf4j
 public class ArticleServiceImpl extends AbstractService<Article> implements ArticleService {
 
     @Resource
@@ -178,14 +181,17 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 }
             }
         }
-
-        System.out.println("开始增加索引");
-        if (isUpdate) {
-            luceneService.writeArticle(newArticle.getIdArticle().toString());
-        } else {
-            luceneService.updateArticle(newArticle.getIdArticle().toString());
+        // 草稿不更新索引
+        if ("0".equals(article.getArticleStatus())) {
+            System.out.println("开始增加索引");
+            if (isUpdate) {
+                log.info("更新文章索引，id={}",newArticle.getIdArticle());
+                luceneService.updateArticle(newArticle.getIdArticle().toString());
+            } else {
+                log.info("写入文章索引，id={}",newArticle.getIdArticle());
+                luceneService.writeArticle(newArticle.getIdArticle().toString());
+            }
         }
-
         tagService.saveTagArticle(newArticle, articleContentHtml);
 
         if (defaultStatus.equals(newArticle.getArticleStatus())) {

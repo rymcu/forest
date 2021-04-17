@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class PortfolioLucene {
 
   /** 作品集编号 */
-  private Integer idPortfolio;
+  private String idPortfolio;
 
   /** 作品集名称 */
   private String portfolioTitle;
