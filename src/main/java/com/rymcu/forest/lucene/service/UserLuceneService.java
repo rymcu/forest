@@ -70,5 +70,5 @@ public interface UserLuceneService {
    * @param ids 用户id(半角逗号分隔)
    * @return
    */
-  List<UserDTO> getUsersByIds(String[] ids);
+  List<UserDTO> getUsersByIds(Integer[] ids);
 }

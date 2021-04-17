@@ -6,6 +6,7 @@ import com.rymcu.forest.lucene.lucene.IKAnalyzer;
 import com.rymcu.forest.lucene.mapper.UserLuceneMapper;
 import com.rymcu.forest.lucene.model.UserLucene;
 import com.rymcu.forest.lucene.service.UserLuceneService;
+import com.rymcu.forest.lucene.util.LucenePath;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.lucene.util.SearchUtil;
 import org.apache.lucene.analysis.Analyzer;
@@ -26,9 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,8 +43,6 @@ public class UserLuceneServiceImpl implements UserLuceneService {
 
   @Resource private UserLuceneMapper userLuceneMapper;
 
-  /** Lucene索引文件路径 */
-  private final String indexPath = "lucene/index";
 
   /**
    * 将文章的数据解析为一个个关键字词存储到索引文件中
@@ -67,7 +64,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
         int end = Math.min((i + 1) * perThreadCount, totalCount);
         List<UserLucene> subList = list.subList(start, end);
         Runnable runnable =
-            new UserBeanIndex(indexPath, i, countDownLatch1, countDownLatch2, subList);
+            new UserBeanIndex(LucenePath.USER_PATH, i, countDownLatch1, countDownLatch2, subList);
         // 子线程交给线程池管理
         pool.execute(runnable);
       }
@@ -111,7 +108,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
     // 定义分词器
     Analyzer analyzer = new IKAnalyzer();
     try {
-      IndexSearcher searcher = SearchUtil.getIndexSearcherByParentPath(indexPath, service);
+      IndexSearcher searcher = SearchUtil.getIndexSearcherByParentPath(LucenePath.USER_PATH, service);
       String[] fields = {"nickname", "signature"};
       // 构造Query对象
       MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
@@ -136,9 +133,6 @@ public class UserLuceneServiceImpl implements UserLuceneService {
         int id = hit.doc;
         float score = hit.score;
         Document hitDoc = searcher.doc(hit.doc);
-        Map<String, String> map = new HashMap<>();
-        map.put("id", hitDoc.get("id"));
-
         // 获取到summary
         String name = hitDoc.get("signature");
         // 将查询的词和搜索词匹配，匹配到添加前缀和后缀
@@ -154,7 +148,6 @@ public class UserLuceneServiceImpl implements UserLuceneService {
             baikeValue.append(textFragment.toString());
           }
         }
-
         // 获取到title
         String title = hitDoc.get("nickname");
         TokenStream titleTokenStream =
@@ -190,7 +183,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
   }
 
   @Override
-  public List<UserDTO> getUsersByIds(String[] ids) {
+  public List<UserDTO> getUsersByIds(Integer[] ids) {
     return userLuceneMapper.getUsersByIds(ids);
   }
 }

@@ -7,6 +7,7 @@ import com.rymcu.forest.lucene.mapper.ArticleLuceneMapper;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.lucene.util.ArticleIndexUtil;
+import com.rymcu.forest.lucene.util.LucenePath;
 import com.rymcu.forest.lucene.util.SearchUtil;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -26,9 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,9 +42,6 @@ import java.util.concurrent.Executors;
 public class LuceneServiceImpl implements LuceneService {
 
   @Resource private ArticleLuceneMapper luceneMapper;
-
-  /** Lucene索引文件路径 */
-  private final String indexPath = "lucene/index";
 
   /**
    * 将文章的数据解析为一个个关键字词存储到索引文件中
@@ -67,7 +63,8 @@ public class LuceneServiceImpl implements LuceneService {
         int end = Math.min((i + 1) * perThreadCount, totalCount);
         List<ArticleLucene> subList = list.subList(start, end);
         Runnable runnable =
-            new ArticleBeanIndex(indexPath, i, countDownLatch1, countDownLatch2, subList);
+            new ArticleBeanIndex(
+                LucenePath.ARTICLE_INDEX_PATH, i, countDownLatch1, countDownLatch2, subList);
         // 子线程交给线程池管理
         pool.execute(runnable);
       }
@@ -118,7 +115,8 @@ public class LuceneServiceImpl implements LuceneService {
     // 定义分词器
     Analyzer analyzer = new IKAnalyzer();
     try {
-      IndexSearcher searcher = SearchUtil.getIndexSearcherByParentPath(indexPath, service);
+      IndexSearcher searcher =
+          SearchUtil.getIndexSearcherByParentPath(LucenePath.ARTICLE_INDEX_PATH, service);
       String[] fields = {"title", "summary"};
       // 构造Query对象
       MultiFieldQueryParser parser = new MultiFieldQueryParser(fields, analyzer);
@@ -143,9 +141,6 @@ public class LuceneServiceImpl implements LuceneService {
         int id = hit.doc;
         float score = hit.score;
         Document hitDoc = searcher.doc(hit.doc);
-        Map<String, String> map = new HashMap<>();
-        map.put("id", hitDoc.get("id"));
-
         // 获取到summary
         String name = hitDoc.get("summary");
         // 将查询的词和搜索词匹配，匹配到添加前缀和后缀
@@ -158,7 +153,7 @@ public class LuceneServiceImpl implements LuceneService {
           if ((textFragment != null) && (textFragment.getScore() > 0)) {
             //  if ((frag[j] != null)) {
             // 获取 summary 的值
-            baikeValue.append(textFragment.toString());
+            baikeValue.append(textFragment);
           }
         }
 
@@ -183,7 +178,6 @@ public class LuceneServiceImpl implements LuceneService {
                 .build());
       }
     } catch (IOException | ParseException | InvalidTokenOffsetsException e) {
-      System.out.println(e.getMessage());
       e.printStackTrace();
     } finally {
       service.shutdownNow();

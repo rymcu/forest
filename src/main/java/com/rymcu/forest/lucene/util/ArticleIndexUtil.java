@@ -1,6 +1,7 @@
 package com.rymcu.forest.lucene.util;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -20,16 +21,13 @@ import java.util.Arrays;
 public class ArticleIndexUtil {
 
   /** lucene索引保存目录 */
-  private static final String PATH = System.getProperty("user.dir") + "/lucene/index";
-
-  /** 系统运行时索引保存目录 */
-  private static final String INDEX_PATH =
-      System.getProperty("user.dir") + "/lucene/index/index777";
+  private static final String PATH =
+      System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.ARTICLE_INDEX_PATH;
 
   /** 删除所有运行中保存的索引 */
   public static void deleteAllIndex() {
-    if (FileUtil.exist(INDEX_PATH)) {
-      FileUtil.del(INDEX_PATH);
+    if (FileUtil.exist(LucenePath.ARTICLE_INCREMENT_INDEX_PATH)) {
+      FileUtil.del(LucenePath.ARTICLE_INCREMENT_INDEX_PATH);
     }
   }
 
@@ -52,7 +50,7 @@ public class ArticleIndexUtil {
     System.out.println("创建单个索引");
     IndexWriter writer;
     try {
-      writer = IndexUtil.getIndexWriter(INDEX_PATH, false);
+      writer = IndexUtil.getIndexWriter(LucenePath.ARTICLE_INCREMENT_INDEX_PATH, false);
       Document doc = new Document();
       doc.add(new StringField("id", t.getIdArticle() + "", Field.Store.YES));
       doc.add(new TextField("title", t.getArticleTitle(), Field.Store.YES));

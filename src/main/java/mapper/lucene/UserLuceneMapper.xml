@@ -20,8 +20,8 @@
     </select>
 
     <select id="getUsersByIds" resultMap="DTOResultMapper">
-        select id, nickname, avatar_type, avatar_url, account, signature from forest_user where nickname = #{nickname}
-        and id in
+        select id, nickname, avatar_type, avatar_url, account, signature from forest_user where
+        id in
         <foreach collection="ids" item="id" index="index"
                  open="(" close=")" separator=",">
             #{id}

@@ -1,6 +1,7 @@
 package com.rymcu.forest.lucene.util;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.rymcu.forest.lucene.model.UserLucene;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -12,6 +13,7 @@ import org.apache.lucene.index.Term;
 import java.io.IOException;
 import java.util.Arrays;
 
+
 /**
  * 用户索引更新工具类
  *
@@ -20,11 +22,10 @@ import java.util.Arrays;
 public class UserIndexUtil {
 
   /** lucene索引保存目录 */
-  private static final String PATH = System.getProperty("user.dir") + "/lucene/index";
+  private static final String PATH = System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.USER_PATH;
 
   /** 系统运行时索引保存目录 */
-  private static final String INDEX_PATH =
-      System.getProperty("user.dir") + "/lucene/index/index777";
+  private static final String INDEX_PATH = LucenePath.USER_INCREMENT_INDEX_PATH;
 
   /** 删除所有运行中保存的索引 */
   public static void deleteAllIndex() {
