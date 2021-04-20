@@ -67,7 +67,7 @@ public interface ArticleService extends Service<Article> {
      * @param id
      * @return
      * */
-    Map delete(Integer id);
+    Map delete(Integer id) throws BaseApiException;
 
     /**
      * 增量文章浏览数
