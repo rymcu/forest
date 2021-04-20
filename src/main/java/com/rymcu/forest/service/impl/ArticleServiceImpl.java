@@ -249,8 +249,18 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map delete(Integer id) {
+    public Map delete(Integer id) throws BaseApiException {
         Map<String, String> map = new HashMap(1);
+        // 鉴权
+        User user = UserUtils.getCurrentUserByToken();
+        Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
+        if (roleWeights > 2) {
+            Article article = articleMapper.selectByPrimaryKey(id);
+            if (!user.getIdUser().equals(article.getArticleAuthorId())) {
+                map.put("message", "非法访问！");
+                return map;
+            }
+        }
         Integer result;
         // 判断是否有评论
         boolean isHavComment = articleMapper.existsCommentWithPrimaryKey(id);
