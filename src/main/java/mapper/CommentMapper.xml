@@ -33,6 +33,7 @@
         <result column="id" property="idUser"/>
         <result column="nickname" property="userNickname"/>
         <result column="avatar_url" property="userAvatarURL"/>
+        <result column="account" property="userAccount"/>
     </resultMap>
     <update id="updateCommentSharpUrl">
         update forest_comment set comment_sharp_url = #{commentSharpUrl} where id = #{idComment}
@@ -41,9 +42,9 @@
         select * from forest_comment where comment_article_id = #{idArticle} order by created_time desc
     </select>
     <select id="selectAuthor" resultMap="AuthorResultMap">
-        select id,nickname,avatar_url from forest_user where id = #{commentAuthorId}
+        select id,nickname,avatar_url,account from forest_user where id = #{commentAuthorId}
     </select>
     <select id="selectCommentOriginalAuthor" resultMap="AuthorResultMap">
-        select vu.id,vu.nickname,vu.avatar_url from forest_comment vc left join forest_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
+        select vu.id,vu.nickname,vu.avatar_url,vu.account from forest_comment vc left join forest_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
     </select>
 </mapper>
