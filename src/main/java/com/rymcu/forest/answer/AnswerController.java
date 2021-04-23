@@ -2,7 +2,6 @@ package com.rymcu.forest.answer;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rymcu.forest.core.result.GlobalResult;
-import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.service.log.annotation.TransactionLogger;
 import com.rymcu.forest.dto.AnswerDTO;
 import com.rymcu.forest.entity.User;
