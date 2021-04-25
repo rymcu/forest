@@ -1,5 +1,5 @@
 # forest
-
+![forest](src/main/resources/static/logo_size.jpg)  
 下一代的知识社区系统,为未来而建
 
 ## 💡 简介

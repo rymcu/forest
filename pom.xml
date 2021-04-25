@@ -88,19 +88,19 @@
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
-            <version>5.1.10</version>
+            <version>5.2.0</version>
         </dependency>
         <!-- fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.67</version>
+            <version>1.2.76</version>
         </dependency>
         <!-- shiro权限控制框架 -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
-            <version>1.4.1</version>
+            <version>1.7.1</version>
         </dependency>
         <!-- shiro-redis -->
         <dependency>
