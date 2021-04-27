@@ -76,7 +76,7 @@ public interface PortfolioService extends Service<Portfolio> {
      * @param idPortfolio
      * @return
      */
-    Map deletePortfolio(Integer idPortfolio);
+    Map deletePortfolio(Integer idPortfolio) throws BaseApiException;
 
     /**
      * 获取作品集列表数据
