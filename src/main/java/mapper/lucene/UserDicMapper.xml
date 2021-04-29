@@ -4,26 +4,26 @@
 
     <select id="getAllDic" resultType="java.lang.String">
         select dic
-        from lucene_user_dic
+        from forest_lucene_user_dic
     </select>
 
     <select id="getAll" resultType="com.rymcu.forest.lucene.model.UserDic">
         select *
-        from lucene_user_dic
+        from forest_lucene_user_dic
     </select>
 
     <insert id="addDic">
-        insert into lucene_user_dic(dic) value (#{dic})
+        insert into forest_lucene_user_dic(dic) value (#{dic})
     </insert>
 
     <delete id="deleteDic">
         delete
-        from lucene_user_dic
+        from forest_lucene_user_dic
         where id = (#{id})
     </delete>
 
     <update id="updateDic">
-        update lucene_user_dic
+        update forest_lucene_user_dic
         set dic=#{dic}
         where id = (#{id})
     </update>

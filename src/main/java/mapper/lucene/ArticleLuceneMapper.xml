@@ -31,17 +31,10 @@
         <result column="article_thumbs_up_count" property="articleThumbsUpCount"></result>
         <result column="article_sponsor_count" property="articleSponsorCount"></result>
     </resultMap>
-    <sql id="Base_Column_List">
-        id
-        , article_title
-    </sql>
-    <sql id="Blob_Column_List">
-        article_content
-    </sql>
     <select id="getAllArticleLucene" resultMap="ResultMapWithBLOBs">
         select art.id, art.article_title, content.article_content
         from forest_article art
-                 left join forest_article_content content on art.id = content.id_article;
+                 join forest_article_content content on art.id = content.id_article;
     </select>
 
     <select id="getArticlesByIds" resultMap="DTOResultMap">
@@ -65,7 +58,7 @@
     <select id="getById" resultMap="ResultMapWithBLOBs">
         select art.id, art.article_title, content.article_content
         from forest_article art
-                 left join forest_article_content content on art.id = content.id_article
+                 join forest_article_content content on art.id = content.id_article
         where id = #{id};
     </select>
 </mapper>

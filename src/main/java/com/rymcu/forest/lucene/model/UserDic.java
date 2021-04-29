@@ -13,7 +13,7 @@ import javax.persistence.Table;
  * @date 2021/2/4 09:09
  */
 @Data
-@Table(name = "lucene_user_dic")
+@Table(name = "forest_lucene_user_dic")
 public class UserDic {
   /** 主键 */
   @Id
