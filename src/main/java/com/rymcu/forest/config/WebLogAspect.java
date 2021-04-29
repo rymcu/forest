@@ -61,12 +61,18 @@ public class WebLogAspect {
                         + joinPoint.getSignature().getDeclaringTypeName()
                         + "."
                         + joinPoint.getSignature().getName());
-        logger.info("ARGS : " + Arrays.toString(joinPoint.getArgs()));
+        logger.info("ARGS : " + Arrays.toString(joinPoint.getArgs())
+                .replaceAll("(?<=password).*?(?=(nickname|$))", "=****, ")
+                .replaceAll("(?<=password).*?(?=(\\)|$))", "=****)]")
+                .replaceAll("(?<=password).*?(?=(code|$))", "=****, "));
 
         // 获取所有参数方法一：
         Enumeration<String> enu = request.getParameterNames();
         while (enu.hasMoreElements()) {
-            String paraName = (String) enu.nextElement();
+            String paraName = enu.nextElement();
+            if ("password".equals(paraName)) {
+                continue;
+            }
             logger.info(paraName + ": " + request.getParameter(paraName));
         }
     }
