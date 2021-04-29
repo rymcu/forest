@@ -45,7 +45,7 @@ public class MybatisConfigurer {
         //添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         factory.setMapperLocations(resolver.getResources("classpath:mapper/**/*.xml"));
-        factory.setTypeHandlersPackage("com.rymcu.forest.util.handlers");
+//        factory.setTypeHandlersPackage("com.rymcu.forest.util.handlers");
         return factory.getObject();
     }
 

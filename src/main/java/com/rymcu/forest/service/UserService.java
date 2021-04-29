@@ -6,6 +6,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -42,11 +43,11 @@ public interface UserService extends Service<User> {
     Map login(String account, String password);
 
     /**
-     * 通过 nickname 获取用户信息接口
-     * @param nickname 昵称
+     * 通过 account 获取用户信息接口
+     * @param account 昵称
      * @return  UserDTO
      * */
-    UserDTO findUserDTOByNickname(String nickname);
+    UserDTO findUserDTOByAccount(String account);
 
     /**
      * 找回密码接口
@@ -117,10 +118,10 @@ public interface UserService extends Service<User> {
 
     /**
      * 获取用户扩展信息
-     * @param nickname
+     * @param account
      * @return
      */
-    UserExtend selectUserExtendByNickname(String nickname);
+    UserExtend selectUserExtendByAccount(String account);
 
     /**
      * 更换邮箱
@@ -135,4 +136,11 @@ public interface UserService extends Service<User> {
      * @return
      */
     Map updatePassword(UpdatePasswordDTO updatePasswordDTO);
+
+    /**
+     * 查询用户列表
+     * @param searchDTO
+     * @return
+     */
+    List<User> findUsers(UserSearchDTO searchDTO);
 }

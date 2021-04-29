@@ -1,0 +1,26 @@
+{
+  "menu": {
+    "button": [
+      {
+        "type": "view",
+        "name": "官方网站",
+        "url": "https://rymcu.com"
+      },
+      {
+        "type": "view",
+        "name": "交流群",
+        "url": "https://mp.weixin.qq.com/s/0XDVL3mgrSpeGEALOQz-4Q"
+      },
+      {
+        "name": "学习教程",
+        "sub_button": [
+          {
+            "type": "view",
+            "name": "51单片机入门教程",
+            "url": "https://mp.weixin.qq.com/mp/homepage?__biz=MzA3NjMzMzM1Mw==&hid=1&sn=672df75323f9976d990f6be14355070b"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -13,6 +13,6 @@
         select portfolio_title as label, id as value, 'portfolio' as type from forest_portfolio
     </select>
     <select id="searchInitialUserSearch" resultMap="BaseResultMap">
-        select nickname as label, nickname as value, 'user' as type from forest_user where status = 0
+        select nickname as label, account as value, 'user' as type from forest_user where status = 0
     </select>
 </mapper>

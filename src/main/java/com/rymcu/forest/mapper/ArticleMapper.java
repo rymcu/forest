@@ -184,4 +184,10 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     int updatePerfect(@Param("idArticle") Integer idArticle, @Param("articlePerfect") String articlePerfect);
+
+    /**
+     * 删除文章关联文章内容表信息
+     * @param idArticle
+     */
+    void deleteArticleContent(@Param("idArticle") Integer idArticle);
 }

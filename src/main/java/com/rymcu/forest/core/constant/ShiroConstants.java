@@ -2,10 +2,10 @@ package com.rymcu.forest.core.constant;
 
 /**
  * Shiro通用常量
- * 
+ *
+ * @author ronger
  */
-public interface ShiroConstants
-{
+public interface ShiroConstants {
     /**
      * 当前登录的用户
      */
@@ -54,7 +54,7 @@ public interface ShiroConstants
     /**
      * 验证码
      */
-    public static final String CURRENT_VALIDATECODE = "validateCode";
+    public static final String CURRENT_VALIDATE_CODE = "validateCode";
 
     /**
      * 验证码错误

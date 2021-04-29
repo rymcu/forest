@@ -10,6 +10,15 @@
         <result column="has_read" property="hasRead"></result>
         <result column="created_time" property="createdTime"></result>
     </resultMap>
+    <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.NotificationDTO">
+        <id column="id" property="idNotification"></id>
+        <result column="id_user" property="idUser"></result>
+        <result column="data_type" property="dataType"></result>
+        <result column="data_id" property="dataId"></result>
+        <result column="data_summary" property="dataSummary"></result>
+        <result column="has_read" property="hasRead"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
     <insert id="insertNotification">
         insert into forest_notification (id_user, data_type, data_id, data_summary, created_time) values (#{idUser}, #{dataType}, #{dataId}, #{dataSummary}, sysdate())
     </insert>
@@ -19,8 +28,8 @@
     <select id="selectUnreadNotifications" resultMap="BaseResultMapper">
         select * from forest_notification where has_read = '0' and id_user = #{idUser} order by created_time desc
     </select>
-    <select id="selectNotifications" resultMap="BaseResultMapper">
-        select * from forest_notification where id_user = #{idUser} order by created_time desc
+    <select id="selectNotifications" resultMap="DTOResultMapper">
+        select * from forest_notification where id_user = #{idUser} order by has_read,created_time desc
     </select>
     <select id="selectNotification" resultMap="BaseResultMapper">
         select * from forest_notification where id_user = #{idUser} and data_id = #{dataId} and data_type = #{dataType}

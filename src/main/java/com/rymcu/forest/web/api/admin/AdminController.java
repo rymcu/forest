@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.dto.UserSearchDTO;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.dto.admin.UserRoleDTO;
 import com.rymcu.forest.entity.*;
@@ -17,8 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Comparator.comparing;
 
 /**
  * @author ronger
@@ -39,11 +38,9 @@ public class AdminController {
     private SpecialDayService specialDayService;
 
     @GetMapping("/users")
-    public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO){
         PageHelper.startPage(page, rows);
-        List<User> list = userService.findAll();
-        // 按最后登录时间进行倒序排序
-        list.sort(comparing(User::getLastLoginTime).reversed());
+        List<User> list = userService.findUsers(searchDTO);
         PageInfo<User> pageInfo = new PageInfo<>(list);
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("users", pageInfo.getList());

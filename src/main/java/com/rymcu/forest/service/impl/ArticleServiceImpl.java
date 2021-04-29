@@ -203,9 +203,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
-            String previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
-            if (previewContent.length() > MAX_PREVIEW) {
-                previewContent = previewContent.substring(0, MAX_PREVIEW);
+            String previewContent;
+            if (articleContentHtml.length() > MAX_PREVIEW) {
+                previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
+                if (previewContent.length() > MAX_PREVIEW) {
+                    previewContent = previewContent.substring(0, MAX_PREVIEW);
+                }
+            } else {
+                previewContent = Html2TextUtil.getContent(articleContentHtml);
             }
             newArticle.setArticlePreviewContent(previewContent);
         }
@@ -260,8 +265,18 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map delete(Integer id) {
+    public Map delete(Integer id) throws BaseApiException {
         Map<String, String> map = new HashMap(1);
+        // 鉴权
+        User user = UserUtils.getCurrentUserByToken();
+        Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
+        if (roleWeights > 2) {
+            Article article = articleMapper.selectByPrimaryKey(id);
+            if (!user.getIdUser().equals(article.getArticleAuthorId())) {
+                map.put("message", "非法访问！");
+                return map;
+            }
+        }
         Integer result;
         // 判断是否有评论
         boolean isHavComment = articleMapper.existsCommentWithPrimaryKey(id);
@@ -285,6 +300,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         articleMapper.deleteLinkedPortfolioData(id);
         // 删除引用标签记录
         articleMapper.deleteTagArticle(id);
+        // 删除文章内容表
+        articleMapper.deleteArticleContent(id);
     }
 
     @Override
@@ -398,9 +415,11 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     private Author genAuthor(ArticleDTO article) {
         Author author = new Author();
+        User user = userService.findById(String.valueOf(article.getArticleAuthorId()));
         author.setUserNickname(article.getArticleAuthorName());
         author.setUserAvatarURL(article.getArticleAuthorAvatarUrl());
         author.setIdUser(article.getArticleAuthorId());
+        author.setUserAccount(user.getAccount());
         return author;
     }
 }

@@ -51,4 +51,7 @@
     <select id="selectMaxSortNo" resultType="java.lang.Integer">
         select ifnull(max(sort_no),0) + 1 from forest_portfolio_article where id_portfolio = #{idPortfolio}
     </select>
+    <select id="selectPortfolios" resultMap="BaseResultMap">
+        select * from forest_portfolio order by updated_time desc
+    </select>
 </mapper>

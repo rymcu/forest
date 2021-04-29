@@ -2,8 +2,10 @@ package com.rymcu.forest.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
 import com.rymcu.forest.core.exception.ServiceException;
+import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.ResultCode;
+import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -25,7 +27,7 @@ import java.util.Map;
  * 全局异常处理器
  *
  * @author ronger
- * */
+ */
 @RestControllerAdvice
 public class BaseExceptionHandler {
 
@@ -33,10 +35,10 @@ public class BaseExceptionHandler {
 
     @SuppressWarnings("Duplicates")
     @ExceptionHandler(Exception.class)
-    public Object errorHandler(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex){
-        if(isAjax(request)){
+    public Object errorHandler(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        if (isAjax(request)) {
             GlobalResult result = new GlobalResult();
-            if (ex instanceof BaseApiException){
+            if (ex instanceof BaseApiException) {
                 result.setCode(401);
                 result.setMessage("用户未登录");
                 logger.info("用户未登录");
@@ -48,7 +50,7 @@ public class BaseExceptionHandler {
                 result.setCode(1000002);
                 result.setMessage("用户无权限");
                 logger.info("用户无权限");
-            }else if (ex instanceof ServiceException) {
+            } else if (ex instanceof ServiceException) {
                 //业务失败的异常，如“账号或密码错误”
                 result.setCode(((ServiceException) ex).getCode());
                 result.setMessage(ex.getMessage());
@@ -59,7 +61,10 @@ public class BaseExceptionHandler {
             } else if (ex instanceof ServletException) {
                 result.setCode(ResultCode.FAIL.getCode());
                 result.setMessage(ex.getMessage());
-            }else {
+            } else if (ex instanceof TransactionException) {
+                result.setCode(TransactionCode.InsufficientBalance.getCode());
+                result.setMessage(ex.getMessage());
+            } else {
                 //系统内部异常,不返回给客户端,内部记录错误日志
                 result.setCode(ResultCode.INTERNAL_SERVER_ERROR.getCode());
                 String message;
@@ -78,11 +83,11 @@ public class BaseExceptionHandler {
             }
             result.setSuccess(false);
             return result;
-        }else {
+        } else {
             ModelAndView mv = new ModelAndView();
             FastJsonJsonView view = new FastJsonJsonView();
             Map<String, Object> attributes = new HashMap(2);
-            if (ex instanceof BaseApiException){
+            if (ex instanceof BaseApiException) {
                 attributes.put("code", "401");
                 attributes.put("message", "用户未登录");
             } else if (ex instanceof UnauthenticatedException) {
@@ -93,18 +98,21 @@ public class BaseExceptionHandler {
                 attributes.put("message", "用户无权限");
             } else if (ex instanceof ServiceException) {
                 //业务失败的异常，如“账号或密码错误”
-                attributes.put("code",((ServiceException) ex).getCode());
-                attributes.put("message",ex.getMessage());
+                attributes.put("code", ((ServiceException) ex).getCode());
+                attributes.put("message", ex.getMessage());
                 logger.info(ex.getMessage());
             } else if (ex instanceof NoHandlerFoundException) {
-                attributes.put("code",ResultCode.NOT_FOUND.getCode());
-                attributes.put("message",ResultCode.NOT_FOUND.getMessage());
+                attributes.put("code", ResultCode.NOT_FOUND.getCode());
+                attributes.put("message", ResultCode.NOT_FOUND.getMessage());
             } else if (ex instanceof ServletException) {
-                attributes.put("code",ResultCode.FAIL.getCode());
-                attributes.put("message",ex.getMessage());
-            }else {
+                attributes.put("code", ResultCode.FAIL.getCode());
+                attributes.put("message", ex.getMessage());
+            } else if (ex instanceof TransactionException) {
+                attributes.put("code", TransactionCode.InsufficientBalance.getCode());
+                attributes.put("message", ex.getMessage());
+            } else {
                 //系统内部异常,不返回给客户端,内部记录错误日志
-                attributes.put("code",ResultCode.INTERNAL_SERVER_ERROR.getCode());
+                attributes.put("code", ResultCode.INTERNAL_SERVER_ERROR.getCode());
                 String message;
                 if (handler instanceof HandlerMethod) {
                     HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -117,9 +125,9 @@ public class BaseExceptionHandler {
                     message = ex.getMessage();
                 }
                 logger.error(message, ex);
-                attributes.put("message","操作失败");
+                attributes.put("message", "操作失败");
             }
-            attributes.put("success",false);
+            attributes.put("success", false);
             view.setAttributesMap(attributes);
             mv.setView(view);
             return mv;
