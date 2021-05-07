@@ -97,6 +97,16 @@ public class CommonApiController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
+    @GetMapping("/announcements")
+    @VisitLogger
+    public GlobalResult<Map> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows){
+        PageHelper.startPage(page, rows);
+        List<ArticleDTO> list = articleService.findAnnouncements();
+        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
+        Map map = Utils.getArticlesGlobalResult(pageInfo);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
     @GetMapping("/article/{id}")
     @VisitLogger
     public GlobalResult<Map<String, Object>> article(@PathVariable Integer id){

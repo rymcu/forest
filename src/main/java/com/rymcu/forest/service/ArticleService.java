@@ -66,6 +66,7 @@ public interface ArticleService extends Service<Article> {
      * 删除文章
      * @param id
      * @return
+     * @throws BaseApiException
      * */
     Map delete(Integer id) throws BaseApiException;
 
@@ -123,4 +124,10 @@ public interface ArticleService extends Service<Article> {
      * @return
      */
     Map updatePerfect(Integer idArticle, String articlePerfect);
+
+    /**
+     * 获取公告列表
+     * @return
+     */
+    List<ArticleDTO> findAnnouncements();
 }

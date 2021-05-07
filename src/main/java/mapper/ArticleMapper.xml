@@ -105,6 +105,7 @@
         where article_status = 0
         <if test="topicUri != 'news'">
             and FIND_IN_SET('划水',art.article_tags) = 0
+            and FIND_IN_SET('公告',art.article_tags) = 0
         </if>
         order by updated_time desc
     </select>
@@ -154,5 +155,11 @@
     <select id="selectPortfolioArticlesByIdPortfolioAndSortNo" resultMap="DTOResultMap">
         select va.article_title, va.id, va.article_permalink from forest_portfolio_article vpa
             join forest_article va on va.id = vpa.id_article where va.article_status = '0' and id_portfolio = #{idPortfolio} order by sort_no
+    </select>
+    <select id="selectAnnouncements" resultMap="DTOResultMap">
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id
+        where article_status = 0
+        and FIND_IN_SET('公告',art.article_tags) > 0
+        order by updated_time desc
     </select>
 </mapper>
