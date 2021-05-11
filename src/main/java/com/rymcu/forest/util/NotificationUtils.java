@@ -123,12 +123,14 @@ public class NotificationUtils {
             case "2":
                 // 回帖
                 comment = commentService.findById(notification.getDataId().toString());
-                article = articleService.findArticleDTOById(comment.getCommentArticleId(), 0);
-                if (Objects.nonNull(article)) {
-                    notificationDTO.setDataTitle(article.getArticleTitle());
-                    notificationDTO.setDataUrl(comment.getCommentSharpUrl());
-                    user = userService.findById(comment.getCommentAuthorId().toString());
-                    notificationDTO.setAuthor(genAuthor(user));
+                if (Objects.nonNull(comment)) {
+                    article = articleService.findArticleDTOById(comment.getCommentArticleId(), 0);
+                    if (Objects.nonNull(article)) {
+                        notificationDTO.setDataTitle(article.getArticleTitle());
+                        notificationDTO.setDataUrl(comment.getCommentSharpUrl());
+                        user = userService.findById(comment.getCommentAuthorId().toString());
+                        notificationDTO.setAuthor(genAuthor(user));
+                    }
                 }
                 break;
             case "3":
