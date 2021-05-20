@@ -34,7 +34,8 @@
     <select id="getAllArticleLucene" resultMap="ResultMapWithBLOBs">
         select art.id, art.article_title, content.article_content
         from forest_article art
-                 join forest_article_content content on art.id = content.id_article;
+                 join forest_article_content content on art.id = content.id_article
+        where article_status = 0;
     </select>
 
     <select id="getArticlesByIds" resultMap="DTOResultMap">
@@ -59,6 +60,7 @@
         select art.id, art.article_title, content.article_content
         from forest_article art
                  join forest_article_content content on art.id = content.id_article
-        where id = #{id};
+        where article_status = 0
+        and id = #{id};
     </select>
 </mapper>
