@@ -38,162 +38,166 @@ import java.util.concurrent.Executors;
 @RequestMapping("/api/v1/lucene")
 public class LuceneSearchController {
 
-  @Resource private LuceneService luceneService;
-  @Resource private UserLuceneService userLuceneService;
-  @Resource private PortfolioLuceneService portfolioLuceneService;
-  @Resource private UserDicService dicService;
+    @Resource
+    private LuceneService luceneService;
+    @Resource
+    private UserLuceneService userLuceneService;
+    @Resource
+    private PortfolioLuceneService portfolioLuceneService;
+    @Resource
+    private UserDicService dicService;
 
-  @PostConstruct
-  public void createIndex() {
-    // 删除系统运行时保存的索引，重新创建索引
-    ArticleIndexUtil.deleteAllIndex();
-    UserIndexUtil.deleteAllIndex();
-    PortfolioIndexUtil.deleteAllIndex();
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    CompletableFuture<String> future =
-        CompletableFuture.supplyAsync(
-            () -> {
-              System.out.println(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
-              luceneService.writeArticle(luceneService.getAllArticleLucene());
-              userLuceneService.writeUser(userLuceneService.getAllUserLucene());
-              portfolioLuceneService.writePortfolio(portfolioLuceneService.getAllPortfolioLucene());
-              System.out.println(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
-              System.out.println("加载用户配置的自定义扩展词典到主词库表");
-              try {
-                System.out.println(">>>>>>>>> 开始加载用户词典 <<<<<<<<<<<");
-                dicService.writeUserDic();
-              } catch (FileNotFoundException e) {
-                System.out.println("加载用户词典失败，未成功创建用户词典");
-              }
-              return ">>>>>>>>> 加载用户词典完毕 <<<<<<<<<<<";
-            },
-            executor);
-    future.thenAccept(System.out::println);
-  }
+    @PostConstruct
+    public void createIndex() {
+        // 删除系统运行时保存的索引，重新创建索引
+        ArticleIndexUtil.deleteAllIndex();
+        UserIndexUtil.deleteAllIndex();
+        PortfolioIndexUtil.deleteAllIndex();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        CompletableFuture<String> future =
+                CompletableFuture.supplyAsync(
+                        () -> {
+                            System.out.println(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
+                            luceneService.writeArticle(luceneService.getAllArticleLucene());
+                            userLuceneService.writeUser(userLuceneService.getAllUserLucene());
+                            portfolioLuceneService.writePortfolio(portfolioLuceneService.getAllPortfolioLucene());
+                            System.out.println(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
+                            System.out.println("加载用户配置的自定义扩展词典到主词库表");
+                            try {
+                                System.out.println(">>>>>>>>> 开始加载用户词典 <<<<<<<<<<<");
+                                dicService.writeUserDic();
+                            } catch (FileNotFoundException e) {
+                                System.out.println("加载用户词典失败，未成功创建用户词典");
+                            }
+                            return ">>>>>>>>> 加载用户词典完毕 <<<<<<<<<<<";
+                        },
+                        executor);
+        future.thenAccept(System.out::println);
+    }
 
-  /**
-   * 文章搜索，实现高亮
-   *
-   * @param q
-   * @return
-   */
-  @GetMapping("/searchArticle/{q}")
-  public GlobalResult<?> searchArticle(
-      @PathVariable String q,
-      @RequestParam(defaultValue = "1") Integer pageNum,
-      @RequestParam(defaultValue = "10") Integer pageSize) {
-    // 找出相关文章，相关度倒序
-    List<ArticleLucene> resList = luceneService.searchArticle(q);
-    // 分页组装文章详情
-    int total = resList.size();
-    if (total == 0) {
-      return GlobalResultGenerator.genSuccessResult("未找到相关文章");
+    /**
+     * 文章搜索，实现高亮
+     *
+     * @param q
+     * @return
+     */
+    @GetMapping("/search-article")
+    public GlobalResult<?> searchArticle(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer rows) {
+        // 找出相关文章，相关度倒序
+        List<ArticleLucene> resList = luceneService.searchArticle(q);
+        // 分页组装文章详情
+        int total = resList.size();
+        if (total == 0) {
+            return GlobalResultGenerator.genSuccessResult("未找到相关文章");
+        }
+        Page<ArticleDTO> articles = new Page<>(page, rows);
+        articles.setTotal(total);
+        int startIndex = (page - 1) * rows;
+        int endIndex = Math.min(startIndex + rows, total);
+        // 分割子列表
+        List<ArticleLucene> subList = resList.subList(startIndex, endIndex);
+        String[] ids = subList.stream().map(ArticleLucene::getIdArticle).toArray(String[]::new);
+        List<ArticleDTO> articleDTOList = luceneService.getArticlesByIds(ids);
+        ArticleDTO temp;
+        // 写入文章关键词信息
+        for (int i = 0; i < articleDTOList.size(); i++) {
+            temp = articleDTOList.get(i);
+            temp.setArticleTitle(subList.get(i).getArticleTitle());
+            if (subList.get(i).getArticleContent().length() > 10) {
+                // 内容中命中太少则不替换
+                temp.setArticlePreviewContent(subList.get(i).getArticleContent());
+            }
+            articleDTOList.set(i, temp);
+        }
+        articles.addAll(articleDTOList);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(articles);
+        return GlobalResultGenerator.genSuccessResult(Utils.getArticlesGlobalResult(pageInfo));
     }
-    Page<ArticleDTO> page = new Page<>(pageNum, pageSize);
-    page.setTotal(total);
-    int startIndex = (pageNum - 1) * pageSize;
-    int endIndex = Math.min(startIndex + pageSize, total);
-    // 分割子列表
-    List<ArticleLucene> subList = resList.subList(startIndex, endIndex);
-    String[] ids = subList.stream().map(ArticleLucene::getIdArticle).toArray(String[]::new);
-    List<ArticleDTO> articleDTOList = luceneService.getArticlesByIds(ids);
-    ArticleDTO temp;
-    // 写入文章关键词信息
-    for (int i = 0; i < articleDTOList.size(); i++) {
-      temp = articleDTOList.get(i);
-      temp.setArticleTitle(subList.get(i).getArticleTitle());
-      if (subList.get(i).getArticleContent().length() > 10) {
-        // 内容中命中太少则不替换
-        temp.setArticlePreviewContent(subList.get(i).getArticleContent());
-      }
-      articleDTOList.set(i, temp);
-    }
-    page.addAll(articleDTOList);
-    PageInfo<ArticleDTO> pageInfo = new PageInfo<>(page);
-    return GlobalResultGenerator.genSuccessResult(Utils.getArticlesGlobalResult(pageInfo));
-  }
 
-  /**
-   * 用户搜索，实现高亮
-   *
-   * @param q
-   * @return
-   */
-  @GetMapping("/searchUser/{q}")
-  public GlobalResult<?> searchUser(
-      @PathVariable String q,
-      @RequestParam(defaultValue = "1") Integer pageNum,
-      @RequestParam(defaultValue = "10") Integer pageSize) {
-    // 找出相关文章，相关度倒序
-    List<UserLucene> resList = userLuceneService.searchUser(q);
-    // 分页组装文章详情
-    int total = resList.size();
-    if (total == 0) {
-      return GlobalResultGenerator.genSuccessResult("未找到相关用户");
+    /**
+     * 用户搜索，实现高亮
+     *
+     * @param q
+     * @return
+     */
+    @GetMapping("/search-user")
+    public GlobalResult<?> searchUser(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer rows) {
+        // 找出相关文章，相关度倒序
+        List<UserLucene> resList = userLuceneService.searchUser(q);
+        // 分页组装文章详情
+        int total = resList.size();
+        if (total == 0) {
+            return GlobalResultGenerator.genSuccessResult("未找到相关用户");
+        }
+        Page<UserDTO> users = new Page<>(page, rows);
+        users.setTotal(total);
+        int startIndex = (page - 1) * rows;
+        int endIndex = Math.min(startIndex + rows, total);
+        // 分割子列表
+        List<UserLucene> subList = resList.subList(startIndex, endIndex);
+        Integer[] ids = subList.stream().map(UserLucene::getIdUser).toArray(Integer[]::new);
+        List<UserDTO> userDTOList = userLuceneService.getUsersByIds(ids);
+        UserDTO temp;
+        // 写入文章关键词信息
+        for (int i = 0; i < userDTOList.size(); i++) {
+            temp = userDTOList.get(i);
+            temp.setNickname(subList.get(i).getNickname());
+            if (subList.get(i).getSignature().length() > 10) {
+                // 内容中命中太少则不替换
+                temp.setSignature(subList.get(i).getSignature());
+            }
+            userDTOList.set(i, temp);
+        }
+        users.addAll(userDTOList);
+        PageInfo<UserDTO> pageInfo = new PageInfo<>(users);
+        return GlobalResultGenerator.genSuccessResult(Utils.getUserGlobalResult(pageInfo));
     }
-    Page<UserDTO> page = new Page<>(pageNum, pageSize);
-    page.setTotal(total);
-    int startIndex = (pageNum - 1) * pageSize;
-    int endIndex = Math.min(startIndex + pageSize, total);
-    // 分割子列表
-    List<UserLucene> subList = resList.subList(startIndex, endIndex);
-    Integer[] ids = subList.stream().map(UserLucene::getIdUser).toArray(Integer[]::new);
-    List<UserDTO> userDTOList = userLuceneService.getUsersByIds(ids);
-    UserDTO temp;
-    // 写入文章关键词信息
-    for (int i = 0; i < userDTOList.size(); i++) {
-      temp = userDTOList.get(i);
-      temp.setNickname(subList.get(i).getNickname());
-      if (subList.get(i).getSignature().length() > 10) {
-        // 内容中命中太少则不替换
-        temp.setSignature(subList.get(i).getSignature());
-      }
-      userDTOList.set(i, temp);
-    }
-    page.addAll(userDTOList);
-    PageInfo<UserDTO> pageInfo = new PageInfo<>(page);
-    return GlobalResultGenerator.genSuccessResult(Utils.getUserGlobalResult(pageInfo));
-  }
 
-  /**
-   * 作品集搜索，实现高亮
-   *
-   * @param q
-   * @return
-   */
-  @GetMapping("/searchPortfolio/{q}")
-  public GlobalResult<?> searchPortfolio(
-          @PathVariable String q,
-          @RequestParam(defaultValue = "1") Integer pageNum,
-          @RequestParam(defaultValue = "10") Integer pageSize) {
-    // 找出相关文章，相关度倒序
-    List<PortfolioLucene> resList = portfolioLuceneService.searchPortfolio(q);
-    // 分页组装文章详情
-    int total = resList.size();
-    if (total == 0) {
-      return GlobalResultGenerator.genSuccessResult("未找到相关作品集");
+    /**
+     * 作品集搜索，实现高亮
+     *
+     * @param q
+     * @return
+     */
+    @GetMapping("/search-portfolio")
+    public GlobalResult<?> searchPortfolio(
+            @RequestParam String q,
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer rows) {
+        // 找出相关文章，相关度倒序
+        List<PortfolioLucene> resList = portfolioLuceneService.searchPortfolio(q);
+        // 分页组装文章详情
+        int total = resList.size();
+        if (total == 0) {
+            return GlobalResultGenerator.genSuccessResult("未找到相关作品集");
+        }
+        Page<PortfolioDTO> portfolios = new Page<>(page, rows);
+        portfolios.setTotal(total);
+        int startIndex = (page - 1) * rows;
+        int endIndex = Math.min(startIndex + rows, total);
+        // 分割子列表
+        List<PortfolioLucene> subList = resList.subList(startIndex, endIndex);
+        String[] ids = subList.stream().map(PortfolioLucene::getIdPortfolio).toArray(String[]::new);
+        List<PortfolioDTO> portfolioDTOList = portfolioLuceneService.getPortfoliosByIds(ids);
+        PortfolioDTO temp;
+        // 写入文章关键词信息
+        for (int i = 0; i < portfolioDTOList.size(); i++) {
+            temp = portfolioDTOList.get(i);
+            temp.setPortfolioTitle(subList.get(i).getPortfolioTitle());
+            if (subList.get(i).getPortfolioDescription().length() > 10) {
+                // 内容中命中太少则不替换
+                temp.setPortfolioDescription(subList.get(i).getPortfolioDescription());
+            }
+            portfolioDTOList.set(i, temp);
+        }
+        portfolios.addAll(portfolioDTOList);
+        PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(portfolios);
+        return GlobalResultGenerator.genSuccessResult(Utils.getPortfolioGlobalResult(pageInfo));
     }
-    Page<PortfolioDTO> page = new Page<>(pageNum, pageSize);
-    page.setTotal(total);
-    int startIndex = (pageNum - 1) * pageSize;
-    int endIndex = Math.min(startIndex + pageSize, total);
-    // 分割子列表
-    List<PortfolioLucene> subList = resList.subList(startIndex, endIndex);
-    String[] ids = subList.stream().map(PortfolioLucene::getIdPortfolio).toArray(String[]::new);
-    List<PortfolioDTO> portfolioDTOList = portfolioLuceneService.getPortfoliosByIds(ids);
-    PortfolioDTO temp;
-    // 写入文章关键词信息
-    for (int i = 0; i < portfolioDTOList.size(); i++) {
-      temp = portfolioDTOList.get(i);
-      temp.setPortfolioTitle(subList.get(i).getPortfolioTitle());
-      if (subList.get(i).getPortfolioDescription().length() > 10) {
-        // 内容中命中太少则不替换
-        temp.setPortfolioDescription(subList.get(i).getPortfolioDescription());
-      }
-      portfolioDTOList.set(i, temp);
-    }
-    page.addAll(portfolioDTOList);
-    PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(page);
-    return GlobalResultGenerator.genSuccessResult(Utils.getPortfolioGlobalResult(pageInfo));
-  }
 }

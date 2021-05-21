@@ -28,9 +28,9 @@ public class UserDicController {
 
   @GetMapping("/getAll")
   public GlobalResult getAll(
-      @RequestParam(defaultValue = "0") Integer pageNum,
-      @RequestParam(defaultValue = "10") Integer pageSize) {
-    PageHelper.startPage(pageNum, pageSize);
+      @RequestParam(defaultValue = "0") Integer page,
+      @RequestParam(defaultValue = "10") Integer rows) {
+    PageHelper.startPage(page, rows);
     List<UserDic> list = dicService.getAll();
     PageInfo<UserDic> pageInfo = new PageInfo<>(list);
     Map<String, Object> map = new HashMap<>(2);
