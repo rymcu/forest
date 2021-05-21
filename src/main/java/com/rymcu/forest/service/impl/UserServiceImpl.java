@@ -251,8 +251,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public UserExtend selectUserExtendByAccount(String nickname) {
-        return userExtendMapper.selectUserExtendByNickname(nickname);
+    public UserExtend selectUserExtendByAccount(String account) {
+        return userExtendMapper.selectUserExtendByAccount(account);
     }
 
     @Override

@@ -10,8 +10,8 @@ import org.apache.ibatis.annotations.Param;
 public interface UserExtendMapper extends Mapper<UserExtend> {
     /**
      * 获取用户扩展信息
-     * @param nickname
+     * @param account
      * @return
      */
-    UserExtend selectUserExtendByNickname(@Param("nickname") String nickname);
+    UserExtend selectUserExtendByAccount(@Param("account") String account);
 }
