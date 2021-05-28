@@ -30,3 +30,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### lucene ###
+index
+userDic

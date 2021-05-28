@@ -7,6 +7,8 @@ import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
 import com.rymcu.forest.jwt.service.TokenManager;
+import com.rymcu.forest.lucene.model.UserLucene;
+import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.mapper.RoleMapper;
 import com.rymcu.forest.mapper.UserExtendMapper;
 import com.rymcu.forest.mapper.UserMapper;
@@ -75,6 +77,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     user = userMapper.findByAccount(email);
                     Role role = roleMapper.selectRoleByInputCode("user");
                     userMapper.insertUserRole(user.getIdUser(), role.getIdRole());
+                    UserIndexUtil.addIndex(UserLucene.builder()
+                            .idUser(user.getIdUser())
+                            .nickname(user.getNickname())
+                            .signature(user.getSignature())
+                            .build());
                     map.put("message","注册成功！");
                     map.put("flag",1);
                     redisService.delete(email);
@@ -194,6 +201,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         }
         Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),
                 user.getEmail(),user.getPhone(),user.getSignature(), user.getSex());
+        UserIndexUtil.addIndex(UserLucene.builder()
+                .idUser(user.getIdUser())
+                .nickname(user.getNickname())
+                .signature(user.getSignature())
+                .build());
         if (result == 0) {
             map.put("message", "操作失败!");
             return map;
@@ -239,8 +251,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public UserExtend selectUserExtendByAccount(String nickname) {
-        return userExtendMapper.selectUserExtendByNickname(nickname);
+    public UserExtend selectUserExtendByAccount(String account) {
+        return userExtendMapper.selectUserExtendByAccount(account);
     }
 
     @Override
