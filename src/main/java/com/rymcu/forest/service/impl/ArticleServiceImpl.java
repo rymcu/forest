@@ -8,6 +8,7 @@ import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.ArticleContent;
 import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.User;
+import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.CommentService;
@@ -15,6 +16,8 @@ import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.*;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,7 @@ import java.util.*;
  * @author ronger
  */
 @Service
+@Slf4j
 public class ArticleServiceImpl extends AbstractService<Article> implements ArticleService {
 
     @Resource
@@ -41,6 +45,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private UserService userService;
     @Resource
     private CommentService commentService;
+    @Resource
+    private LuceneService luceneService;
 
     @Value("${resource.domain}")
     private String domain;
@@ -175,7 +181,17 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 }
             }
         }
-
+        // 草稿不更新索引
+        if ("0".equals(article.getArticleStatus())) {
+            System.out.println("开始增加索引");
+            if (isUpdate) {
+                log.info("更新文章索引，id={}",newArticle.getIdArticle());
+                luceneService.updateArticle(newArticle.getIdArticle().toString());
+            } else {
+                log.info("写入文章索引，id={}",newArticle.getIdArticle());
+                luceneService.writeArticle(newArticle.getIdArticle().toString());
+            }
+        }
         tagService.saveTagArticle(newArticle, articleContentHtml);
 
         if (defaultStatus.equals(newArticle.getArticleStatus())) {
@@ -271,6 +287,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             deleteLinkedData(id);
             // 删除文章
             result = articleMapper.deleteByPrimaryKey(id);
+            luceneService.deleteArticle(id.toString());
             if (result < 1) {
                 map.put("message", "删除失败!");
             }

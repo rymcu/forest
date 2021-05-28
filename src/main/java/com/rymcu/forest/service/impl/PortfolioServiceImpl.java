@@ -7,6 +7,8 @@ import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.entity.User;
+import com.rymcu.forest.lucene.model.PortfolioLucene;
+import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.mapper.PortfolioMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.PortfolioService;
@@ -72,9 +74,21 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolio.setCreatedTime(new Date());
             portfolio.setUpdatedTime(portfolio.getCreatedTime());
             portfolioMapper.insertSelective(portfolio);
+            PortfolioIndexUtil.addIndex(
+                    PortfolioLucene.builder()
+                            .idPortfolio(portfolio.getIdPortfolio().toString())
+                            .portfolioTitle(portfolio.getPortfolioTitle())
+                            .portfolioDescription(portfolio.getPortfolioDescription())
+                            .build());
         } else {
             portfolio.setUpdatedTime(new Date());
             portfolioMapper.updateByPrimaryKeySelective(portfolio);
+            PortfolioIndexUtil.updateIndex(
+                    PortfolioLucene.builder()
+                            .idPortfolio(portfolio.getIdPortfolio().toString())
+                            .portfolioTitle(portfolio.getPortfolioTitle())
+                            .portfolioDescription(portfolio.getPortfolioDescription())
+                            .build());
         }
         return portfolio;
     }
@@ -176,6 +190,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             Integer result = portfolioMapper.deleteByPrimaryKey(idPortfolio);
             if (result.equals(0)) {
                 map.put("message", "操作失败!");
+            }else {
+                PortfolioIndexUtil.deleteIndex(String.valueOf(idPortfolio));
             }
         }
 
