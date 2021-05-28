@@ -364,6 +364,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         return map;
     }
 
+    @Override
+    public List<ArticleDTO> findAnnouncements() {
+        List<ArticleDTO> list = articleMapper.selectAnnouncements();
+        list.forEach(article -> {
+            genArticle(article, 0);
+        });
+        return list;
+    }
+
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {
         Integer articleList = 0;
         Integer articleView = 1;

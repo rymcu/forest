@@ -68,7 +68,7 @@ public class PortfolioController {
     }
 
     @DeleteMapping("/delete")
-    public GlobalResult delete(Integer idPortfolio){
+    public GlobalResult delete(Integer idPortfolio) throws BaseApiException {
         Map map = portfolioService.deletePortfolio(idPortfolio);
         return GlobalResultGenerator.genSuccessResult(map);
     }

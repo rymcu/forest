@@ -190,4 +190,10 @@ public interface ArticleMapper extends Mapper<Article> {
      * @param idArticle
      */
     void deleteArticleContent(@Param("idArticle") Integer idArticle);
+
+    /**
+     * 获取公告
+     * @return
+     */
+    List<ArticleDTO> selectAnnouncements();
 }

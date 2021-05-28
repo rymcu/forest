@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
+import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.mapper.PortfolioMapper;
@@ -152,10 +153,20 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public Map deletePortfolio(Integer idPortfolio) {
+    public Map deletePortfolio(Integer idPortfolio) throws BaseApiException {
         Map map = new HashMap(1);
         if (idPortfolio == null || idPortfolio.equals(0)) {
             map.put("message", "作品集数据异常");
+        }
+        // 鉴权
+        User user = UserUtils.getCurrentUserByToken();
+        Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
+        if (roleWeights > 2) {
+            Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
+            if (!user.getIdUser().equals(portfolio.getPortfolioAuthorId())) {
+                map.put("message", "非法访问！");
+                return map;
+            }
         }
 
         Integer articleNumber = portfolioMapper.selectCountArticleNumber(idPortfolio);
