@@ -32,7 +32,7 @@
         <result column="article_sponsor_count" property="articleSponsorCount"></result>
     </resultMap>
     <select id="getAllArticleLucene" resultMap="ResultMapWithBLOBs">
-        select art.id, art.article_title, content.article_content
+        select art.id, art.article_title, content.article_content_html as article_content
         from forest_article art
                  join forest_article_content content on art.id = content.id_article
         where article_status = 0;
