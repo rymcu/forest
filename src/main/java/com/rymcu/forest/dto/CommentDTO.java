@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.Date;
@@ -35,6 +36,7 @@ public class CommentDTO {
     /** 0：所有人可见，1：仅楼主和自己可见 */
     private String commentVisible;
     /** 创建时间 */
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 
     private Author commenter;

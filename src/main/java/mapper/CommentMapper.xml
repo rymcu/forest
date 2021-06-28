@@ -47,4 +47,7 @@
     <select id="selectCommentOriginalAuthor" resultMap="AuthorResultMap">
         select vu.id,vu.nickname,vu.avatar_url,vu.account from forest_comment vc left join forest_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
     </select>
+    <select id="selectComments" resultMap="DTOResultMap">
+        select * from forest_comment order by created_time desc
+    </select>
 </mapper>
