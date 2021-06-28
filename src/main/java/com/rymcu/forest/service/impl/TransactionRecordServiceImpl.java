@@ -4,15 +4,19 @@ import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.BankAccountDTO;
+import com.rymcu.forest.dto.BankAccountSearchDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
+import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
 import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.TransactionRecordService;
 import com.rymcu.forest.util.DateUtil;
+import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +60,17 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
 
     @Override
     public List<TransactionRecordDTO> findTransactionRecords(String bankAccount) {
-        return transactionRecordMapper.selectTransactionRecords(bankAccount);
+        List<TransactionRecordDTO> list = transactionRecordMapper.selectTransactionRecords(bankAccount);
+        list.forEach(transactionRecordDTO -> genTransactionRecord(transactionRecordDTO));
+        return list;
+    }
+
+    private TransactionRecordDTO genTransactionRecord(TransactionRecordDTO transactionRecordDTO) {
+        BankAccountDTO toBankAccount = bankAccountService.findByBankAccount(transactionRecordDTO.getToBankAccount());
+        BankAccountDTO formBankAccount = bankAccountService.findByBankAccount(transactionRecordDTO.getFormBankAccount());
+        transactionRecordDTO.setFormBankAccountInfo(formBankAccount);
+        transactionRecordDTO.setToBankAccountInfo(toBankAccount);
+        return transactionRecordDTO;
     }
 
     @Override
@@ -122,7 +136,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     private boolean checkFormAccountStatus(String formBankAccount, BigDecimal money) {
-        BankAccount bankAccount = bankAccountService.findByBankAccount(formBankAccount);
+        BankAccountDTO bankAccount = bankAccountService.findByBankAccount(formBankAccount);
         if (Objects.nonNull(bankAccount)) {
             if (bankAccount.getAccountBalance().compareTo(money) > 0) {
                 return true;

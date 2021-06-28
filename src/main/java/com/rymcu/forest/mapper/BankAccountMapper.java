@@ -32,4 +32,11 @@ public interface BankAccountMapper extends Mapper<BankAccount> {
      * @return
      */
     String selectMaxBankAccount();
+
+    /**
+     * 根据卡号获取银行账号信息
+     * @param bankAccount
+     * @return
+     */
+    BankAccountDTO selectByBankAccount(@Param("bankAccount") String bankAccount);
 }

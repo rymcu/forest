@@ -19,8 +19,12 @@ public class TransactionRecordDTO {
     private String funds;
     /** 交易发起方 */
     private String formBankAccount;
+    /** 交易发起方 */
+    private BankAccountDTO formBankAccountInfo;
     /** 交易收款方 */
     private String toBankAccount;
+    /** 交易收款方 */
+    private BankAccountDTO toBankAccountInfo;
     /** 交易金额 */
     private BigDecimal money;
     /** 交易类型 */
