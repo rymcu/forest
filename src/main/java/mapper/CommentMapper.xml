@@ -28,6 +28,7 @@
         <result column="comment_reply_count" property="commentReplyCount"></result>
         <result column="comment_visible" property="commentVisible"></result>
         <result column="created_time" property="createdTime"></result>
+        <result column="article_title" property="articleTitle"></result>
     </resultMap>
     <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
         <result column="id" property="idUser"/>
@@ -39,7 +40,7 @@
         update forest_comment set comment_sharp_url = #{commentSharpUrl} where id = #{idComment}
     </update>
     <select id="selectArticleComments" resultMap="DTOResultMap">
-        select * from forest_comment where comment_article_id = #{idArticle} order by created_time desc
+        select fc.*, fa.article_title from forest_comment fc join forest_article fa on fc.comment_article_id = fa.id where comment_article_id = #{idArticle} order by fc.created_time desc
     </select>
     <select id="selectAuthor" resultMap="AuthorResultMap">
         select id,nickname,avatar_url,account from forest_user where id = #{commentAuthorId}
@@ -48,6 +49,6 @@
         select vu.id,vu.nickname,vu.avatar_url,vu.account from forest_comment vc left join forest_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
     </select>
     <select id="selectComments" resultMap="DTOResultMap">
-        select * from forest_comment order by created_time desc
+        select fc.*, fa.article_title from forest_comment fc join forest_article fa on fc.comment_article_id = fa.id order by fc.created_time desc
     </select>
 </mapper>

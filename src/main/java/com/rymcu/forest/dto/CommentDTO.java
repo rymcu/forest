@@ -42,4 +42,6 @@ public class CommentDTO {
     private Author commenter;
 
     private String timeAgo;
+
+    private String articleTitle;
 }
