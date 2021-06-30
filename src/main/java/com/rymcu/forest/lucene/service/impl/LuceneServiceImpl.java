@@ -1,6 +1,11 @@
 package com.rymcu.forest.lucene.service.impl;
 
 import com.rymcu.forest.dto.ArticleDTO;
+import com.rymcu.forest.dto.ArticleTagDTO;
+import com.rymcu.forest.dto.Author;
+import com.rymcu.forest.dto.PortfolioArticleDTO;
+import com.rymcu.forest.entity.ArticleContent;
+import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.lucene.ArticleBeanIndex;
 import com.rymcu.forest.lucene.lucene.IKAnalyzer;
 import com.rymcu.forest.lucene.mapper.ArticleLuceneMapper;
@@ -9,7 +14,10 @@ import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.lucene.util.ArticleIndexUtil;
 import com.rymcu.forest.lucene.util.LucenePath;
 import com.rymcu.forest.lucene.util.SearchUtil;
+import com.rymcu.forest.mapper.ArticleMapper;
+import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.Html2TextUtil;
+import com.rymcu.forest.util.Utils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -44,6 +52,10 @@ public class LuceneServiceImpl implements LuceneService {
 
     @Resource
     private ArticleLuceneMapper luceneMapper;
+    @Resource
+    private ArticleMapper articleMapper;
+    @Resource
+    private UserService userService;
 
     /**
      * 将文章的数据解析为一个个关键字词存储到索引文件中
@@ -198,6 +210,27 @@ public class LuceneServiceImpl implements LuceneService {
 
     @Override
     public List<ArticleDTO> getArticlesByIds(String[] ids) {
-        return luceneMapper.getArticlesByIds(ids);
+        List<ArticleDTO> list = luceneMapper.getArticlesByIds(ids);
+        list.forEach(articleDTO -> genArticle(articleDTO));
+        return list;
+    }
+
+    private ArticleDTO genArticle(ArticleDTO article) {
+        Author author = genAuthor(article);
+        article.setArticleAuthor(author);
+        article.setTimeAgo(Utils.getTimeAgo(article.getUpdatedTime()));
+        List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
+        article.setTags(tags);
+        return article;
+    }
+
+    private Author genAuthor(ArticleDTO article) {
+        Author author = new Author();
+        User user = userService.findById(String.valueOf(article.getArticleAuthorId()));
+        author.setUserNickname(article.getArticleAuthorName());
+        author.setUserAvatarURL(article.getArticleAuthorAvatarUrl());
+        author.setIdUser(article.getArticleAuthorId());
+        author.setUserAccount(user.getAccount());
+        return author;
     }
 }
