@@ -38,4 +38,11 @@ public interface BankAccountService extends Service<BankAccount> {
      * @return
      */
     BankAccount findSystemBankAccount();
+
+    /**
+     * 查询账号信息
+     * @param formBankAccount
+     * @return
+     */
+    BankAccount findInfoByBankAccount(String formBankAccount);
 }

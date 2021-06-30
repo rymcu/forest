@@ -136,7 +136,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     private boolean checkFormAccountStatus(String formBankAccount, BigDecimal money) {
-        BankAccountDTO bankAccount = bankAccountService.findByBankAccount(formBankAccount);
+        BankAccount bankAccount = bankAccountService.findInfoByBankAccount(formBankAccount);
         if (Objects.nonNull(bankAccount)) {
             if (bankAccount.getAccountBalance().compareTo(money) > 0) {
                 return true;

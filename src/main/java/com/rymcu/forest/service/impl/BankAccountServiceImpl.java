@@ -74,6 +74,13 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
         return bankAccountMapper.selectOne(bankAccount);
     }
 
+    @Override
+    public BankAccount findInfoByBankAccount(String bankAccount) {
+        BankAccount searchBankAccount = new BankAccount();
+        searchBankAccount.setBankAccount(bankAccount);
+        return bankAccountMapper.selectOne(searchBankAccount);
+    }
+
     private String nextBankAccount() {
         String bankAccount = "600000001";
         String maxBankAccount = bankAccountMapper.selectMaxBankAccount();
