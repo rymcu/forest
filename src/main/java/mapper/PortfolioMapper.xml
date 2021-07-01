@@ -52,6 +52,7 @@
         select ifnull(max(sort_no),0) + 1 from forest_portfolio_article where id_portfolio = #{idPortfolio}
     </select>
     <select id="selectPortfolios" resultMap="BaseResultMap">
-        select * from forest_portfolio order by updated_time desc
+        select fp.* from forest_portfolio fp left join (select id_portfolio, count(id_portfolio) numbers from forest_portfolio_article group by id_portfolio) fpa
+            on fp.id = fpa.id_portfolio order by fpa.numbers desc, updated_time desc
     </select>
 </mapper>

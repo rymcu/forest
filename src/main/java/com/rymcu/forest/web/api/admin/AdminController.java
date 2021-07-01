@@ -4,6 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.dto.ArticleDTO;
+import com.rymcu.forest.dto.ArticleSearchDTO;
+import com.rymcu.forest.dto.CommentDTO;
 import com.rymcu.forest.dto.UserSearchDTO;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.dto.admin.UserRoleDTO;
@@ -36,6 +39,10 @@ public class AdminController {
     private TagService tagService;
     @Resource
     private SpecialDayService specialDayService;
+    @Resource
+    private ArticleService articleService;
+    @Resource
+    private CommentService commentService;
 
     @GetMapping("/users")
     public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO){
@@ -218,5 +225,31 @@ public class AdminController {
         map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);
     }
+
+    @GetMapping("/articles")
+    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO articleSearchDTO) {
+        PageHelper.startPage(page, rows);
+        List<ArticleDTO> list = articleService.findArticles(articleSearchDTO);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("articles", pageInfo.getList());
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+    @GetMapping("/comments")
+    public GlobalResult<Map> comments(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+        PageHelper.startPage(page, rows);
+        List<CommentDTO> list = commentService.findComments();
+        PageInfo<CommentDTO> pageInfo = new PageInfo<>(list);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("comments", pageInfo.getList());
+        Map pagination = Utils.getPagination(pageInfo);
+        map.put("pagination", pagination);
+        return GlobalResultGenerator.genSuccessResult(map);
+    }
+
+
 
 }

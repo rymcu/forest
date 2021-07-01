@@ -36,6 +36,10 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
     @Override
     public List<CommentDTO> getArticleComments(Integer idArticle) {
         List<CommentDTO> commentDTOList = commentMapper.selectArticleComments(idArticle);
+        return genComments(commentDTOList);
+    }
+
+    private List<CommentDTO> genComments(List<CommentDTO> commentDTOList) {
         commentDTOList.forEach(commentDTO -> {
             commentDTO.setTimeAgo(Utils.getTimeAgo(commentDTO.getCreatedTime()));
             if (commentDTO.getCommentAuthorId() != null) {
@@ -112,5 +116,11 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
 
 
         return map;
+    }
+
+    @Override
+    public List<CommentDTO> findComments() {
+        List<CommentDTO> commentDTOList = commentMapper.selectComments();
+        return genComments(commentDTOList);
     }
 }

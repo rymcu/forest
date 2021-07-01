@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.Date;
@@ -44,6 +45,7 @@ public class ArticleDTO {
     /** 文章状态 */
     private String articleStatus;
     /** 更新时间 */
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 
     private Author articleAuthor;

@@ -61,10 +61,8 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
     }
 
     @Override
-    public BankAccount findByBankAccount(String bankAccount) {
-        BankAccount searchBankAccount = new BankAccount();
-        searchBankAccount.setBankAccount(bankAccount);
-        return bankAccountMapper.selectOne(searchBankAccount);
+    public BankAccountDTO findByBankAccount(String bankAccount) {
+        return bankAccountMapper.selectByBankAccount(bankAccount);
     }
 
     @Override
@@ -74,6 +72,13 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
         bankAccount.setAccountType("1");
         bankAccount.setAccountOwner(2);
         return bankAccountMapper.selectOne(bankAccount);
+    }
+
+    @Override
+    public BankAccount findInfoByBankAccount(String bankAccount) {
+        BankAccount searchBankAccount = new BankAccount();
+        searchBankAccount.setBankAccount(bankAccount);
+        return bankAccountMapper.selectOne(searchBankAccount);
     }
 
     private String nextBankAccount() {

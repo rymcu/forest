@@ -12,24 +12,30 @@
         <result column="created_time" property="createdTime"></result>
     </resultMap>
     <select id="selectBankAccounts" resultMap="DTOResultMap">
-        select vb.bank_name, vu.nickname as account_owner_name, vba.* from forest_bank_account vba
-        join forest_bank vb on vba.id_bank = vb.id
-        join forest_user vu on vba.account_owner = vu.id where vba.account_type = 0
+        select fb.bank_name, ifnull(fu.nickname, '系统') as account_owner_name, fba.* from forest_bank_account fba
+        join forest_bank fb on fba.id_bank = fb.id
+        left join forest_user fu on fba.account_owner = fu.id where fba.account_type = 0
         <if test="bankName != null and bankName != ''">
-            and vb.bank_name = #{bankName}
+            and fb.bank_name = #{bankName}
         </if>
         <if test="accountOwnerName != null and accountOwnerName != ''">
-            and vu.nickname = #{accountOwnerName}
+            and fu.nickname = #{accountOwnerName}
         </if>
         <if test="bankAccount != null and bankAccount != ''">
-            and vba.bank_account = #{bankAccount}
+            and fba.bank_account = #{bankAccount}
         </if>
     </select>
     <select id="selectBankAccount" resultMap="DTOResultMap">
-        select vb.bank_name, vba.* from forest_bank_account vba
-        join forest_bank vb on vba.id_bank = vb.id where vba.id = #{idBank}
+        select fb.bank_name, fu.nickname as account_owner_name, fba.* from forest_bank_account fba
+        join forest_bank fb on fba.id_bank = fb.id
+        join forest_user fu on fba.account_owner = fu.id where fba.id = #{idBank}
     </select>
     <select id="selectMaxBankAccount" resultType="java.lang.String">
         select max(bank_account) as max_bank_account from forest_bank_account where account_type = 0
+    </select>
+    <select id="selectByBankAccount" resultMap="DTOResultMap">
+        select fb.bank_name, ifnull(fu.nickname, '系统') as account_owner_name, fba.bank_account from forest_bank_account fba
+            join forest_bank fb on fba.id_bank = fb.id
+            left join forest_user fu on fba.account_owner = fu.id where fba.bank_account = #{bankAccount}
     </select>
 </mapper>

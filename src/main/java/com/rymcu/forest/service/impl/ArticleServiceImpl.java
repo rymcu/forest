@@ -11,12 +11,10 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
-import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.*;
 import com.rymcu.forest.web.api.exception.BaseApiException;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -43,8 +41,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private TagService tagService;
     @Resource
     private UserService userService;
-    @Resource
-    private CommentService commentService;
     @Resource
     private LuceneService luceneService;
 
