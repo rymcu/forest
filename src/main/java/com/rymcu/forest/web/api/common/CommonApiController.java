@@ -147,8 +147,8 @@ public class CommonApiController {
     @GetMapping("/portfolios")
     public GlobalResult portfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
         PageHelper.startPage(page, rows);
-        List<Portfolio> list = portfolioService.findPortfolios();
-        PageInfo<Portfolio> pageInfo = new PageInfo(list);
+        List<PortfolioDTO> list = portfolioService.findPortfolios();
+        PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
         Map map = new HashMap(2);
         map.put("portfolios", pageInfo.getList());
         Map pagination = Utils.getPagination(pageInfo);

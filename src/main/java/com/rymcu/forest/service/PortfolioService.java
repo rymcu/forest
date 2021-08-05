@@ -82,5 +82,5 @@ public interface PortfolioService extends Service<Portfolio> {
      * 获取作品集列表数据
      * @return
      */
-    List<Portfolio> findPortfolios();
+    List<PortfolioDTO> findPortfolios();
 }

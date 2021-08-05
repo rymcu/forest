@@ -78,5 +78,5 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * 获取作品集列表数据
      * @return
      */
-    List<Portfolio> selectPortfolios();
+    List<PortfolioDTO> selectPortfolios();
 }

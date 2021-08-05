@@ -199,7 +199,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public List<Portfolio> findPortfolios() {
+    public List<PortfolioDTO> findPortfolios() {
         return portfolioMapper.selectPortfolios();
     }
 
