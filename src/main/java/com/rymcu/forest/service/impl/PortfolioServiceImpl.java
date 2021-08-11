@@ -45,6 +45,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         Author author = userService.selectAuthor(userDTO.getIdUser());
         list.forEach(portfolioDTO -> {
             genPortfolioAuthor(portfolioDTO,author);
+            Integer articleNumber = portfolioMapper.selectCountArticleNumber(portfolioDTO.getIdPortfolio());
+            portfolioDTO.setArticleNumber(articleNumber);
         });
         return list;
     }
