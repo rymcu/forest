@@ -22,13 +22,11 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 浏览
+ *
  * @author ronger
  */
 @Aspect
@@ -43,7 +41,8 @@ public class VisitAspect {
     private VisitService visitService;
 
     @Pointcut("@annotation(com.rymcu.forest.core.service.log.annotation.VisitLogger)")
-    public void pointCut() {}
+    public void pointCut() {
+    }
 
     /**
      * 保存系统操作日志
@@ -52,7 +51,7 @@ public class VisitAspect {
      * @return 方法执行结果
      * @throws Throwable 调用出错
      */
-    @AfterReturning(value = "pointCut()", returning="obj")
+    @AfterReturning(value = "pointCut()", returning = "obj")
     public void save(JoinPoint joinPoint, Object obj) {
         logger.info("保存访问记录 start ...");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -69,9 +68,11 @@ public class VisitAspect {
         visit.setVisitRefererUrl(referer);
         visit.setCreatedTime(new Date());
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
-        if(StringUtils.isNotBlank(authHeader)){
+        if (StringUtils.isNotBlank(authHeader)) {
             TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-            visit.setVisitUserId(tokenUser.getIdUser());
+            if (Objects.nonNull(tokenUser)) {
+                visit.setVisitUserId(tokenUser.getIdUser());
+            }
         }
         visitService.save(visit);
 

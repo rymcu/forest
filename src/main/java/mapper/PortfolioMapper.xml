@@ -17,6 +17,7 @@
         <result column="portfolio_author_id" property="portfolioAuthorId"></result>
         <result column="portfolio_description" property="portfolioDescription"></result>
         <result column="updated_time" property="updatedTime"></result>
+        <result column="numbers" property="articleNumber"></result>
     </resultMap>
     <insert id="insertPortfolioArticle">
         insert into forest_portfolio_article (id_portfolio, id_article, sort_no) values (#{idPortfolio}, #{idArticle}, #{maxSortNo})
@@ -51,8 +52,8 @@
     <select id="selectMaxSortNo" resultType="java.lang.Integer">
         select ifnull(max(sort_no),0) + 1 from forest_portfolio_article where id_portfolio = #{idPortfolio}
     </select>
-    <select id="selectPortfolios" resultMap="BaseResultMap">
-        select fp.* from forest_portfolio fp left join (select id_portfolio, count(id_portfolio) numbers from forest_portfolio_article group by id_portfolio) fpa
+    <select id="selectPortfolios" resultMap="DTOResultMap">
+        select fp.*,fpa.numbers from forest_portfolio fp left join (select id_portfolio, count(id_portfolio) numbers from forest_portfolio_article group by id_portfolio) fpa
             on fp.id = fpa.id_portfolio order by fpa.numbers desc, updated_time desc
     </select>
 </mapper>
