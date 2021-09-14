@@ -50,8 +50,8 @@
     <insert id="insertUserRole">
         insert into forest_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
     </insert>
-    <update id="updatePasswordByAccount">
-        update forest_user set password = #{password} where account = #{account}
+    <update id="updatePasswordByEmail">
+        update forest_user set password = #{password} where email = #{email}
     </update>
     <update id="updateUserRole">
         update forest_user_role set id_role = #{idRole},created_time = sysdate() where id_user = #{idUser}

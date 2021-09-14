@@ -46,11 +46,11 @@ public interface UserMapper extends Mapper<User> {
 
     /**
      * 修改用户密码
-     * @param account
+     * @param email
      * @param password
      * @return
      */
-    Integer updatePasswordByAccount(@Param("account") String account, @Param("password") String password);
+    Integer updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
     /**
      * 获取用户权限权重
