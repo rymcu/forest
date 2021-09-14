@@ -131,12 +131,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Map forgetPassword(String code, String password) {
         Map map = new HashMap<>(2);
-        String account = redisService.get(code);
-        System.out.println("account:\n"+account);
-        if(StringUtils.isBlank(account)){
+        String email = redisService.get(code);
+        if(StringUtils.isBlank(email)){
             map.put("message","链接已失效");
         } else {
-          userMapper.updatePasswordByAccount(account,Utils.entryptPassword(password));
+          userMapper.updatePasswordByEmail(email,Utils.entryptPassword(password));
           map.put("message","修改成功，正在跳转登录登陆界面！");
           map.put("flag",1);
         }
