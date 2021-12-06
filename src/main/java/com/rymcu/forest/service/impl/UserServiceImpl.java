@@ -6,6 +6,7 @@ import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
+import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.jwt.service.TokenManager;
 import com.rymcu.forest.lucene.model.UserLucene;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
@@ -282,8 +283,20 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public List<User> findUsers(UserSearchDTO searchDTO) {
-        return userMapper.selectUsers(searchDTO);
+    public List<UserInfoDTO> findUsers(UserSearchDTO searchDTO) {
+        List<UserInfoDTO> users = userMapper.selectUsers(searchDTO);
+        users.forEach(user -> {
+            user.setOnlineStatus(getUserOnlineStatus(user.getEmail()));
+        });
+        return users;
+    }
+
+    private Integer getUserOnlineStatus(String email) {
+        String lastOnlineTime = redisService.get(JwtConstants.LAST_ONLINE + email);
+        if (StringUtils.isBlank(lastOnlineTime)) {
+            return 0;
+        }
+        return 1;
     }
 
     @Override

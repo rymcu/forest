@@ -145,7 +145,7 @@ public interface UserMapper extends Mapper<User> {
      * @param searchDTO
      * @return
      */
-    List<User> selectUsers(@Param("searchDTO") UserSearchDTO searchDTO);
+    List<UserInfoDTO> selectUsers(@Param("searchDTO") UserSearchDTO searchDTO);
 
     /**
      * 更新用户最后在线时间

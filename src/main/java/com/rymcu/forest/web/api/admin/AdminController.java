@@ -4,10 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
-import com.rymcu.forest.dto.ArticleDTO;
-import com.rymcu.forest.dto.ArticleSearchDTO;
-import com.rymcu.forest.dto.CommentDTO;
-import com.rymcu.forest.dto.UserSearchDTO;
+import com.rymcu.forest.dto.*;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.dto.admin.UserRoleDTO;
 import com.rymcu.forest.entity.*;
@@ -47,8 +44,8 @@ public class AdminController {
     @GetMapping("/users")
     public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO){
         PageHelper.startPage(page, rows);
-        List<User> list = userService.findUsers(searchDTO);
-        PageInfo<User> pageInfo = new PageInfo<>(list);
+        List<UserInfoDTO> list = userService.findUsers(searchDTO);
+        PageInfo<UserInfoDTO> pageInfo = new PageInfo<>(list);
         Map<String, Object> map = new HashMap<String, Object>(2);
         map.put("users", pageInfo.getList());
         Map pagination = Utils.getPagination(pageInfo);
