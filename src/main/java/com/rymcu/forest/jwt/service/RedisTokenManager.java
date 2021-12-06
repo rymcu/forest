@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +52,9 @@ public class RedisTokenManager implements TokenManager {
         }
         //如果验证成功，说明此用户进行了一次有效操作，延长token的过期时间
         redisTemplate.boundValueOps(model.getUsername()).expire(JwtConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
+        StringBuilder key = new StringBuilder();
+        key.append(JwtConstants.LAST_ONLINE).append(model.getUsername());
+        redisTemplate.boundValueOps(key.toString()).set(LocalDateTime.now().toString(), JwtConstants.LAST_ONLINE_EXPIRES_MINUTE, TimeUnit.MINUTES);
         return true;
     }
 

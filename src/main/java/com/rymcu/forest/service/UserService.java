@@ -143,4 +143,11 @@ public interface UserService extends Service<User> {
      * @return
      */
     List<User> findUsers(UserSearchDTO searchDTO);
+
+    /**
+     * 通过邮箱查询用户信息
+     * @param email
+     * @return
+     */
+    Integer updateLastOnlineTimeByEmail(String email);
 }

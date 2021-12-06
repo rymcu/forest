@@ -285,4 +285,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public List<User> findUsers(UserSearchDTO searchDTO) {
         return userMapper.selectUsers(searchDTO);
     }
+
+    @Override
+    public Integer updateLastOnlineTimeByEmail(String email) {
+        return userMapper.updateLastOnlineTimeByEmail(email);
+    }
 }

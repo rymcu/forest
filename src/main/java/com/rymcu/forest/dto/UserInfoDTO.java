@@ -37,4 +37,7 @@ public class UserInfoDTO implements Serializable {
     @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date lastLoginTime;
 
+    @JSONField(format = "yyyy-MM-dd HH:mm")
+    private Date lastOnlineTime;
+
 }
