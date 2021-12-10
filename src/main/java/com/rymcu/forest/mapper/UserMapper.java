@@ -95,13 +95,11 @@ public interface UserMapper extends Mapper<User> {
      * @param nickname
      * @param avatarType
      * @param avatarUrl
-     * @param email
-     * @param phone
      * @param signature
      * @param sex
      * @return
      */
-    Integer updateUserInfo(@Param("idUser") Integer idUser, @Param("nickname") String nickname, @Param("avatarType") String avatarType, @Param("avatarUrl") String avatarUrl, @Param("email") String email, @Param("phone") String phone, @Param("signature") String signature, @Param("sex") String sex);
+    Integer updateUserInfo(@Param("idUser") Integer idUser, @Param("nickname") String nickname, @Param("avatarType") String avatarType, @Param("avatarUrl") String avatarUrl, @Param("signature") String signature, @Param("sex") String sex);
 
     /**
      * 验证昵称是否重复
@@ -145,5 +143,19 @@ public interface UserMapper extends Mapper<User> {
      * @param searchDTO
      * @return
      */
-    List<User> selectUsers(@Param("searchDTO") UserSearchDTO searchDTO);
+    List<UserInfoDTO> selectUsers(@Param("searchDTO") UserSearchDTO searchDTO);
+
+    /**
+     * 更新用户最后在线时间
+     * @param email
+     * @return
+     */
+    Integer updateLastOnlineTimeByEmail(@Param("email") String email);
+
+    /**
+     * 判断用户是否拥有管理员权限
+     * @param email
+     * @return
+     */
+    boolean hasAdminPermission(@Param("email") String email);
 }

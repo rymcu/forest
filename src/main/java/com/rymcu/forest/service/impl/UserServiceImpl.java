@@ -6,6 +6,7 @@ import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
+import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.jwt.service.TokenManager;
 import com.rymcu.forest.lucene.model.UserLucene;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
@@ -198,8 +199,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             user.setAvatarUrl(avatarUrl);
             user.setAvatarType("0");
         }
-        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),
-                user.getEmail(),user.getPhone(),user.getSignature(), user.getSex());
+        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),user.getSignature(), user.getSex());
         UserIndexUtil.addIndex(UserLucene.builder()
                 .idUser(user.getIdUser())
                 .nickname(user.getNickname())
@@ -262,7 +262,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
         String vCode = redisService.get(email);
-        if(StringUtils.isNotBlank(vCode)){
+        if(StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code)){
             if(vCode.equals(code)){
                 userMapper.updateEmail(idUser, email);
                 map.put("message","更新成功！");
@@ -282,7 +282,24 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public List<User> findUsers(UserSearchDTO searchDTO) {
-        return userMapper.selectUsers(searchDTO);
+    public List<UserInfoDTO> findUsers(UserSearchDTO searchDTO) {
+        List<UserInfoDTO> users = userMapper.selectUsers(searchDTO);
+        users.forEach(user -> {
+            user.setOnlineStatus(getUserOnlineStatus(user.getEmail()));
+        });
+        return users;
+    }
+
+    private Integer getUserOnlineStatus(String email) {
+        String lastOnlineTime = redisService.get(JwtConstants.LAST_ONLINE + email);
+        if (StringUtils.isBlank(lastOnlineTime)) {
+            return 0;
+        }
+        return 1;
+    }
+
+    @Override
+    public Integer updateLastOnlineTimeByEmail(String email) {
+        return userMapper.updateLastOnlineTimeByEmail(email);
     }
 }

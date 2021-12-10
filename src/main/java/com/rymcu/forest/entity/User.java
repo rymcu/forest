@@ -108,9 +108,16 @@ public class User implements Serializable,Cloneable {
     private Date createdTime;
 
     /**
-     * 创建时间
+     * 更新时间
      * */
     @Column(name = "updated_time")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
+
+    /**
+     * 最后在线时间
+     * */
+    @Column(name = "last_online_time")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date lastOnlineTime;
 }

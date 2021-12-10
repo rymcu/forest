@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/answer")
 public class AnswerController {
 
-    private final static String ANSWER_API_URL = "http://101.132.237.86:8089/question";
+    private final static String ANSWER_API_URL = "http://1.116.175.112:8089/question";
 
     @GetMapping("/today")
     public GlobalResult today() throws BaseApiException {
