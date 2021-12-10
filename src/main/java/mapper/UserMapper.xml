@@ -63,10 +63,7 @@
         update forest_user set status = #{status} where id = #{idUser}
     </update>
     <update id="updateUserInfo">
-        update forest_user set nickname = #{nickname},email = #{email},signature = #{signature},avatar_type = #{avatarType},avatar_url = #{avatarUrl},sex = #{sex}
-        <if test="phone != null and phone != ''">
-            ,phone = #{phone}
-        </if>
+        update forest_user set nickname = #{nickname},signature = #{signature},avatar_type = #{avatarType},avatar_url = #{avatarUrl},sex = #{sex}
         where id = #{idUser}
     </update>
     <update id="updateLastLoginTime">
@@ -114,6 +111,10 @@
             </if>
         </where>
         order by last_online_time desc
+    </select>
+    <select id="hasAdminPermission" resultType="java.lang.Boolean">
+        select if(count(fur.id_role) = 0, false, true) from forest_user_role fur join forest_user fu on fur.id_user = fu.id
+        where fu.email = #{email} and exists(select id_role from forest_role fr where instr(fr.input_code, 'admin') > 0 and fr.id = fur.id_role)
     </select>
 
 </mapper>

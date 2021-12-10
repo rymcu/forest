@@ -199,8 +199,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             user.setAvatarUrl(avatarUrl);
             user.setAvatarType("0");
         }
-        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),
-                user.getEmail(),user.getPhone(),user.getSignature(), user.getSex());
+        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),user.getSignature(), user.getSex());
         UserIndexUtil.addIndex(UserLucene.builder()
                 .idUser(user.getIdUser())
                 .nickname(user.getNickname())
@@ -263,7 +262,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
         String vCode = redisService.get(email);
-        if(StringUtils.isNotBlank(vCode)){
+        if(StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code)){
             if(vCode.equals(code)){
                 userMapper.updateEmail(idUser, email);
                 map.put("message","更新成功！");

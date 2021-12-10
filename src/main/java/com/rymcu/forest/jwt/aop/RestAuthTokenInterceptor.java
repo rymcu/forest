@@ -4,6 +4,7 @@ package com.rymcu.forest.jwt.aop;
 import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.jwt.model.TokenModel;
 import com.rymcu.forest.jwt.service.TokenManager;
+import com.rymcu.forest.mapper.UserMapper;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -28,6 +30,8 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 
 	@Autowired
 	private TokenManager manager;
+	@Resource
+	private UserMapper userMapper;
 
 	@Override
 	public void afterCompletion(HttpServletRequest httpservletrequest, HttpServletResponse httpservletresponse, Object obj, Exception exception) throws Exception {
@@ -36,7 +40,6 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
-		
 		//从header中得到token
 		String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
 		if(StringUtils.isBlank(authHeader)){
@@ -63,6 +66,19 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
             request.setAttribute(JwtConstants.CURRENT_TOKEN_CLAIMS, claims);
 			//如果token验证成功，将token对应的用户id存在request中，便于之后注入
 			request.setAttribute(JwtConstants.CURRENT_USER_NAME, model.getUsername());
+			// 判断是否为后台接口或财政划转接口
+			String adminApi = "/admin";
+			String transactionApi = "/transaction";
+			String uri = request.getRequestURI();
+			if (uri.contains(adminApi) || uri.contains(transactionApi)) {
+				// 判断管理员权限
+				boolean hasPermission = userMapper.hasAdminPermission(model.getUsername());
+				if (hasPermission) {
+					return true;
+				} else {
+					throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+				}
+			}
 			return true;
 		} else {
 			throw new BaseApiException(ErrorCode.TOKEN_);
