@@ -7,6 +7,7 @@ import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.ResultCode;
 import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
@@ -39,9 +40,9 @@ public class BaseExceptionHandler {
         if (isAjax(request)) {
             GlobalResult result = new GlobalResult();
             if (ex instanceof BaseApiException) {
-                result.setCode(401);
-                result.setMessage("用户未登录");
-                logger.info("用户未登录");
+                result.setCode(((BaseApiException) ex).getCode());
+                result.setMessage(((BaseApiException) ex).getExtraMessage());
+                logger.info(result.getMessage());
             } else if (ex instanceof UnauthenticatedException) {
                 result.setCode(1000001);
                 result.setMessage("token错误");
@@ -88,8 +89,8 @@ public class BaseExceptionHandler {
             FastJsonJsonView view = new FastJsonJsonView();
             Map<String, Object> attributes = new HashMap(2);
             if (ex instanceof BaseApiException) {
-                attributes.put("code", "401");
-                attributes.put("message", "用户未登录");
+                attributes.put("code", ((BaseApiException) ex).getCode());
+                attributes.put("message", ((BaseApiException) ex).getExtraMessage());
             } else if (ex instanceof UnauthenticatedException) {
                 attributes.put("code", "1000001");
                 attributes.put("message", "token错误");
@@ -138,8 +139,8 @@ public class BaseExceptionHandler {
         String requestedWith = request.getHeader("x-requested-with");
         if (requestedWith != null && "XMLHttpRequest".equalsIgnoreCase(requestedWith)) {
             return true;
-        } else {
-            return false;
         }
+        String contentType = request.getContentType();
+        return StringUtils.isNotBlank(contentType) && contentType.contains("application/json");
     }
 }
