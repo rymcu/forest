@@ -5,12 +5,12 @@ import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.jwt.model.TokenModel;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +46,7 @@ public class RedisTokenManager implements TokenManager {
         if (model == null) {
             return false;
         }
-        String token = (String) redisTemplate.boundValueOps(model.getUsername()).get();
+        String token = redisTemplate.boundValueOps(model.getUsername()).get();
         if (token == null || !token.equals(model.getToken())) {
             return false;
         }
@@ -54,7 +54,10 @@ public class RedisTokenManager implements TokenManager {
         redisTemplate.boundValueOps(model.getUsername()).expire(JwtConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
         StringBuilder key = new StringBuilder();
         key.append(JwtConstants.LAST_ONLINE).append(model.getUsername());
-        redisTemplate.boundValueOps(key.toString()).set(LocalDateTime.now().toString(), JwtConstants.LAST_ONLINE_EXPIRES_MINUTE, TimeUnit.MINUTES);
+        String result =  redisTemplate.boundValueOps(key.toString()).get();
+        if (StringUtils.isBlank(result)) {
+            redisTemplate.boundValueOps(key.toString()).set(LocalDateTime.now().toString(), JwtConstants.LAST_ONLINE_EXPIRES_MINUTE, TimeUnit.MINUTES);
+        }
         return true;
     }
 
