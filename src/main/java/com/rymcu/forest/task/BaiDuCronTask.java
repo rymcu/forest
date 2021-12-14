@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author ronger
  */
-@Component
+//@Component
 @Slf4j
 public class BaiDuCronTask {
 

@@ -199,29 +199,13 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
-            String previewContent;
-            if (articleContentHtml.length() > MAX_PREVIEW) {
-                previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
-                if (previewContent.length() > MAX_PREVIEW) {
-                    previewContent = previewContent.substring(0, MAX_PREVIEW);
-                }
-            } else {
-                previewContent = Html2TextUtil.getContent(articleContentHtml);
+            String previewContent = Html2TextUtil.getContent(articleContentHtml);
+            if (previewContent.length() > MAX_PREVIEW) {
+                previewContent = previewContent.substring(0, MAX_PREVIEW);
             }
             newArticle.setArticlePreviewContent(previewContent);
         }
         articleMapper.updateByPrimaryKeySelective(newArticle);
-
-        // 推送百度 SEO
-        if (!ProjectConstant.ENV.equals(env)
-                && defaultStatus.equals(newArticle.getArticleStatus())
-                && articleContent.length() >= MAX_PREVIEW) {
-            if (isUpdate) {
-                BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
-            } else {
-                BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
-            }
-        }
 
         map.put("id", newArticle.getIdArticle());
         return map;
