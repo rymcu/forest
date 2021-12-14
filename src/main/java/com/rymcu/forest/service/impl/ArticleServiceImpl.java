@@ -61,7 +61,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         } else {
             list = articleMapper.selectArticles(searchDTO.getSearchText(), searchDTO.getTag(), searchDTO.getTopicUri());
         }
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -78,7 +78,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public List<ArticleDTO> findArticlesByTopicUri(String name) {
         List<ArticleDTO> list = articleMapper.selectArticlesByTopicUri(name);
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -90,7 +90,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public List<ArticleDTO> findUserArticlesByIdUser(Integer idUser) {
         List<ArticleDTO> list = articleMapper.selectUserArticles(idUser);
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -306,21 +306,21 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
         List<ArticleDTO> list = articleMapper.selectDrafts(user.getIdUser());
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
     @Override
     public List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio) {
         List<ArticleDTO> list = articleMapper.selectArticlesByIdPortfolio(idPortfolio);
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
     @Override
     public List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser) {
         List<ArticleDTO> list = articleMapper.selectUnbindArticlesByIdPortfolio(idPortfolio, searchText, idUser);
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -357,7 +357,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public List<ArticleDTO> findAnnouncements() {
         List<ArticleDTO> list = articleMapper.selectAnnouncements();
-        list.forEach(articleDTO -> genArticle(articleDTO,0));
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
