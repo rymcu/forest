@@ -7,6 +7,7 @@ import com.rymcu.forest.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisTokenManager implements TokenManager {
 
-    @Resource
+    @Autowired
     private StringRedisTemplate redisTemplate;
     @Resource
     private UserService userService;
