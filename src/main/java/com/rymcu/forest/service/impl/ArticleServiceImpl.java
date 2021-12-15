@@ -15,6 +15,7 @@ import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.*;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import com.rymcu.forest.web.api.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -46,24 +47,21 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Value("${resource.domain}")
     private String domain;
-    @Value("${env}")
-    private String env;
 
     private static final int MAX_PREVIEW = 200;
-    private static final String defaultStatus = "0";
-    private static final String defaultTopicUri = "news";
+    private static final String DEFAULT_STATUS = "0";
+    private static final String DEFAULT_TOPIC_URI = "news";
+    private static final int ADMIN_ROLE_WEIGHTS = 2;
 
     @Override
     public List<ArticleDTO> findArticles(ArticleSearchDTO searchDTO) {
         List<ArticleDTO> list;
-        if (StringUtils.isNotBlank(searchDTO.getTopicUri()) && !defaultTopicUri.equals(searchDTO.getTopicUri())) {
+        if (StringUtils.isNotBlank(searchDTO.getTopicUri()) && !DEFAULT_TOPIC_URI.equals(searchDTO.getTopicUri())) {
             list = articleMapper.selectArticlesByTopicUri(searchDTO.getTopicUri());
         } else {
             list = articleMapper.selectArticles(searchDTO.getSearchText(), searchDTO.getTag(), searchDTO.getTopicUri());
         }
-        list.forEach(article -> {
-            genArticle(article, 0);
-        });
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -73,31 +71,26 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         if (articleDTO == null) {
             return null;
         }
-        articleDTO = genArticle(articleDTO, type);
+        genArticle(articleDTO, type);
         return articleDTO;
     }
 
     @Override
     public List<ArticleDTO> findArticlesByTopicUri(String name) {
-        List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTopicUri(name);
-        articleDTOS.forEach(articleDTO -> {
-            genArticle(articleDTO, 0);
-        });
-        return articleDTOS;
+        List<ArticleDTO> list = articleMapper.selectArticlesByTopicUri(name);
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
+        return list;
     }
 
     @Override
     public List<ArticleDTO> findArticlesByTagName(String name) {
-        List<ArticleDTO> articleDTOS = articleMapper.selectArticlesByTagName(name);
-        return articleDTOS;
+        return articleMapper.selectArticlesByTagName(name);
     }
 
     @Override
     public List<ArticleDTO> findUserArticlesByIdUser(Integer idUser) {
         List<ArticleDTO> list = articleMapper.selectUserArticles(idUser);
-        list.forEach(article -> {
-            genArticle(article, 0);
-        });
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -119,11 +112,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String articleContent = article.getArticleContent();
         String articleContentHtml = article.getArticleContentHtml();
         User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
         String reservedTag = checkTags(articleTags);
         boolean notification = false;
         if (StringUtils.isNotBlank(reservedTag)) {
             Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
-            if (roleWeights > 2) {
+            if (roleWeights > ADMIN_ROLE_WEIGHTS) {
                 map.put("message", StringEscapeUtils.unescapeJava(reservedTag) + "标签为系统保留标签!");
                 return map;
             } else {
@@ -144,10 +140,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         } else {
             newArticle = articleMapper.selectByPrimaryKey(article.getIdArticle());
             // 如果文章之前状态为草稿则应视为新发布文章
-            if (defaultStatus.equals(newArticle.getArticleStatus())) {
+            if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
                 isUpdate = true;
-            } else {
-                isUpdate = false;
             }
             if (!user.getIdUser().equals(newArticle.getArticleAuthorId())) {
                 map.put("message", "非法访问！");
@@ -161,13 +155,13 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         }
 
         // 发送相关通知
-        if (defaultStatus.equals(newArticle.getArticleStatus())) {
+        if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
             // 发送系统通知
             if (notification) {
                 NotificationUtils.sendAnnouncement(newArticle.getIdArticle(), NotificationConstant.Article, newArticle.getArticleTitle());
             } else {
                 // 发送关注通知
-                StringBuffer dataSummary = new StringBuffer();
+                StringBuilder dataSummary = new StringBuilder();
                 if (isUpdate) {
                     dataSummary.append(user.getNickname()).append("更新了文章: ").append(newArticle.getArticleTitle());
                     NotificationUtils.sendArticlePush(newArticle.getIdArticle(), NotificationConstant.UpdateArticle, dataSummary.toString(), newArticle.getArticleAuthorId());
@@ -176,52 +170,32 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                     NotificationUtils.sendArticlePush(newArticle.getIdArticle(), NotificationConstant.PostArticle, dataSummary.toString(), newArticle.getArticleAuthorId());
                 }
             }
-        }
-        // 草稿不更新索引
-        if ("0".equals(article.getArticleStatus())) {
-            System.out.println("开始增加索引");
+            // 草稿不更新索引
             if (isUpdate) {
-                log.info("更新文章索引，id={}",newArticle.getIdArticle());
+                log.info("更新文章索引，id={}", newArticle.getIdArticle());
                 luceneService.updateArticle(newArticle.getIdArticle().toString());
             } else {
-                log.info("写入文章索引，id={}",newArticle.getIdArticle());
+                log.info("写入文章索引，id={}", newArticle.getIdArticle());
                 luceneService.writeArticle(newArticle.getIdArticle().toString());
             }
-        }
-        tagService.saveTagArticle(newArticle, articleContentHtml);
-
-        if (defaultStatus.equals(newArticle.getArticleStatus())) {
+            // 更新文章链接
             newArticle.setArticlePermalink(domain + "/article/" + newArticle.getIdArticle());
             newArticle.setArticleLink("/article/" + newArticle.getIdArticle());
         } else {
+            // 更新文章链接
             newArticle.setArticlePermalink(domain + "/draft/" + newArticle.getIdArticle());
             newArticle.setArticleLink("/draft/" + newArticle.getIdArticle());
         }
+        tagService.saveTagArticle(newArticle, articleContentHtml);
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
-            String previewContent;
-            if (articleContentHtml.length() > MAX_PREVIEW) {
-                previewContent = BaiDuAipUtils.getNewsSummary(newArticle.getArticleTitle(), articleContentHtml, MAX_PREVIEW);
-                if (previewContent.length() > MAX_PREVIEW) {
-                    previewContent = previewContent.substring(0, MAX_PREVIEW);
-                }
-            } else {
-                previewContent = Html2TextUtil.getContent(articleContentHtml);
+            String previewContent = Html2TextUtil.getContent(articleContentHtml);
+            if (previewContent.length() > MAX_PREVIEW) {
+                previewContent = previewContent.substring(0, MAX_PREVIEW);
             }
             newArticle.setArticlePreviewContent(previewContent);
         }
         articleMapper.updateByPrimaryKeySelective(newArticle);
-
-        // 推送百度 SEO
-        if (!ProjectConstant.ENV.equals(env)
-                && defaultStatus.equals(newArticle.getArticleStatus())
-                && articleContent.length() >= MAX_PREVIEW) {
-            if (isUpdate) {
-                BaiDuUtils.sendUpdateSEOData(newArticle.getArticlePermalink());
-            } else {
-                BaiDuUtils.sendSEOData(newArticle.getArticlePermalink());
-            }
-        }
 
         map.put("id", newArticle.getIdArticle());
         return map;
@@ -265,15 +239,18 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         Map<String, String> map = new HashMap(1);
         // 鉴权
         User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
         Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
-        if (roleWeights > 2) {
+        if (roleWeights > ADMIN_ROLE_WEIGHTS) {
             Article article = articleMapper.selectByPrimaryKey(id);
             if (!user.getIdUser().equals(article.getArticleAuthorId())) {
                 map.put("message", "非法访问！");
                 return map;
             }
         }
-        Integer result;
+        int result;
         // 判断是否有评论
         boolean isHavComment = articleMapper.existsCommentWithPrimaryKey(id);
         if (isHavComment) {
@@ -312,6 +289,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     public Map share(Integer id) throws BaseApiException {
         Article article = articleMapper.selectByPrimaryKey(id);
         User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
         StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
         shareUrl.append("?s=").append(user.getNickname());
         Map map = new HashMap(1);
@@ -322,28 +302,25 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public List<ArticleDTO> findDrafts() throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
         List<ArticleDTO> list = articleMapper.selectDrafts(user.getIdUser());
-        list.forEach(article -> {
-            genArticle(article, 0);
-        });
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
     @Override
     public List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio) {
         List<ArticleDTO> list = articleMapper.selectArticlesByIdPortfolio(idPortfolio);
-        list.forEach(article -> {
-            genArticle(article, 0);
-        });
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
     @Override
     public List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser) {
         List<ArticleDTO> list = articleMapper.selectUnbindArticlesByIdPortfolio(idPortfolio, searchText, idUser);
-        list.forEach(article -> {
-            genArticle(article, 0);
-        });
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -380,9 +357,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Override
     public List<ArticleDTO> findAnnouncements() {
         List<ArticleDTO> list = articleMapper.selectAnnouncements();
-        list.forEach(article -> {
-            genArticle(article, 0);
-        });
+        list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
 
@@ -401,7 +376,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 article.setArticleContent(articleContent.getArticleContentHtml());
                 // 获取所属作品集列表数据
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
-                portfolioArticleDTOList.forEach(portfolioArticleDTO -> genPortfolioArticles(portfolioArticleDTO));
+                portfolioArticleDTOList.forEach(this::genPortfolioArticles);
                 article.setPortfolios(portfolioArticleDTOList);
             } else if (type.equals(articleEdit)) {
                 article.setArticleContent(articleContent.getArticleContent());

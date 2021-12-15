@@ -27,7 +27,6 @@ import java.util.*;
 
 
 /**
- *
  * @author CodeGenerator
  * @date 2018/05/29
  */
@@ -48,7 +47,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private final static String DEFAULT_AVATAR = "https://static.rymcu.com/article/1578475481946.png";
 
     @Override
-    public User findByAccount(String account) throws TooManyResultsException{
+    public User findByAccount(String account) throws TooManyResultsException {
         return userMapper.findByAccount(account);
     }
 
@@ -56,13 +55,13 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Transactional(rollbackFor = Exception.class)
     public Map register(String email, String password, String code) {
         Map map = new HashMap(2);
-        map.put("message","验证码无效！");
+        map.put("message", "验证码无效！");
         String vCode = redisService.get(email);
-        if(StringUtils.isNotBlank(vCode)){
-            if(vCode.equals(code)){
+        if (StringUtils.isNotBlank(vCode)) {
+            if (vCode.equals(code)) {
                 User user = userMapper.findByAccount(email);
-                if(user != null){
-                    map.put("message","该邮箱已被注册！");
+                if (user != null) {
+                    map.put("message", "该邮箱已被注册！");
                 } else {
                     user = new User();
                     String nickname = email.split("@")[0];
@@ -83,8 +82,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                             .nickname(user.getNickname())
                             .signature(user.getSignature())
                             .build());
-                    map.put("message","注册成功！");
-                    map.put("flag",1);
+                    map.put("message", "注册成功！");
+                    map.put("flag", 1);
                     redisService.delete(email);
                 }
             }
@@ -106,19 +105,20 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public Map login(String account, String password) {
         Map map = new HashMap(1);
         User user = userMapper.findByAccount(account);
-        if(user != null){
-            if(Utils.comparePwd(password, user.getPassword())){
+        if (user != null) {
+            if (Utils.comparePwd(password, user.getPassword())) {
                 userMapper.updateLastLoginTime(user.getIdUser());
+                userMapper.updateLastOnlineTimeByEmail(user.getEmail());
                 TokenUser tokenUser = new TokenUser();
                 BeanCopierUtil.copy(user, tokenUser);
                 tokenUser.setToken(tokenManager.createToken(account));
                 tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
                 map.put("user", tokenUser);
             } else {
-                map.put("message","密码错误！");
+                map.put("message", "密码错误！");
             }
         } else {
-            map.put("message","该账号不存在！");
+            map.put("message", "该账号不存在！");
         }
         return map;
     }
@@ -133,12 +133,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public Map forgetPassword(String code, String password) {
         Map map = new HashMap<>(2);
         String email = redisService.get(code);
-        if(StringUtils.isBlank(email)){
-            map.put("message","链接已失效");
+        if (StringUtils.isBlank(email)) {
+            map.put("message", "链接已失效");
         } else {
-          userMapper.updatePasswordByEmail(email,Utils.entryptPassword(password));
-          map.put("message","修改成功，正在跳转登录登陆界面！");
-          map.put("flag",1);
+            userMapper.updatePasswordByEmail(email, Utils.entryptPassword(password));
+            map.put("message", "修改成功，正在跳转登录登陆界面！");
+            map.put("flag", 1);
         }
         return map;
     }
@@ -147,9 +147,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Transactional(rollbackFor = Exception.class)
     public Map updateUserRole(Integer idUser, Integer idRole) {
         Map map = new HashMap(1);
-        Integer result = userMapper.updateUserRole(idUser,idRole);
-        if(result == 0) {
-            map.put("message","更新失败!");
+        Integer result = userMapper.updateUserRole(idUser, idRole);
+        if (result == 0) {
+            map.put("message", "更新失败!");
         }
         return map;
     }
@@ -158,9 +158,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Transactional(rollbackFor = Exception.class)
     public Map updateStatus(Integer idUser, String status) {
         Map map = new HashMap(1);
-        Integer result = userMapper.updateStatus(idUser,status);
-        if(result == 0) {
-            map.put("message","更新失败!");
+        Integer result = userMapper.updateStatus(idUser, status);
+        if (result == 0) {
+            map.put("message", "更新失败!");
         }
         return map;
     }
@@ -199,7 +199,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             user.setAvatarUrl(avatarUrl);
             user.setAvatarType("0");
         }
-        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(),user.getAvatarUrl(),user.getSignature(), user.getSex());
+        Integer result = userMapper.updateUserInfo(user.getIdUser(), user.getNickname(), user.getAvatarType(), user.getAvatarUrl(), user.getSignature(), user.getSex());
         UserIndexUtil.addIndex(UserLucene.builder()
                 .idUser(user.getIdUser())
                 .nickname(user.getNickname())
@@ -209,7 +209,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             map.put("message", "操作失败!");
             return map;
         }
-        map.put("user",user);
+        map.put("user", user);
         return map;
     }
 
@@ -257,15 +257,15 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Map updateEmail(ChangeEmailDTO changeEmailDTO) {
         Map map = new HashMap(2);
-        map.put("message","验证码无效！");
+        map.put("message", "验证码无效！");
         Integer idUser = changeEmailDTO.getIdUser();
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
         String vCode = redisService.get(email);
-        if(StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code)){
-            if(vCode.equals(code)){
+        if (StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code)) {
+            if (vCode.equals(code)) {
                 userMapper.updateEmail(idUser, email);
-                map.put("message","更新成功！");
+                map.put("message", "更新成功！");
                 map.put("email", email);
             }
         }
