@@ -37,7 +37,7 @@ public class SecurityAspect {
     Logger logger = LoggerFactory.getLogger(SecurityAspect.class);
 
     @Pointcut("@annotation(com.rymcu.forest.core.service.security.annotation.SecurityInterceptor)")
-    public void pointCut() {
+    public void securityPointCut() {
     }
 
     /**
@@ -47,7 +47,7 @@ public class SecurityAspect {
      * @return 方法执行结果
      * @throws Throwable 调用出错
      */
-    @Before(value = "pointCut()")
+    @Before(value = "securityPointCut()")
     public void doBefore(JoinPoint joinPoint) throws BaseApiException {
         logger.info("检查用户修改信息权限 start ...");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
