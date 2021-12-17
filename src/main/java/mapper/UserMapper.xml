@@ -116,5 +116,8 @@
         select if(count(fur.id_role) = 0, false, true) from forest_user_role fur join forest_user fu on fur.id_user = fu.id
         where fu.email = #{email} and exists(select id_role from forest_role fr where instr(fr.input_code, 'admin') > 0 and fr.id = fur.id_role)
     </select>
+    <select id="selectCountByAccount" resultType="java.lang.Integer">
+        select count(*) from forest_user where account = #{account}
+    </select>
 
 </mapper>
