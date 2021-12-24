@@ -23,12 +23,11 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     @Resource
     private NotificationMapper notificationMapper;
 
-    private final static String unRead = "0";
+    private final static String UN_READ = "0";
 
     @Override
     public List<Notification> findUnreadNotifications(Integer idUser) {
-        List<Notification> list = notificationMapper.selectUnreadNotifications(idUser);
-        return list;
+        return notificationMapper.selectUnreadNotifications(idUser);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
                 BeanCopierUtil.copy(notificationDTO, notification);
             } else {
                 // 关联数据已删除,且未读
-                if (unRead.equals(notification.getHasRead())) {
+                if (UN_READ.equals(notification.getHasRead())) {
                     notificationMapper.readNotification(notification.getIdNotification());
                 }
                 NotificationDTO dto = new NotificationDTO();
