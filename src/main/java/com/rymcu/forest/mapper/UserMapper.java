@@ -158,4 +158,11 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     boolean hasAdminPermission(@Param("email") String email);
+
+    /**
+     * 验证账号是否重复
+     * @param account
+     * @return
+     */
+    Integer selectCountByAccount(@Param("account") String account);
 }

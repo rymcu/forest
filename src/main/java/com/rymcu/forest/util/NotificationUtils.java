@@ -116,7 +116,7 @@ public class NotificationUtils {
                 notificationDTO.setDataTitle("关注提醒");
                 if (Objects.nonNull(follow)) {
                     user = userService.findById(follow.getFollowerId().toString());
-                    notificationDTO.setDataUrl(getFollowLink(follow.getFollowingType(), user.getNickname()));
+                    notificationDTO.setDataUrl(getFollowLink(follow.getFollowingType(), user.getAccount()));
                     notificationDTO.setAuthor(genAuthor(user));
                 }
                 break;
