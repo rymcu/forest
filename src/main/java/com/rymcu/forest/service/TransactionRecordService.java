@@ -5,7 +5,6 @@ import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.TransactionRecord;
 import com.rymcu.forest.enumerate.TransactionEnum;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -23,9 +22,11 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
     /**
      * 查询指定账户的交易记录
      * @param bankAccount
+     * @param startDate
+     * @param endDate
      * @return
      */
-    List<TransactionRecordDTO> findTransactionRecords(String bankAccount);
+    List<TransactionRecordDTO> findTransactionRecords(String bankAccount, String startDate, String endDate);
 
     /**
      * 根据用户主键进行交易

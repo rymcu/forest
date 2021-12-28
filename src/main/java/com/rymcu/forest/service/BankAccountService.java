@@ -3,8 +3,8 @@ package com.rymcu.forest.service;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.BankAccountSearchDTO;
+import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.BankAccount;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -45,4 +45,6 @@ public interface BankAccountService extends Service<BankAccount> {
      * @return
      */
     BankAccount findInfoByBankAccount(String formBankAccount);
+
+    List<TransactionRecordDTO> findUserTransactionRecords(String bankAccount, String startDate, String endDate);
 }

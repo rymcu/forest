@@ -4,19 +4,15 @@ import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.BankAccountDTO;
-import com.rymcu.forest.dto.BankAccountSearchDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
-import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
 import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.TransactionRecordService;
 import com.rymcu.forest.util.DateUtil;
-import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,8 +55,8 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public List<TransactionRecordDTO> findTransactionRecords(String bankAccount) {
-        List<TransactionRecordDTO> list = transactionRecordMapper.selectTransactionRecords(bankAccount);
+    public List<TransactionRecordDTO> findTransactionRecords(String bankAccount, String startDate, String endDate) {
+        List<TransactionRecordDTO> list = transactionRecordMapper.selectTransactionRecords(bankAccount, startDate, endDate);
         list.forEach(transactionRecordDTO -> genTransactionRecord(transactionRecordDTO));
         return list;
     }

@@ -1,5 +1,6 @@
 package com.rymcu.forest.service.impl;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.BankAccountSearchDTO;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -54,10 +57,19 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
             bankAccountMapper.insertSelective(bankAccount);
             bankAccountDTO = bankAccountMapper.selectBankAccount(bankAccount.getIdBankAccount());
         }
-        // 查询交易记录
-        List<TransactionRecordDTO> records = transactionRecordService.findTransactionRecords(bankAccountDTO.getBankAccount());
-        bankAccountDTO.setTransactionRecords(records);
         return bankAccountDTO;
+    }
+
+    @Override
+    public List<TransactionRecordDTO> findUserTransactionRecords(String bankAccount, String startDate, String endDate) {
+        if (StringUtils.isBlank(startDate)) {
+            LocalDateTime now = LocalDateTime.now();
+            endDate = LocalDateTimeUtil.format(now, "yyyy-MM-dd");
+            startDate = LocalDateTimeUtil.format(now.minus(30, ChronoUnit.DAYS), "yyyy-MM-dd");
+        }
+        // 查询交易记录
+        List<TransactionRecordDTO> records = transactionRecordService.findTransactionRecords(bankAccount, startDate, endDate);
+        return records;
     }
 
     @Override
