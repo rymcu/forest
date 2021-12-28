@@ -36,10 +36,7 @@ public class BankController {
         PageInfo<BankDTO> pageInfo = new PageInfo(list);
         Map map = new HashMap(2);
         map.put("banks", pageInfo.getList());
-        Map pagination = new HashMap(4);
-        pagination.put("pageSize", pageInfo.getPageSize());
-        pagination.put("total", pageInfo.getTotal());
-        pagination.put("currentPage", pageInfo.getPageNum());
+        Map pagination = Utils.getPagination(pageInfo);
         map.put("pagination", pagination);
         return GlobalResultGenerator.genSuccessResult(map);
     }

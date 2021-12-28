@@ -24,9 +24,11 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
     /**
      * 查询指定账户的交易记录
      * @param bankAccount
+     * @param startDate
+     * @param endDate
      * @return
      */
-    List<TransactionRecordDTO> selectTransactionRecords(@Param("bankAccount") String bankAccount);
+    List<TransactionRecordDTO> selectTransactionRecords(@Param("bankAccount") String bankAccount, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
     /**
      * 校验今日是否已发放答题奖励

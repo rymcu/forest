@@ -11,11 +11,13 @@ import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 消息通知
@@ -31,6 +33,9 @@ public class NotificationController {
     @GetMapping("/all")
     public GlobalResult notifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.TOKEN_);
+        }
         PageHelper.startPage(page, rows);
         List<NotificationDTO> list = notificationService.findNotifications(user.getIdUser());
         PageInfo<NotificationDTO> pageInfo = new PageInfo(list);
@@ -41,6 +46,9 @@ public class NotificationController {
     @GetMapping("/unread")
     public GlobalResult unreadNotification(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.TOKEN_);
+        }
         PageHelper.startPage(page, rows);
         List<Notification> list = notificationService.findUnreadNotifications(user.getIdUser());
         PageInfo<Notification> pageInfo = new PageInfo(list);
