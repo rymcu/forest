@@ -38,7 +38,6 @@ public class WalletController {
         return GlobalResultGenerator.genSuccessResult(bankAccount);
     }
 
-
     @GetMapping("/transaction-records")
     @SecurityInterceptor
     public GlobalResult transactionRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "20") Integer rows, HttpServletRequest request) {
