@@ -143,7 +143,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
                 isUpdate = true;
             }
-            if (!user.getIdUser().equals(newArticle.getArticleAuthorId())) {
+            if (!isAuthor(newArticle.getArticleAuthorId())) {
                 map.put("message", "非法访问！");
                 return map;
             }
@@ -237,13 +237,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Transactional(rollbackFor = Exception.class)
     public Map delete(Integer id) throws BaseApiException {
         Map<String, String> map = new HashMap(1);
-        // 鉴权
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
         Article article = articleMapper.selectByPrimaryKey(id);
-        if (!user.getIdUser().equals(article.getArticleAuthorId())) {
+        // 鉴权
+        if (!isAuthor(article.getArticleAuthorId())) {
             map.put("message", "非法访问！");
             return map;
         }
@@ -327,15 +323,28 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         Map map = new HashMap(2);
         Article article = articleMapper.selectByPrimaryKey(idArticle);
         if (Objects.nonNull(article)) {
-            article.setArticleTags(tags);
-            articleMapper.updateArticleTags(idArticle, tags);
-            tagService.saveTagArticle(article, "");
-            map.put("success", true);
+            if (isAuthor(article.getArticleAuthorId())) {
+                article.setArticleTags(tags);
+                articleMapper.updateArticleTags(idArticle, tags);
+                tagService.saveTagArticle(article, "");
+                map.put("success", true);
+            } else {
+                map.put("success", false);
+                map.put("message", "非法访问!");
+            }
         } else {
             map.put("success", false);
             map.put("message", "更新失败,文章不存在!");
         }
         return map;
+    }
+
+    private boolean isAuthor(Integer idUser) throws BaseApiException {
+        User user = UserUtils.getCurrentUserByToken();
+        if (Objects.nonNull(user)) {
+            return user.getIdUser().equals(idUser);
+        }
+        return false;
     }
 
     @Override
