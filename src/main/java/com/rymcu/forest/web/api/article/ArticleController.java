@@ -95,12 +95,6 @@ public class ArticleController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @PatchMapping("/update-perfect")
-    public GlobalResult updatePerfect(@RequestBody Article article) {
-        Map map = articleService.updatePerfect(article.getIdArticle(), article.getArticlePerfect());
-        return GlobalResultGenerator.genSuccessResult(map);
-    }
-
     @PostMapping("/thumbs-up")
     public GlobalResult thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws BaseApiException {
         Map map = articleThumbsUpService.thumbsUp(articleThumbsUp);
