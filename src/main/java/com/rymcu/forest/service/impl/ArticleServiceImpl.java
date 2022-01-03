@@ -242,13 +242,10 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         if (Objects.isNull(user)) {
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
-        Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
-        if (roleWeights > ADMIN_ROLE_WEIGHTS) {
-            Article article = articleMapper.selectByPrimaryKey(id);
-            if (!user.getIdUser().equals(article.getArticleAuthorId())) {
-                map.put("message", "非法访问！");
-                return map;
-            }
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if (!user.getIdUser().equals(article.getArticleAuthorId())) {
+            map.put("message", "非法访问！");
+            return map;
         }
         int result;
         // 判断是否有评论
