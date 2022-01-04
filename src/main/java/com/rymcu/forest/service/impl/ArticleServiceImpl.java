@@ -285,7 +285,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
         StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
-        shareUrl.append("?s=").append(user.getNickname());
+        shareUrl.append("?s=").append(user.getAccount());
         Map map = new HashMap(1);
         map.put("shareUrl", shareUrl);
         return map;
