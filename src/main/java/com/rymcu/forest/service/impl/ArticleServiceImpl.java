@@ -1,7 +1,6 @@
 package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.constant.NotificationConstant;
-import com.rymcu.forest.core.constant.ProjectConstant;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Article;
@@ -286,7 +285,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
         StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
-        shareUrl.append("?s=").append(user.getNickname());
+        shareUrl.append("?s=").append(user.getAccount());
         Map map = new HashMap(1);
         map.put("shareUrl", shareUrl);
         return map;
@@ -323,7 +322,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         Map map = new HashMap(2);
         Article article = articleMapper.selectByPrimaryKey(idArticle);
         if (Objects.nonNull(article)) {
-            if (isAuthor(article.getArticleAuthorId())) {
+            if (isAuthor(article.getArticleAuthorId()) || hasAdminPermission()) {
                 article.setArticleTags(tags);
                 articleMapper.updateArticleTags(idArticle, tags);
                 tagService.saveTagArticle(article, "");
@@ -337,6 +336,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             map.put("message", "更新失败,文章不存在!");
         }
         return map;
+    }
+
+    private boolean hasAdminPermission() throws BaseApiException {
+        User user = UserUtils.getCurrentUserByToken();
+        if (Objects.nonNull(user)) {
+            Integer userRoleWeight = userService.findRoleWeightsByUser(user.getIdUser());
+            return userRoleWeight <= ADMIN_ROLE_WEIGHTS;
+        }
+        return false;
     }
 
     private boolean isAuthor(Integer idUser) throws BaseApiException {
