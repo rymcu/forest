@@ -68,8 +68,8 @@ public class RestAuthTokenInterceptor implements HandlerInterceptor {
 			request.setAttribute(JwtConstants.CURRENT_USER_NAME, model.getUsername());
 			String uri = request.getRequestURI();
 			// 判断是否为后台接口或财政划转接口
-			String adminApi = "/admin";
-			String transactionApi = "/transaction";
+			String adminApi = "/admin/";
+			String transactionApi = "/transaction/";
 			if (uri.contains(adminApi) || uri.contains(transactionApi)) {
 				// 判断管理员权限
 				boolean hasPermission = userMapper.hasAdminPermission(model.getUsername());
