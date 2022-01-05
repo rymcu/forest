@@ -4,11 +4,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.CommentDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.ArticleThumbsUp;
 import com.rymcu.forest.entity.Sponsor;
+import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.ArticleThumbsUpService;
 import com.rymcu.forest.service.CommentService;
@@ -40,9 +42,9 @@ public class ArticleController {
     @Resource
     private SponsorService sponsorService;
 
-    @GetMapping("/detail/{id}")
-    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer id, @RequestParam(defaultValue = "2") Integer type) {
-        ArticleDTO articleDTO = articleService.findArticleDTOById(id, type);
+    @GetMapping("/detail/{idArticle}")
+    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer idArticle, @RequestParam(defaultValue = "2") Integer type) {
+        ArticleDTO articleDTO = articleService.findArticleDTOById(idArticle, type);
         Map map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
@@ -55,20 +57,22 @@ public class ArticleController {
     }
 
     @PutMapping("/post")
+    @AuthorshipInterceptor(moduleName = Module.ARTICLE)
     public GlobalResult updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
         Map map = articleService.postArticle(article, request);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public GlobalResult delete(@PathVariable Integer id) throws BaseApiException {
-        Map map = articleService.delete(id);
+    @DeleteMapping("/delete/{idArticle}")
+    @AuthorshipInterceptor(moduleName = Module.ARTICLE)
+    public GlobalResult delete(@PathVariable Integer idArticle) throws BaseApiException {
+        Map map = articleService.delete(idArticle);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{id}/comments")
-    public GlobalResult<Map<String, Object>> commons(@PathVariable Integer id) {
-        List<CommentDTO> commentDTOList = commentService.getArticleComments(id);
+    @GetMapping("/{idArticle}/comments")
+    public GlobalResult<Map<String, Object>> commons(@PathVariable Integer idArticle) {
+        List<CommentDTO> commentDTOList = commentService.getArticleComments(idArticle);
         Map map = new HashMap<>(1);
         map.put("comments", commentDTOList);
         return GlobalResultGenerator.genSuccessResult(map);
@@ -83,15 +87,16 @@ public class ArticleController {
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/{id}/share")
-    public GlobalResult share(@PathVariable Integer id) throws BaseApiException {
-        Map map = articleService.share(id);
+    @GetMapping("/{idArticle}/share")
+    public GlobalResult share(@PathVariable Integer idArticle) throws BaseApiException {
+        Map map = articleService.share(idArticle);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @PostMapping("/{id}/update-tags")
-    public GlobalResult updateTags(@PathVariable Integer id, @RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.updateTags(id, article.getArticleTags());
+    @PostMapping("/update-tags")
+    @AuthorshipInterceptor(moduleName = Module.ARTICLE)
+    public GlobalResult updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
+        Map map = articleService.updateTags(article.getIdArticle(), article.getArticleTags());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

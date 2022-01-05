@@ -12,7 +12,10 @@ import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.*;
+import com.rymcu.forest.util.Html2TextUtil;
+import com.rymcu.forest.util.NotificationUtils;
+import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
@@ -142,10 +145,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
                 isUpdate = true;
             }
-            if (!isAuthor(newArticle.getArticleAuthorId())) {
-                map.put("message", "非法访问！");
-                return map;
-            }
             newArticle.setArticleTitle(articleTitle);
             newArticle.setArticleTags(articleTags);
             newArticle.setArticleStatus(article.getArticleStatus());
@@ -236,12 +235,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Transactional(rollbackFor = Exception.class)
     public Map delete(Integer id) throws BaseApiException {
         Map<String, String> map = new HashMap(1);
-        Article article = articleMapper.selectByPrimaryKey(id);
-        // 鉴权
-        if (!isAuthor(article.getArticleAuthorId())) {
-            map.put("message", "非法访问！");
-            return map;
-        }
         int result;
         // 判断是否有评论
         boolean isHavComment = articleMapper.existsCommentWithPrimaryKey(id);
@@ -322,37 +315,15 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         Map map = new HashMap(2);
         Article article = articleMapper.selectByPrimaryKey(idArticle);
         if (Objects.nonNull(article)) {
-            if (isAuthor(article.getArticleAuthorId()) || hasAdminPermission()) {
-                article.setArticleTags(tags);
-                articleMapper.updateArticleTags(idArticle, tags);
-                tagService.saveTagArticle(article, "");
-                map.put("success", true);
-            } else {
-                map.put("success", false);
-                map.put("message", "非法访问!");
-            }
+            article.setArticleTags(tags);
+            articleMapper.updateArticleTags(idArticle, tags);
+            tagService.saveTagArticle(article, "");
+            map.put("success", true);
         } else {
             map.put("success", false);
             map.put("message", "更新失败,文章不存在!");
         }
         return map;
-    }
-
-    private boolean hasAdminPermission() throws BaseApiException {
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.nonNull(user)) {
-            Integer userRoleWeight = userService.findRoleWeightsByUser(user.getIdUser());
-            return userRoleWeight <= ADMIN_ROLE_WEIGHTS;
-        }
-        return false;
-    }
-
-    private boolean isAuthor(Integer idUser) throws BaseApiException {
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.nonNull(user)) {
-            return user.getIdUser().equals(idUser);
-        }
-        return false;
     }
 
     @Override
