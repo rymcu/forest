@@ -1,7 +1,6 @@
 package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.constant.NotificationConstant;
-import com.rymcu.forest.core.constant.ProjectConstant;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Article;
@@ -13,7 +12,10 @@ import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.*;
+import com.rymcu.forest.util.Html2TextUtil;
+import com.rymcu.forest.util.NotificationUtils;
+import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
@@ -143,10 +145,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
                 isUpdate = true;
             }
-            if (!user.getIdUser().equals(newArticle.getArticleAuthorId())) {
-                map.put("message", "非法访问！");
-                return map;
-            }
             newArticle.setArticleTitle(articleTitle);
             newArticle.setArticleTags(articleTags);
             newArticle.setArticleStatus(article.getArticleStatus());
@@ -237,19 +235,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Transactional(rollbackFor = Exception.class)
     public Map delete(Integer id) throws BaseApiException {
         Map<String, String> map = new HashMap(1);
-        // 鉴权
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
-        Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
-        if (roleWeights > ADMIN_ROLE_WEIGHTS) {
-            Article article = articleMapper.selectByPrimaryKey(id);
-            if (!user.getIdUser().equals(article.getArticleAuthorId())) {
-                map.put("message", "非法访问！");
-                return map;
-            }
-        }
         int result;
         // 判断是否有评论
         boolean isHavComment = articleMapper.existsCommentWithPrimaryKey(id);
@@ -293,7 +278,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
         }
         StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
-        shareUrl.append("?s=").append(user.getNickname());
+        shareUrl.append("?s=").append(user.getAccount());
         Map map = new HashMap(1);
         map.put("shareUrl", shareUrl);
         return map;
