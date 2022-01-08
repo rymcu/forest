@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.Arrays;
 
 /**
  * 文件操作工具类
@@ -35,13 +34,20 @@ public class FileUtils {
      * @return
      */
     public static String getExtend(String filename, String defExt) {
-        if ((filename != null) && (filename.length() > 0)) {
-            int i = filename.lastIndexOf('.');
-
-            if ((i > 0) && (i < (filename.length() - 1))) {
-                return (filename.substring(i + 1)).toLowerCase();
-            }
+        if (StringUtils.isEmpty(filename)) {
+            return defExt.toLowerCase();
         }
+
+        int i = filename.lastIndexOf('.');
+
+        if ((i > 0) && (i < (filename.length() - 1))) {
+            String result = filename.substring(i + 1).toLowerCase();
+            if (result.contains("?")) {
+                return result.split("\\?")[0];
+            }
+            return result;
+        }
+
         return defExt.toLowerCase();
     }
 

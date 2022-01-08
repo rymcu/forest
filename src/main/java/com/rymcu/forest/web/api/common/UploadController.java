@@ -187,8 +187,7 @@ public class UploadController {
 
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
 
-        String orgName = url.substring(url.lastIndexOf("."));
-        String fileName = System.currentTimeMillis() + FileUtils.getExtend(orgName).toLowerCase();
+        String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(url);
 
         String savePath = file.getPath() + File.separator + fileName;
 
