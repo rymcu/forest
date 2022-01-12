@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.ForestFileMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.ForestFile">
+        <id column="id" property="id"/>
+        <result column="md5_value" property="md5Value"/>
+        <result column="upload_path" property="uploadPath"/>
+        <result column="web_path" property="webPath"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert">
+        insert into forest_user_role (md5, upload_path, web_path, created_time)
+        values (#{md5Value}, #{uploadPath}, #{webPath}, sysdate())
+    </insert>
+
+    <select id="getByMd5" resultMap="BaseResultMap">
+        select *
+        from forest_file
+        where md5_value = #{md5Value}
+    </select>
+
+</mapper>
