@@ -346,17 +346,38 @@ create table forest_lucene_user_dic
     dic char(32) null comment '字典',
     constraint forest_lucene_user_dic_id_uindex
         unique (id)
-)
-    comment '用户扩展字典';
+) comment '用户扩展字典';
 
 alter table forest_lucene_user_dic
     add primary key (id);
 
-insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (1, '管理员', 'admin', '0', '2019-11-16 04:22:45', '2019-11-16 04:22:45', 1);
-insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (2, '社区管理员', 'blog_admin', '0', '2019-12-05 03:10:05', '2019-12-05 17:11:35', 2);
-insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (3, '作者', 'zz', '0', '2020-03-12 15:07:27', '2020-03-12 15:07:27', 3);
-insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights) values (4, '普通用户', 'user', '0', '2019-12-05 03:10:59', '2020-03-12 15:13:49', 4);
+insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights)
+values (1, '管理员', 'admin', '0', '2019-11-16 04:22:45', '2019-11-16 04:22:45', 1);
+insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights)
+values (2, '社区管理员', 'blog_admin', '0', '2019-12-05 03:10:05', '2019-12-05 17:11:35', 2);
+insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights)
+values (3, '作者', 'zz', '0', '2020-03-12 15:07:27', '2020-03-12 15:07:27', 3);
+insert into forest.forest_role (id, name, input_code, status, created_time, updated_time, weights)
+values (4, '普通用户', 'user', '0', '2019-12-05 03:10:59', '2020-03-12 15:13:49', 4);
 
-insert into forest.forest_user (id, account, password, nickname, real_name, sex, avatar_type, avatar_url, email, phone, status, created_time, updated_time, last_login_time, signature) values (1, 'admin', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'admin', 'admin', '0', '0', null, null, null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', null, null);
+insert into forest.forest_user (id, account, password, nickname, real_name, sex, avatar_type, avatar_url, email, phone,
+                                status, created_time, updated_time, last_login_time, signature)
+values (1, 'admin', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'admin', 'admin', '0', '0', null, null,
+        null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', null, null);
 
-insert into forest.forest_user_role (id_user, id_role, created_time) values (1, 1, '2021-01-25 18:22:12');
+insert into forest.forest_user_role (id_user, id_role, created_time)
+values (1, 1, '2021-01-25 18:22:12');
+
+
+CREATE TABLE `forest_file`
+(
+    `id`           int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `md5_value`    varchar(40) COLLATE utf8mb4_unicode_ci  NOT NULL COMMENT '文件md5值',
+    `file_path`    varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件上传路径',
+    `file_url`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '网络访问路径',
+    `created_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `updated_time` datetime DEFAULT NULL COMMENT '更新时间',
+    `created_by`   int(11) DEFAULT NULL COMMENT '创建人',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `index_md5_value` (`md5_value`)
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci comment '文件上传记录表';
