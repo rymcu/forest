@@ -37,19 +37,20 @@ public class Utils {
         String plain = Encodes.unescapeHtml(plainPassword);
         byte[] salt = Digests.generateSalt(SALT_SIZE);
         byte[] hashPassword = Digests.sha1(plain.getBytes(), salt, HASH_INTERATIONS);
-        return Encodes.encodeHex(salt)+Encodes.encodeHex(hashPassword);
+        return Encodes.encodeHex(salt) + Encodes.encodeHex(hashPassword);
     }
 
     /**
-     *一般检查工具密码比对  add by xlf 2018-11-8
+     * 一般检查工具密码比对  add by xlf 2018-11-8
+     *
      * @param pwd
-     * @param enpwd    加密的密码
+     * @param enpwd 加密的密码
      * @return
      */
-    public static boolean comparePwd(String pwd,String enpwd){
-        byte[] salt = Encodes.decodeHex(enpwd.substring(0,16));
+    public static boolean comparePwd(String pwd, String enpwd) {
+        byte[] salt = Encodes.decodeHex(enpwd.substring(0, 16));
         byte[] hashPassword = Digests.sha1(pwd.getBytes(), salt, HASH_INTERATIONS);
-        return enpwd.equals(Encodes.encodeHex(salt)+Encodes.encodeHex(hashPassword));
+        return enpwd.equals(Encodes.encodeHex(salt) + Encodes.encodeHex(hashPassword));
     }
 
     public static User getCurrentUser() {
@@ -57,33 +58,34 @@ public class Utils {
     }
 
     public static Session getSession() {
-        try{
+        try {
             Subject subject = SecurityUtils.getSubject();
             Session session = subject.getSession(false);
-            if (session == null){
+            if (session == null) {
                 session = subject.getSession();
             }
-            if (session != null){
+            if (session != null) {
                 return session;
             }
             subject.logout();
-        }catch (InvalidSessionException e){
+        } catch (InvalidSessionException e) {
 
         }
         return null;
     }
 
     public static Integer genCode() {
-        Integer code = (int)((Math.random()*9+1)*100000);
+        Integer code = (int) ((Math.random() * 9 + 1) * 100000);
         return code;
     }
 
     /**
      * 获取配置文件内属性
+     *
      * @param key 键值
      * @return 属性值
-     * */
-    public static String getProperty(String key){
+     */
+    public static String getProperty(String key) {
         return env.getProperty(key);
     }
 
@@ -99,24 +101,24 @@ public class Utils {
         LocalDate today = LocalDate.now();
 
         Period p = Period.between(oldLocalDate, today);
-        if(p.getYears() > 0){
-            timeAgo = p.getYears()+" 年前 ";
-        }else if(p.getMonths() > 0){
-            timeAgo = p.getMonths()+" 月前 ";
-        }else if(p.getDays() > 0){
-            timeAgo = p.getDays()+" 天前 ";
-        }else {
+        if (p.getYears() > 0) {
+            timeAgo = p.getYears() + " 年前 ";
+        } else if (p.getMonths() > 0) {
+            timeAgo = p.getMonths() + " 月前 ";
+        } else if (p.getDays() > 0) {
+            timeAgo = p.getDays() + " 天前 ";
+        } else {
             long to = System.currentTimeMillis();
             long from = date.getTime();
-            int hours = (int) ((to - from)/(1000 * 60 * 60));
-            if(hours > 0){
-                timeAgo = hours+" 小时前 ";
-            }else {
-                int minutes = (int) ((to - from)/(1000 * 60));
-                if(minutes == 0){
+            int hours = (int) ((to - from) / (1000 * 60 * 60));
+            if (hours > 0) {
+                timeAgo = hours + " 小时前 ";
+            } else {
+                int minutes = (int) ((to - from) / (1000 * 60));
+                if (minutes == 0) {
                     timeAgo = " 刚刚 ";
-                }else {
-                    timeAgo = minutes+" 分钟前 ";
+                } else {
+                    timeAgo = minutes + " 分钟前 ";
                 }
             }
         }
@@ -125,13 +127,13 @@ public class Utils {
 
     public static Map getPagination(PageInfo pageInfo) {
         Map pagination = new HashMap(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        pagination.put("pageSize", pageInfo.getPageSize());
+        pagination.put("total", pageInfo.getTotal());
+        pagination.put("currentPage", pageInfo.getPageNum());
         return pagination;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String s = entryptPassword("admin");
         System.out.println(s);
     }
@@ -140,9 +142,9 @@ public class Utils {
         Map map = new HashMap(2);
         map.put("articles", pageInfo.getList());
         Map pagination = new HashMap(4);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        pagination.put("pageSize", pageInfo.getPageSize());
+        pagination.put("total", pageInfo.getTotal());
+        pagination.put("currentPage", pageInfo.getPageNum());
         map.put("pagination", pagination);
         return map;
     }
@@ -151,9 +153,9 @@ public class Utils {
         Map map = new HashMap(2);
         map.put("users", pageInfo.getList());
         Map pagination = new HashMap(4);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        pagination.put("pageSize", pageInfo.getPageSize());
+        pagination.put("total", pageInfo.getTotal());
+        pagination.put("currentPage", pageInfo.getPageNum());
         map.put("pagination", pagination);
         return map;
     }
@@ -162,9 +164,9 @@ public class Utils {
         Map map = new HashMap(2);
         map.put("portfolios", pageInfo.getList());
         Map pagination = new HashMap(4);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        pagination.put("pageSize", pageInfo.getPageSize());
+        pagination.put("total", pageInfo.getTotal());
+        pagination.put("currentPage", pageInfo.getPageNum());
         map.put("pagination", pagination);
         return map;
     }
@@ -173,9 +175,9 @@ public class Utils {
         Map map = new HashMap(2);
         map.put("notifications", pageInfo.getList());
         Map pagination = new HashMap(4);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        pagination.put("pageSize", pageInfo.getPageSize());
+        pagination.put("total", pageInfo.getTotal());
+        pagination.put("currentPage", pageInfo.getPageNum());
         map.put("pagination", pagination);
         return map;
     }
@@ -202,16 +204,16 @@ public class Utils {
             ip = ip.substring(0, ip.indexOf(",")).trim();
         }
 
-        return ip;
+        return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
     }
 
     public static Map getNotificationDTOsGlobalResult(PageInfo<NotificationDTO> pageInfo) {
         Map map = new HashMap(2);
         map.put("notifications", pageInfo.getList());
         Map pagination = new HashMap(4);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
+        pagination.put("pageSize", pageInfo.getPageSize());
+        pagination.put("total", pageInfo.getTotal());
+        pagination.put("currentPage", pageInfo.getPageNum());
         map.put("pagination", pagination);
         return map;
     }

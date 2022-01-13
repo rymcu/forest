@@ -1,5 +1,6 @@
 package com.rymcu.forest.config;
 
+import com.rymcu.forest.util.Utils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -48,14 +49,12 @@ public class WebLogAspect {
 
         // 接收到请求，记录请求内容
         logger.info("WebLogAspect.doBefore()");
-        ServletRequestAttributes attributes =
-                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-
         // 记录下请求内容
         logger.info("URL : " + request.getRequestURL().toString());
         logger.info("HTTP_METHOD : " + request.getMethod());
-        logger.info("IP : " + request.getRemoteAddr());
+        logger.info("IP : " + Utils.getIpAddress(request));
         logger.info(
                 "CLASS_METHOD : "
                         + joinPoint.getSignature().getDeclaringTypeName()
