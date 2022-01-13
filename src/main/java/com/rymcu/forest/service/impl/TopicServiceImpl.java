@@ -10,6 +10,7 @@ import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.Topic;
 import com.rymcu.forest.mapper.TopicMapper;
 import com.rymcu.forest.service.TopicService;
+import com.rymcu.forest.web.api.common.UploadController;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +65,12 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             Topic newTopic = new Topic();
             newTopic.setTopicTitle(topic.getTopicTitle());
             newTopic.setTopicUri(topic.getTopicUri());
-            newTopic.setTopicIconPath(topic.getTopicIconPath());
+            if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
+                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 0);
+                newTopic.setTopicIconPath(topicIconPath);
+            } else {
+                newTopic.setTopicIconPath(topic.getTopicIconPath());
+            }
             newTopic.setTopicNva(topic.getTopicNva());
             newTopic.setTopicStatus(topic.getTopicStatus());
             newTopic.setTopicSort(topic.getTopicSort());
@@ -74,7 +80,11 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             newTopic.setUpdatedTime(topic.getCreatedTime());
             result = topicMapper.insertSelective(newTopic);
         } else {
-            topic.setCreatedTime(new Date());
+            if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
+                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 0);
+                topic.setTopicIconPath(topicIconPath);
+            }
+            topic.setUpdatedTime(new Date());
             result = topicMapper.update(topic.getIdTopic(),topic.getTopicTitle(),topic.getTopicUri()
                     ,topic.getTopicIconPath(),topic.getTopicNva(),topic.getTopicStatus()
                     ,topic.getTopicSort(),topic.getTopicDescription(),topic.getTopicDescriptionHtml());

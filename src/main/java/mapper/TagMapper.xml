@@ -23,24 +23,48 @@
         <result column="tag_title" property="value"></result>
     </resultMap>
     <insert id="insertTagArticle">
-        insert into forest_tag_article (id_tag,id_article,created_time,updated_time) values (#{idTag},#{idArticle},sysdate(),sysdate())
+        insert into forest_tag_article (id_tag, id_article, created_time, updated_time)
+        values (#{idTag}, #{idArticle}, sysdate(), sysdate())
     </insert>
     <insert id="insertUserTag">
-        insert into forest_user_tag (id_tag,id_user,type,created_time,updated_time) values (#{idTag},#{idUser},#{type},sysdate(),sysdate())
+        insert into forest_user_tag (id_tag, id_user, type, created_time, updated_time)
+        values (#{idTag}, #{idUser}, #{type}, sysdate(), sysdate())
     </insert>
     <update id="update">
-        update forest_tag set tag_uri = #{tagUri}, tag_icon_path = #{tagIconPath}, tag_status = #{tagStatus}, tag_description = #{tagDescription}, tag_reservation = #{tagReservation} where id = #{idTag}
+        update forest_tag
+        set tag_uri         = #{tagUri},
+            tag_icon_path   = #{tagIconPath},
+            tag_status      = #{tagStatus},
+            tag_description = #{tagDescription},
+            tag_reservation = #{tagReservation},
+            updated_time = sysdate()
+        where id = #{idTag}
     </update>
     <delete id="deleteUnusedTag">
-        delete from forest_tag where tag_reservation = 0 and id not in (select * from (select id_tag from forest_tag_article vta left join forest_article va on vta.id_article = va.id where va.id is not null) tmp);
+        delete
+        from forest_tag
+        where tag_reservation = 0
+          and id not in (select *
+                         from (select id_tag
+                               from forest_tag_article vta
+                                        left join forest_article va on vta.id_article = va.id
+                               where va.id is not null) tmp);
     </delete>
     <select id="selectCountTagArticleById" resultType="java.lang.Integer">
-        select count(*) from forest_tag_article where id_tag = #{idTag} and id_article = #{idArticle}
+        select count(*)
+        from forest_tag_article
+        where id_tag = #{idTag}
+          and id_article = #{idArticle}
     </select>
     <select id="selectCountUserTagById" resultType="java.lang.Integer">
-        select count(*) from forest_user_tag where id_tag = #{idTag} and id_user = #{idUser}
+        select count(*)
+        from forest_user_tag
+        where id_tag = #{idTag}
+          and id_user = #{idUser}
     </select>
     <select id="selectTagLabels" resultMap="TagLabelResultMap">
-        select tag_title from forest_tag where tag_status = 0
+        select tag_title
+        from forest_tag
+        where tag_status = 0
     </select>
 </mapper>

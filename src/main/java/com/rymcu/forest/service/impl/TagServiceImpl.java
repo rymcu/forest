@@ -13,6 +13,7 @@ import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.util.BaiDuAipUtils;
 import com.rymcu.forest.util.CacheUtils;
 import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -142,7 +143,12 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             Tag newTag = new Tag();
             newTag.setTagTitle(tag.getTagTitle());
             newTag.setTagUri(tag.getTagUri());
-            newTag.setTagIconPath(tag.getTagIconPath());
+            if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
+                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 0);
+                newTag.setTagIconPath(tagIconPath);
+            } else {
+                newTag.setTagIconPath(tag.getTagIconPath());
+            }
             newTag.setTagStatus(tag.getTagStatus());
             newTag.setTagDescription(tag.getTagDescription());
             newTag.setTagReservation(tag.getTagReservation());
@@ -151,6 +157,10 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             result = tagMapper.insertSelective(newTag);
         } else {
             tag.setUpdatedTime(new Date());
+            if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
+                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 0);
+                tag.setTagIconPath(tagIconPath);
+            }
             result = tagMapper.update(tag.getIdTag(), tag.getTagUri(), tag.getTagIconPath(), tag.getTagStatus(), tag.getTagDescription(), tag.getTagReservation());
         }
         if (result == 0) {

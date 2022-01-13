@@ -51,27 +51,50 @@
         <id column="updated_time" property="updatedTime"/>
     </resultMap>
     <insert id="insertTopicTag">
-        insert into forest_topic_tag (id_topic, id_tag, created_time, updated_time) values (#{idTopic}, #{idTag}, sysdate(), sysdate())
+        insert into forest_topic_tag (id_topic, id_tag, created_time, updated_time)
+        values (#{idTopic}, #{idTag}, sysdate(), sysdate())
     </insert>
     <update id="update">
-        update forest_topic set topic_title = #{topicTitle},topic_uri = #{topicUri},topic_icon_path = #{topicIconPath}, updated_time = sysdate(),
-        topic_nva = #{topicNva},topic_status = #{topicStatus},topic_sort = #{topicSort},topic_description = #{topicDescription},topic_description_html = #{topicDescriptionHtml}
+        update forest_topic
+        set topic_title            = #{topicTitle},
+            topic_uri              = #{topicUri},
+            topic_icon_path        = #{topicIconPath},
+            updated_time           = sysdate(),
+            topic_nva              = #{topicNva},
+            topic_status           = #{topicStatus},
+            topic_sort             = #{topicSort},
+            topic_description      = #{topicDescription},
+            topic_description_html = #{topicDescriptionHtml}
         where id = #{idTopic}
     </update>
     <delete id="deleteTopicTag">
-        delete from forest_topic_tag where id_topic = #{idTopic} and id_tag = #{idTag}
+        delete
+        from forest_topic_tag
+        where id_topic = #{idTopic}
+          and id_tag = #{idTag}
     </delete>
     <select id="selectTopicNav" resultMap="BaseResultMap">
-        select id,topic_title,topic_uri,topic_icon_path from forest_topic where topic_nva = 0 and topic_status = 0 order by topic_sort
+        select id, topic_title, topic_uri, topic_icon_path
+        from forest_topic
+        where topic_nva = 0
+          and topic_status = 0
+        order by topic_sort
     </select>
     <select id="selectTopicByTopicUri" resultMap="DTOResultMap">
-        select id,topic_title,topic_uri,topic_icon_path,topic_description,topic_tag_count,topic_status from forest_topic where topic_uri = #{topicUri}
+        select id, topic_title, topic_uri, topic_icon_path, topic_description, topic_tag_count, topic_status
+        from forest_topic
+        where topic_uri = #{topicUri}
     </select>
     <select id="selectTopicTag" resultMap="TagDTOResultMap">
-        select vt.id,vt.tag_title,vt.tag_uri,vt.tag_description,vt.tag_icon_path from forest_tag vt left join forest_topic_tag vtt on vt.id = vtt.id_tag where vtt.id_topic = #{idTopic} order by vtt.created_time desc
+        select vt.id, vt.tag_title, vt.tag_uri, vt.tag_description, vt.tag_icon_path
+        from forest_tag vt
+                 left join forest_topic_tag vtt on vt.id = vtt.id_tag
+        where vtt.id_topic = #{idTopic}
+        order by vtt.created_time desc
     </select>
     <select id="selectUnbindTagsById" resultMap="TagResultMap">
-        select * from forest_tag vt where not exists(select * from forest_topic_tag vtt where vtt.id_topic = #{idTopic} and vtt.id_tag = vt.id)
+        select * from forest_tag vt where not exists(select * from forest_topic_tag vtt where vtt.id_topic = #{idTopic}
+        and vtt.id_tag = vt.id)
         <if test="tagTitle != '' and tagTitle != null">
             and LOCATE(#{tagTitle}, vt.tag_title) > 0
         </if>
