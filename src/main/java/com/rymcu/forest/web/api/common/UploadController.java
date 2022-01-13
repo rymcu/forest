@@ -115,11 +115,7 @@ public class UploadController {
         if (multipartFile == null) {
             return GlobalResultGenerator.genErrorResult("请选择要上传的文件");
         }
-        //todo 无法获取当前登录用户
-//        User user = UserUtils.getCurrentUserByToken();
-//        if (Objects.isNull(user)) {
-//            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-//        }
+        TokenUser tokenUser = getTokenUser(request);
         Map data = new HashMap(2);
         String md5 = DigestUtils.md5DigestAsHex(multipartFile.getInputStream());
         String fileUrl = forestFileService.getFileUrlByMd5(md5);
@@ -146,7 +142,7 @@ public class UploadController {
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
-            forestFileService.insertForestFile(fileUrl, savePath, md5, 1);
+            forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser());
             data.put("url", fileUrl);
         } catch (IOException e) {
             data.put("message", "上传失败!");
@@ -158,11 +154,7 @@ public class UploadController {
     @PostMapping("/file/batch")
     @Transactional(rollbackFor = Exception.class)
     public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) throws BaseApiException {
-        //todo 无法获取当前登录用户
-//        User user = UserUtils.getCurrentUserByToken();
-//        if (Objects.isNull(user)) {
-//            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-//        }
+        TokenUser tokenUser = getTokenUser(request);
         String typePath = getTypePath(type);
         //图片存储路径
         String ctxHeadPicPath = env.getProperty("resource.pic-path");
@@ -173,7 +165,7 @@ public class UploadController {
         }
 
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
-        Map succMap = new HashMap(10);
+        Map successMap = new HashMap(16);
         Set errFiles = new HashSet();
 
         for (int i = 0, len = multipartFiles.length; i < len; i++) {
@@ -187,14 +179,14 @@ public class UploadController {
                 String md5 = DigestUtils.md5DigestAsHex(in);
                 String fileUrl = forestFileService.getFileUrlByMd5(md5);
                 if (StringUtils.isNotEmpty(fileUrl)) {
-                    succMap.put(orgName, fileUrl);
+                    successMap.put(orgName, fileUrl);
                     continue;
                 }
 
                 fileUrl = localPath + fileName;
                 FileCopyUtils.copy(in, out);
-                forestFileService.insertForestFile(fileUrl, savePath, md5, 1);
-                succMap.put(orgName, localPath + fileName);
+                forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser());
+                successMap.put(orgName, localPath + fileName);
             } catch (IOException e) {
                 errFiles.add(orgName);
             }
@@ -203,34 +195,37 @@ public class UploadController {
         }
         Map data = new HashMap(2);
         data.put("errFiles", errFiles);
-        data.put("succMap", succMap);
+        data.put("succMap", successMap);
         return GlobalResultGenerator.genSuccessResult(data);
+    }
+
+    private TokenUser getTokenUser(HttpServletRequest request) throws BaseApiException {
+        String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
+        if (StringUtils.isBlank(authHeader)) {
+            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
+        }
+        return UserUtils.getTokenUser(authHeader);
     }
 
     @GetMapping("/simple/token")
     public GlobalResult uploadSimpleToken(HttpServletRequest request) throws BaseApiException {
-        String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
-        if (StringUtils.isBlank(authHeader)) {
-            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
-        }
-        TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-        Map map = new HashMap(2);
-        map.put("uploadToken", tokenUser.getToken());
-        map.put("uploadURL", UPLOAD_SIMPLE_URL);
-        map.put("linkToImageURL", LINK_TO_IMAGE_URL);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return getUploadToken(request, UPLOAD_SIMPLE_URL);
     }
 
     @GetMapping("/token")
     public GlobalResult uploadToken(HttpServletRequest request) throws BaseApiException {
+        return getUploadToken(request, UPLOAD_URL);
+    }
+
+    private GlobalResult getUploadToken(HttpServletRequest request, String uploadUrl) throws BaseApiException {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
         if (StringUtils.isBlank(authHeader)) {
             throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
         TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-        Map map = new HashMap(2);
+        Map map = new HashMap(4);
         map.put("uploadToken", tokenUser.getToken());
-        map.put("uploadURL", UPLOAD_URL);
+        map.put("uploadURL", uploadUrl);
         map.put("linkToImageURL", LINK_TO_IMAGE_URL);
         return GlobalResultGenerator.genSuccessResult(map);
     }
