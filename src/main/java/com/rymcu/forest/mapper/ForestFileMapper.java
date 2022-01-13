@@ -16,7 +16,7 @@ public interface ForestFileMapper extends Mapper<ForestFile> {
      * @param md5Value md5值
      * @return
      */
-    ForestFile getByMd5(@Param("md5Value") String md5Value);
+    ForestFile getForestFileByMd5(@Param("md5Value") String md5Value);
 
     /**
      * 插入文件对象
@@ -24,7 +24,8 @@ public interface ForestFileMapper extends Mapper<ForestFile> {
      * @param webPath    访问路径
      * @param uploadPath 上传路径
      * @param md5Value   md5值
+     * @param createdBy  创建人
      * @return
      */
-    int insert(@Param("webPath") String webPath, @Param("uploadPath") String uploadPath, @Param("md5Value") String md5Value);
+    int insert(@Param("webPath") String webPath, @Param("uploadPath") String uploadPath, @Param("md5Value") String md5Value, @Param("createdBy") long createdBy);
 }

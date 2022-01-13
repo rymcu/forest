@@ -2,7 +2,6 @@ package com.rymcu.forest.service;
 
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.entity.ForestFile;
-import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -19,15 +18,16 @@ public interface ForestFileService extends Service<ForestFile> {
      * @param md5Value md5值
      * @return
      */
-    ForestFile getByMd5(@Param("md5Value") String md5Value);
+    ForestFile getForestFileByMd5(String md5Value);
 
     /**
      * 插入文件对象
      *
-     * @param webPath    访问路径
-     * @param uploadPath 上传路径
-     * @param md5Value   md5值
+     * @param fileUrl   访问路径
+     * @param filePath  上传路径
+     * @param md5Value  md5值
+     * @param createdBy 创建人
      * @return
      */
-    int insert(@Param("webPath") String webPath, @Param("uploadPath") String uploadPath, @Param("md5Value") String md5Value);
+    int insert(String fileUrl, String filePath, String md5Value, long createdBy);
 }

@@ -12,7 +12,7 @@ import java.util.Date;
  * @author caterpillar
  */
 @Data
-@Table(name = "forest_File")
+@Table(name = "forest_file")
 public class ForestFile {
 
     /**
@@ -26,14 +26,14 @@ public class ForestFile {
     /**
      * 访问路径
      */
-    @Column(name = "web_path")
-    private String webPath;
+    @Column(name = "file_url")
+    private String fileUrl;
 
     /**
      * 上传路径
      */
-    @Column(name = "upload_path")
-    private String uploadPath;
+    @Column(name = "file_path")
+    private String filePath;
 
     /**
      * md5
@@ -44,14 +44,20 @@ public class ForestFile {
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
-    private Date createTime;
+    @Column(name = "created_time")
+    private Date createdTime;
 
     /**
      * 更新时间
      */
-    @Column(name = "update_time")
-    private Date updateTime;
+    @Column(name = "updated_time")
+    private Date updatedTime;
+
+    /**
+     * 创建人
+     */
+    @Column(name = "created_by")
+    private long createdBy;
 
 
 }

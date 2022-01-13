@@ -4,18 +4,19 @@
     <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.ForestFile">
         <id column="id" property="id"/>
         <result column="md5_value" property="md5Value"/>
-        <result column="upload_path" property="uploadPath"/>
-        <result column="web_path" property="webPath"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_time" property="updateTime"/>
+        <result column="file_path" property="filePath"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+        <result column="created_by" property="createdBy"/>
     </resultMap>
 
     <insert id="insert">
-        insert into forest_user_role (md5, upload_path, web_path, created_time)
-        values (#{md5Value}, #{uploadPath}, #{webPath}, sysdate())
+        insert into forest_user_role (md5, file_path, file_url, created_time, created_by)
+        values (#{md5Value}, #{filePath}, #{fileUrl}, sysdate(), #{createdBy})
     </insert>
 
-    <select id="getByMd5" resultMap="BaseResultMap">
+    <select id="getForestFileByMd5" resultMap="BaseResultMap">
         select *
         from forest_file
         where md5_value = #{md5Value}
