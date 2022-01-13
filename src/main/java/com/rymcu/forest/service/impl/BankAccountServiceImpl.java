@@ -26,8 +26,6 @@ import java.util.Objects;
 @Service
 public class BankAccountServiceImpl extends AbstractService<BankAccount> implements BankAccountService {
 
-    private static String DEFAULT_ACCOUNT_TYPE = "0";
-
     @Resource
     BankAccountMapper bankAccountMapper;
     @Resource
@@ -35,15 +33,15 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
 
     @Override
     public List<BankAccountDTO> findBankAccounts(BankAccountSearchDTO bankAccountSearchDTO) {
-        List<BankAccountDTO> bankAccounts = bankAccountMapper.selectBankAccounts(bankAccountSearchDTO.getBankName(), bankAccountSearchDTO.getAccountOwnerName(), bankAccountSearchDTO.getBankAccount());
-        return bankAccounts;
+        return bankAccountMapper.selectBankAccounts(bankAccountSearchDTO.getBankName(), bankAccountSearchDTO.getAccountOwnerName(), bankAccountSearchDTO.getBankAccount());
     }
 
     @Override
     public BankAccountDTO findBankAccountByIdUser(Integer idUser) {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountOwner(idUser);
-        bankAccount.setAccountType(DEFAULT_ACCOUNT_TYPE);
+        String defaultAccountType = "0";
+        bankAccount.setAccountType(defaultAccountType);
         List<BankAccount> bankAccounts = bankAccountMapper.select(bankAccount);
         BankAccountDTO bankAccountDTO;
         if (Objects.nonNull(bankAccounts) && bankAccounts.size() > 0) {
@@ -68,8 +66,7 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
             startDate = LocalDateTimeUtil.format(now.minus(30, ChronoUnit.DAYS), "yyyy-MM-dd");
         }
         // 查询交易记录
-        List<TransactionRecordDTO> records = transactionRecordService.findTransactionRecords(bankAccount, startDate, endDate);
-        return records;
+        return transactionRecordService.findTransactionRecords(bankAccount, startDate, endDate);
     }
 
     @Override

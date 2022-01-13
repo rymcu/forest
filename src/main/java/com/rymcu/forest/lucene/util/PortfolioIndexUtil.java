@@ -2,7 +2,6 @@ package com.rymcu.forest.lucene.util;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
-import com.rymcu.forest.lucene.model.ArticleLucene;
 import com.rymcu.forest.lucene.model.PortfolioLucene;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
