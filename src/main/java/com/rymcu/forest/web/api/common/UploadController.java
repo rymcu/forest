@@ -121,7 +121,7 @@ public class UploadController {
         TokenUser tokenUser = getTokenUser(request);
         Map data = new HashMap(2);
         String md5 = DigestUtils.md5DigestAsHex(multipartFile.getInputStream());
-        String fileUrl = forestFileService.getFileUrlByMd5(md5);
+        String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser());
         if (StringUtils.isNotEmpty(fileUrl)) {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
@@ -180,7 +180,7 @@ public class UploadController {
             try (InputStream in = multipartFiles[i].getInputStream();
                  OutputStream out = Files.newOutputStream(saveFile.toPath())) {
                 String md5 = DigestUtils.md5DigestAsHex(in);
-                String fileUrl = forestFileService.getFileUrlByMd5(md5);
+                String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser());
                 if (StringUtils.isNotEmpty(fileUrl)) {
                     successMap.put(orgName, fileUrl);
                     continue;
@@ -235,12 +235,9 @@ public class UploadController {
 
     @PostMapping("/file/link")
     @Transactional(rollbackFor = Exception.class)
-    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO) throws IOException, BaseApiException {
-        //todo 无法获取当前登录用户
-//        User user = UserUtils.getCurrentUserByToken();
-//        if (Objects.isNull(user)) {
-//            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-//        }
+    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO, HttpServletRequest request) throws IOException, BaseApiException {
+
+        TokenUser tokenUser = getTokenUser(request);
         String url = linkToImageUrlDTO.getUrl();
         URL link = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) link.openConnection();
@@ -255,7 +252,7 @@ public class UploadController {
 
         // 获取文件md5值
         String md5 = DigestUtils.md5DigestAsHex(inputStream);
-        String fileUrl = forestFileService.getFileUrlByMd5(md5);
+        String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser());
 
         Map data = new HashMap(2);
         data.put("originalURL", url);
@@ -289,7 +286,7 @@ public class UploadController {
             //获取自己数组
             byte[] getData = readInputStream(inputStream);
             FileCopyUtils.copy(getData, saveFile);
-            forestFileService.insertForestFile(fileUrl, savePath, md5, 1);
+            forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser());
             data.put("originalURL", url);
             data.put("url", fileUrl);
         } catch (IOException e) {

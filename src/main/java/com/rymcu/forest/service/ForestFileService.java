@@ -15,10 +15,11 @@ public interface ForestFileService extends Service<ForestFile> {
     /**
      * 通过md5获取文件访问链接
      *
-     * @param md5Value md5值
+     * @param md5Value  md5值
+     * @param createdBy 用户id
      * @return
      */
-    String getFileUrlByMd5(String md5Value);
+    String getFileUrlByMd5(String md5Value, long createdBy);
 
     /**
      * 插入文件对象

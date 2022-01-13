@@ -22,12 +22,13 @@ public class ForestFileServiceImpl extends AbstractService<ForestFile> implement
     /**
      * 通过md5获取文件访问链接
      *
-     * @param md5Value md5值
+     * @param md5Value  md5值
+     * @param createdBy 用户id
      * @return
      */
     @Override
-    public String getFileUrlByMd5(String md5Value) {
-        return forestFileMapper.getFileUrlByMd5(md5Value);
+    public String getFileUrlByMd5(String md5Value, long createdBy) {
+        return forestFileMapper.getFileUrlByMd5(md5Value, createdBy);
     }
 
     /**

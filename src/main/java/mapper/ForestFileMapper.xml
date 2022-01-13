@@ -20,6 +20,7 @@
         select file_url
         from forest_file
         where md5_value = #{md5Value}
+          and created_by = #{createdBy}
     </select>
 
 </mapper>

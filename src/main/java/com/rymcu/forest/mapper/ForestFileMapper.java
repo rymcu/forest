@@ -13,10 +13,11 @@ public interface ForestFileMapper extends Mapper<ForestFile> {
     /**
      * 通过md5获取文件访问链接
      *
-     * @param md5Value md5值
+     * @param md5Value  md5值
+     * @param createdBy 创建人
      * @return
      */
-    String getFileUrlByMd5(@Param("md5Value") String md5Value);
+    String getFileUrlByMd5(@Param("md5Value") String md5Value, @Param("createdBy") long createdBy);
 
     /**
      * 插入文件对象
