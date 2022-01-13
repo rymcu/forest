@@ -29,5 +29,5 @@ public interface ForestFileService extends Service<ForestFile> {
      * @param createdBy 创建人
      * @return
      */
-    int insert(String fileUrl, String filePath, String md5Value, long createdBy);
+    int insertForestFile(String fileUrl, String filePath, String md5Value, long createdBy);
 }

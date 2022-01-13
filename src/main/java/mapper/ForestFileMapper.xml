@@ -11,12 +11,12 @@
         <result column="created_by" property="createdBy"/>
     </resultMap>
 
-    <insert id="insert">
-        insert into forest_user_role (md5, file_path, file_url, created_time, created_by)
+    <insert id="insertForestFile">
+        insert into forest_file (md5_value, file_path, file_url, created_time, created_by)
         values (#{md5Value}, #{filePath}, #{fileUrl}, sysdate(), #{createdBy})
     </insert>
 
-    <select id="getFileUrlByMd5" resultType="string">
+    <select id="getFileUrlByMd5" resultType="java.lang.String">
         select file_url
         from forest_file
         where md5_value = #{md5Value}

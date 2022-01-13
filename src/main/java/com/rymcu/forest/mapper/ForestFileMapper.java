@@ -21,11 +21,12 @@ public interface ForestFileMapper extends Mapper<ForestFile> {
     /**
      * 插入文件对象
      *
-     * @param webPath    访问路径
-     * @param uploadPath 上传路径
-     * @param md5Value   md5值
-     * @param createdBy  创建人
+     * @param fileUrl   访问路径
+     * @param filePath  上传路径
+     * @param md5Value  md5值
+     * @param createdBy 创建人
      * @return
      */
-    int insert(@Param("webPath") String webPath, @Param("uploadPath") String uploadPath, @Param("md5Value") String md5Value, @Param("createdBy") long createdBy);
+    int insertForestFile(@Param("fileUrl") String fileUrl, @Param("filePath") String filePath, @Param("md5Value") String md5Value, @Param("createdBy") long createdBy);
+
 }

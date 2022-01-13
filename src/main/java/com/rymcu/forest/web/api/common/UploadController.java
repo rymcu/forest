@@ -15,6 +15,7 @@ import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.env.Environment;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -48,10 +47,85 @@ public class UploadController {
     @Resource
     private ForestFileService forestFileService;
 
+    private static String getTypePath(Integer type) {
+        String typePath;
+        switch (type) {
+            case 0:
+                typePath = "avatar";
+                break;
+            case 1:
+                typePath = "article";
+                break;
+            case 2:
+                typePath = "tags";
+                break;
+            default:
+                typePath = "images";
+        }
+        return typePath;
+    }
+
+    public static String uploadBase64File(String fileStr, Integer type) {
+        if (StringUtils.isBlank(fileStr)) {
+            return "";
+        }
+        String typePath = getTypePath(type);
+        //图片存储路径
+        String ctxHeadPicPath = env.getProperty("resource.pic-path");
+        String dir = ctxHeadPicPath + "/" + typePath;
+        File file = new File(dir);
+        if (!file.exists()) {
+            file.mkdirs();// 创建文件根目录
+        }
+
+        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
+        String fileName = System.currentTimeMillis() + ".png";
+        String savePath = file.getPath() + File.separator + fileName;
+        File saveFile = new File(savePath);
+        try {
+            FileCopyUtils.copy(Base64.decodeBase64(fileStr.substring(fileStr.indexOf(",") + 1)), saveFile);
+            fileStr = localPath + fileName;
+        } catch (IOException e) {
+            fileStr = "上传失败!";
+        }
+        return fileStr;
+    }
+
+    /**
+     * 从输入流中获取字节数组
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static byte[] readInputStream(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        while ((len = inputStream.read(buffer)) != -1) {
+            bos.write(buffer, 0, len);
+        }
+        bos.close();
+        return bos.toByteArray();
+    }
+
     @PostMapping("/file")
-    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) throws IOException, BaseApiException {
         if (multipartFile == null) {
             return GlobalResultGenerator.genErrorResult("请选择要上传的文件");
+        }
+        //todo 无法获取当前登录用户
+//        User user = UserUtils.getCurrentUserByToken();
+//        if (Objects.isNull(user)) {
+//            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+//        }
+        Map data = new HashMap(2);
+        String md5 = DigestUtils.md5DigestAsHex(multipartFile.getInputStream());
+        String fileUrl = forestFileService.getFileUrlByMd5(md5);
+        if (StringUtils.isNotEmpty(fileUrl)) {
+            data.put("url", fileUrl);
+            return GlobalResultGenerator.genSuccessResult(data);
         }
         String typePath = getTypePath(type);
         //图片存储路径
@@ -68,12 +142,12 @@ public class UploadController {
         String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(orgName).toLowerCase();
 
         String savePath = file.getPath() + File.separator + fileName;
-
-        Map data = new HashMap(2);
+        fileUrl = localPath + fileName;
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
-            data.put("url", localPath + fileName);
+            forestFileService.insertForestFile(fileUrl, savePath, md5, 1);
+            data.put("url", fileUrl);
         } catch (IOException e) {
             data.put("message", "上传失败!");
         }
@@ -82,7 +156,13 @@ public class UploadController {
     }
 
     @PostMapping("/file/batch")
-    public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) throws BaseApiException {
+        //todo 无法获取当前登录用户
+//        User user = UserUtils.getCurrentUserByToken();
+//        if (Objects.isNull(user)) {
+//            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+//        }
         String typePath = getTypePath(type);
         //图片存储路径
         String ctxHeadPicPath = env.getProperty("resource.pic-path");
@@ -100,39 +180,31 @@ public class UploadController {
             MultipartFile multipartFile = multipartFiles[i];
             String orgName = multipartFile.getOriginalFilename();
             String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(orgName).toLowerCase();
-
             String savePath = file.getPath() + File.separator + fileName;
-
             File saveFile = new File(savePath);
-            try {
-                FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
+            try (InputStream in = multipartFiles[i].getInputStream();
+                 OutputStream out = Files.newOutputStream(saveFile.toPath())) {
+                String md5 = DigestUtils.md5DigestAsHex(in);
+                String fileUrl = forestFileService.getFileUrlByMd5(md5);
+                if (StringUtils.isNotEmpty(fileUrl)) {
+                    succMap.put(orgName, fileUrl);
+                    continue;
+                }
+
+                fileUrl = localPath + fileName;
+                FileCopyUtils.copy(in, out);
+                forestFileService.insertForestFile(fileUrl, savePath, md5, 1);
                 succMap.put(orgName, localPath + fileName);
             } catch (IOException e) {
                 errFiles.add(orgName);
             }
+
+
         }
         Map data = new HashMap(2);
         data.put("errFiles", errFiles);
         data.put("succMap", succMap);
         return GlobalResultGenerator.genSuccessResult(data);
-    }
-
-    private static String getTypePath(Integer type) {
-        String typePath;
-        switch (type) {
-            case 0:
-                typePath = "avatar";
-                break;
-            case 1:
-                typePath = "article";
-                break;
-            case 2:
-                typePath = "tags";
-                break;
-            default:
-                typePath = "images";
-        }
-        return typePath;
     }
 
     @GetMapping("/simple/token")
@@ -164,7 +236,13 @@ public class UploadController {
     }
 
     @PostMapping("/file/link")
-    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO) throws IOException {
+    @Transactional(rollbackFor = Exception.class)
+    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO) throws IOException, BaseApiException {
+        //todo 无法获取当前登录用户
+//        User user = UserUtils.getCurrentUserByToken();
+//        if (Objects.isNull(user)) {
+//            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+//        }
         String url = linkToImageUrlDTO.getUrl();
         URL link = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) link.openConnection();
@@ -176,11 +254,9 @@ public class UploadController {
 
         //得到输入流
         InputStream inputStream = conn.getInputStream();
-        //获取自己数组
-        byte[] getData = readInputStream(inputStream);
 
         // 获取文件md5值
-        String md5 = DigestUtils.md5DigestAsHex(getData);
+        String md5 = DigestUtils.md5DigestAsHex(inputStream);
         String fileUrl = forestFileService.getFileUrlByMd5(md5);
 
         Map data = new HashMap(2);
@@ -212,8 +288,10 @@ public class UploadController {
 
         File saveFile = new File(savePath);
         try {
+            //获取自己数组
+            byte[] getData = readInputStream(inputStream);
             FileCopyUtils.copy(getData, saveFile);
-            forestFileService.insert(fileUrl, savePath, md5, 1);
+            forestFileService.insertForestFile(fileUrl, savePath, md5, 1);
             data.put("originalURL", url);
             data.put("url", fileUrl);
         } catch (IOException e) {
@@ -223,46 +301,4 @@ public class UploadController {
 
     }
 
-    public static String uploadBase64File(String fileStr, Integer type) {
-        if (StringUtils.isBlank(fileStr)) {
-            return "";
-        }
-        String typePath = getTypePath(type);
-        //图片存储路径
-        String ctxHeadPicPath = env.getProperty("resource.pic-path");
-        String dir = ctxHeadPicPath + "/" + typePath;
-        File file = new File(dir);
-        if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
-        }
-
-        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
-        String fileName = System.currentTimeMillis() + ".png";
-        String savePath = file.getPath() + File.separator + fileName;
-        File saveFile = new File(savePath);
-        try {
-            FileCopyUtils.copy(Base64.decodeBase64(fileStr.substring(fileStr.indexOf(",") + 1)), saveFile);
-            fileStr = localPath + fileName;
-        } catch (IOException e) {
-            fileStr = "上传失败!";
-        }
-        return fileStr;
-    }
-
-    /**
-     * 从输入流中获取字节数组
-     * @param inputStream
-     * @return
-     * @throws IOException
-     */
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        while((len = inputStream.read(buffer)) != -1) {
-            bos.write(buffer, 0, len);
-        }
-        bos.close();
-        return bos.toByteArray();
-    }
 }

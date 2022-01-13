@@ -5,7 +5,6 @@ import com.rymcu.forest.entity.ForestFile;
 import com.rymcu.forest.mapper.ForestFileMapper;
 import com.rymcu.forest.service.ForestFileService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -41,8 +40,7 @@ public class ForestFileServiceImpl extends AbstractService<ForestFile> implement
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public int insert(String fileUrl, String filePath, String md5Value, long createdBy) {
-        return forestFileMapper.insert(fileUrl, filePath, md5Value, createdBy);
+    public int insertForestFile(String fileUrl, String filePath, String md5Value, long createdBy) {
+        return forestFileMapper.insertForestFile(fileUrl, filePath, md5Value, createdBy);
     }
 }
