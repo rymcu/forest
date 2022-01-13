@@ -66,7 +66,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             newTopic.setTopicTitle(topic.getTopicTitle());
             newTopic.setTopicUri(topic.getTopicUri());
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
-                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 0);
+                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
                 newTopic.setTopicIconPath(topicIconPath);
             } else {
                 newTopic.setTopicIconPath(topic.getTopicIconPath());
@@ -81,7 +81,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             result = topicMapper.insertSelective(newTopic);
         } else {
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
-                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 0);
+                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
                 topic.setTopicIconPath(topicIconPath);
             }
             topic.setUpdatedTime(new Date());

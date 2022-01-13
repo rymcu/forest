@@ -144,7 +144,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             newTag.setTagTitle(tag.getTagTitle());
             newTag.setTagUri(tag.getTagUri());
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
-                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 0);
+                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 2);
                 newTag.setTagIconPath(tagIconPath);
             } else {
                 newTag.setTagIconPath(tag.getTagIconPath());
@@ -158,7 +158,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         } else {
             tag.setUpdatedTime(new Date());
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
-                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 0);
+                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 2);
                 tag.setTagIconPath(tagIconPath);
             }
             result = tagMapper.update(tag.getIdTag(), tag.getTagUri(), tag.getTagIconPath(), tag.getTagStatus(), tag.getTagDescription(), tag.getTagReservation());
