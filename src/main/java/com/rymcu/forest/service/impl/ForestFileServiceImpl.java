@@ -4,8 +4,8 @@ import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.entity.ForestFile;
 import com.rymcu.forest.mapper.ForestFileMapper;
 import com.rymcu.forest.service.ForestFileService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -14,7 +14,6 @@ import javax.annotation.Resource;
  * @date 2022-1-12 22:34:55
  */
 @Service
-@Slf4j
 public class ForestFileServiceImpl extends AbstractService<ForestFile> implements ForestFileService {
 
     @Resource
@@ -22,14 +21,14 @@ public class ForestFileServiceImpl extends AbstractService<ForestFile> implement
 
 
     /**
-     * 通过md5获取文件对象
+     * 通过md5获取文件访问链接
      *
      * @param md5Value md5值
      * @return
      */
     @Override
-    public ForestFile getForestFileByMd5(String md5Value) {
-        return forestFileMapper.getForestFileByMd5(md5Value);
+    public String getFileUrlByMd5(String md5Value) {
+        return forestFileMapper.getFileUrlByMd5(md5Value);
     }
 
     /**
@@ -42,6 +41,7 @@ public class ForestFileServiceImpl extends AbstractService<ForestFile> implement
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int insert(String fileUrl, String filePath, String md5Value, long createdBy) {
         return forestFileMapper.insert(fileUrl, filePath, md5Value, createdBy);
     }

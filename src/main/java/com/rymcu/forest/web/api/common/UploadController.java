@@ -5,6 +5,7 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.LinkToImageUrlDTO;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.jwt.def.JwtConstants;
+import com.rymcu.forest.service.ForestFileService;
 import com.rymcu.forest.util.FileUtils;
 import com.rymcu.forest.util.SpringContextHolder;
 import com.rymcu.forest.util.UserUtils;
@@ -14,10 +15,12 @@ import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.env.Environment;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,6 +44,9 @@ public class UploadController {
     private final static String LINK_TO_IMAGE_URL = "/api/upload/file/link";
 
     private static Environment env = SpringContextHolder.getBean(Environment.class);
+
+    @Resource
+    private ForestFileService forestFileService;
 
     @PostMapping("/file")
     public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
@@ -161,9 +167,9 @@ public class UploadController {
     public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO) throws IOException {
         String url = linkToImageUrlDTO.getUrl();
         URL link = new URL(url);
-        HttpURLConnection conn = (HttpURLConnection)link.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) link.openConnection();
         //设置超时间为3秒
-        conn.setConnectTimeout(3*1000);
+        conn.setConnectTimeout(3 * 1000);
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
         conn.setRequestProperty("referer", "");
@@ -172,6 +178,19 @@ public class UploadController {
         InputStream inputStream = conn.getInputStream();
         //获取自己数组
         byte[] getData = readInputStream(inputStream);
+
+        // 获取文件md5值
+        String md5 = DigestUtils.md5DigestAsHex(getData);
+        String fileUrl = forestFileService.getFileUrlByMd5(md5);
+
+        Map data = new HashMap(2);
+        data.put("originalURL", url);
+
+        if (StringUtils.isNotEmpty(fileUrl)) {
+            data.put("url", fileUrl);
+            return GlobalResultGenerator.genSuccessResult(data);
+        }
+
         Integer type = linkToImageUrlDTO.getType();
         if (Objects.isNull(type)) {
             type = 1;
@@ -185,18 +204,18 @@ public class UploadController {
             file.mkdirs();// 创建文件根目录
         }
 
-        String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
 
         String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(url);
+        fileUrl = Utils.getProperty("resource.file-path") + "/" + typePath + "/" + fileName;
 
         String savePath = file.getPath() + File.separator + fileName;
 
-        Map data = new HashMap(2);
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(getData, saveFile);
+            forestFileService.insert(fileUrl, savePath, md5, 1);
             data.put("originalURL", url);
-            data.put("url", localPath + fileName);
+            data.put("url", fileUrl);
         } catch (IOException e) {
             data.put("message", "上传失败!");
         }

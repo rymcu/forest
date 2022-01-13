@@ -16,8 +16,8 @@
         values (#{md5Value}, #{filePath}, #{fileUrl}, sysdate(), #{createdBy})
     </insert>
 
-    <select id="getForestFileByMd5" resultMap="BaseResultMap">
-        select *
+    <select id="getFileUrlByMd5" resultType="string">
+        select file_url
         from forest_file
         where md5_value = #{md5Value}
     </select>

@@ -11,12 +11,12 @@ import org.apache.ibatis.annotations.Param;
 public interface ForestFileMapper extends Mapper<ForestFile> {
 
     /**
-     * 通过md5获取文件对象
+     * 通过md5获取文件访问链接
      *
      * @param md5Value md5值
      * @return
      */
-    ForestFile getForestFileByMd5(@Param("md5Value") String md5Value);
+    String getFileUrlByMd5(@Param("md5Value") String md5Value);
 
     /**
      * 插入文件对象

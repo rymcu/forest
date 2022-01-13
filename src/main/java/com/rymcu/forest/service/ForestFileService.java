@@ -13,12 +13,12 @@ import com.rymcu.forest.entity.ForestFile;
 public interface ForestFileService extends Service<ForestFile> {
 
     /**
-     * 通过md5获取文件对象
+     * 通过md5获取文件访问链接
      *
      * @param md5Value md5值
      * @return
      */
-    ForestFile getForestFileByMd5(String md5Value);
+    String getFileUrlByMd5(String md5Value);
 
     /**
      * 插入文件对象
