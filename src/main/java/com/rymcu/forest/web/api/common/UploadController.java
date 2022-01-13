@@ -57,7 +57,10 @@ public class UploadController {
                 typePath = "article";
                 break;
             case 2:
-                typePath = "tags";
+                typePath = "tag";
+                break;
+            case 3:
+                typePath = "topic";
                 break;
             default:
                 typePath = "images";
