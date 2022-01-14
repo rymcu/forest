@@ -189,7 +189,7 @@ public class UploadController {
             String fileName = System.currentTimeMillis() + fileType;
             String savePath = file.getPath() + File.separator + fileName;
             File saveFile = new File(savePath);
-            try (InputStream in = multipartFiles[i].getInputStream(); OutputStream out = Files.newOutputStream(saveFile.toPath())) {
+            try (InputStream in = multipartFile.getInputStream()) {
                 String md5 = DigestUtils.md5DigestAsHex(in);
                 String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
                 if (StringUtils.isNotEmpty(fileUrl)) {
@@ -197,7 +197,7 @@ public class UploadController {
                     continue;
                 }
                 fileUrl = localPath + fileName;
-                FileCopyUtils.copy(in, out);
+                FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
                 forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser(), multipartFile.getSize(), fileType);
                 successMap.put(orgName, localPath + fileName);
             } catch (IOException e) {
@@ -213,7 +213,7 @@ public class UploadController {
     }
 
     private TokenUser getTokenUser(HttpServletRequest request) throws BaseApiException {
-        String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
+        String authHeader = request.getHeader(JwtConstants.UPLOAD_TOKEN);
         if (StringUtils.isBlank(authHeader)) {
             throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
