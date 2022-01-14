@@ -23,10 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -186,9 +188,6 @@ public class UploadController {
                 continue;
             }
             String fileType = FileUtils.getExtend(orgName);
-            String fileName = System.currentTimeMillis() + fileType;
-            String savePath = file.getPath() + File.separator + fileName;
-            File saveFile = new File(savePath);
             try (InputStream in = multipartFile.getInputStream()) {
                 String md5 = DigestUtils.md5DigestAsHex(in);
                 String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
@@ -196,6 +195,9 @@ public class UploadController {
                     successMap.put(orgName, fileUrl);
                     continue;
                 }
+                String fileName = System.currentTimeMillis() + fileType;
+                String savePath = file.getPath() + File.separator + fileName;
+                File saveFile = new File(savePath);
                 fileUrl = localPath + fileName;
                 FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
                 forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser(), multipartFile.getSize(), fileType);
