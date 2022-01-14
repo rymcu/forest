@@ -25,6 +25,7 @@ public class UserUtils {
 
     /**
      * 通过token获取当前用户的信息
+     *
      * @return
      */
     public static User getCurrentUserByToken() throws BaseApiException {
@@ -52,7 +53,7 @@ public class UserUtils {
     }
 
     public static TokenUser getTokenUser(String token) {
-        if(StringUtils.isNotBlank(token)){
+        if (StringUtils.isNotBlank(token)) {
             // 验证token
             Claims claims;
             try {
@@ -65,7 +66,7 @@ public class UserUtils {
                 TokenModel model = tokenManager.getToken(token, account.toString());
                 if (tokenManager.checkToken(model)) {
                     User user = userMapper.findByAccount(account.toString());
-                    if(user != null){
+                    if (user != null) {
                         TokenUser tokenUser = new TokenUser();
                         BeanCopierUtil.copy(user, tokenUser);
                         tokenUser.setToken(token);

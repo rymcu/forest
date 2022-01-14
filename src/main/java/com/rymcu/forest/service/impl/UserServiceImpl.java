@@ -13,6 +13,7 @@ import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.mapper.RoleMapper;
 import com.rymcu.forest.mapper.UserExtendMapper;
 import com.rymcu.forest.mapper.UserMapper;
+import com.rymcu.forest.service.LoginRecordService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.util.Utils;
@@ -42,6 +43,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private TokenManager tokenManager;
     @Resource
     private UserExtendMapper userExtendMapper;
+    @Resource
+    private LoginRecordService loginRecordService;
 
     private final static String AVATAR_SVG_TYPE = "1";
     private final static String DEFAULT_AVATAR = "https://static.rymcu.com/article/1578475481946.png";
@@ -112,7 +115,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public Map login(String account, String password) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         User user = userMapper.findByAccount(account);
         if (user != null) {
             if (Utils.comparePwd(password, user.getPassword())) {
@@ -123,6 +126,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 tokenUser.setToken(tokenManager.createToken(account));
                 tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
                 map.put("user", tokenUser);
+                // 保存登录日志
+                loginRecordService.saveLoginRecord(tokenUser.getIdUser());
             } else {
                 map.put("message", "密码错误！");
             }
@@ -134,8 +139,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public UserDTO findUserDTOByAccount(String account) {
-        UserDTO user = userMapper.selectUserDTOByAccount(account);
-        return user;
+        return userMapper.selectUserDTOByAccount(account);
     }
 
     @Override
@@ -155,7 +159,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map updateUserRole(Integer idUser, Integer idRole) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         Integer result = userMapper.updateUserRole(idUser, idRole);
         if (result == 0) {
             map.put("message", "更新失败!");
@@ -166,7 +170,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map updateStatus(Integer idUser, String status) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         Integer result = userMapper.updateStatus(idUser, status);
         if (result == 0) {
             map.put("message", "更新失败!");
@@ -176,7 +180,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public Map findUserInfo(Integer idUser) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         UserInfoDTO user = userMapper.selectUserInfo(idUser);
         if (user == null) {
             map.put("message", "用户不存在!");
@@ -196,7 +200,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map updateUserInfo(UserInfoDTO user) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         user.setNickname(formatNickname(user.getNickname()));
         Integer number = userMapper.checkNicknameByIdUser(user.getIdUser(), user.getNickname());
         if (number > 0) {
@@ -228,7 +232,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public Map checkNickname(Integer idUser, String nickname) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
         if (number > 0) {
             map.put("message", "该昵称已使用!");
@@ -248,7 +252,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public Map updateUserExtend(UserExtend userExtend) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         int result = userExtendMapper.updateByPrimaryKeySelective(userExtend);
         if (result == 0) {
             map.put("message", "操作失败!");
@@ -283,7 +287,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public Map updatePassword(UpdatePasswordDTO updatePasswordDTO) {
-        Map map = new HashMap(1);
+        Map map = new HashMap(2);
         String password = Utils.entryptPassword(updatePasswordDTO.getPassword());
         userMapper.updatePasswordById(updatePasswordDTO.getIdUser(), password);
         map.put("message", "更新成功!");
