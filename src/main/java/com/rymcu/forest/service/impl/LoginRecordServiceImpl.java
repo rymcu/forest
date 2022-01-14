@@ -15,6 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -48,5 +49,10 @@ public class LoginRecordServiceImpl extends AbstractService<LoginRecord> impleme
         loginRecord.setCreatedTime(new Date());
         loginRecordMapper.insertSelective(loginRecord);
         return loginRecord;
+    }
+
+    @Override
+    public List<LoginRecord> findLoginRecordByIdUser(Integer idUser) {
+        return loginRecordMapper.selectLoginRecordByIdUser(idUser);
     }
 }

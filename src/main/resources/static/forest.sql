@@ -346,21 +346,41 @@ values (1, 'admin', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 
 insert into forest.forest_user_role (id_user, id_role, created_time)
 values (1, 1, '2021-01-25 18:22:12');
 
-
-CREATE TABLE `forest_file`
+create table forest_file
 (
-    `id`           int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `md5_value`    varchar(40) COLLATE utf8mb4_unicode_ci  NOT NULL COMMENT '文件md5值',
-    `file_path`    varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件上传路径',
-    `file_url`     varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '网络访问路径',
-    `created_time` datetime                               DEFAULT NULL COMMENT '创建时间',
-    `updated_time` datetime                               DEFAULT NULL COMMENT '更新时间',
-    `created_by`   int(11) DEFAULT NULL COMMENT '创建人',
-    `file_size`    int(11) DEFAULT NULL COMMENT '文件大小',
-    `file_type`    varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '文件类型',
-    PRIMARY KEY (`id`),
-    KEY            `index_md5_value` (`md5_value`) USING BTREE,
-    KEY            `index_created_by` (`created_by`),
-    KEY            `inddex_md5_value_created_by` (`md5_value`,`created_by`),
-    KEY            `index_file_type` (`file_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='文件上传记录表';
+    id           int unsigned auto_increment comment 'id'
+        primary key,
+    md5_value    varchar(40)  not null comment '文件md5值',
+    file_path    varchar(255) not null comment '文件上传路径',
+    file_url     varchar(255) not null comment '网络访问路径',
+    created_time datetime null comment '创建时间',
+    updated_time datetime null comment '更新时间',
+    created_by   int null comment '创建人',
+    file_size    int null comment '文件大小',
+    file_type    varchar(10) null comment '文件类型'
+) comment '文件上传记录表';
+
+create index index_md5_value_created_by
+    on forest_file (md5_value, created_by);
+
+create index index_created_by
+    on forest_file (created_by);
+
+create index index_md5_value
+    on forest_file (md5_value);
+
+create table forest_login_record
+(
+    id              bigint auto_increment comment '主键'
+        primary key,
+    id_user         bigint not null comment '用户表主键',
+    login_ip        varchar(128) null comment '登录设备IP',
+    login_ua        varchar(512) null comment '登录设备UA',
+    login_city      varchar(128) null comment '登录设备所在城市',
+    login_os        varchar(64) null comment '登录设备操作系统',
+    login_browser   varchar(64) null comment '登录设备浏览器',
+    created_time    datetime null comment '登录时间',
+    login_device_id varchar(512) null comment '登录设备/浏览器指纹',
+    constraint forest_login_record_id_uindex
+        unique (id)
+) comment '登录记录表';
