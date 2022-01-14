@@ -18,7 +18,7 @@ public class FileUtils {
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     /**
-     * 获取文件扩展名
+     * 获取文件扩展名,带.
      *
      * @param filename
      * @return
@@ -31,6 +31,7 @@ public class FileUtils {
      * 获取文件扩展名
      *
      * @param filename
+     * @param defExt   默认文件后缀名， 带.
      * @return
      */
     public static String getExtend(String filename, String defExt) {
@@ -41,7 +42,7 @@ public class FileUtils {
         int i = filename.lastIndexOf('.');
 
         if ((i > 0) && (i < (filename.length() - 1))) {
-            String result = filename.substring(i + 1).toLowerCase();
+            String result = filename.substring(i).toLowerCase();
             if (result.contains("?")) {
                 return result.split("\\?")[0];
             }
