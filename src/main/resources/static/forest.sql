@@ -384,4 +384,3 @@ create table forest_login_record
     constraint forest_login_record_id_uindex
         unique (id)
 ) comment '登录记录表';
-

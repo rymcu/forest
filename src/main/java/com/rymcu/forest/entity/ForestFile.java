@@ -24,6 +24,17 @@ public class ForestFile {
     private Long id;
 
     /**
+     * 文件大小
+     */
+    @Column(name = "file_size")
+    private long fileSize;
+
+    /**
+     * 文件类型-文件后缀
+     */
+    @Column(name = "file_type")
+    private String fileType;
+    /**
      * 访问路径
      */
     @Column(name = "file_url")
