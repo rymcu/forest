@@ -59,12 +59,13 @@ public class VisitAspect {
         String url = request.getRequestURL().toString();
         String ua = request.getHeader("user-agent");
         String referer = request.getHeader("Referer");
+        String fingerprint = request.getHeader("fingerprint");
         Visit visit = new Visit();
         visit.setVisitUrl(url);
         visit.setVisitIp(ip);
         visit.setVisitUa(ua);
         visit.setVisitCity("");
-        visit.setVisitDeviceId("");
+        visit.setVisitDeviceId(fingerprint);
         visit.setVisitRefererUrl(referer);
         visit.setCreatedTime(new Date());
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
