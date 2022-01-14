@@ -213,7 +213,7 @@ public class UploadController {
     }
 
     private TokenUser getTokenUser(HttpServletRequest request) throws BaseApiException {
-        String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
+        String authHeader = request.getHeader(JwtConstants.UPLOAD_TOKEN);
         if (StringUtils.isBlank(authHeader)) {
             throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
