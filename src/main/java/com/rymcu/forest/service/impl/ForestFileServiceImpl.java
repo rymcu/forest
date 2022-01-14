@@ -24,11 +24,12 @@ public class ForestFileServiceImpl extends AbstractService<ForestFile> implement
      *
      * @param md5Value  md5值
      * @param createdBy 用户id
+     * @param fileType  文件类型
      * @return
      */
     @Override
-    public String getFileUrlByMd5(String md5Value, long createdBy) {
-        return forestFileMapper.getFileUrlByMd5(md5Value, createdBy);
+    public String getFileUrlByMd5(String md5Value, long createdBy, String fileType) {
+        return forestFileMapper.getFileUrlByMd5(md5Value, createdBy, fileType);
     }
 
     /**
@@ -38,10 +39,12 @@ public class ForestFileServiceImpl extends AbstractService<ForestFile> implement
      * @param filePath  上传路径
      * @param md5Value  md5值
      * @param createdBy 创建人
+     * @param fileSize  文件大小
+     * @param fileType  文件类型
      * @return
      */
     @Override
-    public int insertForestFile(String fileUrl, String filePath, String md5Value, long createdBy) {
-        return forestFileMapper.insertForestFile(fileUrl, filePath, md5Value, createdBy);
+    public int insertForestFile(String fileUrl, String filePath, String md5Value, long createdBy, long fileSize, String fileType) {
+        return forestFileMapper.insertForestFile(fileUrl, filePath, md5Value, createdBy, fileSize, fileType);
     }
 }

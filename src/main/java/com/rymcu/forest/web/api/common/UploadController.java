@@ -42,8 +42,7 @@ public class UploadController {
     private final static String UPLOAD_URL = "/api/upload/file/batch";
     private final static String LINK_TO_IMAGE_URL = "/api/upload/file/link";
 
-    private static Environment env = SpringContextHolder.getBean(Environment.class);
-
+    private static final Environment env = SpringContextHolder.getBean(Environment.class);
     @Resource
     private ForestFileService forestFileService;
 
@@ -120,8 +119,15 @@ public class UploadController {
         }
         TokenUser tokenUser = getTokenUser(request);
         Map data = new HashMap(2);
+
+        if (multipartFile.getSize() == 0) {
+            data.put("message", "上传失败!");
+            return GlobalResultGenerator.genSuccessResult(data);
+        }
         String md5 = DigestUtils.md5DigestAsHex(multipartFile.getInputStream());
-        String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser());
+        String orgName = multipartFile.getOriginalFilename();
+        String fileType = FileUtils.getExtend(orgName);
+        String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
         if (StringUtils.isNotEmpty(fileUrl)) {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
@@ -137,15 +143,15 @@ public class UploadController {
 
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
 
-        String orgName = multipartFile.getOriginalFilename();
-        String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(orgName).toLowerCase();
+
+        String fileName = System.currentTimeMillis() + fileType;
 
         String savePath = file.getPath() + File.separator + fileName;
         fileUrl = localPath + fileName;
         File saveFile = new File(savePath);
         try {
             FileCopyUtils.copy(multipartFile.getBytes(), saveFile);
-            forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser());
+            forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser(), multipartFile.getSize(), fileType);
             data.put("url", fileUrl);
         } catch (IOException e) {
             data.put("message", "上传失败!");
@@ -174,21 +180,25 @@ public class UploadController {
         for (int i = 0, len = multipartFiles.length; i < len; i++) {
             MultipartFile multipartFile = multipartFiles[i];
             String orgName = multipartFile.getOriginalFilename();
-            String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(orgName).toLowerCase();
+
+            if (multipartFile.getSize() == 0) {
+                errFiles.add(orgName);
+                continue;
+            }
+            String fileType = FileUtils.getExtend(orgName);
+            String fileName = System.currentTimeMillis() + fileType;
             String savePath = file.getPath() + File.separator + fileName;
             File saveFile = new File(savePath);
-            try (InputStream in = multipartFiles[i].getInputStream();
-                 OutputStream out = Files.newOutputStream(saveFile.toPath())) {
+            try (InputStream in = multipartFiles[i].getInputStream(); OutputStream out = Files.newOutputStream(saveFile.toPath())) {
                 String md5 = DigestUtils.md5DigestAsHex(in);
-                String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser());
+                String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
                 if (StringUtils.isNotEmpty(fileUrl)) {
                     successMap.put(orgName, fileUrl);
                     continue;
                 }
-
                 fileUrl = localPath + fileName;
                 FileCopyUtils.copy(in, out);
-                forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser());
+                forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser(), multipartFile.getSize(), fileType);
                 successMap.put(orgName, localPath + fileName);
             } catch (IOException e) {
                 errFiles.add(orgName);
@@ -246,53 +256,57 @@ public class UploadController {
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
         conn.setRequestProperty("referer", "");
-
-        //得到输入流
-        InputStream inputStream = conn.getInputStream();
-
-        // 获取文件md5值
-        String md5 = DigestUtils.md5DigestAsHex(inputStream);
-        String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser());
-
         Map data = new HashMap(2);
-        data.put("originalURL", url);
+        //得到输入流
+        try (InputStream inputStream = conn.getInputStream()) {
+            //获取自己数组
+            byte[] getData = readInputStream(inputStream);
+            if (getData.length == 0) {
+                data.put("message", "文件为空!");
+                return GlobalResultGenerator.genSuccessResult(data);
+            }
 
-        if (StringUtils.isNotEmpty(fileUrl)) {
+            // 获取文件md5值
+            String md5 = DigestUtils.md5DigestAsHex(inputStream);
+            String fileType = FileUtils.getExtend(url);
+            String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
+
+            data.put("originalURL", url);
+
+            if (StringUtils.isNotEmpty(fileUrl)) {
+                data.put("url", fileUrl);
+                return GlobalResultGenerator.genSuccessResult(data);
+            }
+
+            Integer type = linkToImageUrlDTO.getType();
+            if (Objects.isNull(type)) {
+                type = 1;
+            }
+            String typePath = getTypePath(type);
+            //图片存储路径
+            String ctxHeadPicPath = env.getProperty("resource.pic-path");
+            String dir = ctxHeadPicPath + "/" + typePath;
+            File file = new File(dir);
+            if (!file.exists()) {
+                file.mkdirs();// 创建文件根目录
+            }
+
+            String fileName = System.currentTimeMillis() + fileType;
+            fileUrl = Utils.getProperty("resource.file-path") + "/" + typePath + "/" + fileName;
+
+            String savePath = file.getPath() + File.separator + fileName;
+            File saveFile = new File(savePath);
+
+            FileCopyUtils.copy(getData, saveFile);
+            forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser(), getData.length, fileType);
+            data.put("originalURL", url);
             data.put("url", fileUrl);
+            return GlobalResultGenerator.genSuccessResult(data);
+        } catch (IOException e) {
+            data.put("message", "上传失败");
             return GlobalResultGenerator.genSuccessResult(data);
         }
 
-        Integer type = linkToImageUrlDTO.getType();
-        if (Objects.isNull(type)) {
-            type = 1;
-        }
-        String typePath = getTypePath(type);
-        //图片存储路径
-        String ctxHeadPicPath = env.getProperty("resource.pic-path");
-        String dir = ctxHeadPicPath + "/" + typePath;
-        File file = new File(dir);
-        if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
-        }
-
-
-        String fileName = System.currentTimeMillis() + "." + FileUtils.getExtend(url);
-        fileUrl = Utils.getProperty("resource.file-path") + "/" + typePath + "/" + fileName;
-
-        String savePath = file.getPath() + File.separator + fileName;
-
-        File saveFile = new File(savePath);
-        try {
-            //获取自己数组
-            byte[] getData = readInputStream(inputStream);
-            FileCopyUtils.copy(getData, saveFile);
-            forestFileService.insertForestFile(fileUrl, savePath, md5, tokenUser.getIdUser());
-            data.put("originalURL", url);
-            data.put("url", fileUrl);
-        } catch (IOException e) {
-            data.put("message", "上传失败!");
-        }
-        return GlobalResultGenerator.genSuccessResult(data);
 
     }
 
