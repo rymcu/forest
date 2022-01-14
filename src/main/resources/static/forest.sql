@@ -360,7 +360,7 @@ create table forest_file
     file_type    varchar(10) null comment '文件类型'
 ) comment '文件上传记录表';
 
-create index inddex_md5_value_created_by
+create index index_md5_value_created_by
     on forest_file (md5_value, created_by);
 
 create index index_created_by
