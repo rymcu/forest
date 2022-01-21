@@ -35,4 +35,5 @@ build/
 index
 userDic
 
-/src/main/resources/application.yml
+
+*.yml

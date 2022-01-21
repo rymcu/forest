@@ -251,6 +251,17 @@ public class UploadController {
 
         TokenUser tokenUser = getTokenUser(request);
         String url = linkToImageUrlDTO.getUrl();
+        Map data = new HashMap(2);
+
+        if (StringUtils.isBlank(url)) {
+            data.put("message", "文件为空!");
+            return GlobalResultGenerator.genSuccessResult(data);
+        }
+        if (url.contains(Utils.getProperty("resource.file-path"))) {
+            data.put("originalURL", url);
+            data.put("url", url);
+            return GlobalResultGenerator.genSuccessResult(data);
+        }
         URL link = new URL(url);
         HttpURLConnection conn = (HttpURLConnection) link.openConnection();
         //设置超时间为3秒
@@ -258,7 +269,6 @@ public class UploadController {
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
         conn.setRequestProperty("referer", "");
-        Map data = new HashMap(2);
         //得到输入流
         try (InputStream inputStream = conn.getInputStream()) {
             //获取自己数组
@@ -308,8 +318,6 @@ public class UploadController {
             data.put("message", "上传失败");
             return GlobalResultGenerator.genSuccessResult(data);
         }
-
-
     }
 
 }
