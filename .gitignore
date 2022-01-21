@@ -34,3 +34,5 @@ build/
 ### lucene ###
 index
 userDic
+
+/src/main/resources/*.yml
