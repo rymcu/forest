@@ -14,10 +14,12 @@ import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,8 +45,8 @@ public class UploadController {
     private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";
     private final static String UPLOAD_URL = "/api/upload/file/batch";
     private final static String LINK_TO_IMAGE_URL = "/api/upload/file/link";
-
     private static final Environment env = SpringContextHolder.getBean(Environment.class);
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(UploadController.class);
     @Resource
     private ForestFileService forestFileService;
 
@@ -269,6 +271,7 @@ public class UploadController {
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36");
         conn.setRequestProperty("referer", "");
+
         //得到输入流
         try (InputStream inputStream = conn.getInputStream()) {
             //获取自己数组
@@ -277,10 +280,9 @@ public class UploadController {
                 data.put("message", "文件为空!");
                 return GlobalResultGenerator.genSuccessResult(data);
             }
-
             // 获取文件md5值
             String md5 = DigestUtils.md5DigestAsHex(inputStream);
-            String fileType = FileUtils.getExtend(url);
+            String fileType = "." + MimeTypeUtils.parseMimeType(conn.getContentType()).getSubtype();
             String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
 
             data.put("originalURL", url);
@@ -302,7 +304,6 @@ public class UploadController {
             if (!file.exists()) {
                 file.mkdirs();// 创建文件根目录
             }
-
             String fileName = System.currentTimeMillis() + fileType;
             fileUrl = Utils.getProperty("resource.file-path") + "/" + typePath + "/" + fileName;
 
@@ -315,9 +316,15 @@ public class UploadController {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
         } catch (IOException e) {
-            data.put("message", "上传失败");
+            /**
+             * 上传失败返回原链接
+             */
+            logger.error("link: {},\nmessage: {}", url, e.getMessage());
+            data.put("originalURL", url);
+            data.put("url", url);
             return GlobalResultGenerator.genSuccessResult(data);
         }
     }
+
 
 }
