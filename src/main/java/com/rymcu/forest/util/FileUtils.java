@@ -24,7 +24,7 @@ public class FileUtils {
      * @return
      */
     public static String getExtend(String filename) {
-        return getExtend(filename, "");
+        return getExtend(filename, ".png");
     }
 
     /**
