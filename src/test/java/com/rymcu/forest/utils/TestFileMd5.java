@@ -1,13 +1,20 @@
 package com.rymcu.forest.utils;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 import org.springframework.util.DigestUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// 仅运行指定类
+@SpringBootTest(classes = TestFileMd5.class)
 public class TestFileMd5 {
+
+
+    @Value("classpath:1.txt")
+    private Resource testFile;
 
     /**
      * c6c26c7e8a5eb493b14e84bd91df60e3
@@ -17,10 +24,7 @@ public class TestFileMd5 {
      */
     @Test
     public void test() throws Exception {
-        String pathName = "E:\\1.txt";
-        InputStream inputStream = new FileInputStream(new File(pathName));
-        String md5 = DigestUtils.md5DigestAsHex((inputStream));
-        System.err.println(md5);
-        System.err.println(md5.length());
+        String md5 = DigestUtils.md5DigestAsHex(testFile.getInputStream());
+        assertEquals("202cb962ac59075b964b07152d234b70", md5);
     }
 }
