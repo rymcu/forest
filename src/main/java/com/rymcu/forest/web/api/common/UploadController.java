@@ -128,7 +128,7 @@ public class UploadController {
             data.put("message", "上传失败!");
             return GlobalResultGenerator.genSuccessResult(data);
         }
-        String md5 = DigestUtils.md5DigestAsHex(multipartFile.getInputStream());
+        String md5 = DigestUtils.md5DigestAsHex(multipartFile.getBytes());
         String orgName = multipartFile.getOriginalFilename();
         String fileType = FileUtils.getExtend(orgName);
         String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
@@ -190,8 +190,8 @@ public class UploadController {
                 continue;
             }
             String fileType = FileUtils.getExtend(orgName);
-            try (InputStream in = multipartFile.getInputStream()) {
-                String md5 = DigestUtils.md5DigestAsHex(in);
+            try {
+                String md5 = DigestUtils.md5DigestAsHex(multipartFile.getBytes());
                 String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
                 if (StringUtils.isNotEmpty(fileUrl)) {
                     successMap.put(orgName, fileUrl);
@@ -281,7 +281,7 @@ public class UploadController {
                 return GlobalResultGenerator.genSuccessResult(data);
             }
             // 获取文件md5值
-            String md5 = DigestUtils.md5DigestAsHex(inputStream);
+            String md5 = DigestUtils.md5DigestAsHex(getData);
             String fileType = "." + MimeTypeUtils.parseMimeType(conn.getContentType()).getSubtype();
             String fileUrl = forestFileService.getFileUrlByMd5(md5, tokenUser.getIdUser(), fileType);
 
