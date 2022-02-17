@@ -69,6 +69,7 @@ public class UserUtils {
                     if (user != null) {
                         TokenUser tokenUser = new TokenUser();
                         BeanCopierUtil.copy(user, tokenUser);
+                        tokenUser.setAccount(user.getEmail());
                         tokenUser.setToken(token);
                         tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
                         return tokenUser;
