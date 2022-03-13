@@ -1,7 +1,12 @@
 package com.rymcu.forest.service.impl;
 
+import com.rymcu.forest.dto.ArticleDTO;
+import com.rymcu.forest.dto.ArticleTagDTO;
+import com.rymcu.forest.dto.BankAccountDTO;
+import com.rymcu.forest.dto.UserInfoDTO;
 import com.rymcu.forest.dto.admin.Dashboard;
 import com.rymcu.forest.dto.admin.DashboardData;
+import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.mapper.DashboardMapper;
 import com.rymcu.forest.service.DashboardService;
 import org.springframework.stereotype.Service;
@@ -18,6 +23,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Resource
     private DashboardMapper dashboardMapper;
+    @Resource
+    private ArticleMapper articleMapper;
 
     @Override
     public Dashboard dashboard() {
@@ -46,7 +53,6 @@ public class DashboardServiceImpl implements DashboardService {
         while (now.isAfter(localDate)) {
             String date = localDate.toString();
             dates.add(date);
-
             articles.forEach(article->{
                 if (date.equals(article.getLabel())) {
                     articleData.add(article.getValue());
@@ -88,7 +94,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Map history() {
-        Map map = new HashMap(4);
+        Map<String, Object> map = new HashMap(4);
         ArrayList<String> dates = new ArrayList(30);
         ArrayList<Integer> articleData = new ArrayList(30);
         ArrayList<Integer> userData = new ArrayList(30);
@@ -176,5 +182,25 @@ public class DashboardServiceImpl implements DashboardService {
         map.put("users", userData);
         map.put("visits", visitData);
         return map;
+    }
+
+    @Override
+    public List<UserInfoDTO> newUsers() {
+        return dashboardMapper.selectNewUsers();
+    }
+
+    @Override
+    public List<BankAccountDTO> newBankAccounts() {
+        return dashboardMapper.selectNewBankAccounts();
+    }
+
+    @Override
+    public List<ArticleDTO> newArticles() {
+        List<ArticleDTO> list = dashboardMapper.selectNewArticles();
+        list.forEach(article -> {
+            List<ArticleTagDTO> tags = articleMapper.selectTags(article.getIdArticle());
+            article.setTags(tags);
+        });
+        return list;
     }
 }

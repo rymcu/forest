@@ -46,4 +46,12 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
      * @throws Exception
      */
     TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception;
+
+    /**
+     * 发放新手奖励
+     * @param transactionRecord
+     * @return
+     * @throws Exception
+     */
+    TransactionRecord newbieRewards(TransactionRecord transactionRecord) throws Exception;
 }

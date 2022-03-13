@@ -37,4 +37,11 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
      * @return
      */
     Boolean existsWithBankAccountAndFunds(@Param("bankAccount") String bankAccount, @Param("funds") String funds);
+
+    /**
+     * 查询是否已发放
+     * @param bankAccount
+     * @return
+     */
+    Boolean existsWithNewbieRewards(@Param("bankAccount") String bankAccount);
 }

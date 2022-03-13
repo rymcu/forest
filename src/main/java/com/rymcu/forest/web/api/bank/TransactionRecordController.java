@@ -27,4 +27,10 @@ public class TransactionRecordController {
         return GlobalResultGenerator.genSuccessResult(transactionRecord);
     }
 
+    @PostMapping("/newbie-rewards")
+    public GlobalResult newbieRewards(@RequestBody TransactionRecord transactionRecord) throws Exception {
+        transactionRecord = transactionRecordService.newbieRewards(transactionRecord);
+        return GlobalResultGenerator.genSuccessResult(transactionRecord);
+    }
+
 }
