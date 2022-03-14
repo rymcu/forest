@@ -54,13 +54,13 @@ public interface DashboardMapper {
     List<DashboardData> selectLastThirtyDaysArticleData();
 
     /**
-     * 获取最近 30 天文章数据
+     * 获取最近 30 天用户数据
      * @return
      */
     List<DashboardData> selectLastThirtyDaysUserData();
 
     /**
-     * 获取最近 30 天文章数据
+     * 获取最近 30 天流量数据
      * @return
      */
     List<DashboardData> selectLastThirtyDaysVisitData();
@@ -100,4 +100,16 @@ public interface DashboardMapper {
      * @return
      */
     List<ArticleDTO> selectNewArticles();
+
+    /**
+     * 获取最近 30 天访客数据
+     * @return
+     */
+    List<DashboardData> selectLastThirtyDaysVisitIpData();
+
+    /**
+     * 获取历史 1 年访客数据
+     * @return
+     */
+    List<DashboardData> selectHistoryVisitIpData();
 }

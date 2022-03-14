@@ -109,7 +109,7 @@
     <select id="selectNewUsers" resultMap="UserInfoResultMapper">
         select id, nickname, avatar_url, account, created_time
         from forest_user
-        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 7 day), '%Y-%m-%d'), '%Y-%m-%d')
         order by created_time desc
     </select>
     <select id="selectNewBankAccounts" resultMap="BankAccountResultMap">
@@ -117,7 +117,7 @@
         from forest_bank_account fba
                  join forest_user fu on fba.account_owner = fu.id
         where fba.created_time >
-              str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+              str_to_date(date_format(date_sub(sysdate(), interval + 7 day), '%Y-%m-%d'), '%Y-%m-%d')
         order by fba.created_time desc
     </select>
     <select id="selectNewArticles" resultMap="ArticleResultMap">
@@ -131,7 +131,29 @@
         from forest_article art
         where article_status = 0
           and art.created_time >
-              str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+              str_to_date(date_format(date_sub(sysdate(), interval + 7 day), '%Y-%m-%d'), '%Y-%m-%d')
         order by art.created_time desc
+    </select>
+    <select id="selectLastThirtyDaysVisitIpData" resultMap="DashboardDataResultMap">
+        select count(t.label) as value, t.label
+        from (
+                 select distinct visit_ip as ip, date_format(created_time, '%Y-%m-%d') as label
+                 from forest_visit
+                 where created_time >
+                       str_to_date(date_format(date_sub(sysdate(), interval + 30 day), '%Y-%m-%d'), '%Y-%m-%d')
+                 GROUP BY date_format(created_time, '%Y-%m-%d'), visit_ip
+             ) t
+        group by t.label
+    </select>
+    <select id="selectHistoryVisitIpData" resultMap="DashboardDataResultMap">
+        select count(t.label) as value, t.label
+        from (
+                 select distinct visit_ip as ip, date_format(created_time, '%Y-%m') as label
+                 from forest_visit
+                 where created_time >
+                       str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+                 GROUP BY date_format(created_time, '%Y-%m'), visit_ip
+             ) t
+        group by t.label
     </select>
 </mapper>
