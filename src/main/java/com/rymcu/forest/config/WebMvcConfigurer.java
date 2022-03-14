@@ -71,7 +71,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(restAuthTokenInterceptor()).addPathPatterns("/api/**")
                 .excludePathPatterns("/api/v1/console/**", "/api/v1/article/articles/**", "/api/v1/article/detail/**"
-                        , "/api/v1/topic/**", "/api/v1/user/**", "/api/v1/article/*/comments", "/api/v1/rule/currency/**", "/api/v1/lucene/**");
+                        , "/api/v1/topic/**", "/api/v1/user/**", "/api/v1/article/*/comments", "/api/v1/rule/currency/**", "/api/v1/lucene/**", "/api/v1/open-data/**");
 
     }
 
