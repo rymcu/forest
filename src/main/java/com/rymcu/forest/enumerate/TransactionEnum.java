@@ -9,7 +9,8 @@ import java.util.Arrays;
 public enum TransactionEnum {
     ArticleSponsor("0", 20, "文章赞赏"),
     Answer("1", 30, "答题奖励"),
-    CorrectAnswer("2", 50, "答题奖励");
+    CorrectAnswer("2", 50, "答题奖励"),
+    NewbieRewards("3", 200, "新手奖励");
 
     private String dataType;
 

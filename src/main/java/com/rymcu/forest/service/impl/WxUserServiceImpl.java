@@ -45,18 +45,11 @@ public class WxUserServiceImpl extends AbstractService<WxUser> implements WxUser
     }
 
     private WxUser copyWxUser(WxMpUser wxMpUser, WxUser wxUser) {
-        wxUser.setNickname(wxMpUser.getNickname());
-        wxUser.setHeadImgUrl(wxMpUser.getHeadImgUrl());
-        wxUser.setCountry(wxMpUser.getCountry());
-        wxUser.setProvince(wxMpUser.getProvince());
-        wxUser.setCity(wxMpUser.getCity());
-        wxUser.setSex(wxMpUser.getSex());
         wxUser.setSubscribe(wxMpUser.getSubscribe());
         wxUser.setSubscribeTime(wxMpUser.getSubscribeTime());
         wxUser.setUnionId(wxMpUser.getUnionId());
         wxUser.setOpenId(wxMpUser.getOpenId());
         wxUser.setLanguage(wxMpUser.getLanguage());
-        wxUser.setSexDesc(wxMpUser.getSexDesc());
         return wxUser;
     }
 }

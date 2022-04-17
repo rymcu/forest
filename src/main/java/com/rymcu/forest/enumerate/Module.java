@@ -8,5 +8,6 @@ package com.rymcu.forest.enumerate;
  */
 public enum Module {
     ARTICLE,
-    PORTFOLIO;
+    PORTFOLIO,
+    ARTICLE_TAG;
 }

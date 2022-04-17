@@ -106,6 +106,20 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
         return null;
     }
 
+    @Override
+    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) throws Exception {
+        // 判断是否重复发放
+        Boolean result = transactionRecordMapper.existsWithNewbieRewards(transactionRecord.getToBankAccount());
+        if (result) {
+            return transactionRecord;
+        }
+        BankAccount formBankAccount = bankAccountService.findSystemBankAccount();
+        transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
+        transactionRecord.setMoney(new BigDecimal(TransactionEnum.NewbieRewards.getMoney()));
+        transactionRecord.setFunds(TransactionEnum.NewbieRewards.getDescription());
+        return transfer(transactionRecord);
+    }
+
     private String nextTransactionNo() {
         String orderNo = "E";
         String key = "orderId";

@@ -94,7 +94,7 @@ public class ArticleController {
     }
 
     @PostMapping("/update-tags")
-    @AuthorshipInterceptor(moduleName = Module.ARTICLE)
+    @AuthorshipInterceptor(moduleName = Module.ARTICLE_TAG)
     public GlobalResult updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
         Map map = articleService.updateTags(article.getIdArticle(), article.getArticleTags());
         return GlobalResultGenerator.genSuccessResult(map);

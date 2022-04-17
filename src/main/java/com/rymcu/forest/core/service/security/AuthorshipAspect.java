@@ -8,6 +8,7 @@ import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.jwt.def.JwtConstants;
+import com.rymcu.forest.mapper.UserMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.util.UserUtils;
@@ -52,6 +53,8 @@ public class AuthorshipAspect {
     private ArticleService articleService;
     @Resource
     private PortfolioService portfolioService;
+    @Resource
+    private UserMapper userMapper;
 
     /**
      * 检查用户修改信息权限
@@ -119,7 +122,14 @@ public class AuthorshipAspect {
                     TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
                     if (Objects.nonNull(tokenUser)) {
                         if (!idAuthor.equals(tokenUser.getIdUser())) {
-                            throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+                            boolean hasPermission = false;
+                            if (Module.ARTICLE_TAG.equals(log.moduleName())) {
+                                // 判断管理员权限
+                                hasPermission = userMapper.hasAdminPermission(tokenUser.getAccount());
+                            }
+                            if (!hasPermission) {
+                                throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+                            }
                         }
                     } else {
                         throw new BaseApiException(ErrorCode.ACCESS_DENIED);

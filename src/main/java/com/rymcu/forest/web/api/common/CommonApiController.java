@@ -44,10 +44,10 @@ public class CommonApiController {
         map.put("message", GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
-            map.put("message","该邮箱已被注册！");
+            map.put("message", "该邮箱已被注册！");
         } else {
             Integer result = javaMailService.sendEmailCode(email);
-            if(result == 0){
+            if (result == 0) {
                 map.put("message", GlobalResultMessage.SEND_FAIL.getMessage());
             }
         }
@@ -61,35 +61,35 @@ public class CommonApiController {
         User user = userService.findByAccount(email);
         if (user != null) {
             Integer result = javaMailService.sendForgetPasswordEmail(email);
-            if(result == 0){
+            if (result == 0) {
                 map.put("message", GlobalResultMessage.SEND_FAIL.getMessage());
             }
         } else {
-            map.put("message","该邮箱未注册！");
+            map.put("message", "该邮箱未注册！");
         }
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PostMapping("/register")
-    public GlobalResult<Map> register(@RequestBody UserRegisterInfoDTO registerInfo){
+    public GlobalResult<Map> register(@RequestBody UserRegisterInfoDTO registerInfo) {
         Map map = userService.register(registerInfo.getEmail(), registerInfo.getPassword(), registerInfo.getCode());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PostMapping("/login")
-    public GlobalResult<Map> login(@RequestBody User user){
+    public GlobalResult<Map> login(@RequestBody User user) {
         Map map = userService.login(user.getAccount(), user.getPassword());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @GetMapping("/heartbeat")
-    public GlobalResult heartbeat(){
+    public GlobalResult heartbeat() {
         return GlobalResultGenerator.genSuccessResult("heartbeat");
     }
 
     @GetMapping("/articles")
     @VisitLogger
-    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO){
+    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(searchDTO);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
@@ -98,8 +98,7 @@ public class CommonApiController {
     }
 
     @GetMapping("/announcements")
-    @VisitLogger
-    public GlobalResult<Map> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows){
+    public GlobalResult<Map> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findAnnouncements();
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
@@ -109,29 +108,23 @@ public class CommonApiController {
 
     @GetMapping("/article/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> article(@PathVariable Integer id){
-        ArticleDTO articleDTO = articleService.findArticleDTOById(id,1);
+    public GlobalResult<Map<String, Object>> article(@PathVariable Integer id) {
+        ArticleDTO articleDTO = articleService.findArticleDTOById(id, 1);
         Map<String, Object> map = new HashMap<>(1);
         map.put("article", articleDTO);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
-    @GetMapping("/token/{token}")
-    public GlobalResult<TokenUser> token(@PathVariable String token){
-        TokenUser tokenUser = UserUtils.getTokenUser(token);
-        return GlobalResultGenerator.genSuccessResult(tokenUser);
-    }
-
     @PatchMapping("/forget-password")
-    public GlobalResult<Map> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword){
+    public GlobalResult<Map> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword) {
         Map map = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @GetMapping("/portfolio/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Integer id){
-        PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id,1);
+    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Integer id) {
+        PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id, 1);
         Map<String, Object> map = new HashMap<>(1);
         map.put("portfolio", portfolioDTO);
         return GlobalResultGenerator.genSuccessResult(map);
