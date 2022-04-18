@@ -76,3 +76,10 @@ baidu:
     appKey: xxxx # 百度AI-文字识别 应用 appKey
     secretKey: xxxx # 百度AI-文字识别 应用 secretKey
 ```
+
+## 常见问题
+**Q: 找不到数据库配置，Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.**
+
+A: 检查是否配置了资源文件目录
+
+![1636569760e18471dd2c74bedac5756e5fff537df.png](https://static.rymcu.com/article/1650261657433.png)
