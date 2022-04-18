@@ -1,8 +1,6 @@
-create
-database forest default character set utf8mb4 collate utf8mb4_unicode_ci;
+create database forest default character set utf8mb4 collate utf8mb4_unicode_ci;
 
-use
-forest;
+use forest;
 
 create table forest_article
 (
@@ -24,7 +22,7 @@ create table forest_article
     article_status          char default '0' null comment '文章状态',
     article_thumbs_up_count int  default 0 null comment '点赞总数',
     article_sponsor_count   int  default 0 null comment '赞赏总数'
-) comment ' ' collate = utf8mb4_unicode_ci;
+) comment '文章表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_article_content
 (
@@ -272,8 +270,9 @@ create table forest_user
     created_time    datetime null comment '创建时间',
     updated_time    datetime null comment '更新时间',
     last_login_time datetime null comment '最后登录时间',
-    signature       varchar(128) null comment '签名'
-) comment ' ' collate = utf8mb4_unicode_ci;
+    signature       varchar(128) null comment '签名',
+    last_online_time datetime null comment '最后在线时间'
+) comment '用户表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_user_extend
 (
@@ -290,7 +289,7 @@ create table forest_user_role
     id_user      bigint not null comment '用户表主键',
     id_role      bigint not null comment '角色表主键',
     created_time datetime null comment '创建时间'
-) comment ' ' collate = utf8mb4_unicode_ci;
+) comment '用户权限表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_user_tag
 (
