@@ -12,6 +12,7 @@ import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.util.Html2TextUtil;
 import com.rymcu.forest.util.NotificationUtils;
 import com.rymcu.forest.util.Utils;
+import com.rymcu.forest.util.XssUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
     private List<CommentDTO> genComments(List<CommentDTO> commentDTOList) {
         commentDTOList.forEach(commentDTO -> {
             commentDTO.setTimeAgo(Utils.getTimeAgo(commentDTO.getCreatedTime()));
+            commentDTO.setCommentContent(XssUtils.replaceHtmlCode(commentDTO.getCommentContent()));
             if (commentDTO.getCommentAuthorId() != null) {
                 Author author = commentMapper.selectAuthor(commentDTO.getCommentAuthorId());
                 if (author != null) {
@@ -87,10 +89,10 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
         comment.setCommentIP(ip);
         comment.setCommentUA(ua);
         comment.setCreatedTime(new Date());
+        comment.setCommentContent(XssUtils.replaceHtmlCode(comment.getCommentContent()));
         commentMapper.insertSelective(comment);
-        StringBuilder commentSharpUrl = new StringBuilder(article.getArticlePermalink());
-        commentSharpUrl.append("#comment-").append(comment.getIdComment());
-        commentMapper.updateCommentSharpUrl(comment.getIdComment(), commentSharpUrl.toString());
+        String commentSharpUrl = article.getArticlePermalink() + "#comment-" + comment.getIdComment();
+        commentMapper.updateCommentSharpUrl(comment.getIdComment(), commentSharpUrl);
 
         String commentContent = comment.getCommentContent();
         if(StringUtils.isNotBlank(commentContent)){
