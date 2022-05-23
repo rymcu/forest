@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  * @packageName com.rymcu.forest.util
  */
 public class XssUtils {
+    private static final String regex = "(<pre>[\\s|\\S]+?</pre>)|(<code>[\\s|\\S]+?</code>)";
 
     /**
      * 滤除content中的危险 HTML 代码, 主要是脚本代码, 滚动字幕代码以及脚本事件处理代码
@@ -48,10 +49,11 @@ public class XssUtils {
     }
 
     public static String filterHtmlCode(String content) {
-        String regex = "<pre>[\\s|\\S]+?</pre>";
+        if(StringUtils.isBlank(content)) {
+            return  content;
+        }
         // 拿到匹配的pre标签List
         List<String> resultFindAll = ReUtil.findAll(regex, content, 0, new ArrayList<>());
-        String result = "";
         // size大于0，就做替换
         if (resultFindAll.size() > 0) {
             // 生成一个待替换唯一字符串
@@ -63,17 +65,15 @@ public class XssUtils {
             Pattern pattern = Pattern.compile(preTagReplace);
             // 替换pre标签内容
             String preFilter = ReUtil.replaceAll(content, regex, preTagReplace);
-            System.err.println("pre标签替换");
-            System.err.println(preFilter);
-            final String[] filterResult = {HtmlUtil.filter(preFilter)};
-            resultFindAll.forEach(obj -> {
-                filterResult[0] = ReUtil.replaceFirst(pattern, filterResult[0], obj);
-            });
-            result = filterResult[0];
+            // 拦截xss
+            final String[] filterResult = {replaceHtmlCode(preFilter)};
+
+            // 依次将替换后的pre标签换回来
+            resultFindAll.forEach(obj -> filterResult[0] = ReUtil.replaceFirst(pattern, filterResult[0], obj));
+            return filterResult[0];
         } else {
-            result = HtmlUtil.filter(content);
+            return replaceHtmlCode(content);
         }
-        return result;
     }
 
 }
