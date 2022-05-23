@@ -12,10 +12,7 @@ import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.Html2TextUtil;
-import com.rymcu.forest.util.NotificationUtils;
-import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.util.Utils;
+import com.rymcu.forest.util.*;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +109,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String articleTitle = article.getArticleTitle();
         String articleTags = article.getArticleTags();
         String articleContent = article.getArticleContent();
-        String articleContentHtml = article.getArticleContentHtml();
+        String articleContentHtml = XssUtils.filterHtmlCode(article.getArticleContentHtml());
         User user = UserUtils.getCurrentUserByToken();
         if (Objects.isNull(user)) {
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
@@ -358,7 +355,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         if (!type.equals(articleList)) {
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             if (type.equals(articleView)) {
-                article.setArticleContent(articleContent.getArticleContentHtml());
+                article.setArticleContent(XssUtils.filterHtmlCode(articleContent.getArticleContentHtml()));
                 // 获取所属作品集列表数据
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
                 portfolioArticleDTOList.forEach(this::genPortfolioArticles);
@@ -366,7 +363,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             } else if (type.equals(articleEdit)) {
                 article.setArticleContent(articleContent.getArticleContent());
             } else {
-                article.setArticleContent(articleContent.getArticleContentHtml());
+                article.setArticleContent(XssUtils.filterHtmlCode(articleContent.getArticleContentHtml()));
             }
         }
         return article;

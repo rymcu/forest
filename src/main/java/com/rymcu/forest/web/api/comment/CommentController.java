@@ -26,7 +26,7 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/post")
-    public GlobalResult postComment(@RequestBody Comment comment, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
+    public GlobalResult postComment(@RequestBody Comment comment, HttpServletRequest request) throws BaseApiException {
         Map map = commentService.postComment(comment,request);
         return GlobalResultGenerator.genSuccessResult(map);
     }

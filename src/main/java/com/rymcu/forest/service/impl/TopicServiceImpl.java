@@ -1,5 +1,6 @@
 package com.rymcu.forest.service.impl;
 
+import cn.hutool.http.HtmlUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.service.AbstractService;
@@ -10,6 +11,7 @@ import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.Topic;
 import com.rymcu.forest.mapper.TopicMapper;
 import com.rymcu.forest.service.TopicService;
+import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,8 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map saveTopic(Topic topic) {
-        Integer result = 0;
+        Integer result;
+        topic.setTopicDescriptionHtml(XssUtils.filterHtmlCode(topic.getTopicDescriptionHtml()));
         Map map = new HashMap(1);
         if (topic.getIdTopic() == null) {
             if (StringUtils.isBlank(topic.getTopicTitle())) {

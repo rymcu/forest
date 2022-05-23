@@ -13,6 +13,7 @@ import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.util.BaiDuAipUtils;
 import com.rymcu.forest.util.CacheUtils;
 import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
@@ -127,6 +128,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         Integer result;
 
         Map map = new HashMap(1);
+        tag.setTagDescription(XssUtils.filterHtmlCode(tag.getTagDescription()));
         if (tag.getIdTag() == null) {
             if (StringUtils.isBlank(tag.getTagTitle())) {
                 map.put("message", "标签名不能为空!");

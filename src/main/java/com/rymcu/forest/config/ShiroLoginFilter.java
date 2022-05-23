@@ -2,6 +2,7 @@ package com.rymcu.forest.config;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class ShiroLoginFilter extends FormAuthenticationFilter {
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setHeader("sessionstatus", "timeOut");
             httpServletResponse.addHeader("loginPath", this.getLoginUrl());
-            httpServletResponse.getWriter().write(JSONObject.toJSONString(GlobalResultGenerator.genErrorResult("未登录或已登录超时，请重新登录"),true));
+            httpServletResponse.getWriter().write(JSONObject.toJSONString(GlobalResultGenerator.genErrorResult("未登录或已登录超时，请重新登录"), SerializerFeature.PrettyFormat));
             return false;
         }else {
             if (log.isTraceEnabled()) {

@@ -15,6 +15,7 @@ import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.Utils;
+import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
@@ -75,6 +76,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolio.setPortfolioAuthorId(user.getIdUser());
             portfolio.setCreatedTime(new Date());
             portfolio.setUpdatedTime(portfolio.getCreatedTime());
+            portfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
             portfolioMapper.insertSelective(portfolio);
             PortfolioIndexUtil.addIndex(
                     PortfolioLucene.builder()
