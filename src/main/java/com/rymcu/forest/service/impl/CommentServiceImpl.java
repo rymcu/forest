@@ -41,7 +41,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
     private List<CommentDTO> genComments(List<CommentDTO> commentDTOList) {
         commentDTOList.forEach(commentDTO -> {
             commentDTO.setTimeAgo(Utils.getTimeAgo(commentDTO.getCreatedTime()));
-            commentDTO.setCommentContent(XssUtils.replaceHtmlCode(commentDTO.getCommentContent()));
+            commentDTO.setCommentContent(XssUtils.filterHtmlCode(commentDTO.getCommentContent()));
             if (commentDTO.getCommentAuthorId() != null) {
                 Author author = commentMapper.selectAuthor(commentDTO.getCommentAuthorId());
                 if (author != null) {
@@ -88,7 +88,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
         comment.setCommentIP(ip);
         comment.setCommentUA(ua);
         comment.setCreatedTime(new Date());
-        comment.setCommentContent(XssUtils.replaceHtmlCode(comment.getCommentContent()));
+        comment.setCommentContent(XssUtils.filterHtmlCode(comment.getCommentContent()));
         commentMapper.insertSelective(comment);
         String commentSharpUrl = article.getArticlePermalink() + "#comment-" + comment.getIdComment();
         commentMapper.updateCommentSharpUrl(comment.getIdComment(), commentSharpUrl);

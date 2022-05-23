@@ -128,7 +128,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         Integer result;
 
         Map map = new HashMap(1);
-        tag.setTagDescription(XssUtils.replaceHtmlCode(tag.getTagDescription()));
+        tag.setTagDescription(XssUtils.filterHtmlCode(tag.getTagDescription()));
         if (tag.getIdTag() == null) {
             if (StringUtils.isBlank(tag.getTagTitle())) {
                 map.put("message", "标签名不能为空!");

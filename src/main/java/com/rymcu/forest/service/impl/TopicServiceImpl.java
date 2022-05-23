@@ -49,8 +49,8 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Map saveTopic(Topic topic) {
-        Integer result = 0;
-        topic.setTopicDescriptionHtml(XssUtils.replaceHtmlCode(topic.getTopicDescriptionHtml()));
+        Integer result;
+        topic.setTopicDescriptionHtml(XssUtils.filterHtmlCode(topic.getTopicDescriptionHtml()));
         Map map = new HashMap(1);
         if (topic.getIdTopic() == null) {
             if (StringUtils.isBlank(topic.getTopicTitle())) {

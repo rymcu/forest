@@ -76,7 +76,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolio.setPortfolioAuthorId(user.getIdUser());
             portfolio.setCreatedTime(new Date());
             portfolio.setUpdatedTime(portfolio.getCreatedTime());
-            portfolio.setPortfolioDescriptionHtml(XssUtils.replaceHtmlCode(portfolio.getPortfolioDescription()));
+            portfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
             portfolioMapper.insertSelective(portfolio);
             PortfolioIndexUtil.addIndex(
                     PortfolioLucene.builder()

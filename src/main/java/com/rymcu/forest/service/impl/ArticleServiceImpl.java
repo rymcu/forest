@@ -109,7 +109,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String articleTitle = article.getArticleTitle();
         String articleTags = article.getArticleTags();
         String articleContent = article.getArticleContent();
-        String articleContentHtml = XssUtils.replaceHtmlCode(article.getArticleContentHtml());
+        String articleContentHtml = XssUtils.filterHtmlCode(article.getArticleContentHtml());
         User user = UserUtils.getCurrentUserByToken();
         if (Objects.isNull(user)) {
             throw new BaseApiException(ErrorCode.INVALID_TOKEN);
@@ -355,7 +355,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         if (!type.equals(articleList)) {
             ArticleContent articleContent = articleMapper.selectArticleContent(article.getIdArticle());
             if (type.equals(articleView)) {
-                article.setArticleContent(XssUtils.replaceHtmlCode(articleContent.getArticleContentHtml()));
+                article.setArticleContent(XssUtils.filterHtmlCode(articleContent.getArticleContentHtml()));
                 // 获取所属作品集列表数据
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
                 portfolioArticleDTOList.forEach(this::genPortfolioArticles);
@@ -363,7 +363,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             } else if (type.equals(articleEdit)) {
                 article.setArticleContent(articleContent.getArticleContent());
             } else {
-                article.setArticleContent(XssUtils.replaceHtmlCode(articleContent.getArticleContentHtml()));
+                article.setArticleContent(XssUtils.filterHtmlCode(articleContent.getArticleContentHtml()));
             }
         }
         return article;
