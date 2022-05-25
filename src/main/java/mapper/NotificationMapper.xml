@@ -25,6 +25,9 @@
     <update id="readNotification">
         update forest_notification set has_read = '1' where id = #{id}
     </update>
+    <update id="readAllNotification">
+        update forest_notification set has_read = '1' where id_user = #{idUser} and has_read = '0'
+    </update>
     <select id="selectUnreadNotifications" resultMap="BaseResultMapper">
         select * from forest_notification where has_read = '0' and id_user = #{idUser} order by created_time desc
     </select>

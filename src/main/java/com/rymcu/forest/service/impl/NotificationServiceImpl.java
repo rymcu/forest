@@ -7,6 +7,8 @@ import com.rymcu.forest.mapper.NotificationMapper;
 import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.util.NotificationUtils;
+import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,5 +71,10 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     @Transactional(rollbackFor = Exception.class)
     public Integer readNotification(Integer id) {
         return notificationMapper.readNotification(id);
+    }
+
+    @Override
+    public Integer readAllNotification() throws BaseApiException {
+        return notificationMapper.readAllNotification(Objects.requireNonNull(UserUtils.getCurrentUserByToken()).getIdUser());
     }
 }
