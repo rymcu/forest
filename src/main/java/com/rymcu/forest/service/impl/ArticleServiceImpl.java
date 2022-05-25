@@ -277,7 +277,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         StringBuilder shareUrl = new StringBuilder(article.getArticlePermalink());
         shareUrl.append("?s=").append(user.getAccount());
         Map map = new HashMap(1);
-        map.put("shareUrl", shareUrl);
+        map.put("shareUrl", shareUrl.toString());
         return map;
     }
 
