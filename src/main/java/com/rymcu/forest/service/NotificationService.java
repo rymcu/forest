@@ -3,6 +3,7 @@ package com.rymcu.forest.service;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.NotificationDTO;
 import com.rymcu.forest.entity.Notification;
+import com.rymcu.forest.web.api.exception.BaseApiException;
 
 import java.util.List;
 
@@ -47,6 +48,14 @@ public interface NotificationService extends Service<Notification> {
     /**
      * 标记消息已读
      * @param id
+     * @return
      */
     Integer readNotification(Integer id);
+
+    /**
+     * 标记所有消息已读
+     * @return
+     * @throws BaseApiException
+     */
+    Integer readAllNotification() throws BaseApiException;
 }

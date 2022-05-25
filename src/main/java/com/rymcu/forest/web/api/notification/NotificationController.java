@@ -65,4 +65,13 @@ public class NotificationController {
         return GlobalResultGenerator.genSuccessResult("标记已读成功");
     }
 
+    @PutMapping("/read-all")
+    public GlobalResult readAll() throws BaseApiException {
+        Integer result = notificationService.readAllNotification();
+        if (result == 0) {
+            return GlobalResultGenerator.genErrorResult("标记已读失败");
+        }
+        return GlobalResultGenerator.genSuccessResult("标记已读成功");
+    }
+
 }
