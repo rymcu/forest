@@ -77,4 +77,9 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     public Integer readAllNotification() throws BaseApiException {
         return notificationMapper.readAllNotification(Objects.requireNonNull(UserUtils.getCurrentUserByToken()).getIdUser());
     }
+
+    @Override
+    public Integer deleteUnreadNotification(Integer dataId, String dataType) {
+        return notificationMapper.deleteUnreadNotification(dataId, dataType);
+    }
 }

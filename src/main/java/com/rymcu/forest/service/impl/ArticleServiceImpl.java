@@ -10,6 +10,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
+import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.*;
@@ -43,6 +44,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private UserService userService;
     @Resource
     private LuceneService luceneService;
+    @Resource
+    private NotificationService notificationService;
 
     @Value("${resource.domain}")
     private String domain;
@@ -257,6 +260,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         articleMapper.deleteTagArticle(id);
         // 删除文章内容表
         articleMapper.deleteArticleContent(id);
+        // 删除相关未读消息
+        notificationService.deleteUnreadNotification(id, NotificationConstant.PostArticle);
     }
 
     @Override
