@@ -21,6 +21,7 @@ public class XssUtils {
 
     /**
      * 滤除content中的危险 HTML 代码, 主要是脚本代码, 滚动字幕代码以及脚本事件处理代码
+     *
      * @param content 需要滤除的字符串
      * @return 过滤的结果
      */
@@ -49,8 +50,8 @@ public class XssUtils {
     }
 
     public static String filterHtmlCode(String content) {
-        if(StringUtils.isBlank(content)) {
-            return  content;
+        if (StringUtils.isBlank(content)) {
+            return content;
         }
         // 拿到匹配的pre标签List
         List<String> resultFindAll = ReUtil.findAll(REGEX_CODE, content, 0, new ArrayList<>());
@@ -100,5 +101,3 @@ public class XssUtils {
     }
 
 }
-
-
