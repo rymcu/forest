@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @packageName com.rymcu.forest.util
  */
 public class XssUtils {
-    private static final String regex = "(<pre>[\\s|\\S]+?</pre>)|(<code>[\\s|\\S]+?</code>)";
+    private static final String REGEX_CODE = "(<pre>[\\s|\\S]+?</pre>)|(<code>[\\s|\\S]+?</code>)";
 
     /**
      * 滤除content中的危险 HTML 代码, 主要是脚本代码, 滚动字幕代码以及脚本事件处理代码
@@ -53,27 +53,50 @@ public class XssUtils {
             return  content;
         }
         // 拿到匹配的pre标签List
-        List<String> resultFindAll = ReUtil.findAll(regex, content, 0, new ArrayList<>());
+        List<String> resultFindAll = ReUtil.findAll(REGEX_CODE, content, 0, new ArrayList<>());
         // size大于0，就做替换
         if (resultFindAll.size() > 0) {
-            // 生成一个待替换唯一字符串
-            String preTagReplace = UUID.randomUUID().toString() + System.currentTimeMillis();
-            // 判断替换字符串是否唯一
-            while (ReUtil.findAll(preTagReplace, content, 0, new ArrayList<>()).size() > 0) {
-                preTagReplace = UUID.randomUUID().toString() + System.currentTimeMillis();
-            }
-            Pattern pattern = Pattern.compile(preTagReplace);
+            String uniqueUUID = searchUniqueUUID(content);
+
+            // 替换所有$为uniqueUUID
+            content = ReUtil.replaceAll(content, "\\$", uniqueUUID);
+
+            // pre标签替换字符串
+            String replaceStr = uniqueUUID + uniqueUUID;
+
             // 替换pre标签内容
-            String preFilter = ReUtil.replaceAll(content, regex, preTagReplace);
+            String preFilter = ReUtil.replaceAll(content, REGEX_CODE, replaceStr);
+
             // 拦截xss
             final String[] filterResult = {replaceHtmlCode(preFilter)};
 
             // 依次将替换后的pre标签换回来
-            resultFindAll.forEach(obj -> filterResult[0] = ReUtil.replaceFirst(pattern, filterResult[0], obj));
-            return filterResult[0];
+            Pattern pattern = Pattern.compile(replaceStr);
+            resultFindAll.forEach(obj -> {
+                obj = ReUtil.replaceAll(obj, "\\$", uniqueUUID);
+                filterResult[0] = ReUtil.replaceFirst(pattern, filterResult[0], obj);
+            });
+
+            // 将$换回来
+            return ReUtil.replaceAll(filterResult[0], uniqueUUID, "$");
         } else {
             return replaceHtmlCode(content);
         }
+    }
+
+    /**
+     * @param content 待查找内容
+     * @return
+     */
+    public static String searchUniqueUUID(String content) {
+        // 生成一个待替换唯一字符串
+        String uniqueUUID = UUID.randomUUID().toString();
+        // 判断替换字符串是否唯一
+        while (ReUtil.findAll(uniqueUUID, content, 0, new ArrayList<>()).size() > 0) {
+            uniqueUUID = UUID.randomUUID().toString();
+        }
+        return uniqueUUID;
+
     }
 
 }

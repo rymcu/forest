@@ -13,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestFileMd5 {
 
 
+    /**
+     * 要使用spring注解，则这个类必须要交给spring管理
+     */
     @Value("classpath:1.txt")
     private Resource testFile;
 
