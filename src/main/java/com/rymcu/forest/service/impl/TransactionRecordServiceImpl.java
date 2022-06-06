@@ -57,7 +57,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     @Override
     public List<TransactionRecordDTO> findTransactionRecords(String bankAccount, String startDate, String endDate) {
         List<TransactionRecordDTO> list = transactionRecordMapper.selectTransactionRecords(bankAccount, startDate, endDate);
-        list.forEach(transactionRecordDTO -> genTransactionRecord(transactionRecordDTO));
+        list.forEach(this::genTransactionRecord);
         return list;
     }
 
