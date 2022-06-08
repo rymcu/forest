@@ -156,12 +156,11 @@ public class LuceneServiceImpl implements LuceneService {
                 float score = hit.score;
                 Document hitDoc = searcher.doc(hit.doc);
                 // 获取到summary
-                String name = hitDoc.get("summary");
+                String summary = hitDoc.get("summary");
                 // 将查询的词和搜索词匹配，匹配到添加前缀和后缀
-                TokenStream tokenStream =
-                        TokenSources.getAnyTokenStream(searcher.getIndexReader(), id, "summary", analyzer);
+                TokenStream tokenStream = TokenSources.getTokenStream("summary", searcher.getIndexReader().getTermVectors(id), summary, analyzer, -1);
                 // 传入的第二个参数是查询的值
-                TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, name, false, 10);
+                TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, summary, false, 10);
                 StringBuilder baikeValue = new StringBuilder();
                 for (TextFragment textFragment : frag) {
                     if ((textFragment != null) && (textFragment.getScore() > 0)) {
@@ -173,8 +172,7 @@ public class LuceneServiceImpl implements LuceneService {
 
                 // 获取到title
                 String title = hitDoc.get("title");
-                TokenStream titleTokenStream =
-                        TokenSources.getAnyTokenStream(searcher.getIndexReader(), id, "title", analyzer);
+                TokenStream titleTokenStream = TokenSources.getTokenStream("title", searcher.getIndexReader().getTermVectors(id), title, analyzer, -1);
                 TextFragment[] titleFrag =
                         highlighter.getBestTextFragments(titleTokenStream, title, false, 10);
                 StringBuilder titleValue = new StringBuilder();
