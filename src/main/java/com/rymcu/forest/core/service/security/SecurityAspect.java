@@ -54,9 +54,14 @@ public class SecurityAspect {
         String idUser = "";
         if (isAjax(request)) {
             Object[] objects = joinPoint.getArgs();
-            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
-            if (Objects.nonNull(jsonObject)) {
-                idUser = jsonObject.getString("idUser");
+            JSONObject jsonObject;
+            if (objects[0] instanceof Integer) {
+                idUser = objects[0].toString();
+            } else {
+                jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
+                if (Objects.nonNull(jsonObject)) {
+                    idUser = jsonObject.getString("idUser");
+                }
             }
         } else {
             Map params = getParams(request);

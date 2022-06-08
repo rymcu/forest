@@ -75,11 +75,21 @@ public class AuthorshipAspect {
                 isArticle = false;
             }
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-            String idArticle = "";
+            String idArticle;
             Integer idAuthor = 0;
             if (isAjax(request)) {
                 Object[] objects = joinPoint.getArgs();
-                JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
+                JSONObject jsonObject;
+                if (objects[0] instanceof Integer) {
+                    jsonObject = new JSONObject();
+                    if (isArticle) {
+                        jsonObject.put("idArticle", objects[0].toString());
+                    } else {
+                        jsonObject.put("idPortfolio", objects[0].toString());
+                    }
+                } else {
+                    jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
+                }
                 if (Objects.nonNull(jsonObject)) {
                     if (isArticle) {
                         idArticle = jsonObject.getString("idArticle");

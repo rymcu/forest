@@ -58,4 +58,12 @@ public interface NotificationService extends Service<Notification> {
      * @throws BaseApiException
      */
     Integer readAllNotification() throws BaseApiException;
+
+    /**
+     * 删除相关未读消息
+     * @param dataId
+     * @param dataType
+     * @return
+     */
+    Integer deleteUnreadNotification(Integer dataId, String dataType);
 }

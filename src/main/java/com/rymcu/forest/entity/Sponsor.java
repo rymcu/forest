@@ -24,7 +24,7 @@ public class Sponsor implements Serializable, Cloneable {
     /**
      * 数据类型
      */
-    private String dataType;
+    private Integer dataType;
     /**
      * 数据主键
      */
