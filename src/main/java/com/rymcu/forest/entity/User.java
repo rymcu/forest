@@ -120,4 +120,10 @@ public class User implements Serializable,Cloneable {
     @Column(name = "last_online_time")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date lastOnlineTime;
+
+    /**
+     * 个人中心背景图片
+     * */
+    @Column(name = "bg_img_url")
+    private String bgImgUrl;
 }

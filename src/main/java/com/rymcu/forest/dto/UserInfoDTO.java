@@ -46,4 +46,6 @@ public class UserInfoDTO implements Serializable {
 
     private Integer onlineStatus;
 
+    private String bgImgUrl;
+
 }

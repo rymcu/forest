@@ -19,4 +19,6 @@ public class UserDTO {
     private String nickname;
 
     private String signature;
+
+    private String bgImgUrl;
 }
