@@ -96,4 +96,5 @@ forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使
 
 ## 鸣谢
 - 感谢 `JetBrains` 对本项目的帮助,为作者提供了开源许可版 `JetBrains` 全家桶
-![JetBrains](src/main/resources/static/jetbrains.png)
+
+![JetBrains](src/main/resources/static/jb_beam.svg)
