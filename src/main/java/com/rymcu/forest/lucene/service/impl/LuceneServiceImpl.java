@@ -3,8 +3,6 @@ package com.rymcu.forest.lucene.service.impl;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.Author;
-import com.rymcu.forest.dto.PortfolioArticleDTO;
-import com.rymcu.forest.entity.ArticleContent;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.lucene.ArticleBeanIndex;
 import com.rymcu.forest.lucene.lucene.IKAnalyzer;
