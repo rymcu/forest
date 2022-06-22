@@ -3,6 +3,7 @@ package com.rymcu.forest.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -24,7 +25,8 @@ public class Product implements Serializable, Cloneable {
      */
     @Id
     @GeneratedValue(generator = "JDBC")
-    private Integer id;
+    @Column(name = "id")
+    private Integer idProduct;
     /**
      * 产品名
      */
