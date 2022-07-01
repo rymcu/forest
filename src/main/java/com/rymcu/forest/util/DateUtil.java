@@ -13,22 +13,23 @@ public class DateUtil {
         if (StringUtils.isBlank(s)) {
             s = "";
         }
-        for (int i = 0; i < len - s.length(); ++i) {
-            s = "0" + s;
+        StringBuilder sBuilder = new StringBuilder(s);
+        for (int i = 0; i < len - sBuilder.length(); ++i) {
+            sBuilder.insert(0, "0");
         }
-        return s;
+        return sBuilder.toString();
     }
 
     public static String getYear(Calendar cal) {
-        return String.valueOf(cal.get(1));
+        return String.valueOf(cal.get(Calendar.YEAR));
     }
 
     public static String getMonth(Calendar cal) {
-        return strLen(String.valueOf(cal.get(2) + 1), 2);
+        return strLen(String.valueOf(cal.get(Calendar.MONTH) + 1), 2);
     }
 
     public static String getDay(Calendar cal) {
-        return strLen(String.valueOf(cal.get(5)), 2);
+        return strLen(String.valueOf(cal.get(Calendar.DATE)), 2);
     }
 
     public static String getNowDateNum() {

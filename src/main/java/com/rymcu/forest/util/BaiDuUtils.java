@@ -11,18 +11,18 @@ import java.util.concurrent.*;
  */
 public class BaiDuUtils {
 
-    private final static String token = "9cdKR6bVCJzxDEJS";
+    private final static String TOKEN = "9cdKR6bVCJzxDEJS";
 
-    private final static String site = "https://rymcu.com";
+    private final static String SITE = "https://rymcu.com";
 
     public static void sendSEOData(String permalink) {
-        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(token)) {
+        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(TOKEN)) {
             return;
         }
-        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         CompletableFuture.supplyAsync(()-> {
             try {
-                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/urls?site=" + site + "&token=" + token).
+                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/urls?site=" + SITE + "&token=" + TOKEN).
                         header("User-Agent", "curl/7.12.1").
                         header("Host", "data.zz.baidu.com").
                         header("Content-Type", "text/plain").
@@ -34,17 +34,16 @@ public class BaiDuUtils {
             }
             return 0;
         },executor);
-        return;
     }
 
     public static void sendUpdateSEOData(String permalink) {
-        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(token)) {
+        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(TOKEN)) {
             return;
         }
-        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         CompletableFuture.supplyAsync(()-> {
             try {
-                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/update?site=" + site + "&token=" + token).
+                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/update?site=" + SITE + "&token=" + TOKEN).
                         header("User-Agent", "curl/7.12.1").
                         header("Host", "data.zz.baidu.com").
                         header("Content-Type", "text/plain").
@@ -59,13 +58,13 @@ public class BaiDuUtils {
     }
 
     public static void deleteSEOData(String permalink) {
-        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(token)) {
+        if (StringUtils.isBlank(permalink) || StringUtils.isBlank(TOKEN)) {
             return;
         }
-        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        ExecutorService executor= new ThreadPoolExecutor(1,1,0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         CompletableFuture.supplyAsync(()-> {
             try {
-                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/del?site=" + site + "&token=" + token).
+                HttpResponse response = HttpRequest.post("http://data.zz.baidu.com/del?site=" + SITE + "&token=" + TOKEN).
                         header("User-Agent", "curl/7.12.1").
                         header("Host", "data.zz.baidu.com").
                         header("Content-Type", "text/plain").
