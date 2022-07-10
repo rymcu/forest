@@ -27,7 +27,7 @@ public interface RoleService extends Service<Role> {
      * @param idUser
      * @return
      * */
-    List<Role> findByIdUser(Integer idUser);
+    List<Role> findByIdUser(Long idUser);
 
     /**
      * 更新用户状态

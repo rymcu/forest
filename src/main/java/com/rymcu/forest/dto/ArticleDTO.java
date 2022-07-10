@@ -1,6 +1,7 @@
 package com.rymcu.forest.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,13 +12,15 @@ import java.util.List;
  */
 @Data
 public class ArticleDTO {
-    private Integer idArticle;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticle;
     /** 文章标题 */
     private String articleTitle;
     /** 文章缩略图 */
     private String articleThumbnailUrl;
     /** 文章作者id */
-    private Integer articleAuthorId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long articleAuthorId;
     /** 文章作者 */
     private String articleAuthorName;
     /** 文章作者头像 */

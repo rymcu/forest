@@ -33,7 +33,7 @@ public class WalletController {
 
     @GetMapping("/{idUser}")
     @SecurityInterceptor
-    public GlobalResult detail(@PathVariable Integer idUser) {
+    public GlobalResult detail(@PathVariable Long idUser) {
         BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(idUser);
         return GlobalResultGenerator.genSuccessResult(bankAccount);
     }
@@ -44,7 +44,7 @@ public class WalletController {
         String idUser = request.getParameter("idUser");
         String startDate = request.getParameter("startDate");
         String endDate = request.getParameter("endDate");
-        BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(Integer.valueOf(idUser));
+        BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(Long.valueOf(idUser));
         PageHelper.startPage(page, rows);
         List<TransactionRecordDTO> list = bankAccountService.findUserTransactionRecords(bankAccount.getBankAccount(), startDate, endDate);
         PageInfo<TransactionRecordDTO> pageInfo = new PageInfo(list);

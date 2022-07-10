@@ -36,7 +36,7 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
      * @return
      * @throws Exception
      */
-    TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception;
+    TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) throws Exception;
 
     /**
      * 社区银行转账/奖励发放
@@ -45,7 +45,7 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
      * @return
      * @throws Exception
      */
-    TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception;
+    TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) throws Exception;
 
     /**
      * 发放新手奖励

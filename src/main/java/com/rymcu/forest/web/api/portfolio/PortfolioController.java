@@ -26,7 +26,7 @@ public class PortfolioController {
     private PortfolioService portfolioService;
 
     @GetMapping("/detail/{idPortfolio}")
-    public GlobalResult detail(@PathVariable Integer idPortfolio,@RequestParam(defaultValue = "0") Integer type) {
+    public GlobalResult detail(@PathVariable Long idPortfolio,@RequestParam(defaultValue = "0") Integer type) {
         PortfolioDTO portfolio = portfolioService.findPortfolioDTOById(idPortfolio, type);
         Map map = new HashMap<>(1);
         map.put("portfolio", portfolio);
@@ -48,7 +48,7 @@ public class PortfolioController {
 
     @GetMapping("/{idPortfolio}/unbind-articles")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText,@PathVariable Integer idPortfolio) throws BaseApiException {
+    public GlobalResult unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText,@PathVariable Long idPortfolio) throws BaseApiException {
         Map map = portfolioService.findUnbindArticles(page, rows, searchText, idPortfolio);
         return GlobalResultGenerator.genSuccessResult(map);
     }
@@ -69,14 +69,14 @@ public class PortfolioController {
 
     @DeleteMapping("/unbind-article")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult unbindArticle(Integer idArticle,Integer idPortfolio) {
+    public GlobalResult unbindArticle(Long idArticle, Long idPortfolio) {
         Map map = portfolioService.unbindArticle(idPortfolio,idArticle);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @DeleteMapping("/delete")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult delete(Integer idPortfolio) throws BaseApiException {
+    public GlobalResult delete(Long idPortfolio) throws BaseApiException {
         Map map = portfolioService.deletePortfolio(idPortfolio);
         return GlobalResultGenerator.genSuccessResult(map);
     }

@@ -18,19 +18,19 @@ public interface FollowMapper extends Mapper<Follow> {
      * @param followingType
      * @return
      */
-    Boolean isFollow(@Param("followingId") Integer followingId, @Param("followerId") Integer followerId, @Param("followingType") String followingType);
+    Boolean isFollow(@Param("followingId") Integer followingId, @Param("followerId") Long followerId, @Param("followingType") String followingType);
 
     /**
      * 查询用户粉丝
      * @param idUser
      * @return
      */
-    List<UserDTO> selectUserFollowersByUser(@Param("idUser") Integer idUser);
+    List<UserDTO> selectUserFollowersByUser(@Param("idUser") Long idUser);
 
     /**
      * 查询用户关注用户
      * @param idUser
      * @return
      */
-    List<UserDTO> selectUserFollowingsByUser(@Param("idUser") Integer idUser);
+    List<UserDTO> selectUserFollowingsByUser(@Param("idUser") Long idUser);
 }

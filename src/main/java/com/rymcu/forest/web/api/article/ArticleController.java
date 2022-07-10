@@ -43,61 +43,52 @@ public class ArticleController {
     private SponsorService sponsorService;
 
     @GetMapping("/detail/{idArticle}")
-    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer idArticle, @RequestParam(defaultValue = "2") Integer type) {
-        ArticleDTO articleDTO = articleService.findArticleDTOById(idArticle, type);
-        Map map = new HashMap<>(1);
-        map.put("article", articleDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<ArticleDTO> detail(@PathVariable Long idArticle, @RequestParam(defaultValue = "2") Integer type) {
+        ArticleDTO dto = articleService.findArticleDTOById(idArticle, type);
+        return GlobalResultGenerator.genSuccessResult(dto);
     }
 
     @PostMapping("/post")
-    public GlobalResult postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.postArticle(article, request);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Long> postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
+        return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, request));
     }
 
     @PutMapping("/post")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE)
-    public GlobalResult updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.postArticle(article, request);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Long> updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
+        return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, request));
     }
 
     @DeleteMapping("/delete/{idArticle}")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE)
-    public GlobalResult delete(@PathVariable Integer idArticle) throws BaseApiException {
-        Map map = articleService.delete(idArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Integer> delete(@PathVariable Long idArticle) throws BaseApiException {
+        return GlobalResultGenerator.genSuccessResult(articleService.delete(idArticle));
     }
 
     @GetMapping("/{idArticle}/comments")
-    public GlobalResult<Map<String, Object>> commons(@PathVariable Integer idArticle) {
-        List<CommentDTO> commentDTOList = commentService.getArticleComments(idArticle);
-        Map map = new HashMap<>(1);
-        map.put("comments", commentDTOList);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<List<CommentDTO>> commons(@PathVariable Integer idArticle) {
+        return GlobalResultGenerator.genSuccessResult(commentService.getArticleComments(idArticle));
     }
 
     @GetMapping("/drafts")
-    public GlobalResult drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
+    public GlobalResult<PageInfo<ArticleDTO>> drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findDrafts();
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{idArticle}/share")
-    public GlobalResult share(@PathVariable Integer idArticle) throws BaseApiException {
-        Map map = articleService.share(idArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<String> share(@PathVariable Integer idArticle) throws BaseApiException {
+        return GlobalResultGenerator.genSuccessResult(articleService.share(idArticle));
     }
 
     @PostMapping("/update-tags")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE_TAG)
-    public GlobalResult updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.updateTags(article.getIdArticle(), article.getArticleTags());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
+        Long idArticle = article.getIdArticle();
+        String articleTags = article.getArticleTags();
+        return GlobalResultGenerator.genSuccessResult(articleService.updateTags(idArticle, articleTags));
     }
 
     @PostMapping("/thumbs-up")

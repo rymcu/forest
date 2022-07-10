@@ -26,8 +26,9 @@ public class AdminArticleController {
     private ArticleService articleService;
 
     @PatchMapping("/update-perfect")
-    public GlobalResult updatePerfect(@RequestBody Article article) {
-        Map map = articleService.updatePerfect(article.getIdArticle(), article.getArticlePerfect());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> updatePerfect(@RequestBody Article article) {
+        Long idArticle = article.getIdArticle();
+        String articlePerfect = article.getArticlePerfect();
+        return GlobalResultGenerator.genSuccessResult(articleService.updatePerfect(idArticle, articlePerfect));
     }
 }

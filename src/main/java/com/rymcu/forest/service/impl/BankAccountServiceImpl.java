@@ -37,7 +37,7 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
     }
 
     @Override
-    public BankAccountDTO findBankAccountByIdUser(Integer idUser) {
+    public BankAccountDTO findBankAccountByIdUser(Long idUser) {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountOwner(idUser);
         String defaultAccountType = "0";
@@ -79,7 +79,7 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
         BankAccount bankAccount = new BankAccount();
         bankAccount.setIdBank(1);
         bankAccount.setAccountType("1");
-        bankAccount.setAccountOwner(2);
+        bankAccount.setAccountOwner(2L);
         return bankAccountMapper.selectOne(bankAccount);
     }
 

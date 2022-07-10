@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
-import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.model.PortfolioLucene;
@@ -53,7 +52,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public PortfolioDTO findPortfolioDTOById(Integer idPortfolio, Integer type) {
+    public PortfolioDTO findPortfolioDTOById(Long idPortfolio, Integer type) {
         PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio,type);
         if (portfolio == null) {
             return new PortfolioDTO();
@@ -68,6 +67,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     @Override
     public Portfolio postPortfolio(Portfolio portfolio) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
+        assert user != null;
         if (StringUtils.isNotBlank(portfolio.getHeadImgType())) {
             String headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), 0);
             portfolio.setHeadImgUrl(headImgUrl);
@@ -98,7 +98,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public Map findUnbindArticles(Integer page, Integer rows, String searchText, Integer idPortfolio) throws BaseApiException {
+    public Map findUnbindArticles(Integer page, Integer rows, String searchText, Long idPortfolio) throws BaseApiException {
         Map map = new HashMap(1);
         User user = UserUtils.getCurrentUserByToken();
         Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
@@ -153,7 +153,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public Map unbindArticle(Integer idPortfolio, Integer idArticle) {
+    public Map unbindArticle(Long idPortfolio, Long idArticle) {
         Map map = new HashMap(1);
         if (idPortfolio == null || idPortfolio.equals(0)) {
             map.put("message", "作品集数据异常");
@@ -171,7 +171,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public Map deletePortfolio(Integer idPortfolio) throws BaseApiException {
+    public Map deletePortfolio(Long idPortfolio) throws BaseApiException {
         Map map = new HashMap(1);
         if (idPortfolio == null || idPortfolio.equals(0)) {
             map.put("message", "作品集数据异常");

@@ -54,7 +54,7 @@ public class AdminController {
     }
 
     @GetMapping("/user/{idUser}/role")
-    public GlobalResult<List<Role>> userRole(@PathVariable Integer idUser){
+    public GlobalResult<List<Role>> userRole(@PathVariable Long idUser){
         List<Role> roles = roleService.findByIdUser(idUser);
         return GlobalResultGenerator.genSuccessResult(roles);
     }
