@@ -32,7 +32,7 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     }
 
     @Override
-    public List<Role> findByIdUser(Integer idUser) {
+    public List<Role> findByIdUser(Long idUser) {
         return roleMapper.selectRoleByIdUser(idUser);
     }
 

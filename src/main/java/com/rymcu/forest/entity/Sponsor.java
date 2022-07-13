@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;
@@ -28,11 +29,13 @@ public class Sponsor implements Serializable, Cloneable {
     /**
      * 数据主键
      */
-    private Integer dataId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long dataId;
     /**
      * 赞赏人
      */
-    private Integer sponsor;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long sponsor;
     /**
      * 赞赏日期
      */

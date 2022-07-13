@@ -57,7 +57,7 @@ public class NotificationController {
     }
 
     @PutMapping("/read/{id}")
-    public GlobalResult read(@PathVariable Integer id) {
+    public GlobalResult read(@PathVariable Long id) {
         Integer result = notificationService.readNotification(id);
         if (result == 0) {
             return GlobalResultGenerator.genErrorResult("标记已读失败");

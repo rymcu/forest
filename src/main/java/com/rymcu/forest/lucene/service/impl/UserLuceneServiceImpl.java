@@ -161,7 +161,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
         }
         resList.add(
             UserLucene.builder()
-                .idUser(Integer.valueOf(hitDoc.get("id")))
+                .idUser(Long.valueOf(hitDoc.get("id")))
                 .nickname(titleValue.toString())
                 .signature(baikeValue.toString())
                 .score(String.valueOf(score))

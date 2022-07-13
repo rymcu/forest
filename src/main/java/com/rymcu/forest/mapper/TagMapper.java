@@ -18,7 +18,7 @@ public interface TagMapper extends Mapper<Tag> {
      * @param idArticle
      * @return
      */
-    Integer insertTagArticle(@Param("idTag") Integer idTag, @Param("idArticle") Integer idArticle);
+    Integer insertTagArticle(@Param("idTag") Integer idTag, @Param("idArticle") Long idArticle);
 
     /**
      * 统计标签使用数(文章)
@@ -26,7 +26,7 @@ public interface TagMapper extends Mapper<Tag> {
      * @param idArticle
      * @return
      */
-    Integer selectCountTagArticleById(@Param("idTag") Integer idTag, @Param("idArticle") Integer idArticle);
+    Integer selectCountTagArticleById(@Param("idTag") Integer idTag, @Param("idArticle") Long idArticle);
 
     /**
      * 获取用户标签数
@@ -34,7 +34,7 @@ public interface TagMapper extends Mapper<Tag> {
      * @param idTag
      * @return
      */
-    Integer selectCountUserTagById(@Param("idUser") Integer idUser, @Param("idTag") Integer idTag);
+    Integer selectCountUserTagById(@Param("idUser") Long idUser, @Param("idTag") Integer idTag);
 
     /**
      * 插入用户标签信息
@@ -43,7 +43,7 @@ public interface TagMapper extends Mapper<Tag> {
      * @param type
      * @return
      */
-    Integer insertUserTag(@Param("idTag") Integer idTag, @Param("idUser") Integer idUser, @Param("type") Integer type);
+    Integer insertUserTag(@Param("idTag") Integer idTag, @Param("idUser") Long idUser, @Param("type") Integer type);
 
     /**
      * 删除未使用标签

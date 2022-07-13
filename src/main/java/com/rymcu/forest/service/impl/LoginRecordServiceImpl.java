@@ -33,7 +33,7 @@ public class LoginRecordServiceImpl extends AbstractService<LoginRecord> impleme
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public LoginRecord saveLoginRecord(Integer idUser) {
+    public LoginRecord saveLoginRecord(Long idUser) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String ip = Utils.getIpAddress(request);
         String ua = request.getHeader("user-agent");

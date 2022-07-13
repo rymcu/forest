@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -19,22 +20,26 @@ public class Comment implements Serializable,Cloneable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer idComment;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idComment;
     /** 评论内容 */
     @Column(name = "comment_content")
     private String commentContent;
     /** 作者 id */
     @Column(name = "comment_author_id")
-    private Integer commentAuthorId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long commentAuthorId;
     /** 文章 id */
     @Column(name = "comment_article_id")
-    private Integer commentArticleId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long commentArticleId;
     /** 锚点 url */
     @Column(name = "comment_sharp_url")
     private String commentSharpUrl;
     /** 父评论 id */
     @Column(name = "comment_original_comment_id")
-    private Integer commentOriginalCommentId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long commentOriginalCommentId;
     /** 状态 */
     @Column(name = "comment_status")
     private String commentStatus;

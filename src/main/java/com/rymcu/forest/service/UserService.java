@@ -71,7 +71,7 @@ public interface UserService extends Service<User> {
      * @param status 状态
      * @return Map
      * */
-    Map updateStatus(Integer idUser, String status);
+    Map updateStatus(Long idUser, String status);
 
     /**
      * 获取用户信息
@@ -93,21 +93,21 @@ public interface UserService extends Service<User> {
      * @param nickname
      * @return
      */
-    Map checkNickname(Integer idUser, String nickname);
+    Map checkNickname(Long idUser, String nickname);
 
     /**
      * 获取用户权限
      * @param idUser
      * @return
      */
-    Integer findRoleWeightsByUser(Integer idUser);
+    Integer findRoleWeightsByUser(Long idUser);
 
     /**
      * 查询作者信息
      * @param idUser
      * @return
      */
-    Author selectAuthor(Integer idUser);
+    Author selectAuthor(Long idUser);
 
     /**
      * 更新用户扩展信息

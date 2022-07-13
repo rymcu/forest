@@ -76,7 +76,7 @@ public class AuthorshipAspect {
             }
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String idArticle;
-            Integer idAuthor = 0;
+            Long idAuthor = 0l;
             if (isAjax(request)) {
                 Object[] objects = joinPoint.getArgs();
                 JSONObject jsonObject;

@@ -169,7 +169,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map updateStatus(Integer idUser, String status) {
+    public Map updateStatus(Long idUser, String status) {
         Map map = new HashMap(2);
         Integer result = userMapper.updateStatus(idUser, status);
         if (result == 0) {
@@ -231,7 +231,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map checkNickname(Integer idUser, String nickname) {
+    public Map checkNickname(Long idUser, String nickname) {
         Map map = new HashMap(2);
         Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
         if (number > 0) {
@@ -241,12 +241,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Integer findRoleWeightsByUser(Integer idUser) {
+    public Integer findRoleWeightsByUser(Long idUser) {
         return userMapper.selectRoleWeightsByUser(idUser);
     }
 
     @Override
-    public Author selectAuthor(Integer idUser) {
+    public Author selectAuthor(Long idUser) {
         return userMapper.selectAuthor(idUser);
     }
 

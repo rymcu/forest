@@ -1,6 +1,7 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -22,7 +23,8 @@ public class Visit implements Serializable,Cloneable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
     /** 浏览链接 */
     @Column(name = "visit_url")
     private String visitUrl;
@@ -40,7 +42,8 @@ public class Visit implements Serializable,Cloneable {
     private String visitDeviceId;
     /** 浏览者 id */
     @Column(name = "visit_user_id")
-    private Integer visitUserId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long visitUserId;
     /** 上游链接 */
     @Column(name = "visit_referer_url")
     private String visitRefererUrl;

@@ -29,7 +29,7 @@ public class NotificationUtils {
     private static ArticleService articleService = SpringContextHolder.getBean(ArticleService.class);
     private static CommentService commentService = SpringContextHolder.getBean(CommentService.class);
 
-    public static void sendAnnouncement(Integer dataId, String dataType, String dataSummary) {
+    public static void sendAnnouncement(Long dataId, String dataType, String dataSummary) {
         ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -44,7 +44,7 @@ public class NotificationUtils {
         }, executor);
     }
 
-    public static void saveNotification(Integer idUser, Integer dataId, String dataType, String dataSummary) {
+    public static void saveNotification(Long idUser, Long dataId, String dataType, String dataSummary) {
         ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -70,7 +70,7 @@ public class NotificationUtils {
 
     }
 
-    public static void sendArticlePush(Integer dataId, String dataType, String dataSummary, Integer articleAuthorId) {
+    public static void sendArticlePush(Long dataId, String dataType, String dataSummary, Long articleAuthorId) {
         ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -154,12 +154,10 @@ public class NotificationUtils {
     private static String getFollowLink(String followingType, String id) {
         StringBuilder url = new StringBuilder();
         url.append(Utils.getProperty("resource.domain"));
-        switch (followingType) {
-            case "0":
-                url = url.append("/user/").append(id);
-                break;
-            default:
-                url.append("/notification");
+        if ("0".equals(followingType)) {
+            url.append("/user/").append(id);
+        } else {
+            url.append("/notification");
         }
         return url.toString();
     }

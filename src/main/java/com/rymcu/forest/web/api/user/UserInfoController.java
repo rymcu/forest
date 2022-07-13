@@ -41,7 +41,7 @@ public class UserInfoController {
 
     @GetMapping("/check-nickname")
     @SecurityInterceptor
-    public GlobalResult checkNickname(@RequestParam Integer idUser, @RequestParam String nickname) {
+    public GlobalResult checkNickname(@RequestParam Long idUser, @RequestParam String nickname) {
         Map map = userService.checkNickname(idUser, nickname);
         return GlobalResultGenerator.genSuccessResult(map);
     }

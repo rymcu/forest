@@ -1,5 +1,6 @@
 package com.rymcu.forest.lucene.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,8 @@ import javax.persistence.Column;
 public class UserLucene {
 
   /** 用户编号 */
-  private Integer idUser;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private Long idUser;
 
   /** 昵称 */
   private String nickname;

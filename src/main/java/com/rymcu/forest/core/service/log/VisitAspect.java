@@ -90,7 +90,7 @@ public class VisitAspect {
                 if (StringUtils.isBlank(param) || "undefined".equals(param) || "null".equals(param)) {
                     break;
                 }
-                Integer id = Integer.parseInt(param);
+                Long id = Long.parseLong(param);
                 articleService.incrementArticleViewCount(id);
                 break;
             default:

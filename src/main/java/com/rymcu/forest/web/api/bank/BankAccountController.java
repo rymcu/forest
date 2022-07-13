@@ -43,7 +43,7 @@ public class BankAccountController {
     }
 
     @GetMapping("/{idUser}")
-    public GlobalResult detail(@PathVariable Integer idUser) {
+    public GlobalResult detail(@PathVariable Long idUser) {
         BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(idUser);
         return GlobalResultGenerator.genSuccessResult(bankAccount);
     }

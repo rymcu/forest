@@ -70,7 +70,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception {
+    public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) throws Exception {
         BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(toUserId);
         BankAccountDTO formBankAccount = bankAccountService.findBankAccountByIdUser(formUserId);
         TransactionRecord transactionRecord = new TransactionRecord();
@@ -82,7 +82,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception {
+    public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) throws Exception {
         BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(idUser);
         Boolean isTrue;
         // 校验货币规则

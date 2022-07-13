@@ -29,7 +29,7 @@ public interface ArticleService extends Service<Article> {
      * @param type
      * @return
      * */
-    ArticleDTO findArticleDTOById(Integer id, Integer type);
+    ArticleDTO findArticleDTOById(Long id, Integer type);
 
     /**
      * 查询主题下文章列表
@@ -50,7 +50,7 @@ public interface ArticleService extends Service<Article> {
      * @param idUser
      * @return
      * */
-    List<ArticleDTO> findUserArticlesByIdUser(Integer idUser);
+    List<ArticleDTO> findUserArticlesByIdUser(Long idUser);
 
     /**
      * 新增/更新文章
@@ -60,7 +60,7 @@ public interface ArticleService extends Service<Article> {
      * @throws BaseApiException
      * @return
      * */
-    Map postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException;
+    Long postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException;
 
     /**
      * 删除文章
@@ -68,13 +68,13 @@ public interface ArticleService extends Service<Article> {
      * @return
      * @throws BaseApiException
      * */
-    Map delete(Integer id) throws BaseApiException;
+    Integer delete(Long id) throws BaseApiException;
 
     /**
      * 增量文章浏览数
      * @param id
      */
-    void incrementArticleViewCount(Integer id);
+    void incrementArticleViewCount(Long id);
 
     /**
      * 获取分享链接数据
@@ -82,7 +82,7 @@ public interface ArticleService extends Service<Article> {
      * @throws BaseApiException
      * @return
      */
-    Map share(Integer id) throws BaseApiException;
+    public String share(Integer id) throws BaseApiException;
 
     /**
      * 查询草稿文章类别
@@ -96,7 +96,7 @@ public interface ArticleService extends Service<Article> {
      * @param idPortfolio
      * @return
      */
-    List<ArticleDTO> findArticlesByIdPortfolio(Integer idPortfolio);
+    List<ArticleDTO> findArticlesByIdPortfolio(Long idPortfolio);
 
     /**
      * 查询作品集下未绑定文章
@@ -105,7 +105,7 @@ public interface ArticleService extends Service<Article> {
      * @param idUser
      * @return
      */
-    List<ArticleDTO> selectUnbindArticles(Integer idPortfolio, String searchText, Integer idUser);
+    List<ArticleDTO> selectUnbindArticles(Long idPortfolio, String searchText, Long idUser);
 
     /**
      * 更新文章标签
@@ -115,7 +115,7 @@ public interface ArticleService extends Service<Article> {
      * @throws UnsupportedEncodingException
      * @throws BaseApiException
      */
-    Map updateTags(Integer idArticle, String tags) throws UnsupportedEncodingException, BaseApiException;
+    Boolean updateTags(Long idArticle, String tags) throws UnsupportedEncodingException, BaseApiException;
 
     /**
      * 更新文章优选状态
@@ -123,7 +123,7 @@ public interface ArticleService extends Service<Article> {
      * @param articlePerfect
      * @return
      */
-    Map updatePerfect(Integer idArticle, String articlePerfect);
+    Boolean updatePerfect(Long idArticle, String articlePerfect);
 
     /**
      * 获取公告列表

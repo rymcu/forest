@@ -51,7 +51,7 @@ public class FollowServiceImpl extends AbstractService<Follow> implements Follow
     }
 
     @Override
-    public List<Follow> findByFollowingId(String followType, Integer followingId) {
+    public List<Follow> findByFollowingId(String followType, Long followingId) {
         Follow follow = new Follow();
         follow.setFollowingType(followType);
         follow.setFollowingId(followingId);

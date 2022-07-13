@@ -1,6 +1,7 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -29,7 +30,8 @@ public class BankAccount {
     /** 账户余额 */
     private BigDecimal accountBalance;
     /** 账户所有者 */
-    private Integer accountOwner;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long accountOwner;
     /** 创建时间 */
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;

@@ -106,11 +106,9 @@ public class CommonApiController {
 
     @GetMapping("/article/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> article(@PathVariable Integer id) {
+    public GlobalResult<ArticleDTO> article(@PathVariable Long id) {
         ArticleDTO articleDTO = articleService.findArticleDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("article", articleDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(articleDTO);
     }
 
     @PatchMapping("/forget-password")
@@ -121,7 +119,7 @@ public class CommonApiController {
 
     @GetMapping("/portfolio/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Integer id) {
+    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Long id) {
         PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id, 1);
         Map<String, Object> map = new HashMap<>(1);
         map.put("portfolio", portfolioDTO);
@@ -129,7 +127,7 @@ public class CommonApiController {
     }
 
     @GetMapping("/portfolio/{id}/articles")
-    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Integer id) {
+    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Long id) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByIdPortfolio(id);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);

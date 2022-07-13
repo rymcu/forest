@@ -27,7 +27,7 @@ public interface PortfolioService extends Service<Portfolio> {
      * @param type
      * @return
      */
-    PortfolioDTO findPortfolioDTOById(Integer idPortfolio, Integer type);
+    PortfolioDTO findPortfolioDTOById(Long idPortfolio, Integer type);
 
     /**
      * 保持/更新作品集
@@ -47,7 +47,7 @@ public interface PortfolioService extends Service<Portfolio> {
      * @throws BaseApiException
      * @return
      */
-    Map findUnbindArticles(Integer page, Integer rows, String searchText, Integer idPortfolio) throws BaseApiException;
+    Map findUnbindArticles(Integer page, Integer rows, String searchText, Long idPortfolio) throws BaseApiException;
 
     /**
      * 绑定文章
@@ -69,14 +69,14 @@ public interface PortfolioService extends Service<Portfolio> {
      * @param idArticle
      * @return
      */
-    Map unbindArticle(Integer idPortfolio, Integer idArticle);
+    Map unbindArticle(Long idPortfolio, Long idArticle);
 
     /**
      * 删除作品集
      * @param idPortfolio
      * @return
      */
-    Map deletePortfolio(Integer idPortfolio) throws BaseApiException;
+    Map deletePortfolio(Long idPortfolio) throws BaseApiException;
 
     /**
      * 获取作品集列表数据
