@@ -106,11 +106,9 @@ public class CommonApiController {
 
     @GetMapping("/article/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> article(@PathVariable Long id) {
+    public GlobalResult<ArticleDTO> article(@PathVariable Long id) {
         ArticleDTO articleDTO = articleService.findArticleDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("article", articleDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(articleDTO);
     }
 
     @PatchMapping("/forget-password")
