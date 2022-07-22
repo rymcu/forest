@@ -40,17 +40,15 @@ public class AdminController {
     private ArticleService articleService;
     @Resource
     private CommentService commentService;
+    @Resource
+    private ProductService productService;
 
     @GetMapping("/users")
-    public GlobalResult<Map<String, Object>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO){
+    public GlobalResult<PageInfo<UserInfoDTO>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO){
         PageHelper.startPage(page, rows);
         List<UserInfoDTO> list = userService.findUsers(searchDTO);
         PageInfo<UserInfoDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<String, Object>(2);
-        map.put("users", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/user/{idUser}/role")
@@ -60,15 +58,11 @@ public class AdminController {
     }
 
     @GetMapping("/roles")
-    public GlobalResult<Map<String, Object>> roles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<PageInfo<Role>> roles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
         PageHelper.startPage(page, rows);
         List<Role> list = roleService.findAll();
         PageInfo<Role> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<String, Object>(2);
-        map.put("roles", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @PatchMapping("/user/update-role")
@@ -102,15 +96,11 @@ public class AdminController {
     }
 
     @GetMapping("/topics")
-    public GlobalResult<Map<String, Object>> topics(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<PageInfo<Topic>> topics(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
         PageHelper.startPage(page, rows);
         List<Topic> list = topicService.findAll();
         PageInfo<Topic> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("topics", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/topic/{topicUri}")
@@ -138,17 +128,13 @@ public class AdminController {
     }
 
     @GetMapping("/topic/unbind-topic-tags")
-    public GlobalResult unbindTopicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, HttpServletRequest request){
+    public GlobalResult<PageInfo<Tag>> unbindTopicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, HttpServletRequest request){
         Integer idTopic = Integer.valueOf(request.getParameter("idTopic"));
         String tagTitle = request.getParameter("tagTitle");
         PageHelper.startPage(page, rows);
         List<Tag> list = topicService.findUnbindTagsById(idTopic, tagTitle);
         PageInfo<Tag> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("tags", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @PostMapping("/topic/bind-topic-tag")
@@ -176,19 +162,15 @@ public class AdminController {
     }
 
     @GetMapping("/tags")
-    public GlobalResult<Map<String, Object>> tags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<PageInfo<Tag>> tags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
         PageHelper.startPage(page, rows);
         List<Tag> list = tagService.findAll();
         PageInfo<Tag> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("tags", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @DeleteMapping("/tag/clean-unused")
-    public GlobalResult<Map<String, Object>> cleanUnusedTag(){
+    public GlobalResult cleanUnusedTag(){
         Map map = tagService.cleanUnusedTag();
         return GlobalResultGenerator.genSuccessResult(map);
     }
@@ -212,39 +194,35 @@ public class AdminController {
     }
 
     @GetMapping("/special-days")
-    public GlobalResult<Map> specialDays(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<SpecialDay>> specialDays(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<SpecialDay> list = specialDayService.findAll();
         PageInfo<SpecialDay> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("specialDays", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/articles")
-    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO articleSearchDTO) {
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO articleSearchDTO) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(articleSearchDTO);
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("articles", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/comments")
-    public GlobalResult<Map> comments(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<CommentDTO>> comments(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<CommentDTO> list = commentService.findComments();
         PageInfo<CommentDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("comments", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    @GetMapping("/products")
+    public GlobalResult<PageInfo<ProductDTO>> products(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+        PageHelper.startPage(page, rows);
+        List<ProductDTO> list = productService.findProducts();
+        PageInfo<ProductDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
 

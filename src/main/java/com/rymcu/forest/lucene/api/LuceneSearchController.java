@@ -114,7 +114,7 @@ public class LuceneSearchController {
         }
         articles.addAll(articleDTOList);
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(articles);
-        return GlobalResultGenerator.genSuccessResult(Utils.getArticlesGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     /**
@@ -156,7 +156,7 @@ public class LuceneSearchController {
         }
         users.addAll(userDTOList);
         PageInfo<UserDTO> pageInfo = new PageInfo<>(users);
-        return GlobalResultGenerator.genSuccessResult(Utils.getUserGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     /**
@@ -198,6 +198,6 @@ public class LuceneSearchController {
         }
         portfolios.addAll(portfolioDTOList);
         PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(portfolios);
-        return GlobalResultGenerator.genSuccessResult(Utils.getPortfolioGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

@@ -31,7 +31,7 @@ public class NotificationController {
     private NotificationService notificationService;
 
     @GetMapping("/all")
-    public GlobalResult notifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
+    public GlobalResult<PageInfo<NotificationDTO>> notifications(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
         if (Objects.isNull(user)) {
             throw new BaseApiException(ErrorCode.TOKEN_);
@@ -39,12 +39,11 @@ public class NotificationController {
         PageHelper.startPage(page, rows);
         List<NotificationDTO> list = notificationService.findNotifications(user.getIdUser());
         PageInfo<NotificationDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getNotificationDTOsGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/unread")
-    public GlobalResult unreadNotification(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
+    public GlobalResult<PageInfo<Notification>> unreadNotification(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         User user = UserUtils.getCurrentUserByToken();
         if (Objects.isNull(user)) {
             throw new BaseApiException(ErrorCode.TOKEN_);
@@ -52,8 +51,7 @@ public class NotificationController {
         PageHelper.startPage(page, rows);
         List<Notification> list = notificationService.findUnreadNotifications(user.getIdUser());
         PageInfo<Notification> pageInfo = new PageInfo(list);
-        Map map = Utils.getNotificationsGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @PutMapping("/read/{id}")

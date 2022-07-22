@@ -87,21 +87,19 @@ public class CommonApiController {
 
     @GetMapping("/articles")
     @VisitLogger
-    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO) {
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(searchDTO);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/announcements")
-    public GlobalResult<Map> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows) {
+    public GlobalResult<PageInfo<ArticleDTO>> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findAnnouncements();
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/article/{id}")
@@ -127,36 +125,27 @@ public class CommonApiController {
     }
 
     @GetMapping("/portfolio/{id}/articles")
-    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Long id) {
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Long id) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByIdPortfolio(id);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/portfolios")
-    public GlobalResult portfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
+    public GlobalResult<PageInfo<PortfolioDTO>> portfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
         PageHelper.startPage(page, rows);
         List<PortfolioDTO> list = portfolioService.findPortfolios();
         PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("portfolios", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/products")
-    public GlobalResult products(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
+    public GlobalResult<PageInfo<ProductDTO>> products(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ProductDTO> list = productService.findProducts();
         PageInfo<ProductDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("products", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/product/{id}")
