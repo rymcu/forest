@@ -38,7 +38,7 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
 
     @Override
     @Transactional
-    public Map updateStatus(Integer idRole, String status) {
+    public Map updateStatus(Long idRole, String status) {
         Map map = new HashMap(1);
         Integer result = roleMapper.updateStatus(idRole,status);
         if(result == 0) {

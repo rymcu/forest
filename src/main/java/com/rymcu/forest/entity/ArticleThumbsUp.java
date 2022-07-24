@@ -22,11 +22,13 @@ public class ArticleThumbsUp implements Serializable, Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idArticleThumbsUp;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticleThumbsUp;
     /**
      * 文章表主键
      */
-    private Integer idArticle;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticle;
     /**
      * 用户表主键
      */

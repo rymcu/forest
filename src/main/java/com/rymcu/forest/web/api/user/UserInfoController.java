@@ -34,7 +34,7 @@ public class UserInfoController {
 
     @GetMapping("/detail/{idUser}")
     @SecurityInterceptor
-    public GlobalResult detail(@PathVariable Integer idUser) {
+    public GlobalResult detail(@PathVariable Long idUser) {
         Map map = userService.findUserInfo(idUser);
         return GlobalResultGenerator.genSuccessResult(map);
     }

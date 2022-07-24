@@ -158,7 +158,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map updateUserRole(Integer idUser, Integer idRole) {
+    public Map updateUserRole(Long idUser, Long idRole) {
         Map map = new HashMap(2);
         Integer result = userMapper.updateUserRole(idUser, idRole);
         if (result == 0) {
@@ -179,7 +179,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map findUserInfo(Integer idUser) {
+    public Map findUserInfo(Long idUser) {
         Map map = new HashMap(2);
         UserInfoDTO user = userMapper.selectUserInfo(idUser);
         if (user == null) {
@@ -271,7 +271,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public Map updateEmail(ChangeEmailDTO changeEmailDTO) {
         Map map = new HashMap(2);
         map.put("message", "验证码无效！");
-        Integer idUser = changeEmailDTO.getIdUser();
+        Long idUser = changeEmailDTO.getIdUser();
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
         String vCode = redisService.get(email);

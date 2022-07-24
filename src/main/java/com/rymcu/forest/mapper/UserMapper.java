@@ -28,7 +28,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idRole
      * @return
      */
-    Integer insertUserRole(@Param("idUser") Long idUser, @Param("idRole") Integer idRole);
+    Integer insertUserRole(@Param("idUser") Long idUser, @Param("idRole") Long idRole);
 
     /**
      * 根据账号获取获取用户信息
@@ -65,7 +65,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idRole
      * @return
      */
-    Integer updateUserRole(@Param("idUser") Integer idUser, @Param("idRole") Integer idRole);
+    Integer updateUserRole(@Param("idUser") Long idUser, @Param("idRole") Long idRole);
 
     /**
      * 更新用户状态
@@ -87,7 +87,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idUser
      * @return
      */
-    UserInfoDTO selectUserInfo(@Param("idUser") Integer idUser);
+    UserInfoDTO selectUserInfo(@Param("idUser") Long idUser);
 
     /**
      * 更新用户信息
@@ -128,7 +128,7 @@ public interface UserMapper extends Mapper<User> {
      * @param email
      * @return
      */
-    Integer updateEmail(@Param("idUser") Integer idUser, @Param("email") String email);
+    Integer updateEmail(@Param("idUser") Long idUser, @Param("email") String email);
 
     /**
      * 更新密码
@@ -136,7 +136,7 @@ public interface UserMapper extends Mapper<User> {
      * @param password
      * @return
      */
-    Integer updatePasswordById(@Param("idUser") Integer idUser, @Param("password") String password);
+    Integer updatePasswordById(@Param("idUser") Long idUser, @Param("password") String password);
 
     /**
      * 查询用户数据

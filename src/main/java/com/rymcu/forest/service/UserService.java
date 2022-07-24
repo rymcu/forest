@@ -63,7 +63,7 @@ public interface UserService extends Service<User> {
      * @param idRole 角色 id
      * @return Map
      * */
-    Map updateUserRole(Integer idUser, Integer idRole);
+    Map updateUserRole(Long idUser, Long idRole);
 
     /**
      * 更新用户状态
@@ -78,7 +78,7 @@ public interface UserService extends Service<User> {
      * @param idUser
      * @return
      */
-    Map findUserInfo(Integer idUser);
+    Map findUserInfo(Long idUser);
 
     /**
      * 更新用户信息

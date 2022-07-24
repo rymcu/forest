@@ -101,7 +101,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     }
 
     @Override
-    public List<Tag> findUnbindTagsById(Integer idTopic, String tagTitle) {
+    public List<Tag> findUnbindTagsById(Long idTopic, String tagTitle) {
         if (StringUtils.isBlank(tagTitle)) {
             tagTitle = "";
         }

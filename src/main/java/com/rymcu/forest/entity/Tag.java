@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -19,7 +20,8 @@ public class Tag implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idTag;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idTag;
     /** 标签名 */
     private String tagTitle;
     /** 标签图标 */

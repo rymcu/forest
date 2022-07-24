@@ -129,7 +129,7 @@ public class AdminController {
 
     @GetMapping("/topic/unbind-topic-tags")
     public GlobalResult<PageInfo<Tag>> unbindTopicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, HttpServletRequest request){
-        Integer idTopic = Integer.valueOf(request.getParameter("idTopic"));
+        Long idTopic = Long.valueOf(request.getParameter("idTopic"));
         String tagTitle = request.getParameter("tagTitle");
         PageHelper.startPage(page, rows);
         List<Tag> list = topicService.findUnbindTagsById(idTopic, tagTitle);

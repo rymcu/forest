@@ -22,9 +22,11 @@ public class BankAccount {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idBankAccount;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idBankAccount;
     /** 所属银行 */
-    private Integer idBank;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idBank;
     /** 银行账户 */
     private String bankAccount;
     /** 账户余额 */

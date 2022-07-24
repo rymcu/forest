@@ -21,7 +21,8 @@ public class Sponsor implements Serializable, Cloneable {
      */
     @Id
     @GeneratedValue(generator = "JDBC")
-    private Integer id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
     /**
      * 数据类型
      */

@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto.admin;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -8,7 +9,9 @@ import lombok.Data;
 @Data
 public class TopicTagDTO {
 
-    private Integer idTopic;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idTopic;
 
-    private Integer idTag;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idTag;
 }

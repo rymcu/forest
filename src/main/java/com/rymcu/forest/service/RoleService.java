@@ -35,7 +35,7 @@ public interface RoleService extends Service<Role> {
      * @param status
      * @return
      * */
-    Map updateStatus(Integer idRole, String status);
+    Map updateStatus(Long idRole, String status);
 
     /**
      * 添加/更新角色

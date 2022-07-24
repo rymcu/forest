@@ -39,7 +39,7 @@ public interface TopicService extends Service<Topic> {
      * @param tagTitle
      * @return
      */
-    List<Tag> findUnbindTagsById(Integer idTopic, String tagTitle);
+    List<Tag> findUnbindTagsById(Long idTopic, String tagTitle);
 
     /**
      * 绑定标签

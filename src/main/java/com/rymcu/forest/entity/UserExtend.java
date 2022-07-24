@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Id;
@@ -13,6 +14,7 @@ import javax.persistence.Table;
 public class UserExtend {
 
     @Id
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idUser;
 
     private String github;
