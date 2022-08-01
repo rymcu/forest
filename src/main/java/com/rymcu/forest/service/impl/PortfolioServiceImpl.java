@@ -80,7 +80,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolioMapper.insertSelective(portfolio);
             PortfolioIndexUtil.addIndex(
                     PortfolioLucene.builder()
-                            .idPortfolio(portfolio.getIdPortfolio().toString())
+                            .idPortfolio(portfolio.getIdPortfolio())
                             .portfolioTitle(portfolio.getPortfolioTitle())
                             .portfolioDescription(portfolio.getPortfolioDescription())
                             .build());
@@ -89,7 +89,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolioMapper.updateByPrimaryKeySelective(portfolio);
             PortfolioIndexUtil.updateIndex(
                     PortfolioLucene.builder()
-                            .idPortfolio(portfolio.getIdPortfolio().toString())
+                            .idPortfolio(portfolio.getIdPortfolio())
                             .portfolioTitle(portfolio.getPortfolioTitle())
                             .portfolioDescription(portfolio.getPortfolioDescription())
                             .build());
@@ -195,7 +195,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             if (result.equals(0)) {
                 map.put("message", "操作失败!");
             }else {
-                PortfolioIndexUtil.deleteIndex(String.valueOf(idPortfolio));
+                PortfolioIndexUtil.deleteIndex(idPortfolio);
             }
         }
 

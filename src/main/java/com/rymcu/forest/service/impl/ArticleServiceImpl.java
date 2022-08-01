@@ -165,10 +165,10 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             // 草稿不更新索引
             if (isUpdate) {
                 log.info("更新文章索引，id={}", newArticleId);
-                luceneService.updateArticle(newArticleId.toString());
+                luceneService.updateArticle(newArticleId);
             } else {
                 log.info("写入文章索引，id={}", newArticleId);
-                luceneService.writeArticle(newArticleId.toString());
+                luceneService.writeArticle(newArticleId);
             }
             // 更新文章链接
             newArticle.setArticlePermalink(domain + "/article/" + newArticleId);
@@ -200,9 +200,11 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             deleteLinkedData(id);
             // 删除文章
             int result = articleMapper.deleteByPrimaryKey(id);
-            luceneService.deleteArticle(id.toString());
+            luceneService.deleteArticle(id);
             return result;
-        } else throw new DataDuplicationException("已有评论的文章不允许删除!");
+        } else {
+            throw new DataDuplicationException("已有评论的文章不允许删除!");
+        }
     }
 
     private void deleteLinkedData(Long id) {

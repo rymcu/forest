@@ -182,7 +182,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
   }
 
   @Override
-  public List<UserDTO> getUsersByIds(Integer[] ids) {
+  public List<UserDTO> getUsersByIds(Long[] ids) {
     return userLuceneMapper.getUsersByIds(ids);
   }
 }

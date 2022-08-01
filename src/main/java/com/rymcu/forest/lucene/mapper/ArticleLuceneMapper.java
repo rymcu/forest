@@ -29,7 +29,7 @@ public interface ArticleLuceneMapper {
    * @param ids 文章id(半角逗号分隔)
    * @return
    */
-  List<ArticleDTO> getArticlesByIds(@Param("ids") String[] ids);
+  List<ArticleDTO> getArticlesByIds(@Param("ids") Long[] ids);
 
 
   /**
@@ -38,6 +38,6 @@ public interface ArticleLuceneMapper {
    * @param id 文章id
    * @return
    */
-  ArticleLucene getById(@Param("id") String id);
+  ArticleLucene getById(@Param("id") Long id);
 
 }

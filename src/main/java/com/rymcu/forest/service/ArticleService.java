@@ -82,7 +82,7 @@ public interface ArticleService extends Service<Article> {
      * @throws BaseApiException
      * @return
      */
-    public String share(Integer id) throws BaseApiException;
+    String share(Integer id) throws BaseApiException;
 
     /**
      * 查询草稿文章类别
