@@ -15,14 +15,12 @@ import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.ArticleThumbsUpService;
 import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.service.SponsorService;
-import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +78,7 @@ public class ArticleController {
 
     @GetMapping("/{idArticle}/share")
     public GlobalResult<String> share(@PathVariable Integer idArticle) throws BaseApiException {
-        return GlobalResultGenerator.genSuccessResult(articleService.share(idArticle));
+        return GlobalResultGenerator.genResult(true, articleService.share(idArticle), "");
     }
 
     @PostMapping("/update-tags")
