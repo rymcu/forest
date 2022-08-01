@@ -1,5 +1,8 @@
 package com.rymcu.forest.core.exception;
 
+/**
+ * @author KKould
+ */
 public class DataDuplicationException extends RuntimeException {
 
     private static final long serialVersionUID = 3206744387536223284L;
