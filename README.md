@@ -12,7 +12,7 @@ forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使
 
 ## ⚡ 动机
 
-在 2019 年的某一天,受到 [Hugh](https://rymcu.com/user/RYMCU-J) 的邀请, 构建一个开源嵌入式知识学习交流平台。因此就有了 forest 这个项目。 forest
+在 2019 年的某一天,受到 [Hugh](https://rymcu.com/user/Hugh) 的邀请, 构建一个开源嵌入式知识学习交流平台。因此就有了 forest 这个项目。 forest
 在很多方面受到了 [Symphony](https://github.com/88250/symphony) 的启发,并尝试着在 [Symphony](https://github.com/88250/symphony)
 和 [B3log 思想](https://ld246.com/article/1546941897596) 的基础上进一步探索。
 
