@@ -24,6 +24,9 @@ public class ArticleIndexUtil {
   private static final String PATH =
       System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.ARTICLE_INDEX_PATH;
 
+  private static final String WINDOW_PATH =
+          System.getProperty("user.dir") + StrUtil.BACKSLASH + "lucene\\index\\article";
+
   /** 删除所有运行中保存的索引 */
   public static void deleteAllIndex() {
     if (FileUtil.exist(LucenePath.ARTICLE_INCREMENT_INDEX_PATH)) {

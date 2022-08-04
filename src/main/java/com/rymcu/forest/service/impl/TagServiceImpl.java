@@ -42,8 +42,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
-    public Integer saveTagArticle(Article article, String articleContentHtml) throws UnsupportedEncodingException, BaseApiException {
-        User user = UserUtils.getCurrentUserByToken();
+    public Integer saveTagArticle(Article article, String articleContentHtml, Long userId) throws UnsupportedEncodingException, BaseApiException {
         String articleTags = article.getArticleTags();
         if (StringUtils.isNotBlank(articleTags)) {
             String[] tags = articleTags.split(",");
@@ -80,7 +79,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                         tagMapper.updateByPrimaryKeySelective(tag);
                         addTagArticle = true;
                     }
-                    Integer countUserTag = tagMapper.selectCountUserTagById(user.getIdUser(), tag.getIdTag());
+                    Integer countUserTag = tagMapper.selectCountUserTagById(userId, tag.getIdTag());
                     if (countUserTag == 0) {
                         addUserTag = true;
                     }
@@ -92,7 +91,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     tagMapper.insertTagArticle(tag.getIdTag(), article.getIdArticle());
                 }
                 if (addUserTag) {
-                    tagMapper.insertUserTag(tag.getIdTag(), user.getIdUser(), 1);
+                    tagMapper.insertUserTag(tag.getIdTag(), userId, 1);
                 }
             }
             return 1;
@@ -108,7 +107,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                 } else {
                     article.setArticleTags("待分类");
                 }
-                saveTagArticle(article, articleContentHtml);
+                saveTagArticle(article, articleContentHtml, userId);
             }
         }
         return 0;

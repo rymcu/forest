@@ -101,16 +101,12 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
-    public Long postArticle(ArticleDTO article, HttpServletRequest request) throws UnsupportedEncodingException, BaseApiException {
+    public Long postArticle(ArticleDTO article, User user) throws UnsupportedEncodingException, BaseApiException {
         boolean isUpdate = false;
         String articleTitle = article.getArticleTitle();
         String articleTags = article.getArticleTags();
         String articleContent = article.getArticleContent();
         String articleContentHtml = XssUtils.filterHtmlCode(article.getArticleContentHtml());
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
         String reservedTag = checkTags(articleTags);
         boolean notification = false;
         if (StringUtils.isNotBlank(reservedTag)) {
@@ -178,7 +174,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticlePermalink(domain + "/draft/" + newArticleId);
             newArticle.setArticleLink("/draft/" + newArticleId);
         }
-        tagService.saveTagArticle(newArticle, articleContentHtml);
+        tagService.saveTagArticle(newArticle, articleContentHtml, user.getIdUser());
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
             String previewContent = Html2TextUtil.getContent(articleContentHtml);
@@ -237,12 +233,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    public List<ArticleDTO> findDrafts() throws BaseApiException {
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
-        List<ArticleDTO> list = articleMapper.selectDrafts(user.getIdUser());
+    public List<ArticleDTO> findDrafts(Long userId) {
+        List<ArticleDTO> list = articleMapper.selectDrafts(userId);
         list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
     }
@@ -263,14 +255,14 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateTags(Long idArticle, String tags) throws UnsupportedEncodingException, BaseApiException {
+    public Boolean updateTags(Long idArticle, String tags, Long userId) throws UnsupportedEncodingException, BaseApiException {
         Article article = articleMapper.selectByPrimaryKey(idArticle);
         if (!Objects.nonNull(article)) {
             throw new ContentNotExistException("更新失败,文章不存在!");
         }
         article.setArticleTags(tags);
         articleMapper.updateArticleTags(idArticle, tags);
-        tagService.saveTagArticle(article, "");
+        tagService.saveTagArticle(article, "", userId);
         return true;
     }
 
