@@ -23,7 +23,7 @@ public interface TagService extends Service<Tag> {
      * @throws BaseApiException
      * @return
      * */
-    Integer saveTagArticle(Article article, String articleContentHtml) throws UnsupportedEncodingException, BaseApiException;
+    Integer saveTagArticle(Article article, String articleContentHtml, Long userId) throws UnsupportedEncodingException, BaseApiException;
 
     /**
      * 清除未使用标签

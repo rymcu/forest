@@ -2,7 +2,10 @@ package com.rymcu.forest.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +14,9 @@ import java.util.List;
  * @author ronger
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticleDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idArticle;

@@ -55,7 +55,8 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
         try {
             int totalCount = list.size();
             int perThreadCount = 3000;
-            int threadCount = totalCount / perThreadCount + (totalCount % perThreadCount == 0 ? 0 : 1);
+            // 加1避免线程池的参数为0
+            int threadCount = totalCount / perThreadCount + (totalCount % perThreadCount == 0 ? 0 : 1) + 1;
             ExecutorService pool = Executors.newFixedThreadPool(threadCount);
             CountDownLatch countDownLatch1 = new CountDownLatch(1);
             CountDownLatch countDownLatch2 = new CountDownLatch(threadCount);
