@@ -6,15 +6,15 @@ import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.Author;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.web.api.exception.BaseApiException;
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @Transactional
 // 顺序执行单元测试
-@FixMethodOrder(MethodSorters.DEFAULT)
+@TestMethodOrder(MethodOrderer.Random.class)
 class ArticleServiceTest {
 
     /**
