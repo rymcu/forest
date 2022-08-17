@@ -1,6 +1,9 @@
 package com.rymcu.forest.core.exception;
 
-public class ContentNotExistException extends RuntimeException{
+/**
+ * @author KKould
+ */
+public class ContentNotExistException extends BusinessException {
     private static final long serialVersionUID = 3206734387536223284L;
 
     public ContentNotExistException() {

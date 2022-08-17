@@ -6,8 +6,11 @@ import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
 import com.rymcu.forest.dto.PortfolioArticleDTO;
 import com.rymcu.forest.dto.PortfolioDTO;
 import com.rymcu.forest.entity.Portfolio;
+import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.service.PortfolioService;
+import com.rymcu.forest.service.UserService;
+import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +27,8 @@ public class PortfolioController {
 
     @Resource
     private PortfolioService portfolioService;
+    @Resource
+    private UserService userService;
 
     @GetMapping("/detail/{idPortfolio}")
     public GlobalResult detail(@PathVariable Long idPortfolio,@RequestParam(defaultValue = "0") Integer type) {
@@ -76,8 +81,11 @@ public class PortfolioController {
 
     @DeleteMapping("/delete")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult delete(Long idPortfolio) throws BaseApiException {
-        Map map = portfolioService.deletePortfolio(idPortfolio);
+    public GlobalResult delete(Long idPortfolio) throws BaseApiException, IllegalAccessException {
+        User user = UserUtils.getCurrentUserByToken();
+        Long idUser = user.getIdUser();
+        Integer roleWeights = userService.findRoleWeightsByUser(idUser);
+        boolean map = portfolioService.deletePortfolio(idPortfolio, idUser, roleWeights);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 

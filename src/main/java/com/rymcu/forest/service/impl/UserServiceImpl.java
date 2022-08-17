@@ -1,5 +1,7 @@
 package com.rymcu.forest.service.impl;
 
+import com.rymcu.forest.core.exception.CaptchaException;
+import com.rymcu.forest.core.exception.ContentNotExistException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.*;
@@ -20,6 +22,8 @@ import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.common.UploadController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.exceptions.TooManyResultsException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,8 +118,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map login(String account, String password) {
-        Map map = new HashMap(2);
+    public TokenUser login(String account, String password) {
         User user = userMapper.findByAccount(account);
         if (user != null) {
             if (Utils.comparePwd(password, user.getPassword())) {
@@ -125,16 +128,15 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 BeanCopierUtil.copy(user, tokenUser);
                 tokenUser.setToken(tokenManager.createToken(account));
                 tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
-                map.put("user", tokenUser);
                 // 保存登录日志
                 loginRecordService.saveLoginRecord(tokenUser.getIdUser());
+                return tokenUser;
             } else {
-                map.put("message", "密码错误！");
+                throw new AuthenticationException("密码错误");
             }
         } else {
-            map.put("message", "该账号不存在！");
+            throw new UnknownAccountException("账号不存在");
         }
-        return map;
     }
 
     @Override
@@ -183,7 +185,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         Map map = new HashMap(2);
         UserInfoDTO user = userMapper.selectUserInfo(idUser);
         if (user == null) {
-            map.put("message", "用户不存在!");
+            throw new ContentNotExistException("用户不存在!");
         } else {
             UserExtend userExtend = userExtendMapper.selectByPrimaryKey(user.getIdUser());
             if (Objects.isNull(userExtend)) {
@@ -270,7 +272,6 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Map updateEmail(ChangeEmailDTO changeEmailDTO) {
         Map map = new HashMap(2);
-        map.put("message", "验证码无效！");
         Long idUser = changeEmailDTO.getIdUser();
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
@@ -282,7 +283,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 map.put("email", email);
             }
         }
-        return map;
+        throw new CaptchaException();
     }
 
     @Override

@@ -40,7 +40,7 @@ public interface UserService extends Service<User> {
      * @param password  密码
      * @return Map
      * */
-    Map login(String account, String password);
+    TokenUser login(String account, String password);
 
     /**
      * 通过 account 获取用户信息接口

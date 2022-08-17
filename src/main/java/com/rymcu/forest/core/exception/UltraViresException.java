@@ -1,6 +1,9 @@
 package com.rymcu.forest.core.exception;
 
-public class UltraViresException extends RuntimeException {
+/**
+ * @author KKould
+ */
+public class UltraViresException extends BusinessException {
 
     private static final long serialVersionUID = 3206744387536228284L;
 

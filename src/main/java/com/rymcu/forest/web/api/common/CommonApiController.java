@@ -9,7 +9,6 @@ import com.rymcu.forest.core.service.log.annotation.VisitLogger;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.*;
-import com.rymcu.forest.util.Utils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -75,9 +74,9 @@ public class CommonApiController {
     }
 
     @PostMapping("/login")
-    public GlobalResult<Map> login(@RequestBody User user) {
-        Map map = userService.login(user.getAccount(), user.getPassword());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<TokenUser> login(@RequestBody User user) {
+        TokenUser tokenUser = userService.login(user.getAccount(), user.getPassword());
+        return GlobalResultGenerator.genSuccessResult(tokenUser);
     }
 
     @GetMapping("/heartbeat")
@@ -117,11 +116,9 @@ public class CommonApiController {
 
     @GetMapping("/portfolio/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Long id) {
+    public GlobalResult<PortfolioDTO> portfolio(@PathVariable Long id) {
         PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("portfolio", portfolioDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(portfolioDTO);
     }
 
     @GetMapping("/portfolio/{id}/articles")
@@ -150,10 +147,8 @@ public class CommonApiController {
 
     @GetMapping("/product/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> product(@PathVariable Integer id) {
+    public GlobalResult<ProductDTO> product(@PathVariable Integer id) {
         ProductDTO productDTO = productService.findProductDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("product", productDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(productDTO);
     }
 }

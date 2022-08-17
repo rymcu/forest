@@ -2,7 +2,7 @@ package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.constant.NotificationConstant;
 import com.rymcu.forest.core.exception.ContentNotExistException;
-import com.rymcu.forest.core.exception.DataDuplicationException;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.UltraViresException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -199,7 +198,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             luceneService.deleteArticle(id);
             return result;
         } else {
-            throw new DataDuplicationException("已有评论的文章不允许删除!");
+            throw new BusinessException("已有评论的文章不允许删除!");
         }
     }
 

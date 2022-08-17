@@ -71,12 +71,18 @@ public interface PortfolioService extends Service<Portfolio> {
      */
     Map unbindArticle(Long idPortfolio, Long idArticle);
 
+
     /**
      * 删除作品集
+     *
      * @param idPortfolio
+     * @param idUser
+     * @param roleWeights
      * @return
+     * @throws BaseApiException
+     * @throws IllegalAccessException
      */
-    Map deletePortfolio(Long idPortfolio) throws BaseApiException;
+    boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights) throws BaseApiException, IllegalAccessException;
 
     /**
      * 获取作品集列表数据

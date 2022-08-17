@@ -2,6 +2,7 @@ package com.rymcu.forest.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Portfolio;
@@ -44,7 +45,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         List<PortfolioDTO> list = portfolioMapper.selectUserPortfoliosByIdUser(userDTO.getIdUser());
         Author author = userService.selectAuthor(userDTO.getIdUser());
         list.forEach(portfolioDTO -> {
-            genPortfolioAuthor(portfolioDTO,author);
+            genPortfolioAuthor(portfolioDTO, author);
             Integer articleNumber = portfolioMapper.selectCountArticleNumber(portfolioDTO.getIdPortfolio());
             portfolioDTO.setArticleNumber(articleNumber);
         });
@@ -53,12 +54,12 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
 
     @Override
     public PortfolioDTO findPortfolioDTOById(Long idPortfolio, Integer type) {
-        PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio,type);
+        PortfolioDTO portfolio = portfolioMapper.selectPortfolioDTOById(idPortfolio, type);
         if (portfolio == null) {
             return new PortfolioDTO();
         }
         Author author = userService.selectAuthor(portfolio.getPortfolioAuthorId());
-        genPortfolioAuthor(portfolio,author);
+        genPortfolioAuthor(portfolio, author);
         Integer articleNumber = portfolioMapper.selectCountArticleNumber(portfolio.getIdPortfolio());
         portfolio.setArticleNumber(articleNumber);
         return portfolio;
@@ -109,7 +110,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
                 map.put("message", "非法操作!");
             } else {
                 PageHelper.startPage(page, rows);
-                List<ArticleDTO> articles = articleService.selectUnbindArticles(idPortfolio,searchText,user.getIdUser());
+                List<ArticleDTO> articles = articleService.selectUnbindArticles(idPortfolio, searchText, user.getIdUser());
                 PageInfo<ArticleDTO> pageInfo = new PageInfo(articles);
                 map = Utils.getArticlesGlobalResult(pageInfo);
             }
@@ -123,7 +124,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         Integer count = portfolioMapper.selectCountPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio());
         if (count.equals(0)) {
             Integer maxSortNo = portfolioMapper.selectMaxSortNo(portfolioArticle.getIdPortfolio());
-            portfolioMapper.insertPortfolioArticle(portfolioArticle.getIdArticle(),portfolioArticle.getIdPortfolio(),maxSortNo);
+            portfolioMapper.insertPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio(), maxSortNo);
             map.put("message", "绑定成功!");
         } else {
             map.put("message", "该文章已经在作品集下!!");
@@ -143,7 +144,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         if (portfolioArticle.getSortNo() == null) {
             map.put("message", "排序号不能为空!");
         }
-        Integer result = portfolioMapper.updateArticleSortNo(portfolioArticle.getIdPortfolio(),portfolioArticle.getIdArticle(),portfolioArticle.getSortNo());
+        Integer result = portfolioMapper.updateArticleSortNo(portfolioArticle.getIdPortfolio(), portfolioArticle.getIdArticle(), portfolioArticle.getSortNo());
         if (result > 0) {
             map.put("message", "更新成功!");
         } else {
@@ -161,7 +162,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         if (idArticle == null || idArticle.equals(0)) {
             map.put("message", "文章数据异常");
         }
-        Integer result = portfolioMapper.unbindArticle(idPortfolio,idArticle);
+        Integer result = portfolioMapper.unbindArticle(idPortfolio, idArticle);
         if (result > 0) {
             map.put("message", "操作成功!");
         } else {
@@ -171,35 +172,29 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public Map deletePortfolio(Long idPortfolio) throws BaseApiException {
-        Map map = new HashMap(1);
-        if (idPortfolio == null || idPortfolio.equals(0)) {
-            map.put("message", "作品集数据异常");
+    public boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights) throws BaseApiException, IllegalAccessException {
+        if (idPortfolio == null || idPortfolio == 0) {
+            throw new IllegalArgumentException("作品集数据异常！");
         }
         // 鉴权
-        User user = UserUtils.getCurrentUserByToken();
-        Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
         if (roleWeights > 2) {
             Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
-            if (!user.getIdUser().equals(portfolio.getPortfolioAuthorId())) {
-                map.put("message", "非法访问！");
-                return map;
+            if (!idUser.equals(portfolio.getPortfolioAuthorId())) {
+                throw new IllegalAccessException("非法访问！");
             }
         }
 
         Integer articleNumber = portfolioMapper.selectCountArticleNumber(idPortfolio);
         if (articleNumber > 0) {
-            map.put("message", "该作品集已绑定文章不允许删除!");
+            throw new BusinessException("该作品集已绑定文章不允许删除！");
         } else {
             Integer result = portfolioMapper.deleteByPrimaryKey(idPortfolio);
             if (result.equals(0)) {
-                map.put("message", "操作失败!");
-            }else {
-                PortfolioIndexUtil.deleteIndex(idPortfolio);
+                throw new BusinessException("操作失败！");
             }
+            PortfolioIndexUtil.deleteIndex(idPortfolio);
+            return true;
         }
-
-        return map;
     }
 
     @Override

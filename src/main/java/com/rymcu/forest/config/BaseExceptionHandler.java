@@ -1,7 +1,7 @@
 package com.rymcu.forest.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
-import com.rymcu.forest.core.exception.DataDuplicationException;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.result.GlobalResult;
@@ -63,7 +63,7 @@ public class BaseExceptionHandler {
             } else if (ex instanceof ServletException) {
                 result.setCode(ResultCode.FAIL.getCode());
                 result.setMessage(ex.getMessage());
-            } else if (ex instanceof DataDuplicationException) {
+            } else if (ex instanceof BusinessException) {
                 result.setCode(ResultCode.FAIL.getCode());
                 result.setMessage(ex.getMessage());
             } else if (ex instanceof TransactionException) {
@@ -112,7 +112,7 @@ public class BaseExceptionHandler {
             } else if (ex instanceof ServletException) {
                 attributes.put("code", ResultCode.FAIL.getCode());
                 attributes.put("message", ex.getMessage());
-            } else if (ex instanceof DataDuplicationException) {
+            } else if (ex instanceof BusinessException) {
                 attributes.put("code", ResultCode.FAIL.getCode());
                 attributes.put("message", ex.getMessage());
             } else if (ex instanceof TransactionException) {
