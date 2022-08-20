@@ -8,7 +8,7 @@ package com.rymcu.forest.lucene.util;
 public final class LucenePath {
 
   /** lucene 目录 */
-  public static final String INDEX_PATH = "lucene/index";
+  public static final String INDEX_PATH = "/lucene/index";
 
   /** 文章 lucene 目录 */
   public static final String ARTICLE_INDEX_PATH = INDEX_PATH + "/article";

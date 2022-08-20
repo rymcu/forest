@@ -37,6 +37,6 @@
     <select id="getById" resultMap="BaseResultMap">
         SELECT id, nickname, signature
         FROM forest_user
-        where id = #{id};
+        where id = #{id}
     </select>
 </mapper>

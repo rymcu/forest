@@ -1,8 +1,8 @@
 package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.constant.NotificationConstant;
-import com.rymcu.forest.core.exception.ContentNotExistException;
 import com.rymcu.forest.core.exception.BusinessException;
+import com.rymcu.forest.core.exception.ContentNotExistException;
 import com.rymcu.forest.core.exception.UltraViresException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
@@ -10,26 +10,33 @@ import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.ArticleContent;
 import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.User;
-import com.rymcu.forest.lucene.service.LuceneService;
+import com.rymcu.forest.handler.event.ArticleDeleteEvent;
+import com.rymcu.forest.handler.event.ArticleEvent;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.*;
+import com.rymcu.forest.util.Html2TextUtil;
+import com.rymcu.forest.util.UserUtils;
+import com.rymcu.forest.util.Utils;
+import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author ronger
@@ -45,9 +52,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     @Resource
     private UserService userService;
     @Resource
-    private LuceneService luceneService;
-    @Resource
     private NotificationService notificationService;
+    @Resource
+    private ApplicationEventPublisher publisher;
 
     @Value("${resource.domain}")
     private String domain;
@@ -141,39 +148,16 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             articleMapper.updateArticleContent(newArticle.getIdArticle(), articleContent, articleContentHtml);
         }
         Long newArticleId = newArticle.getIdArticle();
-        // 发送相关通知
+        // 更新文章链接
         if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
-            // 发送系统通知
-            if (notification) {
-                NotificationUtils.sendAnnouncement(newArticleId, NotificationConstant.Article, newArticle.getArticleTitle());
-            } else {
-                // 发送关注通知
-                StringBuilder dataSummary = new StringBuilder();
-                if (isUpdate) {
-                    dataSummary.append(user.getNickname()).append("更新了文章: ").append(newArticle.getArticleTitle());
-                    NotificationUtils.sendArticlePush(newArticleId, NotificationConstant.UpdateArticle, dataSummary.toString(), newArticle.getArticleAuthorId());
-                } else {
-                    dataSummary.append(user.getNickname()).append("发布了文章: ").append(newArticle.getArticleTitle());
-                    NotificationUtils.sendArticlePush(newArticleId, NotificationConstant.PostArticle, dataSummary.toString(), newArticle.getArticleAuthorId());
-                }
-            }
-            // 草稿不更新索引
-            if (isUpdate) {
-                log.info("更新文章索引，id={}", newArticleId);
-                luceneService.updateArticle(newArticleId);
-            } else {
-                log.info("写入文章索引，id={}", newArticleId);
-                luceneService.writeArticle(newArticleId);
-            }
-            // 更新文章链接
+            // 文章
             newArticle.setArticlePermalink(domain + "/article/" + newArticleId);
             newArticle.setArticleLink("/article/" + newArticleId);
         } else {
-            // 更新文章链接
+            // 草稿
             newArticle.setArticlePermalink(domain + "/draft/" + newArticleId);
             newArticle.setArticleLink("/draft/" + newArticleId);
         }
-        tagService.saveTagArticle(newArticle, articleContentHtml, user.getIdUser());
 
         if (StringUtils.isNotBlank(articleContentHtml)) {
             String previewContent = Html2TextUtil.getContent(articleContentHtml);
@@ -183,6 +167,12 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             newArticle.setArticlePreviewContent(previewContent);
         }
         articleMapper.updateByPrimaryKeySelective(newArticle);
+        // 更新标签
+        tagService.saveTagArticle(newArticle, articleContentHtml, user.getIdUser());
+        if (DEFAULT_STATUS.equals(newArticle.getArticleStatus())) {
+            // 文章发布事件
+            publisher.publishEvent(new ArticleEvent(newArticleId, newArticle.getArticleTitle(), isUpdate, notification, user.getNickname(), newArticle.getArticleAuthorId()));
+        }
         return newArticleId;
     }
 
@@ -195,7 +185,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
             deleteLinkedData(id);
             // 删除文章
             int result = articleMapper.deleteByPrimaryKey(id);
-            luceneService.deleteArticle(id);
+            if (result > 0) {
+                publisher.publishEvent(new ArticleDeleteEvent(id));
+            }
             return result;
         } else {
             throw new BusinessException("已有评论的文章不允许删除!");
