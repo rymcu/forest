@@ -2,6 +2,7 @@ package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.exception.CaptchaException;
 import com.rymcu.forest.core.exception.ContentNotExistException;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.*;
@@ -60,15 +61,13 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map register(String email, String password, String code) {
-        Map map = new HashMap(2);
-        map.put("message", "验证码无效！");
+    public void register(String email, String password, String code) throws ServiceException {
         String vCode = redisService.get(email);
         if (StringUtils.isNotBlank(vCode)) {
             if (vCode.equals(code)) {
                 User user = userMapper.findByAccount(email);
                 if (user != null) {
-                    map.put("message", "该邮箱已被注册！");
+                    throw new ServiceException("该邮箱已被注册！");
                 } else {
                     user = new User();
                     String nickname = email.split("@")[0];
@@ -88,13 +87,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                             .nickname(user.getNickname())
                             .signature(user.getSignature())
                             .build());
-                    map.put("message", "注册成功！");
-                    map.put("flag", 1);
                     redisService.delete(email);
+                    return;
                 }
             }
         }
-        return map;
+        throw new ServiceException("验证码无效！");
     }
 
     private String checkNickname(String nickname) {
@@ -145,39 +143,34 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map forgetPassword(String code, String password) {
-        Map map = new HashMap<>(2);
+    public String forgetPassword(String code, String password) throws ServiceException {
         String email = redisService.get(code);
         if (StringUtils.isBlank(email)) {
-            map.put("message", "链接已失效");
+            throw new ServiceException("链接已失效");
         } else {
             userMapper.updatePasswordByEmail(email, Utils.entryptPassword(password));
-            map.put("message", "修改成功，正在跳转登录登陆界面！");
-            map.put("flag", 1);
+            return "修改成功，正在跳转登录登陆界面！";
         }
-        return map;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map updateUserRole(Long idUser, Long idRole) {
-        Map map = new HashMap(2);
+    public boolean updateUserRole(Long idUser, Long idRole) throws ServiceException {
         Integer result = userMapper.updateUserRole(idUser, idRole);
         if (result == 0) {
-            map.put("message", "更新失败!");
+            throw new ServiceException("更新失败!");
         }
-        return map;
+        return true;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map updateStatus(Long idUser, String status) {
-        Map map = new HashMap(2);
+    public boolean updateStatus(Long idUser, String status) throws ServiceException {
         Integer result = userMapper.updateStatus(idUser, status);
         if (result == 0) {
-            map.put("message", "更新失败!");
+            throw new ServiceException("更新失败!");
         }
-        return map;
+        return true;
     }
 
     @Override
@@ -201,13 +194,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map updateUserInfo(UserInfoDTO user) {
-        Map map = new HashMap(2);
+    public UserInfoDTO updateUserInfo(UserInfoDTO user) throws Exception {
         user.setNickname(formatNickname(user.getNickname()));
         Integer number = userMapper.checkNicknameByIdUser(user.getIdUser(), user.getNickname());
         if (number > 0) {
-            map.put("message", "该昵称已使用!");
-            return map;
+            throw new ServiceException("该昵称已使用!");
         }
         if (StringUtils.isNotBlank(user.getAvatarType()) && AVATAR_SVG_TYPE.equals(user.getAvatarType())) {
             String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), 0);
@@ -221,11 +212,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 .signature(user.getSignature())
                 .build());
         if (result == 0) {
-            map.put("message", "操作失败!");
-            return map;
+            throw new ServiceException("操作失败!");
         }
-        map.put("user", user);
-        return map;
+
+        return user;
     }
 
     private String formatNickname(String nickname) {
@@ -233,13 +223,13 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map checkNickname(Long idUser, String nickname) {
+    public boolean checkNickname(Long idUser, String nickname) throws ServiceException {
         Map map = new HashMap(2);
         Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
         if (number > 0) {
-            map.put("message", "该昵称已使用!");
+            throw new ServiceException("该昵称已使用!");
         }
-        return map;
+        return true;
     }
 
     @Override
@@ -253,15 +243,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map updateUserExtend(UserExtend userExtend) {
-        Map map = new HashMap(2);
+    public UserExtend updateUserExtend(UserExtend userExtend) throws ServiceException {
         int result = userExtendMapper.updateByPrimaryKeySelective(userExtend);
         if (result == 0) {
-            map.put("message", "操作失败!");
-            return map;
+            throw new ServiceException("操作失败!");
         }
-        map.put("userExtend", userExtend);
-        return map;
+        return userExtend;
     }
 
     @Override
@@ -270,29 +257,23 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map updateEmail(ChangeEmailDTO changeEmailDTO) {
-        Map map = new HashMap(2);
+    public String updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException {
         Long idUser = changeEmailDTO.getIdUser();
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
         String vCode = redisService.get(email);
-        if (StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code)) {
-            if (vCode.equals(code)) {
-                userMapper.updateEmail(idUser, email);
-                map.put("message", "更新成功！");
-                map.put("email", email);
-            }
+        if (StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code) && vCode.equals(code)) {
+            userMapper.updateEmail(idUser, email);
+            return email;
         }
         throw new CaptchaException();
     }
 
     @Override
-    public Map updatePassword(UpdatePasswordDTO updatePasswordDTO) {
-        Map map = new HashMap(2);
+    public boolean updatePassword(UpdatePasswordDTO updatePasswordDTO) {
         String password = Utils.entryptPassword(updatePasswordDTO.getPassword());
         userMapper.updatePasswordById(updatePasswordDTO.getIdUser(), password);
-        map.put("message", "更新成功!");
-        return map;
+        return true;
     }
 
     @Override

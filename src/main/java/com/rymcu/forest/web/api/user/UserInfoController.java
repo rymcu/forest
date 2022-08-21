@@ -2,6 +2,7 @@ package com.rymcu.forest.web.api.user;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.service.security.annotation.SecurityInterceptor;
@@ -41,37 +42,37 @@ public class UserInfoController {
 
     @GetMapping("/check-nickname")
     @SecurityInterceptor
-    public GlobalResult checkNickname(@RequestParam Long idUser, @RequestParam String nickname) {
-        Map map = userService.checkNickname(idUser, nickname);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult checkNickname(@RequestParam Long idUser, @RequestParam String nickname) throws ServiceException {
+        boolean flag = userService.checkNickname(idUser, nickname);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PatchMapping("/update")
     @SecurityInterceptor
-    public GlobalResult updateUserInfo(@RequestBody UserInfoDTO user) {
-        Map map = userService.updateUserInfo(user);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult updateUserInfo(@RequestBody UserInfoDTO user) throws Exception {
+        UserInfoDTO newUsers = userService.updateUserInfo(user);
+        return GlobalResultGenerator.genSuccessResult(newUsers);
     }
 
     @PatchMapping("/update-extend")
     @SecurityInterceptor
-    public GlobalResult updateUserExtend(@RequestBody UserExtend userExtend) {
-        Map map = userService.updateUserExtend(userExtend);
+    public GlobalResult updateUserExtend(@RequestBody UserExtend userExtend) throws ServiceException {
+        UserExtend map = userService.updateUserExtend(userExtend);
         return GlobalResultGenerator.genSuccessResult(map);
     }
 
     @PatchMapping("/update-email")
     @SecurityInterceptor
-    public GlobalResult updateEmail(@RequestBody ChangeEmailDTO changeEmailDTO) {
-        Map map = userService.updateEmail(changeEmailDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult updateEmail(@RequestBody ChangeEmailDTO changeEmailDTO) throws ServiceException {
+        String email = userService.updateEmail(changeEmailDTO);
+        return GlobalResultGenerator.genSuccessResult(email);
     }
 
     @PatchMapping("/update-password")
     @SecurityInterceptor
     public GlobalResult updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO) {
-        Map map = userService.updatePassword(updatePasswordDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        boolean flag = userService.updatePassword(updatePasswordDTO);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @GetMapping("/login-records")

@@ -1,5 +1,6 @@
 package com.rymcu.forest.service.impl;
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
@@ -10,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -38,33 +37,29 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
 
     @Override
     @Transactional
-    public Map updateStatus(Long idRole, String status) {
-        Map map = new HashMap(1);
-        Integer result = roleMapper.updateStatus(idRole,status);
-        if(result == 0) {
-            map.put("message","更新失败!");
+    public boolean updateStatus(Long idRole, String status) throws Exception {
+        Integer result = roleMapper.updateStatus(idRole, status);
+        if (result == 0) {
+            throw new ServiceException("更新失败");
         }
-        return map;
+        return true;
     }
 
     @Override
-    public Map saveRole(Role role) {
-        Integer result = 0;
+    public boolean saveRole(Role role) throws Exception {
+        Integer result;
         if (role.getIdRole() == null) {
             role.setCreatedTime(new Date());
             role.setUpdatedTime(role.getCreatedTime());
             result = roleMapper.insertSelective(role);
         } else {
             role.setCreatedTime(new Date());
-            result = roleMapper.update(role.getIdRole(),role.getName(),role.getInputCode(),role.getWeights());
+            result = roleMapper.update(role.getIdRole(), role.getName(), role.getInputCode(), role.getWeights());
         }
-        Map map = new HashMap(1);
         if (result == 0) {
-            map.put("message","操作失败!");
-        } else {
-            map.put("role", role);
+            throw new ServiceException("操作失败!");
         }
-        return map;
+        return true;
     }
 
 }

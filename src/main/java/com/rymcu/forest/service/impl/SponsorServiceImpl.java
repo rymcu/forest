@@ -1,6 +1,7 @@
 package com.rymcu.forest.service.impl;
 
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleDTO;
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author ronger
@@ -36,11 +38,9 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map sponsorship(Sponsor sponsor) throws Exception {
-        Map map = new HashMap(2);
+    public boolean sponsorship(Sponsor sponsor) throws Exception {
         if (Objects.isNull(sponsor) || Objects.isNull(sponsor.getDataId()) || Objects.isNull(sponsor.getDataType())) {
-            map.put("success", false);
-            map.put("message", "数据异常");
+            throw new ServiceException("数据异常");
         } else {
             TransactionEnum result = TransactionEnum.findTransactionEnum(sponsor.getDataType());
             BigDecimal money = BigDecimal.valueOf(result.getMoney());
@@ -59,9 +59,7 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
                 // 更新文章赞赏数
                 sponsorMapper.updateArticleSponsorCount(articleDTO.getIdArticle());
             }
-            map.put("success", true);
-            map.put("message", "赞赏成功");
         }
-        return map;
+        return true;
     }
 }

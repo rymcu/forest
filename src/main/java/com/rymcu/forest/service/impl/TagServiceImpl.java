@@ -1,18 +1,17 @@
 package com.rymcu.forest.service.impl;
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.LabelModel;
 import com.rymcu.forest.dto.baidu.TagNlpDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Tag;
-import com.rymcu.forest.entity.User;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.mapper.TagMapper;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.util.BaiDuAipUtils;
 import com.rymcu.forest.util.CacheUtils;
-import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
@@ -25,9 +24,7 @@ import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -115,47 +112,42 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map cleanUnusedTag() {
-        Map map = new HashMap(1);
-        tagMapper.deleteUnusedTag();
-        return map;
+    public boolean cleanUnusedTag() {
+        return tagMapper.deleteUnusedTag() > 0;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map saveTag(Tag tag) {
+    public Tag saveTag(Tag tag) throws Exception {
         Integer result;
 
-        Map map = new HashMap(1);
         tag.setTagDescription(XssUtils.filterHtmlCode(tag.getTagDescription()));
         if (tag.getIdTag() == null) {
             if (StringUtils.isBlank(tag.getTagTitle())) {
-                map.put("message", "标签名不能为空!");
-                return map;
+                throw new ServiceException("标签名不能为空!");
             } else {
                 Condition tagCondition = new Condition(Tag.class);
                 tagCondition.createCriteria().andCondition("tag_title =", tag.getTagTitle());
                 List<Tag> tags = tagMapper.selectByCondition(tagCondition);
                 if (!tags.isEmpty()) {
-                    map.put("message", "标签 '" + tag.getTagTitle() + "' 已存在!");
-                    return map;
+                    throw new ServiceException("标签 '" + tag.getTagTitle() + "' 已存在!");
                 }
             }
-            Tag newTag = new Tag();
-            newTag.setTagTitle(tag.getTagTitle());
-            newTag.setTagUri(tag.getTagUri());
+            tag = new Tag();
+            tag.setTagTitle(tag.getTagTitle());
+            tag.setTagUri(tag.getTagUri());
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
                 String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 2);
-                newTag.setTagIconPath(tagIconPath);
+                tag.setTagIconPath(tagIconPath);
             } else {
-                newTag.setTagIconPath(tag.getTagIconPath());
+                tag.setTagIconPath(tag.getTagIconPath());
             }
-            newTag.setTagStatus(tag.getTagStatus());
-            newTag.setTagDescription(tag.getTagDescription());
-            newTag.setTagReservation(tag.getTagReservation());
-            newTag.setCreatedTime(new Date());
-            newTag.setUpdatedTime(tag.getCreatedTime());
-            result = tagMapper.insertSelective(newTag);
+            tag.setTagStatus(tag.getTagStatus());
+            tag.setTagDescription(tag.getTagDescription());
+            tag.setTagReservation(tag.getTagReservation());
+            tag.setCreatedTime(new Date());
+            tag.setUpdatedTime(tag.getCreatedTime());
+            result = tagMapper.insertSelective(tag);
         } else {
             tag.setUpdatedTime(new Date());
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
@@ -165,11 +157,9 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             result = tagMapper.update(tag.getIdTag(), tag.getTagUri(), tag.getTagIconPath(), tag.getTagStatus(), tag.getTagDescription(), tag.getTagReservation());
         }
         if (result == 0) {
-            map.put("message", "操作失败!");
-        } else {
-            map.put("tag", tag);
+            throw new ServiceException("操作失败!");
         }
-        return map;
+        return tag;
     }
 
     @Override

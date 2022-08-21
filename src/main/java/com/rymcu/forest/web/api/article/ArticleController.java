@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -106,15 +105,15 @@ public class ArticleController {
     }
 
     @PostMapping("/thumbs-up")
-    public GlobalResult thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws BaseApiException {
-        Map map = articleThumbsUpService.thumbsUp(articleThumbsUp);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws Exception {
+        String str = articleThumbsUpService.thumbsUp(articleThumbsUp);
+        return GlobalResultGenerator.genSuccessResult(str);
     }
 
     @PostMapping("/sponsor")
     public GlobalResult sponsor(@RequestBody Sponsor sponsor) throws Exception {
-        Map map = sponsorService.sponsorship(sponsor);
-        return GlobalResultGenerator.genSuccessResult(map);
+        boolean flag = sponsorService.sponsorship(sponsor);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
 }

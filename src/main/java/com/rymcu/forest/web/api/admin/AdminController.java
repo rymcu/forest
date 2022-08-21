@@ -2,6 +2,7 @@ package com.rymcu.forest.web.api.admin;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.*;
@@ -9,15 +10,12 @@ import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.dto.admin.UserRoleDTO;
 import com.rymcu.forest.entity.*;
 import com.rymcu.forest.service.*;
-import com.rymcu.forest.util.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -66,33 +64,33 @@ public class AdminController {
     }
 
     @PatchMapping("/user/update-role")
-    public GlobalResult<Map> updateUserRole(@RequestBody UserRoleDTO userRole){
-        Map map = userService.updateUserRole(userRole.getIdUser(),userRole.getIdRole());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> updateUserRole(@RequestBody UserRoleDTO userRole) throws ServiceException {
+        boolean flag = userService.updateUserRole(userRole.getIdUser(), userRole.getIdRole());
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PatchMapping("/user/update-status")
-    public GlobalResult<Map> updateUserStatus(@RequestBody User user){
-        Map map = userService.updateStatus(user.getIdUser(),user.getStatus());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> updateUserStatus(@RequestBody User user) throws ServiceException {
+        boolean flag = userService.updateStatus(user.getIdUser(), user.getStatus());
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PatchMapping("/role/update-status")
-    public GlobalResult<Map> updateRoleStatus(@RequestBody Role role){
-        Map map = roleService.updateStatus(role.getIdRole(),role.getStatus());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> updateRoleStatus(@RequestBody Role role) throws Exception {
+        boolean flag = roleService.updateStatus(role.getIdRole(), role.getStatus());
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PostMapping("/role/post")
-    public GlobalResult<Map> addRole(@RequestBody Role role){
-        Map map = roleService.saveRole(role);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Role> addRole(@RequestBody Role role) throws Exception {
+        boolean flag = roleService.saveRole(role);
+        return GlobalResultGenerator.genSuccessResult(role);
     }
 
     @PutMapping("/role/post")
-    public GlobalResult<Map> updateRole(@RequestBody Role role){
-        Map map = roleService.saveRole(role);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Role> updateRole(@RequestBody Role role) throws Exception {
+        boolean flag = roleService.saveRole(role);
+        return GlobalResultGenerator.genSuccessResult(role);
     }
 
     @GetMapping("/topics")
@@ -113,12 +111,12 @@ public class AdminController {
     }
 
     @GetMapping("/topic/{topicUri}/tags")
-    public GlobalResult topicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows,@PathVariable String topicUri){
+    public GlobalResult topicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows,@PathVariable String topicUri) {
         if (StringUtils.isBlank(topicUri)) {
             return GlobalResultGenerator.genErrorResult("数据异常!");
         }
-        Map map = topicService.findTagsByTopicUri(topicUri,page,rows);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo pageInfo = topicService.findTagsByTopicUri(topicUri, page, rows);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/topic/detail/{idTopic}")
@@ -138,27 +136,27 @@ public class AdminController {
     }
 
     @PostMapping("/topic/bind-topic-tag")
-    public GlobalResult bindTopicTag(@RequestBody TopicTagDTO topicTag){
-        Map map = topicService.bindTopicTag(topicTag);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult bindTopicTag(@RequestBody TopicTagDTO topicTag) throws Exception {
+        TopicTagDTO newTopicTagDTO = topicService.bindTopicTag(topicTag);
+        return GlobalResultGenerator.genSuccessResult(newTopicTagDTO);
     }
 
     @DeleteMapping("/topic/unbind-topic-tag")
-    public GlobalResult unbindTopicTag(@RequestBody TopicTagDTO topicTag){
-        Map map = topicService.unbindTopicTag(topicTag);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult unbindTopicTag(@RequestBody TopicTagDTO topicTag) throws Exception {
+        TopicTagDTO topicTagDTO = topicService.unbindTopicTag(topicTag);
+        return GlobalResultGenerator.genSuccessResult(topicTagDTO);
     }
 
     @PostMapping("/topic/post")
-    public GlobalResult<Map> addTopic(@RequestBody Topic topic){
-        Map map = topicService.saveTopic(topic);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Topic> addTopic(@RequestBody Topic topic) throws Exception {
+        Topic newTopic = topicService.saveTopic(topic);
+        return GlobalResultGenerator.genSuccessResult(newTopic);
     }
 
     @PutMapping("/topic/post")
-    public GlobalResult<Map> updateTopic(@RequestBody Topic topic){
-        Map map = topicService.saveTopic(topic);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Topic> updateTopic(@RequestBody Topic topic) throws Exception {
+        Topic newTopic = topicService.saveTopic(topic);
+        return GlobalResultGenerator.genSuccessResult(newTopic);
     }
 
     @GetMapping("/tags")
@@ -170,9 +168,9 @@ public class AdminController {
     }
 
     @DeleteMapping("/tag/clean-unused")
-    public GlobalResult cleanUnusedTag(){
-        Map map = tagService.cleanUnusedTag();
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult cleanUnusedTag() {
+        boolean bool = tagService.cleanUnusedTag();
+        return GlobalResultGenerator.genSuccessResult(bool);
     }
 
     @GetMapping("/tag/detail/{idTag}")
@@ -182,15 +180,15 @@ public class AdminController {
     }
 
     @PostMapping("/tag/post")
-    public GlobalResult<Map> addTag(@RequestBody Tag tag){
-        Map map = tagService.saveTag(tag);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Tag> addTag(@RequestBody Tag tag) throws Exception {
+        Tag newTag = tagService.saveTag(tag);
+        return GlobalResultGenerator.genSuccessResult(newTag);
     }
 
     @PutMapping("/tag/post")
-    public GlobalResult<Map> updateTag(@RequestBody Tag tag){
-        Map map = tagService.saveTag(tag);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Tag> updateTag(@RequestBody Tag tag) throws Exception {
+        Tag newTag = tagService.saveTag(tag);
+        return GlobalResultGenerator.genSuccessResult(newTag);
     }
 
     @GetMapping("/special-days")

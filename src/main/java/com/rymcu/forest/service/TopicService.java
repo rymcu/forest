@@ -1,12 +1,12 @@
 package com.rymcu.forest.service;
 
+import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.Topic;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -28,10 +28,11 @@ public interface TopicService extends Service<Topic> {
 
     /**
      * 新增/更新主题信息
+     *
      * @param topic 主题信息
      * @return
-     * */
-    Map saveTopic(Topic topic);
+     */
+    Topic saveTopic(Topic topic) throws Exception;
 
     /**
      * 查询未绑定标签
@@ -43,24 +44,27 @@ public interface TopicService extends Service<Topic> {
 
     /**
      * 绑定标签
+     *
      * @param topicTag
      * @return
      */
-    Map bindTopicTag(TopicTagDTO topicTag);
+    TopicTagDTO bindTopicTag(TopicTagDTO topicTag) throws Exception;
 
     /**
      * 取消绑定标签
+     *
      * @param topicTag
      * @return
      */
-    Map unbindTopicTag(TopicTagDTO topicTag);
+    TopicTagDTO unbindTopicTag(TopicTagDTO topicTag) throws Exception;
 
     /**
      * 获取主题下标签列表
+     *
      * @param topicUri
      * @param page
      * @param rows
      * @return
      */
-    Map findTagsByTopicUri(String topicUri, Integer page, Integer rows);
+    PageInfo findTagsByTopicUri(String topicUri, Integer page, Integer rows);
 }

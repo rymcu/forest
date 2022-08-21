@@ -2,6 +2,7 @@ package com.rymcu.forest.web.api.common;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.result.GlobalResultMessage;
@@ -68,13 +69,13 @@ public class CommonApiController {
     }
 
     @PostMapping("/register")
-    public GlobalResult<Map> register(@RequestBody UserRegisterInfoDTO registerInfo) {
-        Map map = userService.register(registerInfo.getEmail(), registerInfo.getPassword(), registerInfo.getCode());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Map> register(@RequestBody UserRegisterInfoDTO registerInfo) throws ServiceException {
+        userService.register(registerInfo.getEmail(), registerInfo.getPassword(), registerInfo.getCode());
+        return GlobalResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/login")
-    public GlobalResult<TokenUser> login(@RequestBody User user) {
+    public GlobalResult<TokenUser> login(@RequestBody User user) throws ServiceException {
         TokenUser tokenUser = userService.login(user.getAccount(), user.getPassword());
         return GlobalResultGenerator.genSuccessResult(tokenUser);
     }
@@ -109,9 +110,9 @@ public class CommonApiController {
     }
 
     @PatchMapping("/forget-password")
-    public GlobalResult<Map> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword) {
-        Map map = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<String> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword) throws ServiceException {
+        String str = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
+        return GlobalResultGenerator.genSuccessResult(str);
     }
 
     @GetMapping("/portfolio/{id}")

@@ -5,7 +5,6 @@ import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -31,16 +30,18 @@ public interface RoleService extends Service<Role> {
 
     /**
      * 更新用户状态
+     *
      * @param idRole
      * @param status
      * @return
-     * */
-    Map updateStatus(Long idRole, String status);
+     */
+    boolean updateStatus(Long idRole, String status) throws Exception;
 
     /**
      * 添加/更新角色
+     *
      * @param role
      * @return
-     * */
-    Map saveRole(Role role);
+     */
+    boolean saveRole(Role role) throws Exception;
 }

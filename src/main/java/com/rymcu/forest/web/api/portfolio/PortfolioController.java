@@ -1,5 +1,6 @@
 package com.rymcu.forest.web.api.portfolio;
 
+import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
@@ -53,30 +54,30 @@ public class PortfolioController {
 
     @GetMapping("/{idPortfolio}/unbind-articles")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText,@PathVariable Long idPortfolio) throws BaseApiException {
-        Map map = portfolioService.findUnbindArticles(page, rows, searchText, idPortfolio);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText, @PathVariable Long idPortfolio) throws Exception {
+        PageInfo pageInfo = portfolioService.findUnbindArticles(page, rows, searchText, idPortfolio);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @PostMapping("/bind-article")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult bindArticle(@RequestBody PortfolioArticleDTO portfolioArticle) {
-        Map map = portfolioService.bindArticle(portfolioArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult bindArticle(@RequestBody PortfolioArticleDTO portfolioArticle) throws Exception {
+        boolean flag = portfolioService.bindArticle(portfolioArticle);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PutMapping("/update-article-sort-no")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult updateArticleSortNo(@RequestBody PortfolioArticleDTO portfolioArticle) {
-        Map map = portfolioService.updateArticleSortNo(portfolioArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult updateArticleSortNo(@RequestBody PortfolioArticleDTO portfolioArticle) throws Exception {
+        boolean flag = portfolioService.updateArticleSortNo(portfolioArticle);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @DeleteMapping("/unbind-article")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult unbindArticle(Long idArticle, Long idPortfolio) {
-        Map map = portfolioService.unbindArticle(idPortfolio,idArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult unbindArticle(Long idArticle, Long idPortfolio) throws Exception {
+        boolean flag = portfolioService.unbindArticle(idPortfolio, idArticle);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @DeleteMapping("/delete")

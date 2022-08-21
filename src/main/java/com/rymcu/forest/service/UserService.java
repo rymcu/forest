@@ -1,5 +1,6 @@
 package com.rymcu.forest.service;
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.User;
@@ -27,20 +28,22 @@ public interface UserService extends Service<User> {
 
     /**
      * 注册接口
-     * @param email 邮箱
-     * @param password  密码
-     * @param code 验证码
+     *
+     * @param email    邮箱
+     * @param password 密码
+     * @param code     验证码
      * @return Map
-     * */
-    Map register(String email, String password, String code);
+     */
+    void register(String email, String password, String code) throws ServiceException;
 
     /**
      * 登录接口
-     * @param account 邮箱
-     * @param password  密码
+     *
+     * @param account  邮箱
+     * @param password 密码
      * @return Map
-     * */
-    TokenUser login(String account, String password);
+     */
+    TokenUser login(String account, String password) throws ServiceException;
 
     /**
      * 通过 account 获取用户信息接口
@@ -51,27 +54,30 @@ public interface UserService extends Service<User> {
 
     /**
      * 找回密码接口
-     * @param code 验证码
+     *
+     * @param code     验证码
      * @param password 密码
      * @return Map
-     * */
-    Map forgetPassword(String code, String password);
+     */
+    String forgetPassword(String code, String password) throws ServiceException;
 
     /**
      * 更新用户角色接口
+     *
      * @param idUser 用户 id
      * @param idRole 角色 id
      * @return Map
-     * */
-    Map updateUserRole(Long idUser, Long idRole);
+     */
+    boolean updateUserRole(Long idUser, Long idRole) throws ServiceException;
 
     /**
      * 更新用户状态
+     *
      * @param idUser 用户 id
      * @param status 状态
      * @return Map
-     * */
-    Map updateStatus(Long idUser, String status);
+     */
+    boolean updateStatus(Long idUser, String status) throws ServiceException;
 
     /**
      * 获取用户信息
@@ -82,18 +88,20 @@ public interface UserService extends Service<User> {
 
     /**
      * 更新用户信息
+     *
      * @param user
      * @return
      */
-    Map updateUserInfo(UserInfoDTO user);
+    UserInfoDTO updateUserInfo(UserInfoDTO user) throws Exception;
 
     /**
      * 验证昵称是否重复
+     *
      * @param idUser
      * @param nickname
      * @return
      */
-    Map checkNickname(Long idUser, String nickname);
+    boolean checkNickname(Long idUser, String nickname) throws ServiceException;
 
     /**
      * 获取用户权限
@@ -111,10 +119,11 @@ public interface UserService extends Service<User> {
 
     /**
      * 更新用户扩展信息
+     *
      * @param userExtend
      * @return
      */
-    Map updateUserExtend(UserExtend userExtend);
+    UserExtend updateUserExtend(UserExtend userExtend) throws ServiceException;
 
     /**
      * 获取用户扩展信息
@@ -125,17 +134,19 @@ public interface UserService extends Service<User> {
 
     /**
      * 更换邮箱
+     *
      * @param changeEmailDTO
      * @return
      */
-    Map updateEmail(ChangeEmailDTO changeEmailDTO);
+    String updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException;
 
     /**
      * 更新密码
+     *
      * @param updatePasswordDTO
      * @return
      */
-    Map updatePassword(UpdatePasswordDTO updatePasswordDTO);
+    boolean updatePassword(UpdatePasswordDTO updatePasswordDTO);
 
     /**
      * 查询用户列表
