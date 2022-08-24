@@ -1,12 +1,12 @@
 package com.rymcu.forest.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.rymcu.forest.core.constant.NotificationConstant;
 import com.rymcu.forest.entity.Comment;
 import com.rymcu.forest.handler.event.CommentEvent;
 import com.rymcu.forest.mapper.CommentMapper;
 import com.rymcu.forest.util.Html2TextUtil;
 import com.rymcu.forest.util.NotificationUtils;
-import com.rymcu.forest.wx.mp.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -32,7 +32,7 @@ public class CommentHandler {
     @Async
     @EventListener
     public void processCommentCreatedEvent(CommentEvent commentEvent) throws InterruptedException {
-        log.info(String.format("开始执行评论发布事件：[%s]", JsonUtils.toJson(commentEvent)));
+        log.info(String.format("开始执行评论发布事件：[%s]", JSON.toJSONString(commentEvent)));
         String commentContent = commentEvent.getContent();
         Integer length = commentContent.length();
         if (length > MAX_PREVIEW) {

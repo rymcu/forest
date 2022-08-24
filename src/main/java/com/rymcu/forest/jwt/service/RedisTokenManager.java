@@ -1,13 +1,14 @@
 package com.rymcu.forest.jwt.service;
 
 
+import com.rymcu.forest.handler.event.AccountEvent;
 import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.jwt.model.TokenModel;
-import com.rymcu.forest.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,7 @@ public class RedisTokenManager implements TokenManager {
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Resource
-    private UserService userService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 生成TOKEN
@@ -62,7 +63,7 @@ public class RedisTokenManager implements TokenManager {
         String result =  redisTemplate.boundValueOps(key.toString()).get();
         if (StringUtils.isBlank(result)) {
             // 更新最后在线时间
-            userService.updateLastOnlineTimeByEmail(model.getUsername());
+            applicationEventPublisher.publishEvent(new AccountEvent(model.getUsername()));
             redisTemplate.boundValueOps(key.toString()).set(LocalDateTime.now().toString(), JwtConstants.LAST_ONLINE_EXPIRES_MINUTE, TimeUnit.MINUTES);
         }
         return true;
