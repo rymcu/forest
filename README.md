@@ -98,3 +98,8 @@ forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使
 - 感谢 `JetBrains` 对本项目的帮助,为作者提供了开源许可版 `JetBrains` 全家桶
 
 ![JetBrains](src/main/resources/static/jb_beam.svg)
+
+
+## ⭐ Star 历史
+
+[![Stargazers over time](https://starchart.cc/rymcu/forest.svg)](https://starchart.cc/rymcu/forest)
