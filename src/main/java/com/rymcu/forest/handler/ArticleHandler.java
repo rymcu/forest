@@ -1,11 +1,11 @@
 package com.rymcu.forest.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.rymcu.forest.core.constant.NotificationConstant;
 import com.rymcu.forest.handler.event.ArticleDeleteEvent;
 import com.rymcu.forest.handler.event.ArticleEvent;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.util.NotificationUtils;
-import com.rymcu.forest.wx.mp.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -29,7 +29,7 @@ public class ArticleHandler {
     @Async
     public void processArticlePostEvent(ArticleEvent articleEvent) throws InterruptedException {
         Thread.sleep(1000);
-        log.info(String.format("执行文章发布相关事件：[%s]", JsonUtils.toJson(articleEvent)));
+        log.info(String.format("执行文章发布相关事件：[%s]", JSON.toJSONString(articleEvent)));
         // 发送系统通知
         if (articleEvent.getNotification()) {
             NotificationUtils.sendAnnouncement(articleEvent.getIdArticle(), NotificationConstant.Article, articleEvent.getArticleTitle());
@@ -59,7 +59,7 @@ public class ArticleHandler {
     @Async
     public void processArticleDeleteEvent(ArticleDeleteEvent articleDeleteEvent) throws InterruptedException {
         Thread.sleep(1000);
-        log.info(String.format("执行文章删除相关事件：[%s]", JsonUtils.toJson(articleDeleteEvent)));
+        log.info(String.format("执行文章删除相关事件：[%s]", JSON.toJSONString(articleDeleteEvent)));
         luceneService.deleteArticle(articleDeleteEvent.getIdArticle());
         log.info("执行完成文章删除相关事件...id={}", articleDeleteEvent.getIdArticle());
     }

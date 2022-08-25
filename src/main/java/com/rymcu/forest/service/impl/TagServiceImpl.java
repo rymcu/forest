@@ -3,16 +3,12 @@ package com.rymcu.forest.service.impl;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.LabelModel;
-import com.rymcu.forest.dto.baidu.TagNlpDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Tag;
-import com.rymcu.forest.entity.User;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.mapper.TagMapper;
 import com.rymcu.forest.service.TagService;
-import com.rymcu.forest.util.BaiDuAipUtils;
 import com.rymcu.forest.util.CacheUtils;
-import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
@@ -97,16 +93,6 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             return 1;
         } else {
             if (StringUtils.isNotBlank(articleContentHtml)) {
-                List<TagNlpDTO> list = BaiDuAipUtils.getKeywords(article.getArticleTitle(), articleContentHtml);
-                if (list.size() > 0) {
-                    StringBuffer tags = new StringBuffer();
-                    for (TagNlpDTO tagNlpDTO : list) {
-                        tags.append(tagNlpDTO.getTag()).append(",");
-                    }
-                    article.setArticleTags(tags.toString());
-                } else {
-                    article.setArticleTags("待分类");
-                }
                 saveTagArticle(article, articleContentHtml, userId);
             }
         }
