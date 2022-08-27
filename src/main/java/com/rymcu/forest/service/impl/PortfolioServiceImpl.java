@@ -4,20 +4,18 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
+import com.rymcu.forest.core.exception.UltraViresException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Portfolio;
-import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.model.PortfolioLucene;
 import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.mapper.PortfolioMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -64,15 +62,12 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public Portfolio postPortfolio(Portfolio portfolio) throws BaseApiException {
-        User user = UserUtils.getCurrentUserByToken();
-        assert user != null;
+    public Portfolio postPortfolio(Portfolio portfolio) {
         if (StringUtils.isNotBlank(portfolio.getHeadImgType())) {
             String headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), 0);
             portfolio.setHeadImgUrl(headImgUrl);
         }
         if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
-            portfolio.setPortfolioAuthorId(user.getIdUser());
             portfolio.setCreatedTime(new Date());
             portfolio.setUpdatedTime(portfolio.getCreatedTime());
             portfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
@@ -97,61 +92,47 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public PageInfo findUnbindArticles(Integer page, Integer rows, String searchText, Long idPortfolio) throws Exception {
-        User user = UserUtils.getCurrentUserByToken();
+    public PageInfo<ArticleDTO> findUnbindArticles(Integer page, Integer rows, String searchText, Long idPortfolio, Long idUser) {
         Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
         if (portfolio == null) {
-            throw new ServiceException("该作品集不存在或已被删除!");
+            throw new BusinessException("该作品集不存在或已被删除!");
         } else {
-            if (!user.getIdUser().equals(portfolio.getPortfolioAuthorId())) {
-                throw new ServiceException("非法操作!");
+            if (!idUser.equals(portfolio.getPortfolioAuthorId())) {
+                throw new UltraViresException("非法操作!");
             } else {
                 PageHelper.startPage(page, rows);
-                List<ArticleDTO> articles = articleService.selectUnbindArticles(idPortfolio, searchText, user.getIdUser());
-                PageInfo<ArticleDTO> pageInfo = new PageInfo(articles);
-                return pageInfo;
+                List<ArticleDTO> articles = articleService.selectUnbindArticles(idPortfolio, searchText, idUser);
+                return new PageInfo<>(articles);
             }
         }
     }
 
     @Override
-    public boolean bindArticle(PortfolioArticleDTO portfolioArticle) throws Exception {
+    public boolean bindArticle(PortfolioArticleDTO portfolioArticle) throws ServiceException {
         Integer count = portfolioMapper.selectCountPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio());
         if (count.equals(0)) {
             Integer maxSortNo = portfolioMapper.selectMaxSortNo(portfolioArticle.getIdPortfolio());
-            portfolioMapper.insertPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio(), maxSortNo);
-            return true;
+            Integer result = portfolioMapper.insertPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio(), maxSortNo);
+            if (result == 0) {
+                throw new ServiceException("更新失败!");
+            }
         } else {
-            throw new ServiceException("该文章已经在作品集下!!");
+            throw new BusinessException("该文章已经在作品集下!!");
         }
+        return true;
     }
 
     @Override
-    public boolean updateArticleSortNo(PortfolioArticleDTO portfolioArticle) throws Exception {
-        if (portfolioArticle.getIdPortfolio() == null || portfolioArticle.getIdPortfolio().equals(0)) {
-            throw new ServiceException("作品集数据异常!");
-        }
-        if (portfolioArticle.getIdArticle() == null || portfolioArticle.getIdArticle().equals(0)) {
-            throw new ServiceException("文章数据异常!");
-        }
-        if (portfolioArticle.getSortNo() == null) {
-            throw new ServiceException("排序号不能为空!");
-        }
+    public boolean updateArticleSortNo(PortfolioArticleDTO portfolioArticle) throws ServiceException {
         Integer result = portfolioMapper.updateArticleSortNo(portfolioArticle.getIdPortfolio(), portfolioArticle.getIdArticle(), portfolioArticle.getSortNo());
-        if (result > 0) {
+        if (result == 0) {
             throw new ServiceException("更新失败!");
         }
         return true;
     }
 
     @Override
-    public boolean unbindArticle(Long idPortfolio, Long idArticle) throws Exception {
-        if (idPortfolio == null || idPortfolio.equals(0)) {
-            throw new ServiceException("作品集数据异常");
-        }
-        if (idArticle == null || idArticle.equals(0)) {
-            throw new ServiceException("文章数据异常");
-        }
+    public boolean unbindArticle(Long idPortfolio, Long idArticle) throws ServiceException {
         Integer result = portfolioMapper.unbindArticle(idPortfolio, idArticle);
         if (result == 0) {
             throw new ServiceException("操作失败!");
@@ -160,7 +141,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
-    public boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights) throws BaseApiException, IllegalAccessException {
+    public boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights) {
         if (idPortfolio == null || idPortfolio == 0) {
             throw new IllegalArgumentException("作品集数据异常！");
         }
@@ -168,7 +149,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
         if (roleWeights > 2) {
             Portfolio portfolio = portfolioMapper.selectByPrimaryKey(idPortfolio);
             if (!idUser.equals(portfolio.getPortfolioAuthorId())) {
-                throw new IllegalAccessException("非法访问！");
+                throw new UltraViresException("非法访问！");
             }
         }
 

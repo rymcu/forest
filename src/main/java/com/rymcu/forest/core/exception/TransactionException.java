@@ -5,7 +5,7 @@ import com.rymcu.forest.enumerate.TransactionCode;
 /**
  * @author ronger
  */
-public class TransactionException extends Exception {
+public class TransactionException extends BusinessException {
 
     private int code;
 

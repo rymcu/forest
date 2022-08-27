@@ -1,5 +1,6 @@
 package com.rymcu.forest.service;
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
@@ -30,18 +31,18 @@ public interface RoleService extends Service<Role> {
 
     /**
      * 更新用户状态
-     *
      * @param idRole
      * @param status
      * @return
+     * @throws ServiceException
      */
-    boolean updateStatus(Long idRole, String status) throws Exception;
+    boolean updateStatus(Long idRole, String status) throws ServiceException;
 
     /**
      * 添加/更新角色
-     *
      * @param role
      * @return
+     * @throws ServiceException
      */
-    boolean saveRole(Role role) throws Exception;
+    boolean saveRole(Role role) throws ServiceException;
 }

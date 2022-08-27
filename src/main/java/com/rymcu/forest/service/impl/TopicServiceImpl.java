@@ -2,6 +2,7 @@ package com.rymcu.forest.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.admin.TagDTO;
@@ -33,8 +34,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     public List<Topic> findTopicNav() {
-        List<Topic> topics = topicMapper.selectTopicNav();
-        return topics;
+        return topicMapper.selectTopicNav();
     }
 
     @Override
@@ -46,18 +46,18 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Topic saveTopic(Topic topic) throws Exception {
+    public Topic saveTopic(Topic topic) throws ServiceException {
         Integer result;
         topic.setTopicDescriptionHtml(XssUtils.filterHtmlCode(topic.getTopicDescriptionHtml()));
         if (topic.getIdTopic() == null) {
             if (StringUtils.isBlank(topic.getTopicTitle())) {
-                throw new ServiceException("标签名不能为空!");
+                throw new IllegalArgumentException("标签名不能为空!");
             } else {
                 Condition topicCondition = new Condition(Topic.class);
                 topicCondition.createCriteria().andCondition("topic_title =", topic.getTopicTitle());
                 List<Topic> topics = topicMapper.selectByCondition(topicCondition);
                 if (!topics.isEmpty()) {
-                    throw new ServiceException("专题 '" + topic.getTopicTitle() + "' 已存在!");
+                    throw new BusinessException("专题 '" + topic.getTopicTitle() + "' 已存在!");
                 }
             }
             topic = new Topic();
@@ -103,7 +103,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public TopicTagDTO bindTopicTag(TopicTagDTO topicTag) throws Exception {
+    public TopicTagDTO bindTopicTag(TopicTagDTO topicTag) throws ServiceException {
         Integer result = topicMapper.insertTopicTag(topicTag.getIdTopic(), topicTag.getIdTag());
         if (result == 0) {
             throw new ServiceException("操作失败!");
@@ -113,7 +113,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public TopicTagDTO unbindTopicTag(TopicTagDTO topicTag) throws Exception {
+    public TopicTagDTO unbindTopicTag(TopicTagDTO topicTag) throws ServiceException {
         Integer result = topicMapper.deleteTopicTag(topicTag.getIdTopic(), topicTag.getIdTag());
         if (result == 0) {
             throw new ServiceException("操作失败!");
@@ -122,14 +122,11 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
     }
 
     @Override
-    public PageInfo findTagsByTopicUri(String topicUri, Integer page, Integer rows) {
+    public List<TagDTO> findTagsByTopicUri(String topicUri) {
         TopicDTO topic = topicMapper.selectTopicByTopicUri(topicUri);
         if (topic == null) {
             return null;
         }
-        PageHelper.startPage(page, rows);
-        List<TagDTO> list = topicMapper.selectTopicTag(topic.getIdTopic());
-        PageInfo pageInfo = new PageInfo(list);
-        return pageInfo;
+        return topicMapper.selectTopicTag(topic.getIdTopic());
     }
 }

@@ -38,7 +38,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public TransactionRecord transfer(TransactionRecord transactionRecord) throws Exception {
+    public TransactionRecord transfer(TransactionRecord transactionRecord) {
         // 判断发起者账户状态
         boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
         if (formAccountStatus) {
@@ -70,7 +70,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) throws Exception {
+    public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) {
         BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(toUserId);
         BankAccountDTO formBankAccount = bankAccountService.findBankAccountByIdUser(formUserId);
         TransactionRecord transactionRecord = new TransactionRecord();
@@ -82,7 +82,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) throws Exception {
+    public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) {
         BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(idUser);
         Boolean isTrue;
         // 校验货币规则
@@ -107,7 +107,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) throws Exception {
+    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) {
         // 判断是否重复发放
         Boolean result = transactionRecordMapper.existsWithNewbieRewards(transactionRecord.getToBankAccount());
         if (result) {

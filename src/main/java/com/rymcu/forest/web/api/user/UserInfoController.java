@@ -35,57 +35,59 @@ public class UserInfoController {
 
     @GetMapping("/detail/{idUser}")
     @SecurityInterceptor
-    public GlobalResult detail(@PathVariable Long idUser) {
-        Map map = userService.findUserInfo(idUser);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<UserInfoDTO> detail(@PathVariable Long idUser) {
+        UserInfoDTO userInfo = userService.findUserInfo(idUser);
+        return GlobalResultGenerator.genSuccessResult(userInfo);
+    }
+    @GetMapping("/detail/{idUser}/extend-info")
+    @SecurityInterceptor
+    public GlobalResult<UserExtend> extendInfo(@PathVariable Long idUser) {
+        UserExtend userExtend = userService.findUserExtendInfo(idUser);
+        return GlobalResultGenerator.genSuccessResult(userExtend);
     }
 
     @GetMapping("/check-nickname")
     @SecurityInterceptor
-    public GlobalResult checkNickname(@RequestParam Long idUser, @RequestParam String nickname) throws ServiceException {
-        boolean flag = userService.checkNickname(idUser, nickname);
+    public GlobalResult checkNickname(@RequestParam Long idUser, @RequestParam String nickname) {
+        boolean flag = userService.checkNicknameByIdUser(idUser, nickname);
         return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PatchMapping("/update")
     @SecurityInterceptor
-    public GlobalResult updateUserInfo(@RequestBody UserInfoDTO user) throws Exception {
-        UserInfoDTO newUsers = userService.updateUserInfo(user);
-        return GlobalResultGenerator.genSuccessResult(newUsers);
+    public GlobalResult<UserInfoDTO> updateUserInfo(@RequestBody UserInfoDTO user) throws ServiceException {
+        user = userService.updateUserInfo(user);
+        return GlobalResultGenerator.genSuccessResult(user);
     }
 
     @PatchMapping("/update-extend")
     @SecurityInterceptor
-    public GlobalResult updateUserExtend(@RequestBody UserExtend userExtend) throws ServiceException {
-        UserExtend map = userService.updateUserExtend(userExtend);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<UserExtend> updateUserExtend(@RequestBody UserExtend userExtend) throws ServiceException {
+        userExtend = userService.updateUserExtend(userExtend);
+        return GlobalResultGenerator.genSuccessResult(userExtend);
     }
 
     @PatchMapping("/update-email")
     @SecurityInterceptor
-    public GlobalResult updateEmail(@RequestBody ChangeEmailDTO changeEmailDTO) throws ServiceException {
-        String email = userService.updateEmail(changeEmailDTO);
-        return GlobalResultGenerator.genSuccessResult(email);
+    public GlobalResult<Boolean> updateEmail(@RequestBody ChangeEmailDTO changeEmailDTO) throws ServiceException {
+        boolean flag = userService.updateEmail(changeEmailDTO);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PatchMapping("/update-password")
     @SecurityInterceptor
-    public GlobalResult updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO) {
+    public GlobalResult<Boolean> updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO) {
         boolean flag = userService.updatePassword(updatePasswordDTO);
         return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @GetMapping("/login-records")
     @SecurityInterceptor
-    public GlobalResult loginRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam Integer idUser) {
+    public GlobalResult<PageInfo<LoginRecord>> loginRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam Integer idUser) {
         PageHelper.startPage(page, rows);
         List<LoginRecord> list = loginRecordService.findLoginRecordByIdUser(idUser);
         PageInfo<LoginRecord> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<String, Object>(2);
-        map.put("records", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
 }

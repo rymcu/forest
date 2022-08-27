@@ -26,8 +26,7 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
 
     @Override
     public List<Role> selectRoleByUser(User sysUser) {
-        List<Role> roles = roleMapper.selectRoleByIdUser(sysUser.getIdUser());
-        return roles;
+        return roleMapper.selectRoleByIdUser(sysUser.getIdUser());
     }
 
     @Override
@@ -36,8 +35,8 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     }
 
     @Override
-    @Transactional
-    public boolean updateStatus(Long idRole, String status) throws Exception {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean updateStatus(Long idRole, String status) throws ServiceException {
         Integer result = roleMapper.updateStatus(idRole, status);
         if (result == 0) {
             throw new ServiceException("更新失败");
@@ -46,7 +45,7 @@ public class RoleServiceImpl extends AbstractService<Role> implements RoleServic
     }
 
     @Override
-    public boolean saveRole(Role role) throws Exception {
+    public boolean saveRole(Role role) throws ServiceException {
         Integer result;
         if (role.getIdRole() == null) {
             role.setCreatedTime(new Date());

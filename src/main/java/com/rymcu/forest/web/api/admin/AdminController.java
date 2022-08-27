@@ -6,6 +6,7 @@ import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.*;
+import com.rymcu.forest.dto.admin.TagDTO;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.dto.admin.UserRoleDTO;
 import com.rymcu.forest.entity.*;
@@ -19,7 +20,7 @@ import java.util.List;
 
 /**
  * @author ronger
- * */
+ */
 @RestController
 @RequestMapping("/api/v1/admin")
 public class AdminController {
@@ -42,7 +43,7 @@ public class AdminController {
     private ProductService productService;
 
     @GetMapping("/users")
-    public GlobalResult<PageInfo<UserInfoDTO>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO){
+    public GlobalResult<PageInfo<UserInfoDTO>> users(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, UserSearchDTO searchDTO) {
         PageHelper.startPage(page, rows);
         List<UserInfoDTO> list = userService.findUsers(searchDTO);
         PageInfo<UserInfoDTO> pageInfo = new PageInfo<>(list);
@@ -50,13 +51,13 @@ public class AdminController {
     }
 
     @GetMapping("/user/{idUser}/role")
-    public GlobalResult<List<Role>> userRole(@PathVariable Long idUser){
+    public GlobalResult<List<Role>> userRole(@PathVariable Long idUser) {
         List<Role> roles = roleService.findByIdUser(idUser);
         return GlobalResultGenerator.genSuccessResult(roles);
     }
 
     @GetMapping("/roles")
-    public GlobalResult<PageInfo<Role>> roles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<PageInfo<Role>> roles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<Role> list = roleService.findAll();
         PageInfo<Role> pageInfo = new PageInfo<>(list);
@@ -76,25 +77,25 @@ public class AdminController {
     }
 
     @PatchMapping("/role/update-status")
-    public GlobalResult<Boolean> updateRoleStatus(@RequestBody Role role) throws Exception {
+    public GlobalResult<Boolean> updateRoleStatus(@RequestBody Role role) throws ServiceException {
         boolean flag = roleService.updateStatus(role.getIdRole(), role.getStatus());
         return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PostMapping("/role/post")
-    public GlobalResult<Role> addRole(@RequestBody Role role) throws Exception {
+    public GlobalResult<Boolean> addRole(@RequestBody Role role) throws ServiceException {
         boolean flag = roleService.saveRole(role);
-        return GlobalResultGenerator.genSuccessResult(role);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PutMapping("/role/post")
-    public GlobalResult<Role> updateRole(@RequestBody Role role) throws Exception {
+    public GlobalResult<Boolean> updateRole(@RequestBody Role role) throws Exception {
         boolean flag = roleService.saveRole(role);
-        return GlobalResultGenerator.genSuccessResult(role);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @GetMapping("/topics")
-    public GlobalResult<PageInfo<Topic>> topics(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<PageInfo<Topic>> topics(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<Topic> list = topicService.findAll();
         PageInfo<Topic> pageInfo = new PageInfo<>(list);
@@ -102,31 +103,33 @@ public class AdminController {
     }
 
     @GetMapping("/topic/{topicUri}")
-    public GlobalResult topic(@PathVariable String topicUri){
+    public GlobalResult topic(@PathVariable String topicUri) {
         if (StringUtils.isBlank(topicUri)) {
-            return GlobalResultGenerator.genErrorResult("数据异常!");
+            throw new IllegalArgumentException("参数异常!");
         }
         Topic topic = topicService.findTopicByTopicUri(topicUri);
         return GlobalResultGenerator.genSuccessResult(topic);
     }
 
     @GetMapping("/topic/{topicUri}/tags")
-    public GlobalResult topicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows,@PathVariable String topicUri) {
+    public GlobalResult<PageInfo<TagDTO>> topicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String topicUri) {
         if (StringUtils.isBlank(topicUri)) {
-            return GlobalResultGenerator.genErrorResult("数据异常!");
+            throw new IllegalArgumentException("参数异常!");
         }
-        PageInfo pageInfo = topicService.findTagsByTopicUri(topicUri, page, rows);
+        PageHelper.startPage(page, rows);
+        List<TagDTO> list = topicService.findTagsByTopicUri(topicUri);
+        PageInfo<TagDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/topic/detail/{idTopic}")
-    public GlobalResult<Topic> topicDetail(@PathVariable Integer idTopic){
+    public GlobalResult<Topic> topicDetail(@PathVariable Integer idTopic) {
         Topic topic = topicService.findById(idTopic.toString());
         return GlobalResultGenerator.genSuccessResult(topic);
     }
 
     @GetMapping("/topic/unbind-topic-tags")
-    public GlobalResult<PageInfo<Tag>> unbindTopicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, HttpServletRequest request){
+    public GlobalResult<PageInfo<Tag>> unbindTopicTags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, HttpServletRequest request) {
         Long idTopic = Long.valueOf(request.getParameter("idTopic"));
         String tagTitle = request.getParameter("tagTitle");
         PageHelper.startPage(page, rows);
@@ -160,7 +163,7 @@ public class AdminController {
     }
 
     @GetMapping("/tags")
-    public GlobalResult<PageInfo<Tag>> tags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows){
+    public GlobalResult<PageInfo<Tag>> tags(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<Tag> list = tagService.findAll();
         PageInfo<Tag> pageInfo = new PageInfo<>(list);
@@ -174,7 +177,7 @@ public class AdminController {
     }
 
     @GetMapping("/tag/detail/{idTag}")
-    public GlobalResult<Tag> tagDetail(@PathVariable Integer idTag){
+    public GlobalResult<Tag> tagDetail(@PathVariable Integer idTag) {
         Tag tag = tagService.findById(idTag.toString());
         return GlobalResultGenerator.genSuccessResult(tag);
     }
@@ -222,7 +225,6 @@ public class AdminController {
         PageInfo<ProductDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
-
 
 
 }

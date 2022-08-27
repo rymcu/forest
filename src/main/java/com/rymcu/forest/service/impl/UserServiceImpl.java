@@ -1,8 +1,6 @@
 package com.rymcu.forest.service.impl;
 
-import com.rymcu.forest.core.exception.CaptchaException;
-import com.rymcu.forest.core.exception.ContentNotExistException;
-import com.rymcu.forest.core.exception.ServiceException;
+import com.rymcu.forest.core.exception.*;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.*;
@@ -61,13 +59,13 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void register(String email, String password, String code) throws ServiceException {
+    public boolean register(String email, String password, String code) {
         String vCode = redisService.get(email);
         if (StringUtils.isNotBlank(vCode)) {
             if (vCode.equals(code)) {
                 User user = userMapper.findByAccount(email);
                 if (user != null) {
-                    throw new ServiceException("该邮箱已被注册！");
+                    throw new AccountExistsException("该邮箱已被注册！");
                 } else {
                     user = new User();
                     String nickname = email.split("@")[0];
@@ -88,11 +86,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                             .signature(user.getSignature())
                             .build());
                     redisService.delete(email);
-                    return;
+                    return true;
                 }
             }
         }
-        throw new ServiceException("验证码无效！");
+        throw new CaptchaException();
     }
 
     private String checkNickname(String nickname) {
@@ -143,13 +141,16 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public String forgetPassword(String code, String password) throws ServiceException {
+    public boolean forgetPassword(String code, String password) throws ServiceException {
         String email = redisService.get(code);
         if (StringUtils.isBlank(email)) {
             throw new ServiceException("链接已失效");
         } else {
-            userMapper.updatePasswordByEmail(email, Utils.entryptPassword(password));
-            return "修改成功，正在跳转登录登陆界面！";
+            int result = userMapper.updatePasswordByEmail(email, Utils.entryptPassword(password));
+            if (result == 0) {
+                throw new ServiceException("密码修改失败!");
+            }
+            return true;
         }
     }
 
@@ -174,31 +175,21 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Map findUserInfo(Long idUser) {
-        Map map = new HashMap(2);
+    public UserInfoDTO findUserInfo(Long idUser) {
         UserInfoDTO user = userMapper.selectUserInfo(idUser);
         if (user == null) {
             throw new ContentNotExistException("用户不存在!");
-        } else {
-            UserExtend userExtend = userExtendMapper.selectByPrimaryKey(user.getIdUser());
-            if (Objects.isNull(userExtend)) {
-                userExtend = new UserExtend();
-                userExtend.setIdUser(user.getIdUser());
-                userExtendMapper.insertSelective(userExtend);
-            }
-            map.put("user", user);
-            map.put("userExtend", userExtend);
         }
-        return map;
+        return user;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserInfoDTO updateUserInfo(UserInfoDTO user) throws Exception {
+    public UserInfoDTO updateUserInfo(UserInfoDTO user) throws ServiceException {
         user.setNickname(formatNickname(user.getNickname()));
         Integer number = userMapper.checkNicknameByIdUser(user.getIdUser(), user.getNickname());
         if (number > 0) {
-            throw new ServiceException("该昵称已使用!");
+            throw new NicknameOccupyException("该昵称已使用!");
         }
         if (StringUtils.isNotBlank(user.getAvatarType()) && AVATAR_SVG_TYPE.equals(user.getAvatarType())) {
             String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), 0);
@@ -222,12 +213,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         return nickname.replaceAll("\\.", "");
     }
 
-    @Override
-    public boolean checkNickname(Long idUser, String nickname) throws ServiceException {
-        Map map = new HashMap(2);
+    public boolean checkNicknameByIdUser(Long idUser, String nickname) {
         Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
         if (number > 0) {
-            throw new ServiceException("该昵称已使用!");
+            return false;
         }
         return true;
     }
@@ -244,7 +233,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public UserExtend updateUserExtend(UserExtend userExtend) throws ServiceException {
-        int result = userExtendMapper.updateByPrimaryKeySelective(userExtend);
+        int result = userExtendMapper.updateByPrimaryKey(userExtend);
         if (result == 0) {
             throw new ServiceException("操作失败!");
         }
@@ -257,14 +246,17 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public String updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException {
+    public boolean updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException {
         Long idUser = changeEmailDTO.getIdUser();
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
         String vCode = redisService.get(email);
         if (StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code) && vCode.equals(code)) {
-            userMapper.updateEmail(idUser, email);
-            return email;
+            int result = userMapper.updateEmail(idUser, email);
+            if (result == 0) {
+                throw new ServiceException("修改邮箱失败!");
+            }
+            return true;
         }
         throw new CaptchaException();
     }
@@ -296,5 +288,16 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public Integer updateLastOnlineTimeByEmail(String email) {
         return userMapper.updateLastOnlineTimeByEmail(email);
+    }
+
+    @Override
+    public UserExtend findUserExtendInfo(Long idUser) {
+        UserExtend userExtend = userExtendMapper.selectByPrimaryKey(idUser);
+        if (Objects.isNull(userExtend)) {
+            userExtend = new UserExtend();
+            userExtend.setIdUser(idUser);
+            userExtendMapper.insertSelective(userExtend);
+        }
+        return userExtend;
     }
 }

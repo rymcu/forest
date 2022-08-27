@@ -12,7 +12,6 @@ import java.util.Map;
 
 
 /**
- *
  * @author CodeGenerator
  * @date 2018/05/29
  */
@@ -20,10 +19,11 @@ public interface UserService extends Service<User> {
 
     /**
      * 通过账号查询用户信息
+     *
      * @param account
-     * @throws TooManyResultsException
      * @return User
-     * */
+     * @throws TooManyResultsException
+     */
     User findByAccount(String account) throws TooManyResultsException;
 
     /**
@@ -34,7 +34,7 @@ public interface UserService extends Service<User> {
      * @param code     验证码
      * @return Map
      */
-    void register(String email, String password, String code) throws ServiceException;
+    boolean register(String email, String password, String code);
 
     /**
      * 登录接口
@@ -47,9 +47,10 @@ public interface UserService extends Service<User> {
 
     /**
      * 通过 account 获取用户信息接口
+     *
      * @param account 昵称
-     * @return  UserDTO
-     * */
+     * @return UserDTO
+     */
     UserDTO findUserDTOByAccount(String account);
 
     /**
@@ -58,8 +59,9 @@ public interface UserService extends Service<User> {
      * @param code     验证码
      * @param password 密码
      * @return Map
+     * @throws ServiceException
      */
-    String forgetPassword(String code, String password) throws ServiceException;
+    boolean forgetPassword(String code, String password) throws ServiceException;
 
     /**
      * 更新用户角色接口
@@ -67,6 +69,7 @@ public interface UserService extends Service<User> {
      * @param idUser 用户 id
      * @param idRole 角色 id
      * @return Map
+     * @throws ServiceException
      */
     boolean updateUserRole(Long idUser, Long idRole) throws ServiceException;
 
@@ -76,23 +79,26 @@ public interface UserService extends Service<User> {
      * @param idUser 用户 id
      * @param status 状态
      * @return Map
+     * @throws ServiceException
      */
     boolean updateStatus(Long idUser, String status) throws ServiceException;
 
     /**
      * 获取用户信息
+     *
      * @param idUser
      * @return
      */
-    Map findUserInfo(Long idUser);
+    UserInfoDTO findUserInfo(Long idUser);
 
     /**
      * 更新用户信息
      *
      * @param user
      * @return
+     * @throws ServiceException
      */
-    UserInfoDTO updateUserInfo(UserInfoDTO user) throws Exception;
+    UserInfoDTO updateUserInfo(UserInfoDTO user) throws ServiceException;
 
     /**
      * 验证昵称是否重复
@@ -101,10 +107,11 @@ public interface UserService extends Service<User> {
      * @param nickname
      * @return
      */
-    boolean checkNickname(Long idUser, String nickname) throws ServiceException;
+    boolean checkNicknameByIdUser(Long idUser, String nickname);
 
     /**
      * 获取用户权限
+     *
      * @param idUser
      * @return
      */
@@ -112,6 +119,7 @@ public interface UserService extends Service<User> {
 
     /**
      * 查询作者信息
+     *
      * @param idUser
      * @return
      */
@@ -127,6 +135,7 @@ public interface UserService extends Service<User> {
 
     /**
      * 获取用户扩展信息
+     *
      * @param account
      * @return
      */
@@ -137,8 +146,9 @@ public interface UserService extends Service<User> {
      *
      * @param changeEmailDTO
      * @return
+     * @throws ServiceException
      */
-    String updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException;
+    boolean updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException;
 
     /**
      * 更新密码
@@ -150,15 +160,25 @@ public interface UserService extends Service<User> {
 
     /**
      * 查询用户列表
+     *
      * @param searchDTO
      * @return
      */
     List<UserInfoDTO> findUsers(UserSearchDTO searchDTO);
 
     /**
-     * 通过邮箱查询用户信息
+     * 通过邮箱更新用户最后登录时间
+     *
      * @param email
      * @return
      */
     Integer updateLastOnlineTimeByEmail(String email);
+
+    /**
+     * 查询用户扩展信息
+     *
+     * @param idUser
+     * @return
+     */
+    UserExtend findUserExtendInfo(Long idUser);
 }

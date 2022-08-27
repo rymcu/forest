@@ -13,7 +13,6 @@ public interface ArticleThumbsUpService extends Service<ArticleThumbsUp> {
      *
      * @param articleThumbsUp
      * @return
-     * @throws BaseApiException
      */
-    String thumbsUp(ArticleThumbsUp articleThumbsUp) throws Exception;
+    int thumbsUp(ArticleThumbsUp articleThumbsUp);
 }

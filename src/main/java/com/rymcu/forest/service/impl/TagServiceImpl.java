@@ -1,5 +1,6 @@
 package com.rymcu.forest.service.impl;
 
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleTagDTO;
@@ -120,17 +121,16 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     @Transactional(rollbackFor = Exception.class)
     public Tag saveTag(Tag tag) throws Exception {
         Integer result;
-
         tag.setTagDescription(XssUtils.filterHtmlCode(tag.getTagDescription()));
         if (tag.getIdTag() == null) {
             if (StringUtils.isBlank(tag.getTagTitle())) {
-                throw new ServiceException("标签名不能为空!");
+                throw new IllegalArgumentException("标签名不能为空!");
             } else {
                 Condition tagCondition = new Condition(Tag.class);
                 tagCondition.createCriteria().andCondition("tag_title =", tag.getTagTitle());
                 List<Tag> tags = tagMapper.selectByCondition(tagCondition);
                 if (!tags.isEmpty()) {
-                    throw new ServiceException("标签 '" + tag.getTagTitle() + "' 已存在!");
+                    throw new BusinessException("标签 '" + tag.getTagTitle() + "' 已存在!");
                 }
             }
             tag = new Tag();

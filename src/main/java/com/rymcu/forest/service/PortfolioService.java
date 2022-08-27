@@ -1,7 +1,9 @@
 package com.rymcu.forest.service;
 
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.Service;
+import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.PortfolioArticleDTO;
 import com.rymcu.forest.dto.PortfolioDTO;
 import com.rymcu.forest.dto.UserDTO;
@@ -35,35 +37,34 @@ public interface PortfolioService extends Service<Portfolio> {
      * @throws BaseApiException
      * @return
      */
-    Portfolio postPortfolio(Portfolio portfolio) throws BaseApiException;
+    Portfolio postPortfolio(Portfolio portfolio);
 
     /**
      * 查询作品集下未绑定文章
-     *
      * @param page
      * @param rows
      * @param searchText
      * @param idPortfolio
+     * @param idUser
      * @return
-     * @throws BaseApiException
      */
-    PageInfo findUnbindArticles(Integer page, Integer rows, String searchText, Long idPortfolio) throws Exception;
+    PageInfo<ArticleDTO> findUnbindArticles(Integer page, Integer rows, String searchText, Long idPortfolio, Long idUser);
 
     /**
      * 绑定文章
-     *
      * @param portfolioArticle
      * @return
+     * @throws ServiceException
      */
-    boolean bindArticle(PortfolioArticleDTO portfolioArticle) throws Exception;
+    boolean bindArticle(PortfolioArticleDTO portfolioArticle) throws ServiceException;
 
     /**
      * 更新文章排序号
-     *
      * @param portfolioArticle
      * @return
+     * @throws ServiceException
      */
-    boolean updateArticleSortNo(PortfolioArticleDTO portfolioArticle) throws Exception;
+    boolean updateArticleSortNo(PortfolioArticleDTO portfolioArticle) throws ServiceException;
 
     /**
      * 取消绑定文章
@@ -71,8 +72,9 @@ public interface PortfolioService extends Service<Portfolio> {
      * @param idPortfolio
      * @param idArticle
      * @return
+     * @throws ServiceException
      */
-    boolean unbindArticle(Long idPortfolio, Long idArticle) throws Exception;
+    boolean unbindArticle(Long idPortfolio, Long idArticle) throws ServiceException;
 
 
     /**
@@ -82,10 +84,8 @@ public interface PortfolioService extends Service<Portfolio> {
      * @param idUser
      * @param roleWeights
      * @return
-     * @throws BaseApiException
-     * @throws IllegalAccessException
      */
-    boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights) throws BaseApiException, IllegalAccessException;
+    boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights);
 
 
     /**
