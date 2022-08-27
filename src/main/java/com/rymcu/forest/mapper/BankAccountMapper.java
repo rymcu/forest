@@ -39,4 +39,11 @@ public interface BankAccountMapper extends Mapper<BankAccount> {
      * @return
      */
     BankAccountDTO selectByBankAccount(@Param("bankAccount") String bankAccount);
+
+    /**
+     * 查询用户个人银行账户信息
+     * @param idUser
+     * @return
+     */
+    BankAccountDTO findPersonBankAccountByIdUser(@Param("idUser") Long idUser);
 }
