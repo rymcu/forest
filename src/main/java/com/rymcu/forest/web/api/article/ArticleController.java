@@ -2,6 +2,7 @@ package com.rymcu.forest.web.api.article;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -106,15 +106,24 @@ public class ArticleController {
     }
 
     @PostMapping("/thumbs-up")
-    public GlobalResult thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws BaseApiException {
-        Map map = articleThumbsUpService.thumbsUp(articleThumbsUp);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Integer> thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws Exception {
+        if (Objects.isNull(articleThumbsUp) || Objects.isNull(articleThumbsUp.getIdArticle())) {
+            throw new BusinessException("数据异常,文章不存在!");
+        }
+        User user = UserUtils.getCurrentUserByToken();
+        articleThumbsUp.setIdUser(user.getIdUser());
+        return GlobalResultGenerator.genSuccessResult(articleThumbsUpService.thumbsUp(articleThumbsUp));
     }
 
     @PostMapping("/sponsor")
     public GlobalResult sponsor(@RequestBody Sponsor sponsor) throws Exception {
-        Map map = sponsorService.sponsorship(sponsor);
-        return GlobalResultGenerator.genSuccessResult(map);
+        if (Objects.isNull(sponsor) || Objects.isNull(sponsor.getDataId()) || Objects.isNull(sponsor.getDataType())) {
+            throw new IllegalArgumentException("数据异常");
+        }
+        User user = UserUtils.getCurrentUserByToken();
+        sponsor.setSponsor(user.getIdUser());
+        boolean flag = sponsorService.sponsorship(sponsor);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
 }

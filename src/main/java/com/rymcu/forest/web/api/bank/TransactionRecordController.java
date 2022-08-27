@@ -22,13 +22,13 @@ public class TransactionRecordController {
     private TransactionRecordService transactionRecordService;
 
     @PostMapping("/transfer")
-    public GlobalResult transfer(@RequestBody TransactionRecord transactionRecord) throws Exception {
+    public GlobalResult transfer(@RequestBody TransactionRecord transactionRecord) {
         transactionRecord = transactionRecordService.transfer(transactionRecord);
         return GlobalResultGenerator.genSuccessResult(transactionRecord);
     }
 
     @PostMapping("/newbie-rewards")
-    public GlobalResult newbieRewards(@RequestBody TransactionRecord transactionRecord) throws Exception {
+    public GlobalResult newbieRewards(@RequestBody TransactionRecord transactionRecord) {
         transactionRecord = transactionRecordService.newbieRewards(transactionRecord);
         return GlobalResultGenerator.genSuccessResult(transactionRecord);
     }

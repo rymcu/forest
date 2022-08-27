@@ -1,8 +1,9 @@
 package com.rymcu.forest.service.impl;
 
-import cn.hutool.http.HtmlUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.BusinessException;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.admin.TagDTO;
 import com.rymcu.forest.dto.admin.TopicDTO;
@@ -20,9 +21,7 @@ import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -35,8 +34,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     public List<Topic> findTopicNav() {
-        List<Topic> topics = topicMapper.selectTopicNav();
-        return topics;
+        return topicMapper.selectTopicNav();
     }
 
     @Override
@@ -48,40 +46,37 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map saveTopic(Topic topic) {
+    public Topic saveTopic(Topic topic) throws ServiceException {
         Integer result;
         topic.setTopicDescriptionHtml(XssUtils.filterHtmlCode(topic.getTopicDescriptionHtml()));
-        Map map = new HashMap(1);
         if (topic.getIdTopic() == null) {
             if (StringUtils.isBlank(topic.getTopicTitle())) {
-                map.put("message","标签名不能为空!");
-                return map;
+                throw new IllegalArgumentException("标签名不能为空!");
             } else {
                 Condition topicCondition = new Condition(Topic.class);
                 topicCondition.createCriteria().andCondition("topic_title =", topic.getTopicTitle());
                 List<Topic> topics = topicMapper.selectByCondition(topicCondition);
                 if (!topics.isEmpty()) {
-                    map.put("message","专题 '" + topic.getTopicTitle() + "' 已存在!");
-                    return map;
+                    throw new BusinessException("专题 '" + topic.getTopicTitle() + "' 已存在!");
                 }
             }
-            Topic newTopic = new Topic();
-            newTopic.setTopicTitle(topic.getTopicTitle());
-            newTopic.setTopicUri(topic.getTopicUri());
+            topic = new Topic();
+            topic.setTopicTitle(topic.getTopicTitle());
+            topic.setTopicUri(topic.getTopicUri());
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
                 String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
-                newTopic.setTopicIconPath(topicIconPath);
+                topic.setTopicIconPath(topicIconPath);
             } else {
-                newTopic.setTopicIconPath(topic.getTopicIconPath());
+                topic.setTopicIconPath(topic.getTopicIconPath());
             }
-            newTopic.setTopicNva(topic.getTopicNva());
-            newTopic.setTopicStatus(topic.getTopicStatus());
-            newTopic.setTopicSort(topic.getTopicSort());
-            newTopic.setTopicDescription(topic.getTopicDescription());
-            newTopic.setTopicDescriptionHtml(topic.getTopicDescriptionHtml());
-            newTopic.setCreatedTime(new Date());
-            newTopic.setUpdatedTime(topic.getCreatedTime());
-            result = topicMapper.insertSelective(newTopic);
+            topic.setTopicNva(topic.getTopicNva());
+            topic.setTopicStatus(topic.getTopicStatus());
+            topic.setTopicSort(topic.getTopicSort());
+            topic.setTopicDescription(topic.getTopicDescription());
+            topic.setTopicDescriptionHtml(topic.getTopicDescriptionHtml());
+            topic.setCreatedTime(new Date());
+            topic.setUpdatedTime(topic.getCreatedTime());
+            result = topicMapper.insertSelective(topic);
         } else {
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
                 String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
@@ -93,11 +88,9 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
                     ,topic.getTopicSort(),topic.getTopicDescription(),topic.getTopicDescriptionHtml());
         }
         if (result == 0) {
-            map.put("message","操作失败!");
-        } else {
-            map.put("topic", topic);
+            throw new ServiceException("操作失败!");
         }
-        return map;
+        return topic;
     }
 
     @Override
@@ -110,46 +103,30 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map bindTopicTag(TopicTagDTO topicTag) {
+    public TopicTagDTO bindTopicTag(TopicTagDTO topicTag) throws ServiceException {
         Integer result = topicMapper.insertTopicTag(topicTag.getIdTopic(), topicTag.getIdTag());
-        Map map = new HashMap(1);
         if (result == 0) {
-            map.put("message", "操作失败!");
-        } else {
-            map.put("topicTag", topicTag);
+            throw new ServiceException("操作失败!");
         }
-        return map;
+        return topicTag;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map unbindTopicTag(TopicTagDTO topicTag) {
+    public TopicTagDTO unbindTopicTag(TopicTagDTO topicTag) throws ServiceException {
         Integer result = topicMapper.deleteTopicTag(topicTag.getIdTopic(), topicTag.getIdTag());
-        Map map = new HashMap(1);
         if (result == 0) {
-            map.put("message", "操作失败!");
-        } else {
-            map.put("topicTag", topicTag);
+            throw new ServiceException("操作失败!");
         }
-        return map;
+        return topicTag;
     }
 
     @Override
-    public Map findTagsByTopicUri(String topicUri, Integer page, Integer rows) {
-        Map map = new HashMap(2);
+    public List<TagDTO> findTagsByTopicUri(String topicUri) {
         TopicDTO topic = topicMapper.selectTopicByTopicUri(topicUri);
         if (topic == null) {
-            return map;
+            return null;
         }
-        PageHelper.startPage(page, rows);
-        List<TagDTO> list = topicMapper.selectTopicTag(topic.getIdTopic());
-        PageInfo pageInfo = new PageInfo(list);
-        map.put("tags", pageInfo.getList());
-        Map pagination = new HashMap(3);
-        pagination.put("pageSize",pageInfo.getPageSize());
-        pagination.put("total",pageInfo.getTotal());
-        pagination.put("currentPage",pageInfo.getPageNum());
-        map.put("pagination", pagination);
-        return map;
+        return topicMapper.selectTopicTag(topic.getIdTopic());
     }
 }
