@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -21,13 +22,15 @@ public class ForestFile {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     /**
      * 文件大小
      */
     @Column(name = "file_size")
-    private long fileSize;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long fileSize;
 
     /**
      * 文件类型-文件后缀
@@ -68,7 +71,8 @@ public class ForestFile {
      * 创建人
      */
     @Column(name = "created_by")
-    private long createdBy;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long createdBy;
 
 
 }
