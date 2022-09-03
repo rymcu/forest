@@ -1,8 +1,11 @@
 package com.rymcu.forest.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
+import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.LabelModel;
 import com.rymcu.forest.entity.Article;
@@ -10,7 +13,6 @@ import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.mapper.TagMapper;
 import com.rymcu.forest.service.TagService;
-import com.rymcu.forest.util.CacheUtils;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import com.rymcu.forest.web.api.exception.BaseApiException;
@@ -35,6 +37,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     private TagMapper tagMapper;
     @Resource
     private ArticleMapper articleMapper;
+    @Resource
+    private RedisService redisService;
 
     @Override
     @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
@@ -63,7 +67,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     int n = articleTagDTOList.size();
                     for (int m = 0; m < n; m++) {
                         ArticleTagDTO articleTag = articleTagDTOList.get(m);
-                        if (articleTag.getIdTag().equals(tag.getIdTag())) {
+                        if (articleTag.getIdTag().toString().equals(tag.getIdTag().toString())) {
                             articleTagDTOList.remove(articleTag);
                             m--;
                             n--;
@@ -93,6 +97,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             return 1;
         } else {
             if (StringUtils.isNotBlank(articleContentHtml)) {
+                article.setArticleTags("待分类");
                 saveTagArticle(article, articleContentHtml, userId);
             }
         }
@@ -152,10 +157,10 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     public List<LabelModel> findTagLabels() {
-        List<LabelModel> list = (List<LabelModel>) CacheUtils.get("tags");
+        List<LabelModel> list = JSONObject.parseArray(redisService.get("tags"), LabelModel.class);
         if (list == null) {
             list = tagMapper.selectTagLabels();
-            CacheUtils.put("tags", list);
+            redisService.set("tags", JSON.toJSONString(list), 600);
         }
         return list;
     }
