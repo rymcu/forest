@@ -3,14 +3,12 @@ package com.rymcu.forest.config;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.crazycake.shiro.RedisCacheManager;
-import org.crazycake.shiro.RedisManager;
-import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.EnvironmentAware;
@@ -116,60 +114,10 @@ public class ShiroConfig implements EnvironmentAware {
     @Bean
     public SessionManager sessionManager() {
         BaseSessionManager sessionManager = new BaseSessionManager();
-        sessionManager.setSessionDAO(redisSessionDAO());
+        sessionManager.setSessionDAO(new MemorySessionDAO());
         sessionManager.setSessionIdUrlRewritingEnabled(false);
         sessionManager.setGlobalSessionTimeout(21600000L);
         return sessionManager;
-    }
-
-    /**
-     * 配置shiro redisManager
-     * <p>
-     * 使用的是shiro-redis开源插件
-     *
-     * @return
-     */
-
-
-    public RedisManager redisManager() {
-        StringBuffer host = new StringBuffer(env.getProperty("spring.redis.host"));
-        host.append(":").append(env.getProperty("spring.redis.port"));
-        // 设置redis配置信息
-        RedisManager redisManager = new RedisManager();
-        redisManager.setHost(host.toString());
-        redisManager.setPassword(env.getProperty("spring.redis.password"));
-        return redisManager;
-    }
-
-    /**
-     * cacheManager 缓存 redis实现
-     * <p>
-     * 使用的是shiro-redis开源插件
-     *
-     * @return
-     */
-
-
-    @Bean
-    public RedisCacheManager cacheManager() {
-        RedisCacheManager redisCacheManager = new RedisCacheManager();
-        redisCacheManager.setRedisManager(redisManager());
-        return redisCacheManager;
-    }
-
-    /**
-     * RedisSessionDAO shiro sessionDao层的实现 通过redis
-     * <p>
-     * 使用的是shiro-redis开源插件
-     */
-
-
-    @Bean
-    public RedisSessionDAO redisSessionDAO() {
-        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
-        redisSessionDAO.setRedisManager(redisManager());
-        redisSessionDAO.setExpire(21600);
-        return redisSessionDAO;
     }
 
     /**

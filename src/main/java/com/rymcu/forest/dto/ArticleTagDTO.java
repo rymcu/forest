@@ -1,18 +1,26 @@
 package com.rymcu.forest.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author ronger
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticleTagDTO {
-
-    private Integer idArticleTag;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticleTag;
 
     private Integer idTag;
 
-    private Integer idArticle;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticle;
 
     private String tagTitle;
 
@@ -22,5 +30,6 @@ public class ArticleTagDTO {
 
     private String tagIconPath;
 
-    private Integer tagAuthorId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long tagAuthorId;
 }

@@ -17,14 +17,14 @@ public interface NotificationService extends Service<Notification> {
      * @param idUser
      * @return
      */
-    List<Notification> findUnreadNotifications(Integer idUser);
+    List<Notification> findUnreadNotifications(Long idUser);
 
     /**
      * 获取消息数据
      * @param idUser
      * @return
      */
-    List<NotificationDTO> findNotifications(Integer idUser);
+    List<NotificationDTO> findNotifications(Long idUser);
 
     /**
      * 获取消息数据
@@ -33,7 +33,7 @@ public interface NotificationService extends Service<Notification> {
      * @param dataType
      * @return
      */
-    Notification findNotification(Integer idUser, Integer dataId, String dataType);
+    Notification findNotification(Long idUser, Long dataId, String dataType);
 
     /**
      * 创建系统通知
@@ -43,14 +43,14 @@ public interface NotificationService extends Service<Notification> {
      * @param dataSummary
      * @return
      */
-    Integer save(Integer idUser, Integer dataId, String dataType, String dataSummary);
+    Integer save(Long idUser, Long dataId, String dataType, String dataSummary);
 
     /**
      * 标记消息已读
      * @param id
      * @return
      */
-    Integer readNotification(Integer id);
+    Integer readNotification(Long id);
 
     /**
      * 标记所有消息已读
@@ -65,5 +65,5 @@ public interface NotificationService extends Service<Notification> {
      * @param dataType
      * @return
      */
-    Integer deleteUnreadNotification(Integer dataId, String dataType);
+    Integer deleteUnreadNotification(Long dataId, String dataType);
 }

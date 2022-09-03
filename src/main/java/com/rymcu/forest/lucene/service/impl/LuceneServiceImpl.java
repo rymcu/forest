@@ -3,8 +3,6 @@ package com.rymcu.forest.lucene.service.impl;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.Author;
-import com.rymcu.forest.dto.PortfolioArticleDTO;
-import com.rymcu.forest.entity.ArticleContent;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.lucene.lucene.ArticleBeanIndex;
 import com.rymcu.forest.lucene.lucene.IKAnalyzer;
@@ -67,6 +65,7 @@ public class LuceneServiceImpl implements LuceneService {
         try {
             int totalCount = list.size();
             int perThreadCount = 3000;
+            // 加1避免线程池的参数为0
             int threadCount = totalCount / perThreadCount + (totalCount % perThreadCount == 0 ? 0 : 1);
             ExecutorService pool = Executors.newFixedThreadPool(threadCount);
             CountDownLatch countDownLatch1 = new CountDownLatch(1);
@@ -96,7 +95,7 @@ public class LuceneServiceImpl implements LuceneService {
     }
 
     @Override
-    public void writeArticle(String id) {
+    public void writeArticle(Long id) {
         writeArticle(luceneMapper.getById(id));
     }
 
@@ -106,12 +105,12 @@ public class LuceneServiceImpl implements LuceneService {
     }
 
     @Override
-    public void updateArticle(String id) {
+    public void updateArticle(Long id) {
         ArticleIndexUtil.updateIndex(luceneMapper.getById(id));
     }
 
     @Override
-    public void deleteArticle(String id) {
+    public void deleteArticle(Long id) {
         ArticleIndexUtil.deleteIndex(id);
     }
 
@@ -156,12 +155,11 @@ public class LuceneServiceImpl implements LuceneService {
                 float score = hit.score;
                 Document hitDoc = searcher.doc(hit.doc);
                 // 获取到summary
-                String name = hitDoc.get("summary");
+                String summary = hitDoc.get("summary");
                 // 将查询的词和搜索词匹配，匹配到添加前缀和后缀
-                TokenStream tokenStream =
-                        TokenSources.getAnyTokenStream(searcher.getIndexReader(), id, "summary", analyzer);
+                TokenStream tokenStream = TokenSources.getTokenStream("summary", searcher.getIndexReader().getTermVectors(id), summary, analyzer, -1);
                 // 传入的第二个参数是查询的值
-                TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, name, false, 10);
+                TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, summary, false, 10);
                 StringBuilder baikeValue = new StringBuilder();
                 for (TextFragment textFragment : frag) {
                     if ((textFragment != null) && (textFragment.getScore() > 0)) {
@@ -173,8 +171,7 @@ public class LuceneServiceImpl implements LuceneService {
 
                 // 获取到title
                 String title = hitDoc.get("title");
-                TokenStream titleTokenStream =
-                        TokenSources.getAnyTokenStream(searcher.getIndexReader(), id, "title", analyzer);
+                TokenStream titleTokenStream = TokenSources.getTokenStream("title", searcher.getIndexReader().getTermVectors(id), title, analyzer, -1);
                 TextFragment[] titleFrag =
                         highlighter.getBestTextFragments(titleTokenStream, title, false, 10);
                 StringBuilder titleValue = new StringBuilder();
@@ -185,7 +182,7 @@ public class LuceneServiceImpl implements LuceneService {
                 }
                 resList.add(
                         ArticleLucene.builder()
-                                .idArticle(hitDoc.get("id"))
+                                .idArticle(Long.valueOf(hitDoc.get("id")))
                                 .articleTitle(titleValue.toString())
                                 .articleContent(baikeValue.toString())
                                 .score(String.valueOf(score))
@@ -209,9 +206,9 @@ public class LuceneServiceImpl implements LuceneService {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByIds(String[] ids) {
+    public List<ArticleDTO> getArticlesByIds(Long[] ids) {
         List<ArticleDTO> list = luceneMapper.getArticlesByIds(ids);
-        list.forEach(articleDTO -> genArticle(articleDTO));
+        list.forEach(this::genArticle);
         return list;
     }
 

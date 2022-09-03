@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import tk.mybatis.mapper.annotation.ColumnType;
 
@@ -19,7 +20,8 @@ public class Permission implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idPermission;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idPermission;
 
     /**
      * 权限标识

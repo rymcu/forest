@@ -32,7 +32,7 @@ public interface PortfolioLuceneMapper {
    * @param ids 作品集id(半角逗号分隔)
    * @return
    */
-  List<PortfolioDTO> getPortfoliosByIds(@Param("ids") String[] ids);
+  List<PortfolioDTO> getPortfoliosByIds(@Param("ids") Long[] ids);
 
   /**
    * 加载作品集
@@ -40,5 +40,5 @@ public interface PortfolioLuceneMapper {
    * @param id 用户id
    * @return
    */
-  PortfolioLucene getById(@Param("id") String id);
+  PortfolioLucene getById(@Param("id") Long id);
 }

@@ -35,11 +35,10 @@ public class TopicController {
 
     @GetMapping("/{name}")
     @VisitLogger
-    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTopicUri(name);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

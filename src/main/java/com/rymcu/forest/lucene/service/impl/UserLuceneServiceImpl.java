@@ -133,13 +133,13 @@ public class UserLuceneServiceImpl implements UserLuceneService {
         int id = hit.doc;
         float score = hit.score;
         Document hitDoc = searcher.doc(hit.doc);
-        // 获取到summary
-        String name = hitDoc.get("signature");
+        // 获取到 signature
+        String signature = hitDoc.get("signature");
         // 将查询的词和搜索词匹配，匹配到添加前缀和后缀
-        TokenStream tokenStream =
-            TokenSources.getAnyTokenStream(searcher.getIndexReader(), id, "signature", analyzer);
+        TokenStream tokenStream = TokenSources.getTokenStream("signature", searcher.getIndexReader().getTermVectors(id), signature, analyzer, -1);
+
         // 传入的第二个参数是查询的值
-        TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, name, false, 10);
+        TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, signature, false, 10);
         StringBuilder baikeValue = new StringBuilder();
         for (TextFragment textFragment : frag) {
           if ((textFragment != null) && (textFragment.getScore() > 0)) {
@@ -148,12 +148,11 @@ public class UserLuceneServiceImpl implements UserLuceneService {
             baikeValue.append(textFragment.toString());
           }
         }
-        // 获取到title
-        String title = hitDoc.get("nickname");
-        TokenStream titleTokenStream =
-            TokenSources.getAnyTokenStream(searcher.getIndexReader(), id, "nickname", analyzer);
+        // 获取到 nickname
+        String nickname = hitDoc.get("nickname");
+        TokenStream titleTokenStream = TokenSources.getTokenStream("nickname", searcher.getIndexReader().getTermVectors(id), nickname, analyzer, -1);
         TextFragment[] titleFrag =
-            highlighter.getBestTextFragments(titleTokenStream, title, false, 10);
+            highlighter.getBestTextFragments(titleTokenStream, nickname, false, 10);
         StringBuilder titleValue = new StringBuilder();
         for (int j = 0; j < titleFrag.length; j++) {
           if ((frag[j] != null)) {
@@ -162,7 +161,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
         }
         resList.add(
             UserLucene.builder()
-                .idUser(Integer.valueOf(hitDoc.get("id")))
+                .idUser(Long.valueOf(hitDoc.get("id")))
                 .nickname(titleValue.toString())
                 .signature(baikeValue.toString())
                 .score(String.valueOf(score))
@@ -183,7 +182,7 @@ public class UserLuceneServiceImpl implements UserLuceneService {
   }
 
   @Override
-  public List<UserDTO> getUsersByIds(Integer[] ids) {
+  public List<UserDTO> getUsersByIds(Long[] ids) {
     return userLuceneMapper.getUsersByIds(ids);
   }
 }

@@ -43,7 +43,7 @@ create table forest_article_thumbs_up
     id_article     bigint null comment '文章表主键',
     id_user        bigint null comment '用户表主键',
     thumbs_up_time datetime null comment '点赞时间'
-) comment '文章点赞表 ';
+) comment '文章点赞表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_bank
 (
@@ -54,7 +54,7 @@ create table forest_bank
     bank_description varchar(512) null comment '银行描述',
     created_by       bigint null comment '创建人',
     created_time     datetime null comment '创建时间'
-) comment '银行表 ';
+) comment '银行表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_bank_account
 (
@@ -66,7 +66,7 @@ create table forest_bank_account
     account_owner   bigint null comment '账户所有者',
     created_time    datetime null comment '创建时间',
     account_type    char default '0' null comment '0: 普通账户 1: 银行账户'
-) comment '银行账户表 ';
+) comment '银行账户表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_comment
 (
@@ -93,7 +93,7 @@ create table forest_currency_issue
     issue_value  decimal(32, 8) null comment '发行数额',
     created_by   bigint null comment '发行人',
     created_time datetime null comment '发行时间'
-) comment '货币发行表 ';
+) comment '货币发行表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_currency_rule
 (
@@ -107,7 +107,7 @@ create table forest_currency_rule
     maximum_money    decimal(32, 8) null comment '上限金额',
     repeat_days      int  default 0 null comment '重复(0: 不重复,单位:天)',
     status           char default '0' null comment '状态'
-) comment '货币规则表 ';
+) comment '货币规则表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_follow
 (
@@ -173,7 +173,7 @@ create table forest_sponsor
     sponsor           bigint null comment '赞赏人',
     sponsorship_time  datetime null comment '赞赏日期',
     sponsorship_money decimal(32, 8) null comment '赞赏金额'
-) comment '赞赏表 ';
+) comment '赞赏表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_tag
 (
@@ -251,7 +251,7 @@ create table forest_transaction_record
     money             decimal(32, 8) null comment '交易金额',
     transaction_type  char default '0' null comment '交易类型',
     transaction_time  datetime null comment '交易时间'
-) comment '交易记录表 ';
+) comment '交易记录表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_user
 (
@@ -271,7 +271,8 @@ create table forest_user
     updated_time    datetime null comment '更新时间',
     last_login_time datetime null comment '最后登录时间',
     signature       varchar(128) null comment '签名',
-    last_online_time datetime null comment '最后在线时间'
+    last_online_time datetime null comment '最后在线时间',
+    bg_img_url       varchar(512)     null comment '背景图片'
 ) comment '用户表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_user_extend
@@ -282,7 +283,7 @@ create table forest_user_extend
     weixin  varchar(32) null comment '微信',
     qq      varchar(32) null comment 'qq',
     blog    varchar(500) null comment '博客'
-) comment '用户扩展表 ';
+) comment '用户扩展表 ' collate = utf8mb4_unicode_ci;
 
 create table forest_user_role
 (
@@ -323,7 +324,7 @@ create table forest_lucene_user_dic
     dic char(32) null comment '字典',
     constraint forest_lucene_user_dic_id_uindex
         unique (id)
-) comment '用户扩展字典';
+) comment '用户扩展字典' collate = utf8mb4_unicode_ci;
 
 alter table forest_lucene_user_dic
     add primary key (id);
@@ -341,6 +342,10 @@ insert into forest.forest_user (id, account, password, nickname, real_name, sex,
                                 status, created_time, updated_time, last_login_time, signature)
 values (1, 'admin', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'admin', 'admin', '0', '0', null, 'admin@rymcu.com',
         null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', null, null);
+insert into forest.forest_user (id, account, password, nickname, real_name, sex, avatar_type, avatar_url, email, phone,
+                                status, created_time, updated_time, last_login_time, signature)
+values (2, 'testUser', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'testUser', 'testUser', '0', '0', null, 'testUser@rymcu.com',
+        null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', null, null);
 
 insert into forest.forest_user_role (id_user, id_role, created_time)
 values (1, 1, '2021-01-25 18:22:12');
@@ -357,7 +362,7 @@ create table forest_file
     created_by   int null comment '创建人',
     file_size    int null comment '文件大小',
     file_type    varchar(10) null comment '文件类型'
-) comment '文件上传记录表';
+) comment '文件上传记录表' collate = utf8mb4_unicode_ci;
 
 create index index_md5_value_created_by
     on forest_file (md5_value, created_by);
@@ -382,4 +387,4 @@ create table forest_login_record
     login_device_id varchar(512) null comment '登录设备/浏览器指纹',
     constraint forest_login_record_id_uindex
         unique (id)
-) comment '登录记录表';
+) comment '登录记录表' collate = utf8mb4_unicode_ci;

@@ -5,7 +5,7 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" jdbcType="INTEGER" property="idArticle"/>
+        <id column="id" jdbcType="BIGINT" property="idArticle"/>
         <result column="article_title" property="articleTitle"></result>
         <result column="article_thumbnail_url" property="articleThumbnailUrl"></result>
         <result column="article_author_id" property="articleAuthorId"></result>

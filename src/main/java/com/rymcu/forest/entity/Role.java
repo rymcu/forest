@@ -1,6 +1,7 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -19,7 +20,8 @@ public class Role implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idRole;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idRole;
 
     /**
      * 角色名称

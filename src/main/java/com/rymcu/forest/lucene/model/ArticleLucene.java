@@ -1,5 +1,6 @@
 package com.rymcu.forest.lucene.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,8 @@ import javax.persistence.Id;
 public class ArticleLucene {
 
   /** 文章编号 */
-  private String idArticle;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private Long idArticle;
 
   /** 文章标题 */
   private String articleTitle;

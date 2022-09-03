@@ -49,41 +49,26 @@ public class DashboardController {
     }
 
     @GetMapping("/new-users")
-    public GlobalResult newUsers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<UserInfoDTO>> newUsers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<UserInfoDTO> list = dashboardService.newUsers();
         PageInfo<UserInfoDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<String, Object>(2);
-        map.put("users", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/new-bank-accounts")
-    public GlobalResult newBankAccounts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<BankAccountDTO>> newBankAccounts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<BankAccountDTO> list = dashboardService.newBankAccounts();
         PageInfo<BankAccountDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("bankAccounts", pageInfo.getList());
-        Map pagination = new HashMap(4);
-        pagination.put("pageSize", pageInfo.getPageSize());
-        pagination.put("total", pageInfo.getTotal());
-        pagination.put("currentPage", pageInfo.getPageNum());
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/new-articles")
-    public GlobalResult newArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<ArticleDTO>> newArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = dashboardService.newArticles();
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("articles", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

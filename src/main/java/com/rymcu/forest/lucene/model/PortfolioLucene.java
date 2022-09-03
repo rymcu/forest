@@ -1,5 +1,6 @@
 package com.rymcu.forest.lucene.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,8 @@ import lombok.NoArgsConstructor;
 public class PortfolioLucene {
 
   /** 作品集编号 */
-  private String idPortfolio;
+  @JsonFormat(shape = JsonFormat.Shape.STRING)
+  private Long idPortfolio;
 
   /** 作品集名称 */
   private String portfolioTitle;

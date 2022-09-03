@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -19,7 +20,8 @@ public class Topic {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idTopic;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idTopic;
     /** 专题标题 */
     private String topicTitle;
     /** 专题路径 */

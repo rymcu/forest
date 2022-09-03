@@ -20,7 +20,7 @@ public class Digests {
 	private static final String SHA1 = "SHA-1";
 	private static final String MD5 = "MD5";
 
-	private static SecureRandom random = new SecureRandom();
+	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
 	/**
 	 * 对输入字符串进行md5散列.
@@ -79,7 +79,7 @@ public class Digests {
 		Validate.isTrue(numBytes > 0, "numBytes argument must be a positive integer (1 or larger)", numBytes);
 
 		byte[] bytes = new byte[numBytes];
-		random.nextBytes(bytes);
+		SECURE_RANDOM.nextBytes(bytes);
 		return bytes;
 	}
 

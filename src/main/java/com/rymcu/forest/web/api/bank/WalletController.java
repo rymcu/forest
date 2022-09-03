@@ -33,25 +33,21 @@ public class WalletController {
 
     @GetMapping("/{idUser}")
     @SecurityInterceptor
-    public GlobalResult detail(@PathVariable Integer idUser) {
+    public GlobalResult<BankAccountDTO> detail(@PathVariable Long idUser) {
         BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(idUser);
         return GlobalResultGenerator.genSuccessResult(bankAccount);
     }
 
     @GetMapping("/transaction-records")
     @SecurityInterceptor
-    public GlobalResult transactionRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "20") Integer rows, HttpServletRequest request) {
+    public GlobalResult<PageInfo<TransactionRecordDTO>> transactionRecords(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "20") Integer rows, HttpServletRequest request) {
         String idUser = request.getParameter("idUser");
         String startDate = request.getParameter("startDate");
         String endDate = request.getParameter("endDate");
-        BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(Integer.valueOf(idUser));
+        BankAccountDTO bankAccount = bankAccountService.findBankAccountByIdUser(Long.valueOf(idUser));
         PageHelper.startPage(page, rows);
         List<TransactionRecordDTO> list = bankAccountService.findUserTransactionRecords(bankAccount.getBankAccount(), startDate, endDate);
         PageInfo<TransactionRecordDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("records", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

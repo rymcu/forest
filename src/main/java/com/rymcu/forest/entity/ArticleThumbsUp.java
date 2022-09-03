@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -21,15 +22,18 @@ public class ArticleThumbsUp implements Serializable, Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idArticleThumbsUp;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticleThumbsUp;
     /**
      * 文章表主键
      */
-    private Integer idArticle;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idArticle;
     /**
      * 用户表主键
      */
-    private Integer idUser;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idUser;
     /**
      * 点赞时间
      */

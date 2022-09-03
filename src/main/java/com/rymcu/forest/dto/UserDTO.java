@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -8,7 +9,8 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
-    private Integer idUser;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idUser;
 
     private String account;
 
@@ -19,4 +21,6 @@ public class UserDTO {
     private String nickname;
 
     private String signature;
+
+    private String bgImgUrl;
 }

@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @GetMapping("/{account}/articles")
-    public GlobalResult userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<ArticleDTO>> userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
@@ -53,12 +53,11 @@ public class UserController {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findUserArticlesByIdUser(userDTO.getIdUser());
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/portfolios")
-    public GlobalResult userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<PortfolioDTO>> userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
@@ -66,15 +65,11 @@ public class UserController {
         PageHelper.startPage(page, rows);
         List<PortfolioDTO> list = portfolioService.findUserPortfoliosByUser(userDTO);
         PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("portfolios", list);
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/followers")
-    public GlobalResult userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<UserDTO>> userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
@@ -82,15 +77,11 @@ public class UserController {
         PageHelper.startPage(page, rows);
         List<UserDTO> list = followService.findUserFollowersByUser(userDTO);
         PageInfo<UserDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("users", list);
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/followings")
-    public GlobalResult userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<UserDTO>> userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         if (userDTO == null){
             return GlobalResultGenerator.genErrorResult("用户不存在！");
@@ -98,15 +89,11 @@ public class UserController {
         PageHelper.startPage(page, rows);
         List<UserDTO> list = followService.findUserFollowingsByUser(userDTO);
         PageInfo<UserDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("users", list);
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/user-extend")
-    public GlobalResult userExtend(@PathVariable String account) {
+    public GlobalResult<UserExtend> userExtend(@PathVariable String account) {
         UserExtend userExtend = userService.selectUserExtendByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userExtend);
     }

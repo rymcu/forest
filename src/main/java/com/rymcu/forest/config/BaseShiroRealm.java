@@ -1,5 +1,6 @@
 package com.rymcu.forest.config;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rymcu.forest.core.constant.ShiroConstants;
 import com.rymcu.forest.core.exception.CaptchaException;
 import com.rymcu.forest.entity.Permission;
@@ -106,7 +107,8 @@ public class BaseShiroRealm extends AuthorizingRealm {
 
         private static final long serialVersionUID = 1L;
 
-        private Integer id; // 编号
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        private Long id; // 编号
         private String account; // 登录名
         private String name; // 姓名
         private boolean mobileLogin; // 是否手机登录
@@ -120,7 +122,7 @@ public class BaseShiroRealm extends AuthorizingRealm {
             this.mobileLogin = mobileLogin;
         }
 
-        public Integer getId() {
+        public Long getId() {
             return id;
         }
 

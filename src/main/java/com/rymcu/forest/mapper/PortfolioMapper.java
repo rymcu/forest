@@ -16,7 +16,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @param idUser
      * @return
      */
-    List<PortfolioDTO> selectUserPortfoliosByIdUser(@Param("idUser") Integer idUser);
+    List<PortfolioDTO> selectUserPortfoliosByIdUser(@Param("idUser") Long idUser);
 
     /**
      * 查询作品集
@@ -24,14 +24,14 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @param type
      * @return
      */
-    PortfolioDTO selectPortfolioDTOById(@Param("id") Integer id, @Param("type") Integer type);
+    PortfolioDTO selectPortfolioDTOById(@Param("id") Long id, @Param("type") Integer type);
 
     /**
      * 统计作品集下文章数
      * @param idPortfolio
      * @return
      */
-    Integer selectCountArticleNumber(@Param("idPortfolio") Integer idPortfolio);
+    Integer selectCountArticleNumber(@Param("idPortfolio") Long idPortfolio);
 
     /**
      * 查询文章是否已绑定
@@ -39,7 +39,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @param idPortfolio
      * @return
      */
-    Integer selectCountPortfolioArticle(@Param("idArticle") Integer idArticle, @Param("idPortfolio") Integer idPortfolio);
+    Integer selectCountPortfolioArticle(@Param("idArticle") Long idArticle, @Param("idPortfolio") Long idPortfolio);
 
     /**
      * 插入文章与作品集绑定数据
@@ -48,14 +48,14 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @param maxSortNo
      * @return
      */
-    Integer insertPortfolioArticle(@Param("idArticle") Integer idArticle, @Param("idPortfolio") Integer idPortfolio, @Param("maxSortNo") Integer maxSortNo);
+    Integer insertPortfolioArticle(@Param("idArticle") Long idArticle, @Param("idPortfolio") Long idPortfolio, @Param("maxSortNo") Integer maxSortNo);
 
     /**
      * 查询作品集下最大排序号
      * @param idPortfolio
      * @return
      */
-    Integer selectMaxSortNo(@Param("idPortfolio") Integer idPortfolio);
+    Integer selectMaxSortNo(@Param("idPortfolio") Long idPortfolio);
 
     /**
      * 更新文章排序号
@@ -64,7 +64,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @param sortNo
      * @return
      */
-    Integer updateArticleSortNo(@Param("idPortfolio") Integer idPortfolio, @Param("idArticle") Integer idArticle, @Param("sortNo") Integer sortNo);
+    Integer updateArticleSortNo(@Param("idPortfolio") Long idPortfolio, @Param("idArticle") Long idArticle, @Param("sortNo") Integer sortNo);
 
     /**
      * 取消绑定文章
@@ -72,7 +72,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
      * @param idArticle
      * @return
      */
-    Integer unbindArticle(@Param("idPortfolio") Integer idPortfolio, @Param("idArticle") Integer idArticle);
+    Integer unbindArticle(@Param("idPortfolio") Long idPortfolio, @Param("idArticle") Long idArticle);
 
     /**
      * 获取作品集列表数据

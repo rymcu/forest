@@ -28,12 +28,12 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     private final static String UN_READ = "0";
 
     @Override
-    public List<Notification> findUnreadNotifications(Integer idUser) {
+    public List<Notification> findUnreadNotifications(Long idUser) {
         return notificationMapper.selectUnreadNotifications(idUser);
     }
 
     @Override
-    public List<NotificationDTO> findNotifications(Integer idUser) {
+    public List<NotificationDTO> findNotifications(Long idUser) {
         List<NotificationDTO> list = notificationMapper.selectNotifications(idUser);
         list.forEach(notification -> {
             NotificationDTO notificationDTO = NotificationUtils.genNotification(notification);
@@ -57,19 +57,19 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     }
 
     @Override
-    public Notification findNotification(Integer idUser, Integer dataId, String dataType) {
+    public Notification findNotification(Long idUser, Long dataId, String dataType) {
         return notificationMapper.selectNotification(idUser, dataId, dataType);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer save(Integer idUser, Integer dataId, String dataType, String dataSummary) {
+    public Integer save(Long idUser, Long dataId, String dataType, String dataSummary) {
         return notificationMapper.insertNotification(idUser, dataId, dataType, dataSummary);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer readNotification(Integer id) {
+    public Integer readNotification(Long id) {
         return notificationMapper.readNotification(id);
     }
 
@@ -79,7 +79,7 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     }
 
     @Override
-    public Integer deleteUnreadNotification(Integer dataId, String dataType) {
+    public Integer deleteUnreadNotification(Long dataId, String dataType) {
         return notificationMapper.deleteUnreadNotification(dataId, dataType);
     }
 }

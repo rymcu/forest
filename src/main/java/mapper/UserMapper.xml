@@ -20,6 +20,7 @@
         <result column="last_online_time" property="lastOnlineTime"/>
         <result column="created_time" property="createdTime"/>
         <result column="updated_time" property="updatedTime"/>
+        <result column="bg_img_url" property="bgImgUrl"/>
     </resultMap>
     <resultMap id="UserInfoResultMapper" type="com.rymcu.forest.dto.UserInfoDTO">
         <result column="id" property="idUser"/>
@@ -35,6 +36,7 @@
         <result column="last_online_time" property="lastOnlineTime"/>
         <result column="created_time" property="createdTime"/>
         <result column="signature" property="signature"/>
+        <result column="bg_img_url" property="bgImgUrl"/>
     </resultMap>
     <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.UserDTO">
         <result column="id" property="idUser"/>
@@ -43,6 +45,7 @@
         <result column="avatar_type" property="avatarType"/>
         <result column="avatar_url" property="avatarUrl"/>
         <result column="signature" property="signature"/>
+        <result column="bg_img_url" property="bgImgUrl"/>
     </resultMap>
     <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
         <result column="id" property="idUser"/>
@@ -86,7 +89,7 @@
         select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time, last_online_time from forest_user where account = #{account}
     </select>
     <select id="selectUserDTOByAccount" resultMap="DTOResultMapper">
-        select id, nickname, avatar_type, avatar_url, account, signature from forest_user where account = #{account} and status = 0
+        select id, nickname, avatar_type, avatar_url, account, signature, bg_img_url from forest_user where account = #{account} and status = 0
     </select>
     <select id="selectRoleWeightsByUser" resultType="java.lang.Integer">
         select vr.weights from forest_role vr left join forest_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}

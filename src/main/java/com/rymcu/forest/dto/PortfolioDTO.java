@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,11 +11,13 @@ import java.util.Date;
 @Data
 public class PortfolioDTO {
 
-    private Integer idPortfolio;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idPortfolio;
     /** 作品集头像 */
     private String headImgUrl;
     /** 作品集作者 */
-    private Integer portfolioAuthorId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long portfolioAuthorId;
     /** 作品集作者 */
     private String portfolioAuthorName;
     /** 作品集作者头像 */
