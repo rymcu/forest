@@ -55,6 +55,7 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
         try {
             int totalCount = list.size();
             int perThreadCount = 3000;
+            // 加1避免线程池的参数为0
             int threadCount = totalCount / perThreadCount + (totalCount % perThreadCount == 0 ? 0 : 1);
             ExecutorService pool = Executors.newFixedThreadPool(threadCount);
             CountDownLatch countDownLatch1 = new CountDownLatch(1);
@@ -83,7 +84,7 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
     }
 
     @Override
-    public void writePortfolio(String id) {
+    public void writePortfolio(Long id) {
         writePortfolio(portfolioLuceneMapper.getById(id));
     }
 
@@ -94,12 +95,12 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
 
 
     @Override
-    public void updatePortfolio(String id) {
+    public void updatePortfolio(Long id) {
         PortfolioIndexUtil.updateIndex(portfolioLuceneMapper.getById(id));
     }
 
     @Override
-    public void deletePortfolio(String id) {
+    public void deletePortfolio(Long id) {
         PortfolioIndexUtil.deleteIndex(id);
     }
 
@@ -109,7 +110,7 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
     }
 
     @Override
-    public List<PortfolioDTO> getPortfoliosByIds(String[] ids) {
+    public List<PortfolioDTO> getPortfoliosByIds(Long[] ids) {
         return portfolioLuceneMapper.getPortfoliosByIds(ids);
     }
 
@@ -156,7 +157,7 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
                     if ((textFragment != null) && (textFragment.getScore() > 0)) {
                         //  if ((frag[j] != null)) {
                         // 获取 summary 的值
-                        sb.append(textFragment.toString());
+                        sb.append(textFragment);
                     }
                 }
                 // 获取到title
@@ -172,7 +173,7 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
                 }
                 resList.add(
                         PortfolioLucene.builder()
-                                .idPortfolio(hitDoc.get("id"))
+                                .idPortfolio(Long.valueOf(hitDoc.get("id")))
                                 .portfolioTitle(titleValue.toString())
                                 .portfolioDescription(sb.toString())
                                 .score(String.valueOf(score))

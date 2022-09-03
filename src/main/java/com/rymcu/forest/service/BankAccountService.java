@@ -24,7 +24,7 @@ public interface BankAccountService extends Service<BankAccount> {
      * @param idUser
      * @return
      */
-    BankAccountDTO findBankAccountByIdUser(Integer idUser);
+    BankAccountDTO findBankAccountByIdUser(Long idUser);
 
     /**
      * 根据账户查询银行账户信息

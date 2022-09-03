@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -20,7 +21,8 @@ public class TransactionRecord {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idTransactionRecord;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idTransactionRecord;
     /** 交易流水号 */
     private String transactionNo;
     /** 款项 */

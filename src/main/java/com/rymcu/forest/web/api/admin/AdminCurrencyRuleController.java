@@ -32,15 +32,11 @@ public class AdminCurrencyRuleController {
     private CurrencyRuleService currencyRuleService;
 
     @GetMapping("/list")
-    public GlobalResult list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "20") Integer rows, HttpServletRequest request) {
+    public GlobalResult<PageInfo<TransactionRecordDTO>> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "20") Integer rows, HttpServletRequest request) {
         PageHelper.startPage(page, rows);
         List<CurrencyRule> list = currencyRuleService.findAll();
-        Map map = new HashMap(2);
         PageInfo<TransactionRecordDTO> pageInfo = new PageInfo(list);
-        map.put("rules", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
 }

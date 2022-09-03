@@ -25,7 +25,7 @@ public interface LuceneService {
    *
    * @param id
    */
-  void writeArticle(String id);
+  void writeArticle(Long id);
 
 
   /**
@@ -40,14 +40,14 @@ public interface LuceneService {
    *
    * @param id
    */
-  void updateArticle(String id);
+  void updateArticle(Long id);
 
   /**
    * 删除单个文章索引
    *
    * @param id
    */
-  void deleteArticle(String id);
+  void deleteArticle(Long id);
 
   /**
    * 关键词搜索
@@ -71,5 +71,5 @@ public interface LuceneService {
    * @param ids 文章id(半角逗号分隔)
    * @return
    */
-  List<ArticleDTO> getArticlesByIds(String[] ids);
+  List<ArticleDTO> getArticlesByIds(Long[] ids);
 }

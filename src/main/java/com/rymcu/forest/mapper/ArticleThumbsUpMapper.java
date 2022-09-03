@@ -14,5 +14,5 @@ public interface ArticleThumbsUpMapper extends Mapper<ArticleThumbsUp> {
      * @param thumbsUpNumber
      * @return
      */
-    Integer updateArticleThumbsUpNumber(@Param("idArticle") Integer idArticle, @Param("thumbsUpNumber") Integer thumbsUpNumber);
+    Integer updateArticleThumbsUpNumber(@Param("idArticle") Long idArticle, @Param("thumbsUpNumber") Integer thumbsUpNumber);
 }

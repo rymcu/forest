@@ -25,7 +25,7 @@ public interface PortfolioLuceneService {
    *
    * @param id
    */
-  void writePortfolio(String id);
+  void writePortfolio(Long id);
 
   /**
    * 写入单个作品集索引
@@ -39,14 +39,14 @@ public interface PortfolioLuceneService {
    *
    * @param id
    */
-  void updatePortfolio(String id);
+  void updatePortfolio(Long id);
 
   /**
    * 删除单个作品集索引
    *
    * @param id
    */
-  void deletePortfolio(String id);
+  void deletePortfolio(Long id);
 
   /**
    * 关键词搜索
@@ -70,5 +70,5 @@ public interface PortfolioLuceneService {
    * @param ids 作品集id(半角逗号分隔)
    * @return
    */
-  List<PortfolioDTO> getPortfoliosByIds(String[] ids);
+  List<PortfolioDTO> getPortfoliosByIds(Long[] ids);
 }

@@ -2,6 +2,8 @@ package com.rymcu.forest.web.api.common;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.AccountExistsException;
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.result.GlobalResultMessage;
@@ -9,7 +11,7 @@ import com.rymcu.forest.core.service.log.annotation.VisitLogger;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.*;
-import com.rymcu.forest.util.Utils;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -42,7 +44,7 @@ public class CommonApiController {
         map.put("message", GlobalResultMessage.SEND_SUCCESS.getMessage());
         User user = userService.findByAccount(email);
         if (user != null) {
-            map.put("message", "该邮箱已被注册！");
+            throw new AccountExistsException("该邮箱已被注册!");
         } else {
             Integer result = javaMailService.sendEmailCode(email);
             if (result == 0) {
@@ -53,31 +55,29 @@ public class CommonApiController {
     }
 
     @GetMapping("/get-forget-password-email")
-    public GlobalResult<Map<Object, Object>> getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException {
-        Map<Object, Object> map = new HashMap<>(1);
-        map.put("message", GlobalResultMessage.SEND_SUCCESS.getMessage());
+    public GlobalResult getForgetPasswordEmail(@RequestParam("email") String email) throws MessagingException, ServiceException {
         User user = userService.findByAccount(email);
         if (user != null) {
             Integer result = javaMailService.sendForgetPasswordEmail(email);
             if (result == 0) {
-                map.put("message", GlobalResultMessage.SEND_FAIL.getMessage());
+                throw new ServiceException(GlobalResultMessage.SEND_FAIL.getMessage());
             }
         } else {
-            map.put("message", "该邮箱未注册！");
+            throw new UnknownAccountException("该邮箱未注册！");
         }
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(GlobalResultMessage.SEND_SUCCESS.getMessage());
     }
 
     @PostMapping("/register")
-    public GlobalResult<Map> register(@RequestBody UserRegisterInfoDTO registerInfo) {
-        Map map = userService.register(registerInfo.getEmail(), registerInfo.getPassword(), registerInfo.getCode());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> register(@RequestBody UserRegisterInfoDTO registerInfo) {
+        boolean flag = userService.register(registerInfo.getEmail(), registerInfo.getPassword(), registerInfo.getCode());
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @PostMapping("/login")
-    public GlobalResult<Map> login(@RequestBody User user) {
-        Map map = userService.login(user.getAccount(), user.getPassword());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<TokenUser> login(@RequestBody User user) throws ServiceException {
+        TokenUser tokenUser = userService.login(user.getAccount(), user.getPassword());
+        return GlobalResultGenerator.genSuccessResult(tokenUser);
     }
 
     @GetMapping("/heartbeat")
@@ -87,86 +87,69 @@ public class CommonApiController {
 
     @GetMapping("/articles")
     @VisitLogger
-    public GlobalResult<Map> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO) {
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, ArticleSearchDTO searchDTO) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticles(searchDTO);
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/announcements")
-    public GlobalResult<Map> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows) {
+    public GlobalResult<PageInfo<ArticleDTO>> announcements(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findAnnouncements();
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/article/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> article(@PathVariable Integer id) {
+    public GlobalResult<ArticleDTO> article(@PathVariable Long id) {
         ArticleDTO articleDTO = articleService.findArticleDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("article", articleDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(articleDTO);
     }
 
     @PatchMapping("/forget-password")
-    public GlobalResult<Map> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword) {
-        Map map = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> forgetPassword(@RequestBody ForgetPasswordDTO forgetPassword) throws ServiceException {
+        boolean flag = userService.forgetPassword(forgetPassword.getCode(), forgetPassword.getPassword());
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
     @GetMapping("/portfolio/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> portfolio(@PathVariable Integer id) {
+    public GlobalResult<PortfolioDTO> portfolio(@PathVariable Long id) {
         PortfolioDTO portfolioDTO = portfolioService.findPortfolioDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("portfolio", portfolioDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(portfolioDTO);
     }
 
     @GetMapping("/portfolio/{id}/articles")
-    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Integer id) {
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable Long id) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByIdPortfolio(id);
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/portfolios")
-    public GlobalResult portfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
+    public GlobalResult<PageInfo<PortfolioDTO>> portfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
         PageHelper.startPage(page, rows);
         List<PortfolioDTO> list = portfolioService.findPortfolios();
-        PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("portfolios", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/products")
-    public GlobalResult products(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
+    public GlobalResult<PageInfo<ProductDTO>> products(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ProductDTO> list = productService.findProducts();
-        PageInfo<ProductDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("products", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<ProductDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/product/{id}")
     @VisitLogger
-    public GlobalResult<Map<String, Object>> product(@PathVariable Integer id) {
+    public GlobalResult<ProductDTO> product(@PathVariable Integer id) {
         ProductDTO productDTO = productService.findProductDTOById(id, 1);
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("product", productDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(productDTO);
     }
 }

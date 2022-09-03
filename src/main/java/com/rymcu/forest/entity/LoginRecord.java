@@ -1,6 +1,7 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -22,7 +23,8 @@ public class LoginRecord implements Serializable,Cloneable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
     /** IP */
     @Column(name = "login_ip")
     private String loginIp;
@@ -43,7 +45,8 @@ public class LoginRecord implements Serializable,Cloneable {
     private String loginBrowser;
     /** 用户 id */
     @Column(name = "id_user")
-    private Integer idUser;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idUser;
     /** 创建时间 */
     @Column(name = "created_time")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")

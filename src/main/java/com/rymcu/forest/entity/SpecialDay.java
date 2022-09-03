@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -19,7 +20,8 @@ public class SpecialDay implements Serializable,Cloneable{
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idSpecialDay;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idSpecialDay;
     /** 名称 */
     private String specialDayName;
     /** 权重/优先级,小数优秀 */

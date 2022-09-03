@@ -25,7 +25,7 @@ public interface BankAccountMapper extends Mapper<BankAccount> {
      * @param idBank
      * @return
      */
-    BankAccountDTO selectBankAccount(@Param("idBank") Integer idBank);
+    BankAccountDTO selectBankAccount(@Param("idBank") Long idBank);
 
     /**
      * 获取当前最大卡号
@@ -39,4 +39,11 @@ public interface BankAccountMapper extends Mapper<BankAccount> {
      * @return
      */
     BankAccountDTO selectByBankAccount(@Param("bankAccount") String bankAccount);
+
+    /**
+     * 查询用户个人银行账户信息
+     * @param idUser
+     * @return
+     */
+    BankAccountDTO findPersonBankAccountByIdUser(@Param("idUser") Long idUser);
 }

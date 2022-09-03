@@ -342,6 +342,10 @@ insert into forest.forest_user (id, account, password, nickname, real_name, sex,
                                 status, created_time, updated_time, last_login_time, signature)
 values (1, 'admin', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'admin', 'admin', '0', '0', null, 'admin@rymcu.com',
         null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', null, null);
+insert into forest.forest_user (id, account, password, nickname, real_name, sex, avatar_type, avatar_url, email, phone,
+                                status, created_time, updated_time, last_login_time, signature)
+values (2, 'testUser', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'testUser', 'testUser', '0', '0', null, 'testUser@rymcu.com',
+        null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', null, null);
 
 insert into forest.forest_user_role (id_user, id_role, created_time)
 values (1, 1, '2021-01-25 18:22:12');

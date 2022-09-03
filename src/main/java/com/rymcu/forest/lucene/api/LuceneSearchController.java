@@ -99,7 +99,7 @@ public class LuceneSearchController {
         int endIndex = Math.min(startIndex + rows, total);
         // 分割子列表
         List<ArticleLucene> subList = resList.subList(startIndex, endIndex);
-        String[] ids = subList.stream().map(ArticleLucene::getIdArticle).toArray(String[]::new);
+        Long[] ids = subList.stream().map(ArticleLucene::getIdArticle).toArray(Long[]::new);
         List<ArticleDTO> articleDTOList = luceneService.getArticlesByIds(ids);
         ArticleDTO temp;
         // 写入文章关键词信息
@@ -114,7 +114,7 @@ public class LuceneSearchController {
         }
         articles.addAll(articleDTOList);
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(articles);
-        return GlobalResultGenerator.genSuccessResult(Utils.getArticlesGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     /**
@@ -141,7 +141,7 @@ public class LuceneSearchController {
         int endIndex = Math.min(startIndex + rows, total);
         // 分割子列表
         List<UserLucene> subList = resList.subList(startIndex, endIndex);
-        Integer[] ids = subList.stream().map(UserLucene::getIdUser).toArray(Integer[]::new);
+        Long[] ids = subList.stream().map(UserLucene::getIdUser).toArray(Long[]::new);
         List<UserDTO> userDTOList = userLuceneService.getUsersByIds(ids);
         UserDTO temp;
         // 写入文章关键词信息
@@ -156,7 +156,7 @@ public class LuceneSearchController {
         }
         users.addAll(userDTOList);
         PageInfo<UserDTO> pageInfo = new PageInfo<>(users);
-        return GlobalResultGenerator.genSuccessResult(Utils.getUserGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     /**
@@ -183,7 +183,7 @@ public class LuceneSearchController {
         int endIndex = Math.min(startIndex + rows, total);
         // 分割子列表
         List<PortfolioLucene> subList = resList.subList(startIndex, endIndex);
-        String[] ids = subList.stream().map(PortfolioLucene::getIdPortfolio).toArray(String[]::new);
+        Long[] ids = subList.stream().map(PortfolioLucene::getIdPortfolio).toArray(Long[]::new);
         List<PortfolioDTO> portfolioDTOList = portfolioLuceneService.getPortfoliosByIds(ids);
         PortfolioDTO temp;
         // 写入文章关键词信息
@@ -198,6 +198,6 @@ public class LuceneSearchController {
         }
         portfolios.addAll(portfolioDTOList);
         PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(portfolios);
-        return GlobalResultGenerator.genSuccessResult(Utils.getPortfolioGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

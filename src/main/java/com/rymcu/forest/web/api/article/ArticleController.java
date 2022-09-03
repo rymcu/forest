@@ -2,6 +2,7 @@ package com.rymcu.forest.web.api.article;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
@@ -10,21 +11,21 @@ import com.rymcu.forest.dto.CommentDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.ArticleThumbsUp;
 import com.rymcu.forest.entity.Sponsor;
+import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.ArticleThumbsUpService;
 import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.service.SponsorService;
-import com.rymcu.forest.util.Utils;
+import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
+import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author ronger
@@ -43,73 +44,86 @@ public class ArticleController {
     private SponsorService sponsorService;
 
     @GetMapping("/detail/{idArticle}")
-    public GlobalResult<Map<String, Object>> detail(@PathVariable Integer idArticle, @RequestParam(defaultValue = "2") Integer type) {
-        ArticleDTO articleDTO = articleService.findArticleDTOById(idArticle, type);
-        Map map = new HashMap<>(1);
-        map.put("article", articleDTO);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<ArticleDTO> detail(@PathVariable Long idArticle, @RequestParam(defaultValue = "2") Integer type) {
+        ArticleDTO dto = articleService.findArticleDTOById(idArticle, type);
+        return GlobalResultGenerator.genSuccessResult(dto);
     }
 
     @PostMapping("/post")
-    public GlobalResult postArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.postArticle(article, request);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Long> postArticle(@RequestBody ArticleDTO article) throws BaseApiException, UnsupportedEncodingException {
+        User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
+        return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, user));
     }
 
     @PutMapping("/post")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE)
-    public GlobalResult updateArticle(@RequestBody ArticleDTO article, HttpServletRequest request) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.postArticle(article, request);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Long> updateArticle(@RequestBody ArticleDTO article) throws BaseApiException, UnsupportedEncodingException {
+        User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
+        return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, user));
     }
 
     @DeleteMapping("/delete/{idArticle}")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE)
-    public GlobalResult delete(@PathVariable Integer idArticle) throws BaseApiException {
-        Map map = articleService.delete(idArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Integer> delete(@PathVariable Long idArticle) throws BaseApiException {
+        return GlobalResultGenerator.genSuccessResult(articleService.delete(idArticle));
     }
 
     @GetMapping("/{idArticle}/comments")
-    public GlobalResult<Map<String, Object>> commons(@PathVariable Integer idArticle) {
-        List<CommentDTO> commentDTOList = commentService.getArticleComments(idArticle);
-        Map map = new HashMap<>(1);
-        map.put("comments", commentDTOList);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<List<CommentDTO>> commons(@PathVariable Integer idArticle) {
+        return GlobalResultGenerator.genSuccessResult(commentService.getArticleComments(idArticle));
     }
 
     @GetMapping("/drafts")
-    public GlobalResult drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
+    public GlobalResult<PageInfo<ArticleDTO>> drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
         PageHelper.startPage(page, rows);
-        List<ArticleDTO> list = articleService.findDrafts();
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        User user = UserUtils.getCurrentUserByToken();
+        if (Objects.isNull(user)) {
+            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
+        }
+        List<ArticleDTO> list = articleService.findDrafts(user.getIdUser());
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{idArticle}/share")
-    public GlobalResult share(@PathVariable Integer idArticle) throws BaseApiException {
-        Map map = articleService.share(idArticle);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<String> share(@PathVariable Integer idArticle) throws BaseApiException {
+        return GlobalResultGenerator.genResult(true, articleService.share(idArticle), "");
     }
 
     @PostMapping("/update-tags")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE_TAG)
-    public GlobalResult updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
-        Map map = articleService.updateTags(article.getIdArticle(), article.getArticleTags());
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Boolean> updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
+        Long idArticle = article.getIdArticle();
+        String articleTags = article.getArticleTags();
+        User user = UserUtils.getCurrentUserByToken();
+        return GlobalResultGenerator.genSuccessResult(articleService.updateTags(idArticle, articleTags, user.getIdUser()));
     }
 
     @PostMapping("/thumbs-up")
-    public GlobalResult thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws BaseApiException {
-        Map map = articleThumbsUpService.thumbsUp(articleThumbsUp);
-        return GlobalResultGenerator.genSuccessResult(map);
+    public GlobalResult<Integer> thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws Exception {
+        if (Objects.isNull(articleThumbsUp) || Objects.isNull(articleThumbsUp.getIdArticle())) {
+            throw new BusinessException("数据异常,文章不存在!");
+        }
+        User user = UserUtils.getCurrentUserByToken();
+        articleThumbsUp.setIdUser(user.getIdUser());
+        return GlobalResultGenerator.genSuccessResult(articleThumbsUpService.thumbsUp(articleThumbsUp));
     }
 
     @PostMapping("/sponsor")
     public GlobalResult sponsor(@RequestBody Sponsor sponsor) throws Exception {
-        Map map = sponsorService.sponsorship(sponsor);
-        return GlobalResultGenerator.genSuccessResult(map);
+        if (Objects.isNull(sponsor) || Objects.isNull(sponsor.getDataId()) || Objects.isNull(sponsor.getDataType())) {
+            throw new IllegalArgumentException("数据异常");
+        }
+        User user = UserUtils.getCurrentUserByToken();
+        sponsor.setSponsor(user.getIdUser());
+        boolean flag = sponsorService.sponsorship(sponsor);
+        return GlobalResultGenerator.genSuccessResult(flag);
     }
 
 }

@@ -44,21 +44,21 @@ public interface TopicMapper extends Mapper<Topic> {
      * @param topicDescriptionHtml
      * @return
      */
-    Integer update(@Param("idTopic") Integer idTopic, @Param("topicTitle") String topicTitle, @Param("topicUri") String topicUri, @Param("topicIconPath") String topicIconPath, @Param("topicNva") String topicNva, @Param("topicStatus") String topicStatus, @Param("topicSort") Integer topicSort, @Param("topicDescription") String topicDescription, @Param("topicDescriptionHtml") String topicDescriptionHtml);
+    Integer update(@Param("idTopic") Long idTopic, @Param("topicTitle") String topicTitle, @Param("topicUri") String topicUri, @Param("topicIconPath") String topicIconPath, @Param("topicNva") String topicNva, @Param("topicStatus") String topicStatus, @Param("topicSort") Integer topicSort, @Param("topicDescription") String topicDescription, @Param("topicDescriptionHtml") String topicDescriptionHtml);
 
     /**
      * @param idTopic
      * @param tagTitle
      * @return
      */
-    List<Tag> selectUnbindTagsById(@Param("idTopic") Integer idTopic, @Param("tagTitle") String tagTitle);
+    List<Tag> selectUnbindTagsById(@Param("idTopic") Long idTopic, @Param("tagTitle") String tagTitle);
 
-    Integer insertTopicTag(@Param("idTopic") Integer idTopic, @Param("idTag") Integer idTag);
+    Integer insertTopicTag(@Param("idTopic") Long idTopic, @Param("idTag") Long idTag);
 
     /**
      * @param idTopic
      * @param idTag
      * @return
      */
-    Integer deleteTopicTag(@Param("idTopic") Integer idTopic, @Param("idTag") Integer idTag);
+    Integer deleteTopicTag(@Param("idTopic") Long idTopic, @Param("idTag") Long idTag);
 }

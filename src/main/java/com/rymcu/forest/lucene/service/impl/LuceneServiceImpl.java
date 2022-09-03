@@ -65,6 +65,7 @@ public class LuceneServiceImpl implements LuceneService {
         try {
             int totalCount = list.size();
             int perThreadCount = 3000;
+            // 加1避免线程池的参数为0
             int threadCount = totalCount / perThreadCount + (totalCount % perThreadCount == 0 ? 0 : 1);
             ExecutorService pool = Executors.newFixedThreadPool(threadCount);
             CountDownLatch countDownLatch1 = new CountDownLatch(1);
@@ -94,7 +95,7 @@ public class LuceneServiceImpl implements LuceneService {
     }
 
     @Override
-    public void writeArticle(String id) {
+    public void writeArticle(Long id) {
         writeArticle(luceneMapper.getById(id));
     }
 
@@ -104,12 +105,12 @@ public class LuceneServiceImpl implements LuceneService {
     }
 
     @Override
-    public void updateArticle(String id) {
+    public void updateArticle(Long id) {
         ArticleIndexUtil.updateIndex(luceneMapper.getById(id));
     }
 
     @Override
-    public void deleteArticle(String id) {
+    public void deleteArticle(Long id) {
         ArticleIndexUtil.deleteIndex(id);
     }
 
@@ -181,7 +182,7 @@ public class LuceneServiceImpl implements LuceneService {
                 }
                 resList.add(
                         ArticleLucene.builder()
-                                .idArticle(hitDoc.get("id"))
+                                .idArticle(Long.valueOf(hitDoc.get("id")))
                                 .articleTitle(titleValue.toString())
                                 .articleContent(baikeValue.toString())
                                 .score(String.valueOf(score))
@@ -205,9 +206,9 @@ public class LuceneServiceImpl implements LuceneService {
     }
 
     @Override
-    public List<ArticleDTO> getArticlesByIds(String[] ids) {
+    public List<ArticleDTO> getArticlesByIds(Long[] ids) {
         List<ArticleDTO> list = luceneMapper.getArticlesByIds(ids);
-        list.forEach(articleDTO -> genArticle(articleDTO));
+        list.forEach(this::genArticle);
         return list;
     }
 

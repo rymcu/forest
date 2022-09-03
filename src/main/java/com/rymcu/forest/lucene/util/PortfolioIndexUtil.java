@@ -63,7 +63,7 @@ public class PortfolioIndexUtil {
   }
 
   /** 删除单个索引 */
-  public static synchronized void deleteIndex(String id) {
+  public static synchronized void deleteIndex(Long id) {
     Arrays.stream(FileUtil.ls(PATH))
         .forEach(
             each -> {
@@ -71,7 +71,7 @@ public class PortfolioIndexUtil {
                 IndexWriter writer;
                 try {
                   writer = IndexUtil.getIndexWriter(each.getAbsolutePath(), false);
-                  writer.deleteDocuments(new Term("id", id));
+                  writer.deleteDocuments(new Term("id", String.valueOf(id)));
                   writer.forceMergeDeletes(); // 强制删除
                   writer.commit();
                   writer.close();
