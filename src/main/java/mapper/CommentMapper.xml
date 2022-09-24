@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Comment">
+        <id column="id" property="idComment"></id>
+        <result column="comment_content" property="commentContent"></result>
+        <result column="comment_author_id" property="commentAuthorId"></result>
+        <result column="comment_article_id" property="commentArticleId"></result>
+        <result column="comment_sharp_url" property="commentSharpUrl"></result>
+        <result column="comment_original_comment_id" property="commentOriginalCommentId"></result>
+        <result column="comment_status" property="commentStatus"></result>
+        <result column="comment_ip" property="commentIP"></result>
+        <result column="comment_ua" property="commentUA"></result>
+        <result column="comment_anonymous" property="commentAnonymous"></result>
+        <result column="comment_reply_count" property="commentReplyCount"></result>
+        <result column="comment_visible" property="commentVisible"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.CommentDTO">
+        <id column="id" property="idComment"></id>
+        <result column="comment_content" property="commentContent"></result>
+        <result column="comment_author_id" property="commentAuthorId"></result>
+        <result column="comment_article_id" property="commentArticleId"></result>
+        <result column="comment_sharp_url" property="commentSharpUrl"></result>
+        <result column="comment_original_comment_id" property="commentOriginalCommentId"></result>
+        <result column="comment_status" property="commentStatus"></result>
+        <result column="comment_anonymous" property="commentAnonymous"></result>
+        <result column="comment_reply_count" property="commentReplyCount"></result>
+        <result column="comment_visible" property="commentVisible"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="article_title" property="articleTitle"></result>
+    </resultMap>
+    <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
+        <result column="id" property="idUser"/>
+        <result column="nickname" property="userNickname"/>
+        <result column="avatar_url" property="userAvatarURL"/>
+        <result column="account" property="userAccount"/>
+    </resultMap>
+    <update id="updateCommentSharpUrl">
+        update forest_comment set comment_sharp_url = #{commentSharpUrl} where id = #{idComment}
+    </update>
+    <select id="selectArticleComments" resultMap="DTOResultMap">
+        select fc.*, fa.article_title from forest_comment fc join forest_article fa on fc.comment_article_id = fa.id where comment_article_id = #{idArticle} order by fc.created_time desc
+    </select>
+    <select id="selectAuthor" resultMap="AuthorResultMap">
+        select id,nickname,avatar_url,account from forest_user where id = #{commentAuthorId}
+    </select>
+    <select id="selectCommentOriginalAuthor" resultMap="AuthorResultMap">
+        select vu.id,vu.nickname,vu.avatar_url,vu.account from forest_comment vc left join forest_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
+    </select>
+    <select id="selectComments" resultMap="DTOResultMap">
+        select fc.*, fa.article_title from forest_comment fc join forest_article fa on fc.comment_article_id = fa.id order by fc.created_time desc
+    </select>
+</mapper>

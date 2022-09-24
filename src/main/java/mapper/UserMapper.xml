@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="real_name" property="realName"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_online_time" property="lastOnlineTime"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+        <result column="bg_img_url" property="bgImgUrl"/>
+    </resultMap>
+    <resultMap id="UserInfoResultMapper" type="com.rymcu.forest.dto.UserInfoDTO">
+        <result column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_online_time" property="lastOnlineTime"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="signature" property="signature"/>
+        <result column="bg_img_url" property="bgImgUrl"/>
+    </resultMap>
+    <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.UserDTO">
+        <result column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="signature" property="signature"/>
+        <result column="bg_img_url" property="bgImgUrl"/>
+    </resultMap>
+    <resultMap id="AuthorResultMap" type="com.rymcu.forest.dto.Author">
+        <result column="id" property="idUser"/>
+        <result column="nickname" property="userNickname"/>
+        <result column="avatar_url" property="userAvatarURL"/>
+        <result column="account" property="userAccount"/>
+    </resultMap>
+    <insert id="insertUserRole">
+        insert into forest_user_role (id_user,id_role,created_time) values (#{idUser},#{idRole},sysdate())
+    </insert>
+    <update id="updatePasswordByEmail">
+        update forest_user set password = #{password} where email = #{email}
+    </update>
+    <update id="updateUserRole">
+        update forest_user_role set id_role = #{idRole},created_time = sysdate() where id_user = #{idUser}
+    </update>
+    <update id="updateStatus">
+        update forest_user set status = #{status} where id = #{idUser}
+    </update>
+    <update id="updateUserInfo">
+        update forest_user set nickname = #{nickname},signature = #{signature},avatar_type = #{avatarType},avatar_url = #{avatarUrl},sex = #{sex}
+        where id = #{idUser}
+    </update>
+    <update id="updateLastLoginTime">
+        update forest_user set last_login_time = sysdate() where id = #{idUser}
+    </update>
+    <update id="updateEmail">
+        update forest_user set email = #{email} where id = #{idUser}
+    </update>
+    <update id="updatePasswordById">
+        update forest_user set password = #{password} where id = #{idUser}
+    </update>
+    <update id="updateLastOnlineTimeByEmail">
+        update forest_user set last_online_time = sysdate() where email = #{email}
+    </update>
+
+    <select id="findByAccount" resultMap="BaseResultMap">
+        select id, nickname, account, password, status, avatar_type, avatar_url, email from forest_user where (account = #{account} or email = #{account} ) and status = 0
+    </select>
+    <select id="findUserInfoByAccount" resultMap="UserInfoResultMapper">
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time, last_online_time from forest_user where account = #{account}
+    </select>
+    <select id="selectUserDTOByAccount" resultMap="DTOResultMapper">
+        select id, nickname, avatar_type, avatar_url, account, signature, bg_img_url from forest_user where account = #{account} and status = 0
+    </select>
+    <select id="selectRoleWeightsByUser" resultType="java.lang.Integer">
+        select vr.weights from forest_role vr left join forest_user_role vur on vr.id = vur.id_role where vur.id_user = #{idUser}
+    </select>
+    <select id="selectCountByNickName" resultType="java.lang.Integer">
+        select count(*) from forest_user where nickname = #{nickname}
+    </select>
+    <select id="selectUserInfo" resultMap="UserInfoResultMapper">
+        select id, nickname, sex, avatar_type, avatar_url, email, phone, account, status, signature, last_login_time, last_online_time from forest_user where id = #{idUser}
+    </select>
+    <select id="checkNicknameByIdUser" resultType="java.lang.Integer">
+        select count(*) from forest_user where nickname = #{nickname} and id != #{idUser}
+    </select>
+    <select id="selectAuthor" resultMap="AuthorResultMap">
+        select * from forest_user where id = #{id}
+    </select>
+    <select id="selectUsers" resultMap="UserInfoResultMapper">
+        select id, nickname, sex, avatar_type, avatar_url, email, account, status, last_login_time, created_time, last_online_time from forest_user
+        <where>
+            <if test="searchDTO.nickname != null and searchDTO.nickname != ''">
+                and instr(nickname, #{searchDTO.nickname}) > 0
+            </if>
+        </where>
+        order by last_online_time desc
+    </select>
+    <select id="hasAdminPermission" resultType="java.lang.Boolean">
+        select if(count(fur.id_role) = 0, false, true) from forest_user_role fur join forest_user fu on fur.id_user = fu.id
+        where fu.email = #{email} and exists(select id_role from forest_role fr where instr(fr.input_code, 'admin') > 0 and fr.id = fur.id_role)
+    </select>
+    <select id="selectCountByAccount" resultType="java.lang.Integer">
+        select count(*) from forest_user where account = #{account}
+    </select>
+
+</mapper>

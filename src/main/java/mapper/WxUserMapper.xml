@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.WxUserMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.WxUser">
+        <id column="id" property="idWxUser"></id>
+        <result column="nickname" property="nickname"></result>
+        <result column="nickname" property="unionId"></result>
+        <result column="nickname" property="appId"></result>
+        <result column="nickname" property="openId"></result>
+        <result column="nickname" property="sex"></result>
+        <result column="nickname" property="sexDesc"></result>
+        <result column="nickname" property="headImgUrl"></result>
+        <result column="nickname" property="country"></result>
+        <result column="nickname" property="province"></result>
+        <result column="nickname" property="city"></result>
+        <result column="nickname" property="actToken"></result>
+        <result column="nickname" property="subscribe"></result>
+        <result column="nickname" property="subscribeTime"></result>
+        <result column="nickname" property="language"></result>
+    </resultMap>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.SpecialDayMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.SpecialDay">
+        <id column="id" property="idSpecialDay"></id>
+        <result column="special_day_name" property="specialDayName"></result>
+        <result column="weights" property="weights"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="expiration_time" property="expirationTime"></result>
+        <result column="repeat" property="repeat"></result>
+        <result column="repeat_cycle" property="repeatCycle"></result>
+        <result column="repeat_cycle_unit" property="repeatCycleUnit"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="img_url" property="imgUrl"></result>
+        <result column="css_style" property="cssStyle"></result>
+    </resultMap>
+</mapper>

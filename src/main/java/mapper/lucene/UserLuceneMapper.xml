@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.lucene.mapper.UserLuceneMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.lucene.model.UserLucene">
+        <id column="id" property="idUser" jdbcType="INTEGER"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="signature" property="signature" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.UserDTO">
+        <result column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="signature" property="signature"/>
+    </resultMap>
+    <select id="getAllUserLucene" resultMap="BaseResultMap">
+        SELECT id, nickname, signature
+        FROM forest_user
+    </select>
+
+    <select id="getUsersByIds" resultMap="DTOResultMapper">
+        select id, nickname, avatar_type, avatar_url, account, signature from forest_user where
+        id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        order by
+        field(id
+        <foreach collection="ids" item="id" index="index"
+                 open="," close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT id, nickname, signature
+        FROM forest_user
+        where id = #{id}
+    </select>
+</mapper>

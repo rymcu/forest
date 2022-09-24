@@ -1,0 +1,79 @@
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: # redis 密码
+    database: 1
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 500
+        min-idle: 0
+  datasource:
+    url: jdbc:mysql://localhost:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: root
+    password: # 数据库密码
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    resources:
+      add-mappings: true
+  mail:
+    host: smtp.163.com # 网站发送邮件邮箱服务 host
+    port: 465
+    username: # 邮箱
+    password: # 密码
+wx:
+  open:
+    componentAppId: #
+    componentSecret: #
+    componentToken: #
+    componentAesKey: #
+  mp:
+    configs:
+      - appId: xxx #微信公众号消息服务器配置的 appId
+        secret: xxx #微信公众号消息服务器配置的 secret
+        token: xxx #微信公众号消息服务器配置的 token
+        aesKey: xxx #微信公众号消息服务器配置的 aesKey
+  miniapp:
+    configs:
+      - appid: #微信小程序消息服务器配置的 appid
+        secret: #微信小程序消息服务器配置的 secret
+        token: #微信小程序消息服务器配置的 token
+        aesKey: #微信小程序消息服务器配置的 EncodingAESKey
+        msgDataFormat: JSON
+env: dev
+logging:
+  file:
+    path: /logs/forest
+  level:
+    com:
+      rymcu: info
+server:
+  port: 8099
+  servlet:
+    context-path: /forest
+version: 1.0
+resource:
+  domain: http://yourdomain.com # 网站域名
+  file-path: http://yourdomain.com # 上传文件前缀域名
+  pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址
+baidu:
+  data:
+    site: https://yourdomain.com # 百度搜索绑定网站域名
+    token: xxxx
+  ai:
+    appId: xxx # 百度AI-文字识别 应用 appId
+    appKey: xxxx # 百度AI-文字识别 应用 appKey
+    secretKey: xxxx # 百度AI-文字识别 应用 secretKey
+

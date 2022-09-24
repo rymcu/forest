@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.PermissionMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Permission">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="idPermission"/>
+        <result column="permission_category" property="permissionCategory"/>
+    </resultMap>
+
+    <select id="selectMenuByIdRole" resultMap="BaseResultMap">
+        select * from forest_role_permission srm left join forest_permission sm on srm.id = sm.id
+    </select>
+</mapper>

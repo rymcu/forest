@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.lucene.mapper.PortfolioLuceneMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.lucene.model.PortfolioLucene">
+        <id column="id" property="idPortfolio"></id>
+        <result column="id" property="idPortfolio"></result>
+        <result column="portfolio_title" property="portfolioTitle"></result>
+        <result column="portfolio_description" property="portfolioDescription"></result>
+    </resultMap>
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.PortfolioDTO">
+        <result column="id" property="idPortfolio"></result>
+        <result column="portfolio_head_img_url" property="headImgUrl"></result>
+        <result column="portfolio_title" property="portfolioTitle"></result>
+        <result column="portfolio_author_id" property="portfolioAuthorId"></result>
+        <result column="portfolio_description" property="portfolioDescription"></result>
+        <result column="updated_time" property="updatedTime"></result>
+    </resultMap>
+
+    <select id="getAllPortfolioLucene" resultMap="BaseResultMap">
+        SELECT id, portfolio_title, portfolio_description
+        FROM forest_portfolio
+    </select>
+
+    <select id="getPortfoliosByIds" resultMap="DTOResultMap">
+        select id, portfolio_head_img_url, portfolio_author_id, portfolio_description, updated_time from forest_portfolio where
+        id in
+        <foreach collection="ids" item="id" index="index"
+                 open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        order by
+        field(id
+        <foreach collection="ids" item="id" index="index"
+                 open="," close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getById" resultMap="BaseResultMap">
+        SELECT id, portfolio_title, portfolio_description
+        FROM forest_portfolio
+        where id = #{id}
+    </select>
+</mapper>

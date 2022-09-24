@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.PortfolioMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Portfolio">
+        <id column="id" property="idPortfolio"></id>
+        <result column="portfolio_head_img_url" property="headImgUrl"></result>
+        <result column="portfolio_title" property="portfolioTitle"></result>
+        <result column="portfolio_author_id" property="portfolioAuthorId"></result>
+        <result column="portfolio_description" property="portfolioDescription"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="updated_time" property="updatedTime"></result>
+    </resultMap>
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.PortfolioDTO">
+        <result column="id" property="idPortfolio"></result>
+        <result column="portfolio_head_img_url" property="headImgUrl"></result>
+        <result column="portfolio_title" property="portfolioTitle"></result>
+        <result column="portfolio_author_id" property="portfolioAuthorId"></result>
+        <result column="portfolio_description" property="portfolioDescription"></result>
+        <result column="updated_time" property="updatedTime"></result>
+        <result column="numbers" property="articleNumber"></result>
+    </resultMap>
+    <insert id="insertPortfolioArticle">
+        insert into forest_portfolio_article (id_portfolio, id_article, sort_no) values (#{idPortfolio}, #{idArticle}, #{maxSortNo})
+    </insert>
+    <update id="updateArticleSortNo">
+        update forest_portfolio_article set sort_no = #{sortNo} where id_portfolio = #{idPortfolio} and id_article = #{idArticle}
+    </update>
+    <delete id="unbindArticle">
+        delete from forest_portfolio_article where id_portfolio = #{idPortfolio} and id_article = #{idArticle}
+    </delete>
+    <select id="selectUserPortfoliosByIdUser" resultMap="DTOResultMap">
+        select id, portfolio_head_img_url, portfolio_title, portfolio_author_id, portfolio_description, updated_time from forest_portfolio where portfolio_author_id = #{idUser}
+    </select>
+    <select id="selectPortfolioDTOById" resultMap="DTOResultMap">
+        select id, portfolio_head_img_url, portfolio_title, portfolio_author_id,
+        <choose>
+            <when test="type == 1">
+                portfolio_description_html as portfolio_description,
+            </when>
+            <otherwise>
+                portfolio_description,
+            </otherwise>
+        </choose>
+        updated_time from forest_portfolio where id = #{id}
+    </select>
+    <select id="selectCountArticleNumber" resultType="java.lang.Integer">
+        select count(*) from forest_portfolio_article where id_portfolio = #{idPortfolio}
+    </select>
+    <select id="selectCountPortfolioArticle" resultType="java.lang.Integer">
+        select count(*) from forest_portfolio_article where id_portfolio = #{idPortfolio} and id_article = #{idArticle}
+    </select>
+    <select id="selectMaxSortNo" resultType="java.lang.Integer">
+        select ifnull(max(sort_no),0) + 1 from forest_portfolio_article where id_portfolio = #{idPortfolio}
+    </select>
+    <select id="selectPortfolios" resultMap="DTOResultMap">
+        select fp.*,fpa.numbers from forest_portfolio fp left join (select id_portfolio, count(id_portfolio) numbers from forest_portfolio_article group by id_portfolio) fpa
+            on fp.id = fpa.id_portfolio order by fpa.numbers desc, updated_time desc
+    </select>
+</mapper>

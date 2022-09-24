@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.FollowMapper">
+    <resultMap id="DTOResultMapper" type="com.rymcu.forest.dto.UserDTO">
+        <result column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="signature" property="signature"/>
+    </resultMap>
+    <select id="isFollow" resultType="java.lang.Boolean">
+        select ifnull((select true from forest_follow where follower_id = #{followerId}
+        and following_id = #{followingId} and following_type = #{followingType}), false)
+    </select>
+    <select id="selectUserFollowersByUser" resultMap="DTOResultMapper">
+        select id, nickname, avatar_type, avatar_url, account, signature from forest_user vu
+        where exists (select * from forest_follow vf where following_type = 0 and following_id = #{idUser} and follower_id = vu.id  limit 1)
+    </select>
+    <select id="selectUserFollowingsByUser" resultMap="DTOResultMapper">
+        select id, nickname, avatar_type, avatar_url, account, signature from forest_user vu
+        where exists (select * from forest_follow vf where following_type = 0 and follower_id = #{idUser} and following_id = vu.id limit 1)
+    </select>
+</mapper>

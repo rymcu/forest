@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.UserExtendMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.UserExtend">
+        <result column="id_user" property="idUser"></result>
+        <result column="github" property="github"></result>
+        <result column="weibo" property="weibo"></result>
+        <result column="weixin" property="weixin"></result>
+        <result column="qq" property="qq"></result>
+        <result column="blog" property="blog"></result>
+    </resultMap>
+    <select id="selectUserExtendByAccount" resultMap="BaseResultMap">
+        select vue.* from forest_user_extend vue join forest_user vu on vue.id_user = vu.id
+        where vu.account = #{account} limit 1
+    </select>
+</mapper>

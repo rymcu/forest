@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.TopicMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.Topic">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="idTopic"/>
+        <id column="topic_title" property="topicTitle"/>
+        <id column="topic_uri" property="topicUri"/>
+        <id column="topic_description" property="topicDescription"/>
+        <id column="topic_type" property="topicType"/>
+        <id column="topic_sort" property="topicSort"/>
+        <id column="topic_icon_path" property="topicIconPath"/>
+        <id column="topic_nva" property="topicNva"/>
+        <id column="topic_tag_count" property="topicTagCount"/>
+        <id column="topic_status" property="topicStatus"/>
+        <id column="created_time" property="createdTime"/>
+        <id column="updated_time" property="updatedTime"/>
+    </resultMap>
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.admin.TopicDTO">
+        <id column="id" property="idTopic"/>
+        <id column="topic_title" property="topicTitle"/>
+        <id column="topic_uri" property="topicUri"/>
+        <id column="topic_description" property="topicDescription"/>
+        <id column="topic_icon_path" property="topicIconPath"/>
+        <id column="topic_tag_count" property="topicTagCount"/>
+        <id column="topic_status" property="topicStatus"/>
+    </resultMap>
+    <resultMap id="TagDTOResultMap" type="com.rymcu.forest.dto.admin.TagDTO">
+        <id column="id" property="idTag"/>
+        <id column="tag_title" property="tagTitle"/>
+        <id column="tag_uri" property="tagUri"/>
+        <id column="tag_description" property="tagDescription"/>
+        <id column="tag_icon_path" property="tagIconPath"/>
+    </resultMap>
+    <resultMap id="TagResultMap" type="com.rymcu.forest.entity.Tag">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="idTag"/>
+        <id column="tag_title" property="tagTitle"/>
+        <id column="tag_icon_path" property="tagIconPath"/>
+        <id column="tag_uri" property="tagUri"/>
+        <id column="tag_description" property="tagDescription"/>
+        <id column="tag_view_count" property="tagViewCount"/>
+        <id column="tag_article_count" property="tagArticleCount"/>
+        <id column="tag_ad" property="tagAd"/>
+        <id column="tag_show_side_ad" property="tagShowSideAd"/>
+        <id column="created_time" property="createdTime"/>
+        <id column="updated_time" property="updatedTime"/>
+    </resultMap>
+    <insert id="insertTopicTag">
+        insert into forest_topic_tag (id_topic, id_tag, created_time, updated_time)
+        values (#{idTopic}, #{idTag}, sysdate(), sysdate())
+    </insert>
+    <update id="update">
+        update forest_topic
+        set topic_title            = #{topicTitle},
+            topic_uri              = #{topicUri},
+            topic_icon_path        = #{topicIconPath},
+            updated_time           = sysdate(),
+            topic_nva              = #{topicNva},
+            topic_status           = #{topicStatus},
+            topic_sort             = #{topicSort},
+            topic_description      = #{topicDescription},
+            topic_description_html = #{topicDescriptionHtml}
+        where id = #{idTopic}
+    </update>
+    <delete id="deleteTopicTag">
+        delete
+        from forest_topic_tag
+        where id_topic = #{idTopic}
+          and id_tag = #{idTag}
+    </delete>
+    <select id="selectTopicNav" resultMap="BaseResultMap">
+        select id, topic_title, topic_uri, topic_icon_path
+        from forest_topic
+        where topic_nva = 0
+          and topic_status = 0
+        order by topic_sort
+    </select>
+    <select id="selectTopicByTopicUri" resultMap="DTOResultMap">
+        select id, topic_title, topic_uri, topic_icon_path, topic_description, topic_tag_count, topic_status
+        from forest_topic
+        where topic_uri = #{topicUri}
+    </select>
+    <select id="selectTopicTag" resultMap="TagDTOResultMap">
+        select vt.id, vt.tag_title, vt.tag_uri, vt.tag_description, vt.tag_icon_path
+        from forest_tag vt
+                 left join forest_topic_tag vtt on vt.id = vtt.id_tag
+        where vtt.id_topic = #{idTopic}
+        order by vtt.created_time desc
+    </select>
+    <select id="selectUnbindTagsById" resultMap="TagResultMap">
+        select * from forest_tag vt where not exists(select * from forest_topic_tag vtt where vtt.id_topic = #{idTopic}
+        and vtt.id_tag = vt.id)
+        <if test="tagTitle != '' and tagTitle != null">
+            and LOCATE(#{tagTitle}, vt.tag_title) > 0
+        </if>
+        order by vt.created_time desc
+    </select>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.DashboardMapper">
+    <resultMap id="DashboardDataResultMap" type="com.rymcu.forest.dto.admin.DashboardData">
+        <result column="label" property="label"></result>
+        <result column="value" property="value"></result>
+    </resultMap>
+    <resultMap id="UserInfoResultMapper" type="com.rymcu.forest.dto.UserInfoDTO">
+        <result column="id" property="idUser"/>
+        <result column="account" property="account"/>
+        <result column="nickname" property="nickname"/>
+        <result column="sex" property="sex"/>
+        <result column="avatar_type" property="avatarType"/>
+        <result column="avatar_url" property="avatarUrl"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="last_online_time" property="lastOnlineTime"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="signature" property="signature"/>
+    </resultMap>
+
+    <resultMap id="BankAccountResultMap" type="com.rymcu.forest.dto.BankAccountDTO">
+        <result column="id" property="idBankAccount"></result>
+        <result column="id_bank" property="idBank"></result>
+        <result column="bank_name" property="bankName"></result>
+        <result column="bank_account" property="bankAccount"></result>
+        <result column="account_balance" property="accountBalance"></result>
+        <result column="account_owner" property="accountOwner"></result>
+        <result column="account_owner_name" property="accountOwnerName"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
+    <resultMap id="ArticleResultMap" type="com.rymcu.forest.dto.ArticleDTO">
+        <result column="id" property="idArticle"></result>
+        <result column="article_title" property="articleTitle"></result>
+        <result column="article_permalink" property="articlePermalink"></result>
+        <result column="created_time" property="updatedTime"></result>
+        <result column="article_perfect" property="articlePerfect"></result>
+        <result column="article_status" property="articleStatus"></result>
+        <result column="article_tags" property="articleTags"></result>
+    </resultMap>
+    <select id="selectUserCount" resultType="java.lang.Integer">
+        select count(*)
+        from forest_user
+    </select>
+    <select id="selectNewUserCount" resultType="java.lang.Integer">
+        select count(*)
+        from forest_user
+        where created_time > str_to_date(date_format(sysdate(), '%Y-%m-%d'), '%Y-%m-%d')
+    </select>
+    <select id="selectArticleCount" resultType="java.lang.Integer">
+        select count(*)
+        from forest_article
+    </select>
+    <select id="selectNewArticleCount" resultType="java.lang.Integer">
+        select count(*)
+        from forest_article
+        where created_time > str_to_date(date_format(sysdate(), '%Y-%m-%d'), '%Y-%m-%d')
+          and article_status = 0
+    </select>
+    <select id="selectCountViewNum" resultType="java.lang.Integer">
+        select count(*)
+        from forest_visit
+    </select>
+    <select id="selectTodayViewNum" resultType="java.lang.Integer">
+        select count(*)
+        from forest_visit
+        where created_time > str_to_date(date_format(sysdate(), '%Y-%m-%d'), '%Y-%m-%d')
+    </select>
+    <select id="selectLastThirtyDaysArticleData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label
+        from forest_article
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 30 day), '%Y-%m-%d'), '%Y-%m-%d')
+          and article_status = 0
+        GROUP BY date_format(created_time, '%Y-%m-%d')
+    </select>
+    <select id="selectLastThirtyDaysUserData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label
+        from forest_user
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 30 day), '%Y-%m-%d'), '%Y-%m-%d')
+        GROUP BY date_format(created_time, '%Y-%m-%d')
+    </select>
+    <select id="selectLastThirtyDaysVisitData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m-%d') as label
+        from forest_visit
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 30 day), '%Y-%m-%d'), '%Y-%m-%d')
+        GROUP BY date_format(created_time, '%Y-%m-%d')
+    </select>
+    <select id="selectHistoryArticleData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m') as label
+        from forest_article
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+          and article_status = 0
+        GROUP BY date_format(created_time, '%Y-%m')
+    </select>
+    <select id="selectHistoryUserData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m') as label
+        from forest_user
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+        GROUP BY date_format(created_time, '%Y-%m')
+    </select>
+    <select id="selectHistoryVisitData" resultMap="DashboardDataResultMap">
+        select COUNT(*) as value, date_format(created_time, '%Y-%m') as label
+        from forest_visit
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+        GROUP BY date_format(created_time, '%Y-%m')
+    </select>
+    <select id="selectNewUsers" resultMap="UserInfoResultMapper">
+        select id, nickname, avatar_url, account, created_time
+        from forest_user
+        where created_time > str_to_date(date_format(date_sub(sysdate(), interval + 7 day), '%Y-%m-%d'), '%Y-%m-%d')
+        order by created_time desc
+    </select>
+    <select id="selectNewBankAccounts" resultMap="BankAccountResultMap">
+        select fu.nickname as account_owner_name, fba.bank_account, fba.account_balance
+        from forest_bank_account fba
+                 join forest_user fu on fba.account_owner = fu.id
+        where fba.created_time >
+              str_to_date(date_format(date_sub(sysdate(), interval + 7 day), '%Y-%m-%d'), '%Y-%m-%d')
+        order by fba.created_time desc
+    </select>
+    <select id="selectNewArticles" resultMap="ArticleResultMap">
+        select art.id,
+               art.article_title,
+               art.article_tags,
+               art.article_permalink,
+               art.article_perfect,
+               art.article_status,
+               art.created_time
+        from forest_article art
+        where article_status = 0
+          and art.created_time >
+              str_to_date(date_format(date_sub(sysdate(), interval + 7 day), '%Y-%m-%d'), '%Y-%m-%d')
+        order by art.created_time desc
+    </select>
+    <select id="selectLastThirtyDaysVisitIpData" resultMap="DashboardDataResultMap">
+        select count(t.label) as value, t.label
+        from (
+                 select distinct visit_ip as ip, date_format(created_time, '%Y-%m-%d') as label
+                 from forest_visit
+                 where created_time >
+                       str_to_date(date_format(date_sub(sysdate(), interval + 30 day), '%Y-%m-%d'), '%Y-%m-%d')
+                 GROUP BY date_format(created_time, '%Y-%m-%d'), visit_ip
+             ) t
+        group by t.label
+    </select>
+    <select id="selectHistoryVisitIpData" resultMap="DashboardDataResultMap">
+        select count(t.label) as value, t.label
+        from (
+                 select distinct visit_ip as ip, date_format(created_time, '%Y-%m') as label
+                 from forest_visit
+                 where created_time >
+                       str_to_date(date_format(date_sub(sysdate(), interval + 1 year), '%Y-%m-%d'), '%Y-%m-%d')
+                 GROUP BY date_format(created_time, '%Y-%m'), visit_ip
+             ) t
+        group by t.label
+    </select>
+</mapper>

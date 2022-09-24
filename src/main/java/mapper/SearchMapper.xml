@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.SearchMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.dto.SearchModel">
+        <result column="label" property="label"></result>
+        <result column="value" property="value"></result>
+        <result column="type" property="type"></result>
+    </resultMap>
+    <select id="searchInitialArticleSearch" resultMap="BaseResultMap">
+        select article_title as label, id as value, 'article' as type from forest_article where article_status = 0
+    </select>
+    <select id="searchInitialPortfolioSearch" resultMap="BaseResultMap">
+        select portfolio_title as label, id as value, 'portfolio' as type from forest_portfolio
+    </select>
+    <select id="searchInitialUserSearch" resultMap="BaseResultMap">
+        select nickname as label, account as value, 'user' as type from forest_user where status = 0
+    </select>
+</mapper>

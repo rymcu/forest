@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.ForestFileMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.ForestFile">
+        <id column="id" property="id"/>
+        <id column="file_size" property="fileSize"/>
+        <id column="file_type" property="fileType"/>
+        <result column="md5_value" property="md5Value"/>
+        <result column="file_path" property="filePath"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+        <result column="created_by" property="createdBy"/>
+    </resultMap>
+
+    <insert id="insertForestFile">
+        insert into forest_file (md5_value, file_path, file_url, created_time, created_by, file_size, file_type)
+        values (#{md5Value}, #{filePath}, #{fileUrl}, sysdate(), #{createdBy}, #{fileSize}, #{fileType})
+    </insert>
+
+    <select id="getFileUrlByMd5" resultType="java.lang.String">
+        select file_url
+        from forest_file
+        where md5_value = #{md5Value}
+          and created_by = #{createdBy}
+          and file_type = #{fileType}
+    </select>
+
+</mapper>

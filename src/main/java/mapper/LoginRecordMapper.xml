@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.LoginRecordMapper">
+    <resultMap id="BaseResultMap" type="com.rymcu.forest.entity.LoginRecord">
+        <result column="id" property="id"></result>
+        <result column="id_user" property="idUser"></result>
+        <result column="login_ip" property="loginIp"></result>
+        <result column="login_browser" property="loginBrowser"></result>
+        <result column="login_city" property="loginCity"></result>
+        <result column="login_os" property="loginOS"></result>
+        <result column="login_ua" property="loginUa"></result>
+        <result column="created_time" property="createdTime"></result>
+    </resultMap>
+    <select id="selectLoginRecordByIdUser" resultMap="BaseResultMap">
+        select id, id_user, login_ip, login_browser, login_city, login_os, created_time
+        from forest_login_record
+        where id_user = #{idUser} order by created_time desc
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rymcu.forest.mapper.TransactionRecordMapper">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.TransactionRecordDTO">
+        <result column="id" property="idTransactionRecord"></result>
+        <result column="transaction_no" property="transactionNo"></result>
+        <result column="funds" property="funds"></result>
+        <result column="form_bank_account" property="formBankAccount"></result>
+        <result column="to_bank_account" property="toBankAccount"></result>
+        <result column="money" property="money"></result>
+        <result column="transaction_type" property="transactionType"></result>
+        <result column="transaction_time" property="transactionTime"></result>
+    </resultMap>
+    <update id="transfer">
+        update forest_bank_account
+        set account_balance = account_balance - #{money}
+        where bank_account = #{formBankAccount};
+        update forest_bank_account
+        set account_balance = account_balance + #{money}
+        where bank_account = #{toBankAccount};
+    </update>
+    <select id="selectTransactionRecords" resultMap="DTOResultMap">
+        select *
+        from forest_transaction_record ftr
+        where (form_bank_account = #{bankAccount} or to_bank_account = #{bankAccount})
+          and transaction_time between str_to_date(#{startDate}, '%Y-%m-%d') and str_to_date(#{endDate}, '%Y-%m-%d') + interval 1 day
+        order by transaction_time desc
+    </select>
+    <select id="existsWithBankAccountAndFunds" resultType="java.lang.Boolean">
+        select ifnull((select false
+                       from forest_transaction_record
+                       where to_bank_account = #{bankAccount}
+                         and funds = #{funds}
+                         and transaction_time > str_to_date(date_format(sysdate(), '%Y-%m-%d'), '%Y-%m-%d')
+                       limit 1), true)
+    </select>
+    <select id="existsWithNewbieRewards" resultType="java.lang.Boolean">
+        select ifnull((select true
+                       from forest_transaction_record
+                       where to_bank_account = #{bankAccount} and funds = '新手奖励'
+                       limit 1), false)
+    </select>
+</mapper>
