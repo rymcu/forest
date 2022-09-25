@@ -30,7 +30,7 @@ jobs:
     image: '@script:builtin:maven:determine-docker-image@'
     interpreter: !DefaultInterpreter
       commands:
-      - mvn clean test
+      - mvn clean test -P dev
     useTTY: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   triggers:
