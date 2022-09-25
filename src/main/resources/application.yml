@@ -1,6 +1,9 @@
+---
 spring:
   profiles:
-    active: dev
+    active: '@profileActive@'
+---
+spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
