@@ -93,6 +93,18 @@ jobs:
   timeout: 3600
 - name: Build Docker Image
   steps:
+  - !CommandStep
+    name: delete build version
+    runInContainer: true
+    image: '@script:builtin:maven:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - echo "Detecting project version (may require some time while downloading maven
+        dependencies)..."
+      - echo $(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version
+        -q -DforceStdout) > buildVersion
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !SetBuildVersionStep
     name: Set Build Version
     buildVersion: '@file:buildVersion@'
