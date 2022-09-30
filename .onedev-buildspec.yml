@@ -74,12 +74,12 @@ jobs:
     image: '@script:builtin:maven:determine-docker-image@'
     interpreter: !DefaultInterpreter
       commands:
-      - mvn package -P dev
+      - mvn package
     useTTY: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !BuildImageStep
     name: Build Docker Image
-    tags: rymcu/@project_name@:@build_version@
+    tags: rymcu/forest:@build_version@
     publish: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   retryCondition: never
@@ -87,4 +87,7 @@ jobs:
   retryDelay: 30
   cpuRequirement: 250
   memoryRequirement: 256
+  caches:
+  - key: maven-cache
+    path: /root/.m2/repository
   timeout: 3600
