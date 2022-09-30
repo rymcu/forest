@@ -74,9 +74,7 @@ jobs:
     image: '@script:builtin:maven:determine-docker-image@'
     interpreter: !DefaultInterpreter
       commands:
-      - ll
       - mvn package -P dev
-      - ll
     useTTY: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !BuildImageStep
