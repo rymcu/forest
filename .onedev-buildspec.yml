@@ -93,6 +93,10 @@ jobs:
   timeout: 3600
 - name: Build Docker Image
   steps:
+  - !SetBuildVersionStep
+    name: Set Build Version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !BuildImageStep
     name: Build Docker Image
     tags: rymcu/forest:@build_version@
