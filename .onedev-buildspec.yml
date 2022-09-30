@@ -44,7 +44,8 @@ jobs:
   - key: maven-cache
     path: /root/.m2/repository
   timeout: 3600
-- name: Build Docker Image
+- name: package
+  jobExecutor: internal
   steps:
   - !CheckoutStep
     name: Checkout Code
@@ -77,10 +78,9 @@ jobs:
       - mvn package
     useTTY: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-  - !BuildImageStep
-    name: Build Docker Image
-    tags: rymcu/forest:@build_version@
-    publish: false
+  - !PublishArtifactStep
+    name: Publish Artifacts
+    artifacts: forest*
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   retryCondition: never
   maxRetries: 3
@@ -90,4 +90,21 @@ jobs:
   caches:
   - key: maven-cache
     path: /root/.m2/repository
+  timeout: 3600
+- name: Build Docker Image
+  steps:
+  - !BuildImageStep
+    name: Build Docker Image
+    tags: rymcu/forest:@build_version@
+    publish: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  jobDependencies:
+  - jobName: package
+    requireSuccessful: true
+    artifacts: forest*
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  cpuRequirement: 250
+  memoryRequirement: 256
   timeout: 3600
