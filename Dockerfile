@@ -8,6 +8,6 @@ ENV JAVA_HOME=/usr/lib/jvm/jdk1.8.0_202
 
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-CMD ["/tomcat/bin/catalina.sh", "run"]
+CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
 
 EXPOSE 8080
