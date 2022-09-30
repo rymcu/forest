@@ -98,6 +98,10 @@ jobs:
     tags: rymcu/forest:@build_version@
     publish: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: Set Build Version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   jobDependencies:
   - jobName: package
     requireSuccessful: true
