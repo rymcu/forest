@@ -93,12 +93,6 @@ jobs:
   timeout: 3600
 - name: Build Docker Image
   steps:
-  - !CheckoutStep
-    name: Checkout Code
-    cloneCredential: !DefaultCredential {}
-    withLfs: false
-    withSubmodules: false
-    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !BuildImageStep
     name: Build Docker Image
     tags: rymcu/forest:@build_version@
