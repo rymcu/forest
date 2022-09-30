@@ -101,7 +101,7 @@ jobs:
   jobDependencies:
   - jobName: package
     requireSuccessful: true
-    artifacts: forest*
+    artifacts: '**'
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
