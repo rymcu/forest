@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.32</version>
+            <version>1.33</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -241,12 +241,12 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
-            <version>5.8.7</version>
+            <version>5.8.8</version>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-http</artifactId>
-            <version>5.8.7</version>
+            <version>5.8.8</version>
         </dependency>
 
         <dependency>
@@ -328,7 +328,7 @@
                 <profileActive>dev</profileActive>
             </properties>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
         </profile>
         <profile>
@@ -337,7 +337,7 @@
                 <profileActive>prod</profileActive>
             </properties>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
     </profiles>
