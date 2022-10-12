@@ -122,7 +122,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 userMapper.updateLastOnlineTimeByEmail(user.getEmail());
                 TokenUser tokenUser = new TokenUser();
                 BeanCopierUtil.copy(user, tokenUser);
-                tokenUser.setToken(tokenManager.createToken(account));
+                tokenUser.setToken(tokenManager.createToken(user.getEmail()));
                 tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
                 // 保存登录日志
                 loginRecordService.saveLoginRecord(tokenUser.getIdUser());
