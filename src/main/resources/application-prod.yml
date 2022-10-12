@@ -92,7 +92,7 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
     min-response-size: 1024
-  max-http-header-size: 1024
+  max-http-header-size: 1048576
 version: 1.0
 resource:
   domain: https://rymcu.com
