@@ -388,3 +388,193 @@ create table forest_login_record
     constraint forest_login_record_id_uindex
         unique (id)
 ) comment '登录记录表' collate = utf8mb4_unicode_ci;
+
+create table forest_product
+(
+    id                  int auto_increment comment '主键'
+        primary key,
+    product_title       varchar(100)       null comment '产品名',
+    product_price       int     default 0  null comment '单价(单位:分)',
+    product_img_url     varchar(100)       null comment '产品主图',
+    product_description varchar(200)       null comment '产品描述',
+    weights             tinyint default 50 null comment '权重,数值越小权限越大;0:无权限',
+    created_time        datetime           null comment '创建时间',
+    updated_time        datetime           null comment '更新时间',
+    constraint forest_product_id_uindex
+        unique (id)
+)
+    comment '产品表';
+
+create table forest_product_content
+(
+    id_product           int      null comment '产品表主键',
+    product_content      text     null comment '产品详情原文',
+    product_content_html text     null comment '产品详情 Html',
+    created_time         datetime null comment '创建时间',
+    updated_time         datetime null comment '更新时间'
+)
+    comment '产品详情表';
+
+INSERT INTO forest.forest_product (id, product_title, product_price, product_img_url, product_description, weights, created_time, updated_time) VALUES (1, 'Nebula Pi', 2000000, 'https://static.rymcu.com/article/1648960741563.jpg', '产品描述', 20, '2022-06-13 22:35:33', '2022-06-13 22:35:33');
+
+INSERT INTO forest.forest_product_content (id_product, product_content, product_content_html, created_time,
+                                           updated_time)
+VALUES (1, '![nebula pi](https://static.rymcu.com/article/1640531590770)
+
+Nebula-Pi 开发板平台
+
+## 1.1主板结构及布局
+
+![](https://static.rymcu.com/article/1640531590844)
+
+图1.1 Nebula-Pi 单片机开发平台
+
+## 1.2主板元件说明
+
+从图1.1可以看出， Nebula-Pi 开发板平台资源丰富，不仅涵盖了 51 单片机所有内部资源，还扩展了大量的外设，单片机的各项功能均可以在平台上得到验证。我们以顺时针的顺序从**①**到**⑳**，分别介绍主要模块的功能。
+
+| 序号 | 元器件 | 功能介绍 |
+| --- | --- | --- |
+| 1 | 迷你 USB 接口 | 给开发板供电，以及计算机与开发板通信 |
+| 2 | 单片机跳线帽 | 开发板上有两块独立的 51 单片机，可以通过这个跳线进行切换，选择你需要使用的单片机。 |
+| 3 | 电源开关 | 开发板电源开关 |
+| 4 |  51 单片机 STC89C52RC | 这套教程的主角， 51 单片机，选用 STC 公司的 STC89C52RC 型号进行讲解 |
+| 5 | 液晶显示器跳线帽 | 液晶显示器的跳线，可以选择 OLED 或者 LCD |
+| 6 | 主板复位按钮 | 复位按钮，相当于电脑的重启按键 |
+| 7 | 数字温度传感器 | 温度传感器，可以测量环境温度 |
+| 8 | 红外接收头 | 接收红外遥控信号专用 |
+| 9 | 液晶显示器接口 | 预留的液晶显示器 1602/12864 等的接口 |
+| 10 | 数码管 | 4 位数码管，可以同时显示 4 个数字等 |
+| 11 | 蜂鸣器 | 相当于开发板的小喇叭，可以发出"滴滴"等声音 |
+| 12 | 光敏&热敏电阻 | 两种类型的电阻，分别可以用来测量光强度和温度 |
+| 13 | 步进电机接口 | 预留给电机的接口 |
+| 14 | 8 个 LED 灯 | 8 个 LED 小灯，可实现指示灯，流水灯等效果 |
+| 15 | 增强型 51 单片机 STC12 | 开发板上的另外一块 51 单片机，比主角功能更强大，第一块用来学习，这一块用来做项目，学习、实践两不误 |
+| 16 | 2.4G 无线模块接口 | 为 2.4G 无线通信模块预留的接口，无线通信距离可以达到 1-2Km，大大扩展了开发板的功能 |
+| 17 | 3 个独立按键 | 3 个按键，可以当做开发板的输入设备，相当于迷你版键盘 |
+| 18 | 继电器接口 | 开发板上集成了继电器，这个接口预留给用户接线用的，可以用来控制 220V 设备的开关。因此，可以通过开发板來控制各种类型的家用电器 |
+| 19 | 电源端子 | 预留了 5V 和 3.3V 的电源端子，可以用来给其他设备供电 |
+| 20 | WiFi 模块接口 | WiFi 模块接口，接上 WiFi 模块，开发板可以轻松上网冲浪 |
+
+表 1-1 主板元器件说明
+
+', '<p><img src="https://static.rymcu.com/article/1640531590770" alt="nebula pi" /></p>
+<p>Nebula-Pi 开发板平台</p>
+<h2 id="1-1主板结构及布局">1.1 主板结构及布局</h2>
+<p><img src="https://static.rymcu.com/article/1640531590844" alt="" /></p>
+<p>图 1.1 Nebula-Pi 单片机开发平台</p>
+<h2 id="1-2主板元件说明">1.2 主板元件说明</h2>
+<p>从图 1.1 可以看出， Nebula-Pi 开发板平台资源丰富，不仅涵盖了 51 单片机所有内部资源，还扩展了大量的外设，单片机的各项功能均可以在平台上得到验证。我们以顺时针的顺序从 <strong>①</strong> 到 <strong>⑳</strong>，分别介绍主要模块的功能。</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>元器件</th>
+<th>功能介绍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>迷你 USB 接口</td>
+<td>给开发板供电，以及计算机与开发板通信</td>
+</tr>
+<tr>
+<td>2</td>
+<td>单片机跳线帽</td>
+<td>开发板上有两块独立的 51 单片机，可以通过这个跳线进行切换，选择你需要使用的单片机。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>电源开关</td>
+<td>开发板电源开关</td>
+</tr>
+<tr>
+<td>4</td>
+<td>51 单片机 STC89C52RC</td>
+<td>这套教程的主角， 51 单片机，选用 STC 公司的 STC89C52RC 型号进行讲解</td>
+</tr>
+<tr>
+<td>5</td>
+<td>液晶显示器跳线帽</td>
+<td>液晶显示器的跳线，可以选择 OLED 或者 LCD</td>
+</tr>
+<tr>
+<td>6</td>
+<td>主板复位按钮</td>
+<td>复位按钮，相当于电脑的重启按键</td>
+</tr>
+<tr>
+<td>7</td>
+<td>数字温度传感器</td>
+<td>温度传感器，可以测量环境温度</td>
+</tr>
+<tr>
+<td>8</td>
+<td>红外接收头</td>
+<td>接收红外遥控信号专用</td>
+</tr>
+<tr>
+<td>9</td>
+<td>液晶显示器接口</td>
+<td>预留的液晶显示器 1602/12864 等的接口</td>
+</tr>
+<tr>
+<td>10</td>
+<td>数码管</td>
+<td>4 位数码管，可以同时显示 4 个数字等</td>
+</tr>
+<tr>
+<td>11</td>
+<td>蜂鸣器</td>
+<td>相当于开发板的小喇叭，可以发出&quot;滴滴&quot;等声音</td>
+</tr>
+<tr>
+<td>12</td>
+<td>光敏&amp;热敏电阻</td>
+<td>两种类型的电阻，分别可以用来测量光强度和温度</td>
+</tr>
+<tr>
+<td>13</td>
+<td>步进电机接口</td>
+<td>预留给电机的接口</td>
+</tr>
+<tr>
+<td>14</td>
+<td>8 个 LED 灯</td>
+<td>8 个 LED 小灯，可实现指示灯，流水灯等效果</td>
+</tr>
+<tr>
+<td>15</td>
+<td>增强型 51 单片机 STC12</td>
+<td>开发板上的另外一块 51 单片机，比主角功能更强大，第一块用来学习，这一块用来做项目，学习、实践两不误</td>
+</tr>
+<tr>
+<td>16</td>
+<td>2.4G 无线模块接口</td>
+<td>为 2.4G 无线通信模块预留的接口，无线通信距离可以达到 1-2Km，大大扩展了开发板的功能</td>
+</tr>
+<tr>
+<td>17</td>
+<td>3 个独立按键</td>
+<td>3 个按键，可以当做开发板的输入设备，相当于迷你版键盘</td>
+</tr>
+<tr>
+<td>18</td>
+<td>继电器接口</td>
+<td>开发板上集成了继电器，这个接口预留给用户接线用的，可以用来控制 220V 设备的开关。因此，可以通过开发板來控制各种类型的家用电器</td>
+</tr>
+<tr>
+<td>19</td>
+<td>电源端子</td>
+<td>预留了 5V 和 3.3V 的电源端子，可以用来给其他设备供电</td>
+</tr>
+<tr>
+<td>20</td>
+<td>WiFi 模块接口</td>
+<td>WiFi 模块接口，接上 WiFi 模块，开发板可以轻松上网冲浪</td>
+</tr>
+</tbody>
+</table>
+<p>表 1-1 主板元器件说明</p>
+', '2022-06-13 22:35:34', '2022-06-13 22:35:34');
