@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -15,14 +16,16 @@ public class Portfolio {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer idPortfolio;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idPortfolio;
     /** 作品集头像 */
     @Column(name = "portfolio_head_img_url")
     private String headImgUrl;
     /** 作品集名称 */
     private String portfolioTitle;
     /** 作品集作者 */
-    private Integer portfolioAuthorId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long portfolioAuthorId;
     /** 作品集介绍 */
     private String portfolioDescription;
     /** 作品集介绍 Html */

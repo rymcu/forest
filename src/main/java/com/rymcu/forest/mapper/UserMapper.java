@@ -28,7 +28,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idRole
      * @return
      */
-    Integer insertUserRole(@Param("idUser") Integer idUser, @Param("idRole") Integer idRole);
+    Integer insertUserRole(@Param("idUser") Long idUser, @Param("idRole") Long idRole);
 
     /**
      * 根据账号获取获取用户信息
@@ -57,7 +57,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idUser
      * @return
      */
-    Integer selectRoleWeightsByUser(@Param("idUser") Integer idUser);
+    Integer selectRoleWeightsByUser(@Param("idUser") Long idUser);
 
     /**
      * 更新用户权限
@@ -65,7 +65,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idRole
      * @return
      */
-    Integer updateUserRole(@Param("idUser") Integer idUser, @Param("idRole") Integer idRole);
+    Integer updateUserRole(@Param("idUser") Long idUser, @Param("idRole") Long idRole);
 
     /**
      * 更新用户状态
@@ -73,7 +73,7 @@ public interface UserMapper extends Mapper<User> {
      * @param status
      * @return
      */
-    Integer updateStatus(@Param("idUser") Integer idUser, @Param("status") String status);
+    Integer updateStatus(@Param("idUser") Long idUser, @Param("status") String status);
 
     /**
      * 根据昵称获取重名用户数量
@@ -87,7 +87,7 @@ public interface UserMapper extends Mapper<User> {
      * @param idUser
      * @return
      */
-    UserInfoDTO selectUserInfo(@Param("idUser") Integer idUser);
+    UserInfoDTO selectUserInfo(@Param("idUser") Long idUser);
 
     /**
      * 更新用户信息
@@ -99,7 +99,7 @@ public interface UserMapper extends Mapper<User> {
      * @param sex
      * @return
      */
-    Integer updateUserInfo(@Param("idUser") Integer idUser, @Param("nickname") String nickname, @Param("avatarType") String avatarType, @Param("avatarUrl") String avatarUrl, @Param("signature") String signature, @Param("sex") String sex);
+    Integer updateUserInfo(@Param("idUser") Long idUser, @Param("nickname") String nickname, @Param("avatarType") String avatarType, @Param("avatarUrl") String avatarUrl, @Param("signature") String signature, @Param("sex") String sex);
 
     /**
      * 验证昵称是否重复
@@ -107,20 +107,20 @@ public interface UserMapper extends Mapper<User> {
      * @param nickname
      * @return
      */
-    Integer checkNicknameByIdUser(@Param("idUser") Integer idUser, @Param("nickname") String nickname);
+    Integer checkNicknameByIdUser(@Param("idUser") Long idUser, @Param("nickname") String nickname);
     /**
      * 根据用户 ID 获取作者信息
      * @param id
      * @return
      */
-    Author selectAuthor(@Param("id") Integer id);
+    Author selectAuthor(@Param("id") Long id);
 
     /**
      * 更新用户最后登录时间
      * @param idUser
      * @return
      */
-    Integer updateLastLoginTime(@Param("idUser") Integer idUser);
+    Integer updateLastLoginTime(@Param("idUser") Long idUser);
 
     /**
      * 更换邮箱
@@ -128,7 +128,7 @@ public interface UserMapper extends Mapper<User> {
      * @param email
      * @return
      */
-    Integer updateEmail(@Param("idUser") Integer idUser, @Param("email") String email);
+    Integer updateEmail(@Param("idUser") Long idUser, @Param("email") String email);
 
     /**
      * 更新密码
@@ -136,7 +136,7 @@ public interface UserMapper extends Mapper<User> {
      * @param password
      * @return
      */
-    Integer updatePasswordById(@Param("idUser") Integer idUser, @Param("password") String password);
+    Integer updatePasswordById(@Param("idUser") Long idUser, @Param("password") String password);
 
     /**
      * 查询用户数据

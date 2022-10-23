@@ -29,7 +29,7 @@ public interface UserLuceneMapper {
    * @param ids 用户id(半角逗号分隔)
    * @return
    */
-  List<UserDTO> getUsersByIds(@Param("ids") Integer[] ids);
+  List<UserDTO> getUsersByIds(@Param("ids") Long[] ids);
 
   /**
    * 加载 UserLucene

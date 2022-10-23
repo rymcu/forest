@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -21,7 +22,8 @@ public class CurrencyRule implements Serializable, Cloneable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer idCurrencyRule;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idCurrencyRule;
     /**
      * 规则名称
      */

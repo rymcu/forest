@@ -18,7 +18,7 @@ public interface LoginRecordService extends Service<LoginRecord> {
      * @param idUser
      * @return
      */
-    LoginRecord saveLoginRecord(Integer idUser);
+    LoginRecord saveLoginRecord(Long idUser);
 
     /**
      * 获取用户登录记录

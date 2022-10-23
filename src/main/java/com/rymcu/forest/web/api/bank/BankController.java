@@ -30,15 +30,11 @@ public class BankController {
     private BankService bankService;
 
     @GetMapping("/list")
-    public GlobalResult banks(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<BankDTO>> banks(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<BankDTO> list = bankService.findBanks();
         PageInfo<BankDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("banks", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
 }

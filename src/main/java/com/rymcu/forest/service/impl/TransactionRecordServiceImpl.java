@@ -9,10 +9,11 @@ import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
 import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.enumerate.TransactionEnum;
+import com.rymcu.forest.mapper.BankAccountMapper;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
-import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.TransactionRecordService;
 import com.rymcu.forest.util.DateUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,13 +33,13 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     @Resource
     private TransactionRecordMapper transactionRecordMapper;
     @Resource
-    private BankAccountService bankAccountService;
+    private BankAccountMapper bankAccountMapper;
     @Resource
     private RedisService redisService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public TransactionRecord transfer(TransactionRecord transactionRecord) throws Exception {
+    public TransactionRecord transfer(TransactionRecord transactionRecord) {
         // 判断发起者账户状态
         boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
         if (formAccountStatus) {
@@ -62,17 +63,17 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     private TransactionRecordDTO genTransactionRecord(TransactionRecordDTO transactionRecordDTO) {
-        BankAccountDTO toBankAccount = bankAccountService.findByBankAccount(transactionRecordDTO.getToBankAccount());
-        BankAccountDTO formBankAccount = bankAccountService.findByBankAccount(transactionRecordDTO.getFormBankAccount());
+        BankAccountDTO toBankAccount = bankAccountMapper.selectByBankAccount(transactionRecordDTO.getToBankAccount());
+        BankAccountDTO formBankAccount = bankAccountMapper.selectByBankAccount(transactionRecordDTO.getFormBankAccount());
         transactionRecordDTO.setFormBankAccountInfo(formBankAccount);
         transactionRecordDTO.setToBankAccountInfo(toBankAccount);
         return transactionRecordDTO;
     }
 
     @Override
-    public TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception {
-        BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(toUserId);
-        BankAccountDTO formBankAccount = bankAccountService.findBankAccountByIdUser(formUserId);
+    public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) {
+        BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(toUserId);
+        BankAccountDTO formBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(formUserId);
         TransactionRecord transactionRecord = new TransactionRecord();
         transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
         transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
@@ -82,8 +83,8 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception {
-        BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(idUser);
+    public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) {
+        BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(idUser);
         Boolean isTrue;
         // 校验货币规则
         switch (transactionType) {
@@ -95,7 +96,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
                 isTrue = true;
         }
         if (isTrue) {
-            BankAccount formBankAccount = bankAccountService.findSystemBankAccount();
+            BankAccount formBankAccount = findSystemBankAccount();
             TransactionRecord transactionRecord = new TransactionRecord();
             transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
             transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
@@ -106,14 +107,22 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
         return null;
     }
 
+    private BankAccount findSystemBankAccount() {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setIdBank(1L);
+        bankAccount.setAccountType("1");
+        bankAccount.setAccountOwner(2L);
+        return bankAccountMapper.selectOne(bankAccount);
+    }
+
     @Override
-    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) throws Exception {
+    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) {
         // 判断是否重复发放
         Boolean result = transactionRecordMapper.existsWithNewbieRewards(transactionRecord.getToBankAccount());
         if (result) {
             return transactionRecord;
         }
-        BankAccount formBankAccount = bankAccountService.findSystemBankAccount();
+        BankAccount formBankAccount = findSystemBankAccount();
         transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
         transactionRecord.setMoney(new BigDecimal(TransactionEnum.NewbieRewards.getMoney()));
         transactionRecord.setFunds(TransactionEnum.NewbieRewards.getDescription());
@@ -146,12 +155,18 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     private boolean checkFormAccountStatus(String formBankAccount, BigDecimal money) {
-        BankAccount bankAccount = bankAccountService.findInfoByBankAccount(formBankAccount);
+        BankAccount bankAccount = findInfoByBankAccount(formBankAccount);
         if (Objects.nonNull(bankAccount)) {
             if (bankAccount.getAccountBalance().compareTo(money) > 0) {
                 return true;
             }
         }
         return false;
+    }
+
+    private BankAccount findInfoByBankAccount(String bankAccount) {
+        BankAccount searchBankAccount = new BankAccount();
+        searchBankAccount.setBankAccount(bankAccount);
+        return bankAccountMapper.selectOne(searchBankAccount);
     }
 }

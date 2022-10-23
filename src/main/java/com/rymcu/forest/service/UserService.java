@@ -1,5 +1,6 @@
 package com.rymcu.forest.service;
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.User;
@@ -11,7 +12,6 @@ import java.util.Map;
 
 
 /**
- *
  * @author CodeGenerator
  * @date 2018/05/29
  */
@@ -19,105 +19,123 @@ public interface UserService extends Service<User> {
 
     /**
      * 通过账号查询用户信息
+     *
      * @param account
-     * @throws TooManyResultsException
      * @return User
-     * */
+     * @throws TooManyResultsException
+     */
     User findByAccount(String account) throws TooManyResultsException;
 
     /**
      * 注册接口
-     * @param email 邮箱
-     * @param password  密码
-     * @param code 验证码
+     *
+     * @param email    邮箱
+     * @param password 密码
+     * @param code     验证码
      * @return Map
-     * */
-    Map register(String email, String password, String code);
+     */
+    boolean register(String email, String password, String code);
 
     /**
      * 登录接口
-     * @param account 邮箱
-     * @param password  密码
+     *
+     * @param account  邮箱
+     * @param password 密码
      * @return Map
-     * */
-    Map login(String account, String password);
+     */
+    TokenUser login(String account, String password) throws ServiceException;
 
     /**
      * 通过 account 获取用户信息接口
+     *
      * @param account 昵称
-     * @return  UserDTO
-     * */
+     * @return UserDTO
+     */
     UserDTO findUserDTOByAccount(String account);
 
     /**
      * 找回密码接口
-     * @param code 验证码
+     *
+     * @param code     验证码
      * @param password 密码
      * @return Map
-     * */
-    Map forgetPassword(String code, String password);
+     * @throws ServiceException
+     */
+    boolean forgetPassword(String code, String password) throws ServiceException;
 
     /**
      * 更新用户角色接口
+     *
      * @param idUser 用户 id
      * @param idRole 角色 id
      * @return Map
-     * */
-    Map updateUserRole(Integer idUser, Integer idRole);
+     * @throws ServiceException
+     */
+    boolean updateUserRole(Long idUser, Long idRole) throws ServiceException;
 
     /**
      * 更新用户状态
+     *
      * @param idUser 用户 id
      * @param status 状态
      * @return Map
-     * */
-    Map updateStatus(Integer idUser, String status);
+     * @throws ServiceException
+     */
+    boolean updateStatus(Long idUser, String status) throws ServiceException;
 
     /**
      * 获取用户信息
+     *
      * @param idUser
      * @return
      */
-    Map findUserInfo(Integer idUser);
+    UserInfoDTO findUserInfo(Long idUser);
 
     /**
      * 更新用户信息
+     *
      * @param user
      * @return
+     * @throws ServiceException
      */
-    Map updateUserInfo(UserInfoDTO user);
+    UserInfoDTO updateUserInfo(UserInfoDTO user) throws ServiceException;
 
     /**
      * 验证昵称是否重复
+     *
      * @param idUser
      * @param nickname
      * @return
      */
-    Map checkNickname(Integer idUser, String nickname);
+    boolean checkNicknameByIdUser(Long idUser, String nickname);
 
     /**
      * 获取用户权限
+     *
      * @param idUser
      * @return
      */
-    Integer findRoleWeightsByUser(Integer idUser);
+    Integer findRoleWeightsByUser(Long idUser);
 
     /**
      * 查询作者信息
+     *
      * @param idUser
      * @return
      */
-    Author selectAuthor(Integer idUser);
+    Author selectAuthor(Long idUser);
 
     /**
      * 更新用户扩展信息
+     *
      * @param userExtend
      * @return
      */
-    Map updateUserExtend(UserExtend userExtend);
+    UserExtend updateUserExtend(UserExtend userExtend) throws ServiceException;
 
     /**
      * 获取用户扩展信息
+     *
      * @param account
      * @return
      */
@@ -125,29 +143,42 @@ public interface UserService extends Service<User> {
 
     /**
      * 更换邮箱
+     *
      * @param changeEmailDTO
      * @return
+     * @throws ServiceException
      */
-    Map updateEmail(ChangeEmailDTO changeEmailDTO);
+    boolean updateEmail(ChangeEmailDTO changeEmailDTO) throws ServiceException;
 
     /**
      * 更新密码
+     *
      * @param updatePasswordDTO
      * @return
      */
-    Map updatePassword(UpdatePasswordDTO updatePasswordDTO);
+    boolean updatePassword(UpdatePasswordDTO updatePasswordDTO);
 
     /**
      * 查询用户列表
+     *
      * @param searchDTO
      * @return
      */
     List<UserInfoDTO> findUsers(UserSearchDTO searchDTO);
 
     /**
-     * 通过邮箱查询用户信息
+     * 通过邮箱更新用户最后登录时间
+     *
      * @param email
      * @return
      */
     Integer updateLastOnlineTimeByEmail(String email);
+
+    /**
+     * 查询用户扩展信息
+     *
+     * @param idUser
+     * @return
+     */
+    UserExtend findUserExtendInfo(Long idUser);
 }

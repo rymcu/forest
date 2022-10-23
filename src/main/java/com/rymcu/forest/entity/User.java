@@ -1,6 +1,7 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 import tk.mybatis.mapper.annotation.ColumnType;
@@ -21,7 +22,8 @@ public class User implements Serializable,Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idUser;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long idUser;
 
     /**
      * 登录账号
@@ -120,4 +122,10 @@ public class User implements Serializable,Cloneable {
     @Column(name = "last_online_time")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date lastOnlineTime;
+
+    /**
+     * 个人中心背景图片
+     * */
+    @Column(name = "bg_img_url")
+    private String bgImgUrl;
 }

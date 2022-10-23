@@ -2,7 +2,6 @@ package com.rymcu.forest.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,14 +15,14 @@ public class BeanCopierUtil {
      * beanCopier缓存
      * (A拷贝到B,确定一个beanCopier)
      */
-    private static Map<Class<?>,Map<Class<?>, BeanCopier>> beanCopierMap = new ConcurrentHashMap<>();
+    private static final Map<String, BeanCopier> BEAN_COPIER_MAP = new ConcurrentHashMap<>();
 
     /**
      * 拷贝方法
-     * @param sourceBean
-     * @param targetBean
-     * @param <S>
-     * @param <T>
+     * @param sourceBean 源对象
+     * @param targetBean 目标对象
+     * @param <S> 源对象类型
+     * @param <T> 目标对象类型
      */
     public static <S,T> void copy(S sourceBean,T targetBean){
         @SuppressWarnings("unchecked")
@@ -37,16 +36,15 @@ public class BeanCopierUtil {
 
     /**
      * 转换方法
-     * @param sourceBean 原对象
-     * @param targetClass 目标类
-     * @param <S>
-     * @param <T>
-     * @return
+     * @param sourceBean 源对象
+     * @param targetBean 目标对象
+     * @param <S> 源对象类型
+     * @param <T> 目标对象类型
+     * @return 拷贝值后的targetBean
      */
-    public static <S,T> T convert(S sourceBean,Class<T> targetClass){
+    public static <S,T> T convert(S sourceBean,T targetBean){
         try {
             assert sourceBean!=null;
-            T targetBean = targetClass.newInstance();
             copy(sourceBean,targetBean);
             return targetBean;
         } catch (Exception e) {
@@ -56,24 +54,20 @@ public class BeanCopierUtil {
     }
 
 
-    private static <S,T> BeanCopier getBeanCopier(Class<S> sourceClass, Class<T> targetClass ){
-        Map<Class<?>, BeanCopier> map = beanCopierMap.get(sourceClass);
-        if(CollectionUtils.isEmpty(map)){
-            BeanCopier newBeanCopier = BeanCopier.create(sourceClass, targetClass, false);
-            Map<Class<?>, BeanCopier> newMap = new ConcurrentHashMap<>();
-            newMap.put(targetClass,newBeanCopier);
-            beanCopierMap.put(sourceClass,newMap);
-            return newBeanCopier;
-        }
-
-        BeanCopier beanCopier = map.get(targetClass);
-        if(beanCopier == null){
-            BeanCopier newBeanCopier = BeanCopier.create(sourceClass, targetClass, false);
-            map.put(targetClass,newBeanCopier);
-
-            return newBeanCopier;
-        }
-
-        return beanCopier;
+    /**
+     * beanCopier获取方法
+     *
+     * 使用beanCopierMap重用BeanCopier对象
+     *
+     * 线程安全
+     * @param sourceClass 源类型
+     * @param targetClass 目标类型
+     * @param <S> 源类型
+     * @param <T> 目标类型
+     * @return BeanCopier实例
+     */
+    private static <S,T> BeanCopier getBeanCopier(Class<S> sourceClass, Class<T> targetClass){
+        String classKey = sourceClass.getTypeName() + targetClass.getTypeName();
+        return BEAN_COPIER_MAP.computeIfAbsent(classKey, key -> BeanCopier.create(sourceClass, targetClass, false));
     }
 }

@@ -39,6 +39,6 @@
     <select id="getById" resultMap="BaseResultMap">
         SELECT id, portfolio_title, portfolio_description
         FROM forest_portfolio
-        where id = #{id};
+        where id = #{id}
     </select>
 </mapper>

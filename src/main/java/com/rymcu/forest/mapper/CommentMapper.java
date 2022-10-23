@@ -39,7 +39,7 @@ public interface CommentMapper extends Mapper<Comment> {
      * @param commentSharpUrl
      * @return
      */
-    Integer updateCommentSharpUrl(@Param("idComment") Integer idComment, @Param("commentSharpUrl") String commentSharpUrl);
+    Integer updateCommentSharpUrl(@Param("idComment") Long idComment, @Param("commentSharpUrl") String commentSharpUrl);
 
     /**
      * 获取评论列表数据

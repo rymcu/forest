@@ -3,11 +3,9 @@ package com.rymcu.forest.service;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.dto.CommentDTO;
 import com.rymcu.forest.entity.Comment;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -27,7 +25,7 @@ public interface CommentService extends Service<Comment> {
      * @param request
      * @return
      */
-    Map postComment(Comment comment, HttpServletRequest request) throws BaseApiException;
+    Comment postComment(Comment comment, HttpServletRequest request);
 
     /**
      * 获取评论列表数据

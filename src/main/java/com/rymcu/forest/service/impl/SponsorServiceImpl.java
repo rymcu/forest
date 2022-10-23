@@ -1,6 +1,7 @@
 package com.rymcu.forest.service.impl;
 
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.exception.TransactionException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleDTO;
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author ronger
@@ -36,32 +38,25 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map sponsorship(Sponsor sponsor) throws Exception {
-        Map map = new HashMap(2);
-        if (Objects.isNull(sponsor) || Objects.isNull(sponsor.getDataId()) || Objects.isNull(sponsor.getDataType())) {
-            map.put("success", false);
-            map.put("message", "数据异常");
-        } else {
-            TransactionEnum result = TransactionEnum.findTransactionEnum(sponsor.getDataType());
-            BigDecimal money = BigDecimal.valueOf(result.getMoney());
-            sponsor.setSponsorshipMoney(money);
-            User user = UserUtils.getCurrentUserByToken();
-            sponsor.setSponsor(user.getIdUser());
-            sponsor.setSponsorshipTime(new Date());
-            sponsorMapper.insertSelective(sponsor);
-            // 赞赏金额划转
-            if (result.isArticleSponsor()) {
-                ArticleDTO articleDTO = articleService.findArticleDTOById(sponsor.getDataId(), 1);
-                TransactionRecord transactionRecord = transactionRecordService.userTransfer(articleDTO.getArticleAuthorId(), user.getIdUser(), result);
-                if (Objects.isNull(transactionRecord.getIdTransactionRecord())) {
-                    throw new TransactionException(TransactionCode.InsufficientBalance);
-                }
-                // 更新文章赞赏数
-                sponsorMapper.updateArticleSponsorCount(articleDTO.getIdArticle());
+    public boolean sponsorship(Sponsor sponsor) throws Exception {
+        TransactionEnum transactionEnum = TransactionEnum.findTransactionEnum(sponsor.getDataType());
+        BigDecimal money = BigDecimal.valueOf(transactionEnum.getMoney());
+        sponsor.setSponsorshipMoney(money);
+        sponsor.setSponsorshipTime(new Date());
+        sponsorMapper.insertSelective(sponsor);
+        // 赞赏金额划转
+        if (transactionEnum.isArticleSponsor()) {
+            ArticleDTO articleDTO = articleService.findArticleDTOById(sponsor.getDataId(), 1);
+            TransactionRecord transactionRecord = transactionRecordService.userTransfer(articleDTO.getArticleAuthorId(), sponsor.getSponsor(), transactionEnum);
+            if (Objects.isNull(transactionRecord.getIdTransactionRecord())) {
+                throw new TransactionException(TransactionCode.InsufficientBalance);
             }
-            map.put("success", true);
-            map.put("message", "赞赏成功");
+            // 更新文章赞赏数
+            int result = sponsorMapper.updateArticleSponsorCount(articleDTO.getIdArticle());
+            if (result == 0) {
+                throw new ServiceException("操作失败!");
+            }
         }
-        return map;
+        return true;
     }
 }

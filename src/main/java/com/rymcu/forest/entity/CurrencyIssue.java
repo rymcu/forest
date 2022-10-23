@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;
@@ -18,11 +19,13 @@ public class CurrencyIssue {
     /** 主键 */
     @Id
     @GeneratedValue(generator = "JDBC")
-    private Integer id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
     /** 发行数额 */
     private BigDecimal issueValue;
     /** 发行人 */
-    private Integer createdBy;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long createdBy;
     /** 发行时间 */
     private Date createdTime;
 

@@ -42,7 +42,7 @@ public interface FollowService extends Service<Follow> {
      * @param followingId
      * @return
      */
-    List<Follow> findByFollowingId(String followType, Integer followingId);
+    List<Follow> findByFollowingId(String followType, Long followingId);
 
 
 

@@ -13,5 +13,5 @@ public interface SponsorMapper extends Mapper<Sponsor> {
      * @param idArticle
      * @return
      */
-    Integer updateArticleSponsorCount(@Param("idArticle") Integer idArticle);
+    Integer updateArticleSponsorCount(@Param("idArticle") Long idArticle);
 }

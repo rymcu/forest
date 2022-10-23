@@ -15,9 +15,8 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
      * 交易
      * @param transactionRecord
      * @return
-     * @throws Exception
      */
-    TransactionRecord transfer(TransactionRecord transactionRecord) throws Exception;
+    TransactionRecord transfer(TransactionRecord transactionRecord);
 
     /**
      * 查询指定账户的交易记录
@@ -34,24 +33,21 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
      * @param formUserId
      * @param transactionType
      * @return
-     * @throws Exception
      */
-    TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception;
+    TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType);
 
     /**
      * 社区银行转账/奖励发放
      * @param idUser
      * @param transactionType
      * @return
-     * @throws Exception
      */
-    TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception;
+    TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType);
 
     /**
      * 发放新手奖励
      * @param transactionRecord
      * @return
-     * @throws Exception
      */
-    TransactionRecord newbieRewards(TransactionRecord transactionRecord) throws Exception;
+    TransactionRecord newbieRewards(TransactionRecord transactionRecord);
 }

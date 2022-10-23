@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
 * @ClassName: ContextHolderUtils 
@@ -17,24 +18,22 @@ import java.util.Map;
 *
  */
 public class ContextHolderUtils {
-	private static final Map<String, HttpSession> sessionMap = new HashMap<String, HttpSession>();
+	private static final Map<String, HttpSession> sessionMap = new HashMap<>();
 	
 	/**
 	 * SpringMvc下获取request
 	 * 
-	 * @return
+	 * @return HttpServletRequest
 	 */
 	public static HttpServletRequest getRequest() {
-
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		return request;
+		return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
 	}
 	
 	/**
 	 * SpringMvc下获取session
 	 * 
-	 * @return
+	 * @return HttpSession
 	 */
 	public static HttpSession getSession() {
 		HttpServletRequest request = getRequest();
@@ -54,7 +53,7 @@ public class ContextHolderUtils {
 	}
 
 	public static HttpSession getSession2() {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 		return request.getSession();
 
 	}
@@ -65,9 +64,7 @@ public class ContextHolderUtils {
 	}
 	
 	public static void removeSession(String sessionId){
-		if(sessionMap.containsKey(sessionId)){
-			sessionMap.remove(sessionId);
-		}
+		sessionMap.remove(sessionId);
 	}
 	
 }
