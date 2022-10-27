@@ -1,10 +1,10 @@
 package com.rymcu.forest.web.api.common;
 
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.LinkToImageUrlDTO;
 import com.rymcu.forest.dto.TokenUser;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.service.ForestFileService;
 import com.rymcu.forest.util.FileUtils;
 import com.rymcu.forest.util.SpringContextHolder;

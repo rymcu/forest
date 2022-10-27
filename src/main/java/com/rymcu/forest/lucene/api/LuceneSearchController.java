@@ -17,8 +17,10 @@ import com.rymcu.forest.lucene.service.UserLuceneService;
 import com.rymcu.forest.lucene.util.ArticleIndexUtil;
 import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
-import com.rymcu.forest.util.Utils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

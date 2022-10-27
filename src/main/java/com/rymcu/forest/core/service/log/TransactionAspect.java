@@ -2,12 +2,10 @@ package com.rymcu.forest.core.service.log;
 
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.service.log.annotation.TransactionLogger;
-import com.rymcu.forest.entity.TransactionRecord;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.service.TransactionRecordService;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,11 +13,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Objects;
 

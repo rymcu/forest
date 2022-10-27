@@ -1,7 +1,5 @@
 package com.rymcu.forest.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.AbstractService;
@@ -60,9 +58,6 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
                     throw new BusinessException("专题 '" + topic.getTopicTitle() + "' 已存在!");
                 }
             }
-            topic = new Topic();
-            topic.setTopicTitle(topic.getTopicTitle());
-            topic.setTopicUri(topic.getTopicUri());
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
                 String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
                 topic.setTopicIconPath(topicIconPath);

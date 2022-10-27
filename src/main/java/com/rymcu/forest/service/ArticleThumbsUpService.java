@@ -2,7 +2,6 @@ package com.rymcu.forest.service;
 
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.entity.ArticleThumbsUp;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 
 /**
  * @author ronger

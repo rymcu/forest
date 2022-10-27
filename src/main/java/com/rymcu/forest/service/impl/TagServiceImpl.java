@@ -126,9 +126,6 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     throw new BusinessException("标签 '" + tag.getTagTitle() + "' 已存在!");
                 }
             }
-            tag = new Tag();
-            tag.setTagTitle(tag.getTagTitle());
-            tag.setTagUri(tag.getTagUri());
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
                 String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 2);
                 tag.setTagIconPath(tagIconPath);

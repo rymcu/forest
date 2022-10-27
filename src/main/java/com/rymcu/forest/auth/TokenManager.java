@@ -1,7 +1,4 @@
-package com.rymcu.forest.jwt.service;
-
-
-import com.rymcu.forest.jwt.model.TokenModel;
+package com.rymcu.forest.auth;
 
 /**
  * 对token进行操作的接口
@@ -12,6 +9,7 @@ public interface TokenManager {
 
     /**
      * 创建一个token关联上指定用户
+     * @param id
      * @return 生成的token
      */
     public String createToken(String id);
@@ -25,6 +23,8 @@ public interface TokenManager {
 
     /**
      * 从字符串中解析token
+     * @param token
+     * @param account
      * @return
      */
     public TokenModel getToken(String token, String account);

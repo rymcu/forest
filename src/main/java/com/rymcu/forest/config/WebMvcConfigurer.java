@@ -4,17 +4,14 @@ package com.rymcu.forest.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.rymcu.forest.jwt.aop.RestAuthTokenInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -58,22 +55,6 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
                 .allowedOriginPatterns(CorsConfiguration.ALL)
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH");
-    }
-
-    @Bean
-    public RestAuthTokenInterceptor restAuthTokenInterceptor() {
-        return new RestAuthTokenInterceptor();
-    }
-
-    /**
-     * 添加拦截器
-     */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(restAuthTokenInterceptor()).addPathPatterns("/api/**")
-                .excludePathPatterns("/api/v1/console/**", "/api/v1/article/articles/**", "/api/v1/article/detail/**"
-                        , "/api/v1/topic/**", "/api/v1/user/**", "/api/v1/article/*/comments", "/api/v1/rule/currency/**", "/api/v1/lucene/**", "/api/v1/open-data/**");
-
     }
 
     /**

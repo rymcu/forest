@@ -1,14 +1,14 @@
 package com.rymcu.forest.lucene.service.impl;
 
 import com.rymcu.forest.dto.UserDTO;
-import com.rymcu.forest.lucene.lucene.UserBeanIndex;
 import com.rymcu.forest.lucene.lucene.IKAnalyzer;
+import com.rymcu.forest.lucene.lucene.UserBeanIndex;
 import com.rymcu.forest.lucene.mapper.UserLuceneMapper;
 import com.rymcu.forest.lucene.model.UserLucene;
 import com.rymcu.forest.lucene.service.UserLuceneService;
 import com.rymcu.forest.lucene.util.LucenePath;
-import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.lucene.util.SearchUtil;
+import com.rymcu.forest.lucene.util.UserIndexUtil;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;

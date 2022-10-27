@@ -1,14 +1,14 @@
 package com.rymcu.forest.service.impl;
 
+import com.github.f4b6a3.ulid.UlidCreator;
+import com.rymcu.forest.auth.JwtConstants;
+import com.rymcu.forest.auth.TokenManager;
 import com.rymcu.forest.core.exception.*;
 import com.rymcu.forest.core.service.AbstractService;
-import com.rymcu.forest.core.service.redis.RedisService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
-import com.rymcu.forest.jwt.def.JwtConstants;
-import com.rymcu.forest.jwt.service.TokenManager;
 import com.rymcu.forest.lucene.model.UserLucene;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.mapper.RoleMapper;
@@ -16,18 +16,20 @@ import com.rymcu.forest.mapper.UserExtendMapper;
 import com.rymcu.forest.mapper.UserMapper;
 import com.rymcu.forest.service.LoginRecordService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.common.UploadController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -40,8 +42,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     private UserMapper userMapper;
     @Resource
     private RoleMapper roleMapper;
-    @Resource
-    private RedisService redisService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
     @Resource
     private TokenManager tokenManager;
     @Resource
@@ -54,16 +57,16 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public User findByAccount(String account) throws TooManyResultsException {
-        return userMapper.findByAccount(account);
+        return userMapper.selectByAccount(account);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean register(String email, String password, String code) {
-        String vCode = redisService.get(email);
+        String vCode = redisTemplate.boundValueOps(email).get();
         if (StringUtils.isNotBlank(vCode)) {
             if (vCode.equals(code)) {
-                User user = userMapper.findByAccount(email);
+                User user = userMapper.selectByAccount(email);
                 if (user != null) {
                     throw new AccountExistsException("该邮箱已被注册！");
                 } else {
@@ -77,7 +80,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                     user.setUpdatedTime(user.getCreatedTime());
                     user.setAvatarUrl(DEFAULT_AVATAR);
                     userMapper.insertSelective(user);
-                    user = userMapper.findByAccount(email);
+                    user = userMapper.selectByAccount(email);
                     Role role = roleMapper.selectRoleByInputCode("user");
                     userMapper.insertUserRole(user.getIdUser(), role.getIdRole());
                     UserIndexUtil.addIndex(UserLucene.builder()
@@ -85,7 +88,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                             .nickname(user.getNickname())
                             .signature(user.getSignature())
                             .build());
-                    redisService.delete(email);
+                    redisTemplate.delete(email);
                     return true;
                 }
             }
@@ -115,17 +118,17 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public TokenUser login(String account, String password) {
-        User user = userMapper.findByAccount(account);
+        User user = userMapper.selectByAccount(account);
         if (user != null) {
             if (Utils.comparePwd(password, user.getPassword())) {
                 userMapper.updateLastLoginTime(user.getIdUser());
-                userMapper.updateLastOnlineTimeByEmail(user.getEmail());
+                userMapper.updateLastOnlineTimeByAccount(user.getAccount());
                 TokenUser tokenUser = new TokenUser();
-                BeanCopierUtil.copy(user, tokenUser);
-                tokenUser.setToken(tokenManager.createToken(user.getEmail()));
-                tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
+                tokenUser.setToken(tokenManager.createToken(user.getAccount()));
+                tokenUser.setRefreshToken(UlidCreator.getUlid().toString());
+                redisTemplate.boundValueOps(tokenUser.getRefreshToken()).set(account, JwtConstants.REFRESH_TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
                 // 保存登录日志
-                loginRecordService.saveLoginRecord(tokenUser.getIdUser());
+                loginRecordService.saveLoginRecord(user.getIdUser());
                 return tokenUser;
             } else {
                 throw new AuthenticationException("密码错误");
@@ -142,7 +145,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Override
     public boolean forgetPassword(String code, String password) throws ServiceException {
-        String email = redisService.get(code);
+        String email = redisTemplate.boundValueOps(code).get();
         if (StringUtils.isBlank(email)) {
             throw new ServiceException("链接已失效");
         } else {
@@ -250,7 +253,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         Long idUser = changeEmailDTO.getIdUser();
         String email = changeEmailDTO.getEmail();
         String code = changeEmailDTO.getCode();
-        String vCode = redisService.get(email);
+        String vCode = redisTemplate.boundValueOps(email).get();
         if (StringUtils.isNotBlank(vCode) && StringUtils.isNotBlank(code) && vCode.equals(code)) {
             int result = userMapper.updateEmail(idUser, email);
             if (result == 0) {
@@ -272,13 +275,13 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public List<UserInfoDTO> findUsers(UserSearchDTO searchDTO) {
         List<UserInfoDTO> users = userMapper.selectUsers(searchDTO);
         users.forEach(user -> {
-            user.setOnlineStatus(getUserOnlineStatus(user.getEmail()));
+            user.setOnlineStatus(getUserOnlineStatus(user.getAccount()));
         });
         return users;
     }
 
-    private Integer getUserOnlineStatus(String email) {
-        String lastOnlineTime = redisService.get(JwtConstants.LAST_ONLINE + email);
+    private Integer getUserOnlineStatus(String account) {
+        String lastOnlineTime = redisTemplate.boundValueOps(JwtConstants.LAST_ONLINE + account).get();
         if (StringUtils.isBlank(lastOnlineTime)) {
             return 0;
         }
@@ -286,8 +289,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public Integer updateLastOnlineTimeByEmail(String email) {
-        return userMapper.updateLastOnlineTimeByEmail(email);
+    public Integer updateLastOnlineTimeByAccount(String account) {
+        return userMapper.updateLastOnlineTimeByAccount(account);
     }
 
     @Override
@@ -299,5 +302,37 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             userExtendMapper.insertSelective(userExtend);
         }
         return userExtend;
+    }
+
+    @Override
+    public TokenUser refreshToken(String refreshToken) {
+        String account = redisTemplate.boundValueOps(refreshToken).get();
+        if (StringUtils.isNotBlank(account)) {
+            User nucleicUser = userMapper.selectByAccount(account);
+            if (nucleicUser != null) {
+                TokenUser tokenUser = new TokenUser();
+                tokenUser.setToken(tokenManager.createToken(nucleicUser.getAccount()));
+                tokenUser.setRefreshToken(UlidCreator.getUlid().toString());
+                redisTemplate.boundValueOps(tokenUser.getRefreshToken()).set(account, JwtConstants.REFRESH_TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
+                redisTemplate.delete(refreshToken);
+                return tokenUser;
+            } else {
+                throw new UnknownAccountException("未知账号");
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<String> findUserPermissions(User user) {
+        Set<String> permissions = new HashSet<>();
+        List<Role> roles = roleMapper.selectRoleByIdUser(user.getIdUser());
+        for (Role role : roles) {
+            if (StringUtils.isNotBlank(role.getInputCode())) {
+                permissions.add(role.getInputCode());
+            }
+        }
+        permissions.add("user");
+        return permissions;
     }
 }
