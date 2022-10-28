@@ -1,9 +1,9 @@
 package com.rymcu.forest.core.service.log;
 
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.core.service.log.constant.LoggerConstant;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.entity.Visit;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.VisitService;
 import com.rymcu.forest.util.UserUtils;

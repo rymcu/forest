@@ -13,7 +13,6 @@ import com.rymcu.forest.mapper.BankAccountMapper;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
 import com.rymcu.forest.service.TransactionRecordService;
 import com.rymcu.forest.util.DateUtil;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

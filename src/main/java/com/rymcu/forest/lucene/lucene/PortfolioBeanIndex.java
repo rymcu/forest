@@ -1,7 +1,6 @@
 package com.rymcu.forest.lucene.lucene;
 
 import com.rymcu.forest.lucene.model.PortfolioLucene;
-import com.rymcu.forest.lucene.model.UserLucene;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;

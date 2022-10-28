@@ -1,9 +1,7 @@
-package com.rymcu.forest.jwt.service;
+package com.rymcu.forest.auth;
 
 
 import com.rymcu.forest.handler.event.AccountEvent;
-import com.rymcu.forest.jwt.def.JwtConstants;
-import com.rymcu.forest.jwt.model.TokenModel;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +36,7 @@ public class RedisTokenManager implements TokenManager {
         //使用 account 作为源 token
         String token = Jwts.builder().setId(id).setSubject(id).setIssuedAt(new Date()).signWith(SignatureAlgorithm.HS256, JwtConstants.JWT_SECRET).compact();
         //存储到 redis 并设置过期时间
-        redisTemplate.boundValueOps(id).set(token, JwtConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
+        redisTemplate.boundValueOps(id).set(token, JwtConstants.TOKEN_EXPIRES_MINUTE, TimeUnit.MINUTES);
         return token;
     }
 
@@ -56,8 +54,6 @@ public class RedisTokenManager implements TokenManager {
         if (token == null || !token.equals(model.getToken())) {
             return false;
         }
-        // 如果验证成功，说明此用户进行了一次有效操作，延长 token 的过期时间
-        redisTemplate.boundValueOps(model.getUsername()).expire(JwtConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
         StringBuilder key = new StringBuilder();
         key.append(JwtConstants.LAST_ONLINE).append(model.getUsername());
         String result =  redisTemplate.boundValueOps(key.toString()).get();

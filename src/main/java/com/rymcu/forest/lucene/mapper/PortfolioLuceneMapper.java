@@ -1,10 +1,7 @@
 package com.rymcu.forest.lucene.mapper;
 
 import com.rymcu.forest.dto.PortfolioDTO;
-import com.rymcu.forest.dto.UserDTO;
-import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.lucene.model.PortfolioLucene;
-import com.rymcu.forest.lucene.model.UserLucene;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

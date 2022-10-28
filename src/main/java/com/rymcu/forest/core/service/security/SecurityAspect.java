@@ -2,8 +2,8 @@ package com.rymcu.forest.core.service.security;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.dto.TokenUser;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;

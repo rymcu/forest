@@ -7,14 +7,12 @@ import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.entity.Sponsor;
 import com.rymcu.forest.entity.TransactionRecord;
-import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.mapper.SponsorMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.SponsorService;
 import com.rymcu.forest.service.TransactionRecordService;
-import com.rymcu.forest.util.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -9,14 +9,12 @@ import com.rymcu.forest.entity.Notification;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.exception.BaseApiException;
 import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**

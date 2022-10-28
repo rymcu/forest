@@ -3,6 +3,8 @@ package com.rymcu.forest.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.util.Set;
+
 /**
  * @author ronger
  */
@@ -18,10 +20,10 @@ public class TokenUser {
 
     private String token;
 
-    private String avatarType;
-
     private String avatarUrl;
 
-    private Integer weights;
+    private String refreshToken;
+
+    private Set<String> scope;
 
 }

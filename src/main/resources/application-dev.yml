@@ -1,0 +1,100 @@
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANbY1W9TXU+OdseRBVw5/eq1rs5UVQZie5ydEPYIurRzF4oBORu/+Sjqt+c5mHulleuiD4Yov+0e/CXODg4FYu8CAwEAAQ==
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+  redis:
+    host: 192.168.31.200
+    port: 6379
+    password: d9d2j9w2
+    database: 1
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 500
+        min-idle: 0
+  datasource:
+    druid:
+      url: jdbc:mysql://192.168.31.200:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      username: root
+      password: Ldh1NrsXJntz5nTXeO0nPh+8s1FMe+JHCfXy2Zj3egqqjegN+mNe+53ZmduUlVdE4ZqKuUho7T9yftc6AYYKog==
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      connection-properties: config.decrypt=true;config.decrypt.key=${publickey}
+      filters: config,stat
+      max-pool-prepared-statement-per-connection-size: 100
+      stat-view-servlet:
+        enabled: true
+        allow:
+        login-username: admin
+        login-password: rymcu.Test1
+      filter:
+        stat:
+          log-slow-sql: true
+  mail:
+    host: smtp.ym.163.com
+    port: 465
+    username: service@rymcu.com
+    password: 4W3tCXdyk0Gm
+wx:
+  open:
+    componentAppId: wx9c4a7dfb3238d5f6
+    componentSecret: e32a6f75ab6b746ec3ae38a39a79ba22
+    componentToken: rymcu
+    componentAesKey: NWIwMDQyZjU0YWI2NGFlZThkOWZhZTg3NTg4NzQwN2E
+  mp:
+    configs:
+      - appId: wxf085386aa07c0857
+        secret: aabd075d2851764714fd14a0d0b1b8b4
+        token: rymcu
+        aesKey: lvn3mMSnFOvbnIJVNhHQqjWb9swe66L1xIcerJSs0fm
+      - appId: wxa49093339a5a822b
+        secret: 29e9390e6d58d57a2b2a2350dbee8754
+        token: qwert
+        aesKey:
+  miniapp:
+    configs:
+      - appid: wxb4fff78a6b878cf7
+        secret: c8735d0ccc8497b8509dc2762246cb37
+        token: #微信小程序消息服务器配置的token
+        aesKey: #微信小程序消息服务器配置的EncodingAESKey
+        msgDataFormat: JSON
+env: dev
+logging:
+  file:
+    path: /logs/forest
+  level:
+    com:
+      rymcu: info
+server:
+  port: 8099
+  servlet:
+    context-path: /forest
+  max-http-header-size: 1048576
+version: 1.0
+resource:
+  domain: http://test.rymcu.com
+  file-path: http://test.rymcu.com
+  pic-path: /opt/nebula/static
+baidu:
+  data:
+    site: https://rymcu.com
+    token: 9cdKR6bVCJzxDEJS
+  ai:
+    appId: 22891829
+    appKey: HKxdO8ioaUmltZh0eaOVMsmW
+    secretKey: GXOtl3XtiIkVA3CPsc3c29Pqa4V290Yr

@@ -2,12 +2,12 @@ package com.rymcu.forest.core.service.security;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.enumerate.Module;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.mapper.UserMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.PortfolioService;
@@ -76,7 +76,7 @@ public class AuthorshipAspect {
             }
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String idArticle;
-            Long idAuthor = 0l;
+            Long idAuthor = 0L;
             if (isAjax(request)) {
                 Object[] objects = joinPoint.getArgs();
                 JSONObject jsonObject;

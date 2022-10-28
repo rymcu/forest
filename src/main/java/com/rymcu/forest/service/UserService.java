@@ -8,7 +8,7 @@ import com.rymcu.forest.entity.UserExtend;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -43,7 +43,7 @@ public interface UserService extends Service<User> {
      * @param password 密码
      * @return Map
      */
-    TokenUser login(String account, String password) throws ServiceException;
+    TokenUser login(String account, String password);
 
     /**
      * 通过 account 获取用户信息接口
@@ -169,10 +169,10 @@ public interface UserService extends Service<User> {
     /**
      * 通过邮箱更新用户最后登录时间
      *
-     * @param email
+     * @param account
      * @return
      */
-    Integer updateLastOnlineTimeByEmail(String email);
+    Integer updateLastOnlineTimeByAccount(String account);
 
     /**
      * 查询用户扩展信息
@@ -181,4 +181,18 @@ public interface UserService extends Service<User> {
      * @return
      */
     UserExtend findUserExtendInfo(Long idUser);
+
+    /**
+     * 刷新  token
+     * @param refreshToken
+     * @return
+     */
+    TokenUser refreshToken(String refreshToken);
+
+    /**
+     * 查询用户权限
+     * @param user
+     * @return
+     */
+    Set<String> findUserPermissions(User user);
 }

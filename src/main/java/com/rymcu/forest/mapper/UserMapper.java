@@ -20,7 +20,7 @@ public interface UserMapper extends Mapper<User> {
      * @param account
      * @return
      */
-    User findByAccount(@Param("account") String account);
+    User selectByAccount(@Param("account") String account);
 
     /**
      * 添加用户权限
@@ -147,10 +147,10 @@ public interface UserMapper extends Mapper<User> {
 
     /**
      * 更新用户最后在线时间
-     * @param email
+     * @param account
      * @return
      */
-    Integer updateLastOnlineTimeByEmail(@Param("email") String email);
+    Integer updateLastOnlineTimeByAccount(@Param("account") String account);
 
     /**
      * 判断用户是否拥有管理员权限
