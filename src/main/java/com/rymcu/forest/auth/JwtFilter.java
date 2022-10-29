@@ -81,7 +81,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
         if (isLoginAttempt(request, response)) {
             try {
-                executeLogin(request, response);
+                return executeLogin(request, response);
             } catch (Exception e) {
                 onLoginFail(response);
             }
