@@ -41,6 +41,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/api/v1/rule/currency/**", "anon");
         filterChainDefinitionMap.put("/api/v1/lucene/**", "anon");
         filterChainDefinitionMap.put("/api/v1/open-data/**", "anon");
+        filterChainDefinitionMap.put("/api/v1/auth/login/**", "anon");
+        filterChainDefinitionMap.put("/api/v1/auth/logout/**", "anon");
+        filterChainDefinitionMap.put("/api/v1/auth/refresh-token/**", "anon");
         filterChainDefinitionMap.put("/**", "jwt");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
