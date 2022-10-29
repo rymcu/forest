@@ -8,7 +8,6 @@ import com.rymcu.forest.dto.PortfolioArticleDTO;
 import com.rymcu.forest.dto.PortfolioDTO;
 import com.rymcu.forest.dto.UserDTO;
 import com.rymcu.forest.entity.Portfolio;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 
 import java.util.List;
 
@@ -34,7 +33,6 @@ public interface PortfolioService extends Service<Portfolio> {
     /**
      * 保持/更新作品集
      * @param portfolio
-     * @throws BaseApiException
      * @return
      */
     Portfolio postPortfolio(Portfolio portfolio);

@@ -18,11 +18,8 @@ import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.Html2TextUtil;
-import com.rymcu.forest.util.UserUtils;
 import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.util.XssUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
-import com.rymcu.forest.web.api.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -106,8 +103,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
-    public Long postArticle(ArticleDTO article, User user) throws UnsupportedEncodingException, BaseApiException {
+    @Transactional(rollbackFor = {UnsupportedEncodingException.class})
+    public Long postArticle(ArticleDTO article, User user) throws UnsupportedEncodingException {
         boolean isUpdate = false;
         String articleTitle = article.getArticleTitle();
         String articleTags = article.getArticleTags();
@@ -178,7 +175,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer delete(Long id) throws BaseApiException {
+    public Integer delete(Long id) {
         // 判断是否有评论
         if (!articleMapper.existsCommentWithPrimaryKey(id)) {
             // 删除关联数据(作品集关联关系,标签关联关系)
@@ -214,13 +211,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
-    public String share(Integer id) throws BaseApiException {
+    public String share(Integer id, String account) {
         Article article = articleMapper.selectByPrimaryKey(id);
-        User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
-        return article.getArticlePermalink() + "?s=" + user.getAccount();
+        return article.getArticlePermalink() + "?s=" + account;
     }
 
     @Override
@@ -246,7 +239,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateTags(Long idArticle, String tags, Long userId) throws UnsupportedEncodingException, BaseApiException {
+    public Boolean updateTags(Long idArticle, String tags, Long userId) throws UnsupportedEncodingException {
         Article article = articleMapper.selectByPrimaryKey(idArticle);
         if (!Objects.nonNull(article)) {
             throw new ContentNotExistException("更新失败,文章不存在!");

@@ -8,7 +8,6 @@ import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.util.NotificationUtils;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +42,7 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
             } else {
                 // 关联数据已删除,且未读
                 if (UN_READ.equals(notification.getHasRead())) {
-                    notificationMapper.readNotification(notification.getIdNotification());
+                    notificationMapper.readNotification(notification.getIdNotification(), idUser);
                 }
                 NotificationDTO dto = new NotificationDTO();
                 dto.setDataSummary("该消息已被撤销!");
@@ -69,12 +68,12 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer readNotification(Long id) {
-        return notificationMapper.readNotification(id);
+    public Integer readNotification(Long id, Long idUser) {
+        return notificationMapper.readNotification(id, idUser);
     }
 
     @Override
-    public Integer readAllNotification() throws BaseApiException {
+    public Integer readAllNotification() {
         return notificationMapper.readAllNotification(Objects.requireNonNull(UserUtils.getCurrentUserByToken()).getIdUser());
     }
 

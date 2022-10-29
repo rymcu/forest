@@ -5,7 +5,6 @@ import java.util.Arrays;
 /**
  * @author ronger
  */
-
 public enum TransactionEnum {
     ArticleSponsor(20, "文章赞赏"),
     Answer(30, "答题奖励"),

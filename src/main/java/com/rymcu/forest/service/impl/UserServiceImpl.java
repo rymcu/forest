@@ -20,8 +20,8 @@ import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.web.api.common.UploadController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -130,12 +130,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 // 保存登录日志
                 loginRecordService.saveLoginRecord(user.getIdUser());
                 return tokenUser;
-            } else {
-                throw new AuthenticationException("密码错误");
             }
-        } else {
-            throw new UnknownAccountException("账号不存在");
         }
+        throw new AccountException();
     }
 
     @Override
@@ -316,11 +313,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 redisTemplate.boundValueOps(tokenUser.getRefreshToken()).set(account, JwtConstants.REFRESH_TOKEN_EXPIRES_HOUR, TimeUnit.HOURS);
                 redisTemplate.delete(refreshToken);
                 return tokenUser;
-            } else {
-                throw new UnknownAccountException("未知账号");
             }
         }
-        return null;
+        throw new UnauthenticatedException();
     }
 
     @Override

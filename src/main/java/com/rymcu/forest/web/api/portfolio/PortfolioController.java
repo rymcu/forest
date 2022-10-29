@@ -13,7 +13,6 @@ import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -39,7 +38,7 @@ public class PortfolioController {
     }
 
     @PostMapping("/post")
-    public GlobalResult<Portfolio> add(@RequestBody Portfolio portfolio) throws BaseApiException {
+    public GlobalResult<Portfolio> add(@RequestBody Portfolio portfolio) {
         User user = UserUtils.getCurrentUserByToken();
         portfolio.setPortfolioAuthorId(user.getIdUser());
         portfolio = portfolioService.postPortfolio(portfolio);
@@ -48,7 +47,7 @@ public class PortfolioController {
 
     @PutMapping("/post")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult<Portfolio> update(@RequestBody Portfolio portfolio) throws BaseApiException {
+    public GlobalResult<Portfolio> update(@RequestBody Portfolio portfolio) {
         if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
             throw new IllegalArgumentException("作品集主键参数异常!");
         }
@@ -60,7 +59,7 @@ public class PortfolioController {
 
     @GetMapping("/{idPortfolio}/unbind-articles")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult<PageInfo> unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText, @PathVariable Long idPortfolio) throws BaseApiException {
+    public GlobalResult<PageInfo> unbindArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @RequestParam(defaultValue = "") String searchText, @PathVariable Long idPortfolio) {
         if (idPortfolio == null || idPortfolio == 0) {
             throw new IllegalArgumentException("作品集主键参数异常!");
         }
@@ -110,7 +109,7 @@ public class PortfolioController {
 
     @DeleteMapping("/delete")
     @AuthorshipInterceptor(moduleName = Module.PORTFOLIO)
-    public GlobalResult<Boolean> delete(Long idPortfolio) throws BaseApiException {
+    public GlobalResult<Boolean> delete(Long idPortfolio) {
         if (idPortfolio == null || idPortfolio == 0) {
             throw new IllegalArgumentException("参数异常!");
         }

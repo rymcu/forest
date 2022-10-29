@@ -1,5 +1,6 @@
 package com.rymcu.forest.service;
 
+import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.entity.Sponsor;
 
@@ -12,7 +13,7 @@ public interface SponsorService extends Service<Sponsor> {
      *
      * @param sponsor
      * @return
-     * @throws Exception
+     * @throws ServiceException
      */
-    boolean sponsorship(Sponsor sponsor) throws Exception;
+    boolean sponsorship(Sponsor sponsor) throws ServiceException;
 }

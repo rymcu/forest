@@ -18,8 +18,6 @@ import com.rymcu.forest.service.ArticleThumbsUpService;
 import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.service.SponsorService;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
-import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -50,27 +48,21 @@ public class ArticleController {
     }
 
     @PostMapping("/post")
-    public GlobalResult<Long> postArticle(@RequestBody ArticleDTO article) throws BaseApiException, UnsupportedEncodingException {
+    public GlobalResult<Long> postArticle(@RequestBody ArticleDTO article) throws UnsupportedEncodingException {
         User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
         return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, user));
     }
 
     @PutMapping("/post")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE)
-    public GlobalResult<Long> updateArticle(@RequestBody ArticleDTO article) throws BaseApiException, UnsupportedEncodingException {
+    public GlobalResult<Long> updateArticle(@RequestBody ArticleDTO article) throws UnsupportedEncodingException {
         User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
         return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, user));
     }
 
     @DeleteMapping("/delete/{idArticle}")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE)
-    public GlobalResult<Integer> delete(@PathVariable Long idArticle) throws BaseApiException {
+    public GlobalResult<Integer> delete(@PathVariable Long idArticle) {
         return GlobalResultGenerator.genSuccessResult(articleService.delete(idArticle));
     }
 
@@ -80,25 +72,23 @@ public class ArticleController {
     }
 
     @GetMapping("/drafts")
-    public GlobalResult<PageInfo<ArticleDTO>> drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) throws BaseApiException {
+    public GlobalResult<PageInfo<ArticleDTO>> drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         User user = UserUtils.getCurrentUserByToken();
-        if (Objects.isNull(user)) {
-            throw new BaseApiException(ErrorCode.INVALID_TOKEN);
-        }
         List<ArticleDTO> list = articleService.findDrafts(user.getIdUser());
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{idArticle}/share")
-    public GlobalResult<String> share(@PathVariable Integer idArticle) throws BaseApiException {
-        return GlobalResultGenerator.genResult(true, articleService.share(idArticle), "");
+    public GlobalResult<String> share(@PathVariable Integer idArticle){
+        User user = UserUtils.getCurrentUserByToken();
+        return GlobalResultGenerator.genResult(true, articleService.share(idArticle, user.getAccount()), "");
     }
 
     @PostMapping("/update-tags")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE_TAG)
-    public GlobalResult<Boolean> updateTags(@RequestBody Article article) throws BaseApiException, UnsupportedEncodingException {
+    public GlobalResult<Boolean> updateTags(@RequestBody Article article) throws UnsupportedEncodingException {
         Long idArticle = article.getIdArticle();
         String articleTags = article.getArticleTags();
         User user = UserUtils.getCurrentUserByToken();
@@ -106,7 +96,7 @@ public class ArticleController {
     }
 
     @PostMapping("/thumbs-up")
-    public GlobalResult<Integer> thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) throws Exception {
+    public GlobalResult<Integer> thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) {
         if (Objects.isNull(articleThumbsUp) || Objects.isNull(articleThumbsUp.getIdArticle())) {
             throw new BusinessException("数据异常,文章不存在!");
         }
@@ -116,13 +106,13 @@ public class ArticleController {
     }
 
     @PostMapping("/sponsor")
-    public GlobalResult sponsor(@RequestBody Sponsor sponsor) throws Exception {
+    public GlobalResult<Boolean> sponsor(@RequestBody Sponsor sponsor) {
         if (Objects.isNull(sponsor) || Objects.isNull(sponsor.getDataId()) || Objects.isNull(sponsor.getDataType())) {
             throw new IllegalArgumentException("数据异常");
         }
         User user = UserUtils.getCurrentUserByToken();
         sponsor.setSponsor(user.getIdUser());
-        boolean flag = sponsorService.sponsorship(sponsor);
+        Boolean flag = sponsorService.sponsorship(sponsor);
         return GlobalResultGenerator.genSuccessResult(flag);
     }
 

@@ -35,8 +35,8 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
     private TransactionRecordService transactionRecordService;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean sponsorship(Sponsor sponsor) throws Exception {
+    @Transactional(rollbackFor = ServiceException.class)
+    public boolean sponsorship(Sponsor sponsor) throws ServiceException {
         TransactionEnum transactionEnum = TransactionEnum.findTransactionEnum(sponsor.getDataType());
         BigDecimal money = BigDecimal.valueOf(transactionEnum.getMoney());
         sponsor.setSponsorshipMoney(money);

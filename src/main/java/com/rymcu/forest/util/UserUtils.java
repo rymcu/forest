@@ -10,6 +10,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import java.util.Objects;
@@ -19,8 +20,8 @@ import java.util.Objects;
  */
 public class UserUtils {
 
-    private static UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
-    private static TokenManager tokenManager = SpringContextHolder.getBean(TokenManager.class);
+    private static final UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
+    private static final TokenManager tokenManager = SpringContextHolder.getBean(TokenManager.class);
 
     /**
      * 通过token获取当前用户的信息
@@ -30,25 +31,26 @@ public class UserUtils {
     public static User getCurrentUserByToken() {
         String authHeader = ContextHolderUtils.getRequest().getHeader(JwtConstants.AUTHORIZATION);
         if (authHeader == null) {
-            return null;
+            throw new UnauthenticatedException();
         }
         // 验证token
         Claims claims;
         try {
             claims = Jwts.parser().setSigningKey(JwtConstants.JWT_SECRET).parseClaimsJws(authHeader).getBody();
         } catch (final SignatureException e) {
-            throw new UnauthorizedException();
+            throw new UnauthenticatedException();
         }
         Object account = claims.getId();
         if (StringUtils.isNotBlank(Objects.toString(account, ""))) {
             TokenModel model = tokenManager.getToken(authHeader, account.toString());
             if (tokenManager.checkToken(model)) {
-                return userMapper.selectByAccount(account.toString());
+                User user = userMapper.selectByAccount(account.toString());
+                if (Objects.nonNull(user)) {
+                    return user;
+                }
             }
-        } else {
-            throw new UnauthorizedException();
         }
-        return null;
+        throw new UnauthenticatedException();
     }
 
     public static TokenUser getTokenUser(String token) {
@@ -58,14 +60,14 @@ public class UserUtils {
             try {
                 claims = Jwts.parser().setSigningKey(JwtConstants.JWT_SECRET).parseClaimsJws(token).getBody();
             } catch (final SignatureException e) {
-                return null;
+                throw new UnauthenticatedException();
             }
             Object account = claims.getId();
             if (StringUtils.isNotBlank(Objects.toString(account, ""))) {
                 TokenModel model = tokenManager.getToken(token, account.toString());
                 if (tokenManager.checkToken(model)) {
                     User user = userMapper.selectByAccount(account.toString());
-                    if (user != null) {
+                    if (Objects.nonNull(user)) {
                         TokenUser tokenUser = new TokenUser();
                         BeanCopierUtil.copy(user, tokenUser);
                         tokenUser.setAccount(user.getEmail());
@@ -75,6 +77,6 @@ public class UserUtils {
                 }
             }
         }
-        return null;
+        throw new UnauthenticatedException();
     }
 }

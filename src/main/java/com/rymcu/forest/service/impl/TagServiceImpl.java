@@ -15,7 +15,6 @@ import com.rymcu.forest.mapper.TagMapper;
 import com.rymcu.forest.service.TagService;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +40,8 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
     private RedisService redisService;
 
     @Override
-    @Transactional(rollbackFor = {UnsupportedEncodingException.class, BaseApiException.class})
-    public Integer saveTagArticle(Article article, String articleContentHtml, Long userId) throws UnsupportedEncodingException, BaseApiException {
+    @Transactional(rollbackFor = {UnsupportedEncodingException.class})
+    public Integer saveTagArticle(Article article, String articleContentHtml, Long userId) throws UnsupportedEncodingException {
         String articleTags = article.getArticleTags();
         if (StringUtils.isNotBlank(articleTags)) {
             String[] tags = articleTags.split(",");

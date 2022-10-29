@@ -47,10 +47,12 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 标记消息已读
+     *
      * @param id
+     * @param idUser
      * @return
      */
-    Integer readNotification(@Param("id") Long id);
+    Integer readNotification(@Param("id") Long id, Long idUser);
 
     /**
      * 标记所有消息已读
