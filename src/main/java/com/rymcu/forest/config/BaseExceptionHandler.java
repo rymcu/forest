@@ -71,7 +71,7 @@ public class BaseExceptionHandler {
                 result.setCode(((TransactionException) ex).getCode());
                 result.setMessage(ex.getMessage());
             } else if (ex instanceof BusinessException) {
-                result.setCode(ResultCode.FAIL.getCode());
+                result.setCode(ResultCode.INVALID_PARAM.getCode());
                 result.setMessage(ex.getMessage());
             } else {
                 //系统内部异常,不返回给客户端,内部记录错误日志
@@ -116,7 +116,7 @@ public class BaseExceptionHandler {
                 attributes.put("code", ((TransactionException) ex).getCode());
                 attributes.put("message", ex.getMessage());
             } else if (ex instanceof BusinessException) {
-                attributes.put("code", ResultCode.FAIL.getCode());
+                attributes.put("code", ResultCode.INVALID_PARAM.getCode());
                 attributes.put("message", ex.getMessage());
             } else {
                 //系统内部异常,不返回给客户端,内部记录错误日志
