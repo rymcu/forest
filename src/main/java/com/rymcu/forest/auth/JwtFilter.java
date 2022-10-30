@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader(JwtConstants.AUTHORIZATION);
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String authorization = httpServletRequest.getHeader(JwtConstants.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            // 编辑器上传文件使用 X-Upload-Token 请求头传递 token
+            authorization = httpServletRequest.getHeader(JwtConstants.UPLOAD_TOKEN);
+        }
         return authorization != null;
     }
 
@@ -45,6 +50,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean executeLogin(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String authorization = httpServletRequest.getHeader(JwtConstants.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            // 编辑器上传文件使用 X-Upload-Token 请求头传递 token
+            authorization = httpServletRequest.getHeader(JwtConstants.UPLOAD_TOKEN);
+        }
         // 验证token
         Claims claims;
         try {
