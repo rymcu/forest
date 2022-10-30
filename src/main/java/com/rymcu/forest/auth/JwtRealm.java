@@ -12,6 +12,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -68,7 +69,7 @@ public class JwtRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
         TokenModel token = (TokenModel) authToken;
         if (!manager.checkToken(token)) {
-            throw new AuthenticationException();
+            throw new UnauthorizedException();
         }
         return new SimpleAuthenticationInfo(token.getPrincipal(), token.getCredentials(), this.getName());
     }

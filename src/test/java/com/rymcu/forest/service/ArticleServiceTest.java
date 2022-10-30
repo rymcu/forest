@@ -5,7 +5,6 @@ import com.rymcu.forest.dto.ArticleSearchDTO;
 import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.Author;
 import com.rymcu.forest.entity.User;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -94,11 +93,10 @@ class ArticleServiceTest {
      *
      * 测试数据是否会返回Article的Id，并且Id会填充到测试数据中
      * @throws UnsupportedEncodingException
-     * @throws BaseApiException
      */
     @Test
     @BeforeEach
-    public void postArticle() throws UnsupportedEncodingException, BaseApiException {
+    public void postArticle() throws UnsupportedEncodingException {
         Long articleId = articleService.postArticle(testArticle, testUser);
         testArticle.setIdArticle(articleId);
         assertNotNull(articleId);
@@ -218,10 +216,9 @@ class ArticleServiceTest {
      * cn.hutool.core.io.IORuntimeException: Path [xxxxxxx] is not directory!
      * 这是由于Lucene的路径通配符默认为linux的，解决方式：
      * 将ArticleIndexUtil.deleteIndex()方法中的PATH改为WINDOW_PATH即可 :)
-     * @throws BaseApiException 基础Api错误
      */
     @Test
-    void delete() throws BaseApiException {
+    void delete() {
         articleService.delete(testArticle.getIdArticle());
         ArticleDTO articleDTOByIdAfter = articleService.findArticleDTOById(testArticle.getIdArticle(), 0);
         assertNull(articleDTOByIdAfter);

@@ -23,7 +23,7 @@
         insert into forest_notification (id_user, data_type, data_id, data_summary, created_time) values (#{idUser}, #{dataType}, #{dataId}, #{dataSummary}, sysdate())
     </insert>
     <update id="readNotification">
-        update forest_notification set has_read = '1' where id = #{id}
+        update forest_notification set has_read = '1' where id = #{id} and id_user = #{idUser}
     </update>
     <update id="readAllNotification">
         update forest_notification set has_read = '1' where id_user = #{idUser} and has_read = '0'

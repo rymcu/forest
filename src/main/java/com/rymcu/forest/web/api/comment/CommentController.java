@@ -5,7 +5,6 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.entity.Comment;
 import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +25,8 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/post")
-    public GlobalResult<Comment> postComment(@RequestBody Comment comment, HttpServletRequest request) throws BaseApiException {
-        comment.setCommentAuthorId(Objects.requireNonNull(UserUtils.getCurrentUserByToken()).getIdUser());
+    public GlobalResult<Comment> postComment(@RequestBody Comment comment, HttpServletRequest request) {
+        comment.setCommentAuthorId(UserUtils.getCurrentUserByToken().getIdUser());
         comment = commentService.postComment(comment,request);
         return GlobalResultGenerator.genSuccessResult(comment);
     }

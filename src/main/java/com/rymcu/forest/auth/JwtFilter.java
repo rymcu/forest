@@ -1,9 +1,12 @@
 package com.rymcu.forest.auth;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.rymcu.forest.core.result.GlobalResultGenerator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
@@ -31,8 +34,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader(JwtConstants.AUTHORIZATION);
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String authorization = httpServletRequest.getHeader(JwtConstants.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            // 编辑器上传文件使用 X-Upload-Token 请求头传递 token
+            authorization = httpServletRequest.getHeader(JwtConstants.UPLOAD_TOKEN);
+        }
         return authorization != null;
     }
 
@@ -43,6 +50,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     protected boolean executeLogin(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String authorization = httpServletRequest.getHeader(JwtConstants.AUTHORIZATION);
+        if (StringUtils.isBlank(authorization)) {
+            // 编辑器上传文件使用 X-Upload-Token 请求头传递 token
+            authorization = httpServletRequest.getHeader(JwtConstants.UPLOAD_TOKEN);
+        }
         // 验证token
         Claims claims;
         try {
@@ -72,14 +83,20 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        return false;
+    }
+
+    @Override
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
         if (isLoginAttempt(request, response)) {
             try {
-                executeLogin(request, response);
+                return executeLogin(request, response);
             } catch (Exception e) {
-                response401(request, response);
+                onLoginFail(response);
             }
         }
-        return true;
+        onLoginFail(response);
+        return false;
     }
 
     /**
@@ -104,12 +121,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     /**
      * 将非法请求跳转到 /401
      */
-    private void response401(ServletRequest request, ServletResponse response) {
+    private void onLoginFail(ServletResponse response) {
         try {
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            httpResponse.setContentType("application/json;charset=utf-8");
-            httpResponse.getOutputStream().write("login fail".getBytes());
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(GlobalResultGenerator.genErrorResult("未登录或已登录超时，请重新登录")).getBytes());
         } catch (IOException e) {
             // 错误日志
             log.error(e.getMessage());

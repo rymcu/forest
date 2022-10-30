@@ -4,13 +4,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
-import com.rymcu.forest.core.service.security.annotation.SecurityInterceptor;
 import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.util.UserUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

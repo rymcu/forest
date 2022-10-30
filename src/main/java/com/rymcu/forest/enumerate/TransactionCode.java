@@ -3,7 +3,6 @@ package com.rymcu.forest.enumerate;
 /**
  * @author ronger
  */
-
 public enum TransactionCode {
 
     InsufficientBalance(901, "余额不足");
@@ -16,7 +15,6 @@ public enum TransactionCode {
         this.code = code;
         this.message = message;
     }
-
 
     public String getMessage() {
         return this.message;

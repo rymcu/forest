@@ -5,7 +5,6 @@ import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.ArticleSearchDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.User;
-import com.rymcu.forest.web.api.exception.BaseApiException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -56,18 +55,16 @@ public interface ArticleService extends Service<Article> {
      * @param article
      * @param user
      * @throws UnsupportedEncodingException
-     * @throws BaseApiException
      * @return
      * */
-    Long postArticle(ArticleDTO article, User user) throws UnsupportedEncodingException, BaseApiException;
+    Long postArticle(ArticleDTO article, User user) throws UnsupportedEncodingException;
 
     /**
      * 删除文章
      * @param id
      * @return
-     * @throws BaseApiException
      * */
-    Integer delete(Long id) throws BaseApiException;
+    Integer delete(Long id);
 
     /**
      * 增量文章浏览数
@@ -77,11 +74,12 @@ public interface ArticleService extends Service<Article> {
 
     /**
      * 获取分享链接数据
+     *
      * @param id
-     * @throws BaseApiException
+     * @param account
      * @return
      */
-    String share(Integer id) throws BaseApiException;
+    String share(Integer id, String account);
 
     /**
      * 查询草稿文章类别
@@ -112,9 +110,8 @@ public interface ArticleService extends Service<Article> {
      * @param userId
      * @return
      * @throws UnsupportedEncodingException
-     * @throws BaseApiException
      */
-    Boolean updateTags(Long idArticle, String tags, Long userId) throws UnsupportedEncodingException, BaseApiException;
+    Boolean updateTags(Long idArticle, String tags, Long userId) throws UnsupportedEncodingException;
 
     /**
      * 更新文章优选状态

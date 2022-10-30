@@ -36,15 +36,15 @@ public class UserController {
 
     @GetMapping("/{account}")
     @VisitLogger
-    public GlobalResult detail(@PathVariable String account){
+    public GlobalResult detail(@PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userDTO);
     }
 
     @GetMapping("/{account}/articles")
-    public GlobalResult<PageInfo<ArticleDTO>> userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<ArticleDTO>> userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
@@ -54,9 +54,9 @@ public class UserController {
     }
 
     @GetMapping("/{account}/portfolios")
-    public GlobalResult<PageInfo<PortfolioDTO>> userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<PortfolioDTO>> userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
@@ -66,9 +66,9 @@ public class UserController {
     }
 
     @GetMapping("/{account}/followers")
-    public GlobalResult<PageInfo<UserDTO>> userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<UserDTO>> userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
@@ -78,9 +78,9 @@ public class UserController {
     }
 
     @GetMapping("/{account}/followings")
-    public GlobalResult<PageInfo<UserDTO>> userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<UserDTO>> userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
