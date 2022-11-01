@@ -68,6 +68,9 @@ create table forest_bank_account
     account_type    char default '0' null comment '0: 普通账户 1: 银行账户'
 ) comment '银行账户表 ' collate = utf8mb4_unicode_ci;
 
+create unique index forest_bank_account_pk
+    on forest_bank_account (account_owner, bank_account);
+
 create table forest_comment
 (
     id                          bigint auto_increment comment '主键'
@@ -578,3 +581,10 @@ Nebula-Pi 开发板平台
 </table>
 <p>表 1-1 主板元器件说明</p>
 ', '2022-06-13 22:35:34', '2022-06-13 22:35:34');
+
+INSERT INTO forest.forest_bank (id, bank_name, bank_owner, bank_description, created_by, created_time) VALUES (1, '社区中央银行', 1, '社区中央银行', 1, '2020-11-26 21:24:19');
+INSERT INTO forest.forest_bank (id, bank_name, bank_owner, bank_description, created_by, created_time) VALUES (2, '社区发展与改革银行', 1, '社区发展与改革银行', 1, '2020-11-26 21:31:27');
+
+
+INSERT INTO forest.forest_bank_account (id, id_bank, bank_account, account_balance, account_owner, created_time, account_type) VALUES (2, 1, '100000002', 1207980.00000000, 2, '2020-11-26 21:37:18', '1');
+INSERT INTO forest.forest_bank_account (id, id_bank, bank_account, account_balance, account_owner, created_time, account_type) VALUES (1, 1, '100000001', 997500000.00000000, 1, '2020-11-26 21:36:21', '1');

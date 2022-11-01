@@ -5,7 +5,8 @@ package com.rymcu.forest.enumerate;
  */
 public enum TransactionCode {
 
-    InsufficientBalance(901, "余额不足");
+    INSUFFICIENT_BALANCE(901, "余额不足"),
+    UNKNOWN_ACCOUNT(902, "账号不存在");
 
     private int code;
 

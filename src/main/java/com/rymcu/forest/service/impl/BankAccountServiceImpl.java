@@ -43,19 +43,10 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
         String defaultAccountType = "0";
         bankAccount.setAccountType(defaultAccountType);
         List<BankAccount> bankAccounts = bankAccountMapper.select(bankAccount);
-        BankAccountDTO bankAccountDTO;
         if (Objects.nonNull(bankAccounts) && bankAccounts.size() > 0) {
-             bankAccountDTO = bankAccountMapper.selectBankAccount(bankAccounts.get(0).getIdBankAccount());
-        } else {
-            bankAccount.setAccountBalance(new BigDecimal("0"));
-            // 默认为社区发展与改革银行
-            bankAccount.setIdBank(2L);
-            bankAccount.setBankAccount(nextBankAccount());
-            bankAccount.setCreatedTime(new Date());
-            bankAccountMapper.insertSelective(bankAccount);
-            bankAccountDTO = bankAccountMapper.selectBankAccount(bankAccount.getIdBankAccount());
+             return bankAccountMapper.selectBankAccount(bankAccounts.get(0).getIdBankAccount());
         }
-        return bankAccountDTO;
+        return null;
     }
 
     @Override
@@ -67,6 +58,19 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
         }
         // 查询交易记录
         return transactionRecordService.findTransactionRecords(bankAccount, startDate, endDate);
+    }
+
+    @Override
+    public BankAccount createBankAccount(Long idUser) {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setAccountBalance(new BigDecimal("0"));
+        // 默认为社区发展与改革银行
+        bankAccount.setIdBank(2L);
+        bankAccount.setAccountOwner(idUser);
+        bankAccount.setBankAccount(nextBankAccount());
+        bankAccount.setCreatedTime(new Date());
+        bankAccountMapper.insertSelective(bankAccount);
+        return bankAccount;
     }
 
     @Override

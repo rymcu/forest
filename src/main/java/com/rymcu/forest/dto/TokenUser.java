@@ -26,4 +26,6 @@ public class TokenUser {
 
     private Set<String> scope;
 
+    private String bankAccount;
+
 }

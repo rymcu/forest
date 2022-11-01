@@ -6,13 +6,11 @@ import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
+import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.util.UserUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,5 +51,11 @@ public class WalletController {
         List<TransactionRecordDTO> list = bankAccountService.findUserTransactionRecords(bankAccount.getBankAccount(), startDate, endDate);
         PageInfo<TransactionRecordDTO> pageInfo = new PageInfo(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    @PostMapping("/create")
+    public GlobalResult<BankAccount> create() {
+        User user = UserUtils.getCurrentUserByToken();
+        return GlobalResultGenerator.genSuccessResult(bankAccountService.createBankAccount(user.getIdUser()));
     }
 }

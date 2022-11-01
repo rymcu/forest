@@ -47,7 +47,7 @@ public class SponsorServiceImpl extends AbstractService<Sponsor> implements Spon
             ArticleDTO articleDTO = articleService.findArticleDTOById(sponsor.getDataId(), 1);
             TransactionRecord transactionRecord = transactionRecordService.userTransfer(articleDTO.getArticleAuthorId(), sponsor.getSponsor(), transactionEnum);
             if (Objects.isNull(transactionRecord.getIdTransactionRecord())) {
-                throw new TransactionException(TransactionCode.InsufficientBalance);
+                throw new TransactionException(TransactionCode.INSUFFICIENT_BALANCE);
             }
             // 更新文章赞赏数
             int result = sponsorMapper.updateArticleSponsorCount(articleDTO.getIdArticle());

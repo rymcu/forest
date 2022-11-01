@@ -49,7 +49,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
                 transactionRecordMapper.insertSelective(transactionRecord);
             }
         } else {
-            throw new TransactionException(TransactionCode.InsufficientBalance);
+            throw new TransactionException(TransactionCode.INSUFFICIENT_BALANCE);
         }
         return transactionRecord;
     }
@@ -73,6 +73,9 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) {
         BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(toUserId);
         BankAccountDTO formBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(formUserId);
+        if (Objects.isNull(toBankAccount) || Objects.isNull(formBankAccount)) {
+            throw new TransactionException(TransactionCode.UNKNOWN_ACCOUNT);
+        }
         TransactionRecord transactionRecord = new TransactionRecord();
         transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
         transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
@@ -84,6 +87,9 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     @Override
     public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) {
         BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(idUser);
+        if (Objects.isNull(toBankAccount)) {
+            throw new TransactionException(TransactionCode.UNKNOWN_ACCOUNT);
+        }
         Boolean isTrue;
         // 校验货币规则
         switch (transactionType) {
@@ -156,9 +162,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     private boolean checkFormAccountStatus(String formBankAccount, BigDecimal money) {
         BankAccount bankAccount = findInfoByBankAccount(formBankAccount);
         if (Objects.nonNull(bankAccount)) {
-            if (bankAccount.getAccountBalance().compareTo(money) > 0) {
-                return true;
-            }
+            return bankAccount.getAccountBalance().compareTo(money) > 0;
         }
         return false;
     }

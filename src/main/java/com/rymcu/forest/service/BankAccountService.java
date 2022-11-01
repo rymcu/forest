@@ -46,5 +46,19 @@ public interface BankAccountService extends Service<BankAccount> {
      */
     BankAccount findInfoByBankAccount(String formBankAccount);
 
+    /**
+     * 根据时间查询账号交易记录
+     * @param bankAccount
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     List<TransactionRecordDTO> findUserTransactionRecords(String bankAccount, String startDate, String endDate);
+
+    /**
+     * 创建钱包账号
+     * @param idUser
+     * @return
+     */
+    BankAccount createBankAccount(Long idUser);
 }
