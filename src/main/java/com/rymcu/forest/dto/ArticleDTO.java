@@ -70,4 +70,6 @@ public class ArticleDTO {
     private Integer articleThumbsUpCount;
     /** 赞赏总数 */
     private Integer articleSponsorCount;
+
+    private Boolean canSponsor;
 }

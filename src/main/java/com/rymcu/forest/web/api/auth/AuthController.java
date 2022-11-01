@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rymcu.forest.auth.TokenManager;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.entity.User;
+import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.util.UserUtils;
@@ -25,6 +27,8 @@ public class AuthController {
     private UserService userService;
     @Resource
     TokenManager tokenManager;
+    @Resource
+    private BankAccountService bankAccountService;
 
     @PostMapping("/login")
     public GlobalResult<TokenUser> login(@RequestBody User user) {
@@ -53,6 +57,10 @@ public class AuthController {
         TokenUser tokenUser = new TokenUser();
         BeanCopierUtil.copy(user, tokenUser);
         tokenUser.setScope(userService.findUserPermissions(user));
+        BankAccountDTO bankAccountDTO = bankAccountService.findBankAccountByIdUser(user.getIdUser());
+        if (Objects.nonNull(bankAccountDTO)) {
+            tokenUser.setBankAccount(bankAccountDTO.getBankAccount());
+        }
         JSONObject object = new JSONObject();
         object.put("user", tokenUser);
         return GlobalResultGenerator.genSuccessResult(object);

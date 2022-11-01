@@ -13,10 +13,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.handler.event.ArticleDeleteEvent;
 import com.rymcu.forest.handler.event.ArticleEvent;
 import com.rymcu.forest.mapper.ArticleMapper;
-import com.rymcu.forest.service.ArticleService;
-import com.rymcu.forest.service.NotificationService;
-import com.rymcu.forest.service.TagService;
-import com.rymcu.forest.service.UserService;
+import com.rymcu.forest.service.*;
 import com.rymcu.forest.util.Html2TextUtil;
 import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.util.XssUtils;
@@ -52,6 +49,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private NotificationService notificationService;
     @Resource
     private ApplicationEventPublisher publisher;
+    @Resource
+    private BankAccountService bankAccountService;
 
     @Value("${resource.domain}")
     private String domain;
@@ -282,6 +281,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
                 List<PortfolioArticleDTO> portfolioArticleDTOList = articleMapper.selectPortfolioArticles(article.getIdArticle());
                 portfolioArticleDTOList.forEach(this::genPortfolioArticles);
                 article.setPortfolios(portfolioArticleDTOList);
+                // 查询作者是否开通钱包账号
+                article.setCanSponsor(Objects.nonNull(bankAccountService.findBankAccountByIdUser(article.getArticleAuthorId())));
             } else if (type.equals(articleEdit)) {
                 article.setArticleContent(articleContent.getArticleContent());
             } else {
