@@ -1,7 +1,6 @@
 package com.rymcu.forest.util;
 
 /**
- *
  * @author kaenry
  * @date 2016/9/20
  * ErrorCode

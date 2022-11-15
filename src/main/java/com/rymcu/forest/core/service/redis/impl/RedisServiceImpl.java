@@ -25,7 +25,7 @@ import java.util.*;
  * Redis 服务接口实现类
  *
  * @author liwei
- *         16/10/30 下午5:28
+ * 16/10/30 下午5:28
  */
 @Component("redisService")
 @EnableConfigurationProperties({RedisProperties.class})
@@ -547,29 +547,32 @@ public class RedisServiceImpl implements RedisService {
     public String put(String cacheName, String key, Object value) {
         String result = get(cacheName);
         Map map = new HashMap();
-        if (StringUtils.isNotBlank(result)){
-            map = JSON.parseObject(result, new TypeReference<Map>() {});
+        if (StringUtils.isNotBlank(result)) {
+            map = JSON.parseObject(result, new TypeReference<Map>() {
+            });
         }
-        map.put(key,value);
-        return set(cacheName,map);
+        map.put(key, value);
+        return set(cacheName, map);
     }
 
     @Override
     public String put(String cacheName, String key, Object value, int expireTime) {
         String result = get(cacheName);
         Map map = new HashMap();
-        if (StringUtils.isNotBlank(result)){
-            map = JSON.parseObject(result, new TypeReference<Map>() {});
+        if (StringUtils.isNotBlank(result)) {
+            map = JSON.parseObject(result, new TypeReference<Map>() {
+            });
         }
-        map.put(key,value);
-        return set(cacheName,map,expireTime);
+        map.put(key, value);
+        return set(cacheName, map, expireTime);
     }
 
     @Override
-    public  Object get(String cacheName, String key){
+    public Object get(String cacheName, String key) {
         String result = get(cacheName);
-        if (StringUtils.isNotBlank(result)){
-            Map map = JSON.parseObject(result, new TypeReference<Map>() {});
+        if (StringUtils.isNotBlank(result)) {
+            Map map = JSON.parseObject(result, new TypeReference<Map>() {
+            });
             return map.get(key);
         }
         return null;

@@ -1,6 +1,6 @@
 package com.rymcu.forest.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -12,29 +12,45 @@ import java.util.Date;
 
 /**
  * 交易记录
+ *
  * @author ronger
  */
 @Table(name = "forest_transaction_record")
 @Data
 public class TransactionRecord {
-    /** 主键 */
+    /**
+     * 主键
+     */
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idTransactionRecord;
-    /** 交易流水号 */
+    /**
+     * 交易流水号
+     */
     private String transactionNo;
-    /** 款项 */
+    /**
+     * 款项
+     */
     private String funds;
-    /** 交易发起方 */
+    /**
+     * 交易发起方
+     */
     private String formBankAccount;
-    /** 交易收款方 */
+    /**
+     * 交易收款方
+     */
     private String toBankAccount;
-    /** 交易金额 */
+    /**
+     * 交易金额
+     */
     private BigDecimal money;
-    /** 交易类型 */
+    /**
+     * 交易类型
+     */
     private String transactionType;
-    /** 交易时间 */
+    /**
+     * 交易时间
+     */
     private Date transactionTime;
 }

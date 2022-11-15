@@ -13,44 +13,43 @@ import java.util.List;
  */
 public interface UserDicService {
 
-  /**
-   * 加载所有字典
-   *
-   * @return
-   */
-  List<String> getAllDic();
+    /**
+     * 加载所有字典
+     *
+     * @return
+     */
+    List<String> getAllDic();
 
-  /**
-   * 加载所有字典
-   *
-   * @return
-   */
-  List<UserDic> getAll();
+    /**
+     * 加载所有字典
+     *
+     * @return
+     */
+    List<UserDic> getAll();
 
-  /**
-   * 增加字典
-   *
-   * @return
-   */
-  void addDic(String dic);
+    /**
+     * 增加字典
+     *
+     * @return
+     */
+    void addDic(String dic);
 
-  /**
-   * 删除字典
-   *
-   * @param id
-   */
-  void deleteDic(String id);
+    /**
+     * 删除字典
+     *
+     * @param id
+     */
+    void deleteDic(String id);
 
-  /**
-   * 更新字典
-   *
-   * @param userDic
-   */
-  void updateDic(UserDic userDic);
+    /**
+     * 更新字典
+     *
+     * @param userDic
+     */
+    void updateDic(UserDic userDic);
 
-  /**
-   * 写入字典至内存
-   *
-   */
-  void writeUserDic() throws FileNotFoundException;
+    /**
+     * 写入字典至内存
+     */
+    void writeUserDic() throws FileNotFoundException;
 }

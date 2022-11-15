@@ -1,6 +1,6 @@
 package com.rymcu.forest.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 /**
  * @author ronger
  */
-@Table(name="forest_currency_rule")
+@Table(name = "forest_currency_rule")
 @Data
 public class CurrencyRule implements Serializable, Cloneable {
     /**
@@ -22,7 +22,6 @@ public class CurrencyRule implements Serializable, Cloneable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idCurrencyRule;
     /**
      * 规则名称

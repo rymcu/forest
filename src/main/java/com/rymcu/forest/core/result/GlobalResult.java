@@ -20,7 +20,7 @@ public class GlobalResult<T> {
         this.message = resultCode.getMessage();
     }
 
-    public static  <T> GlobalResult<T> newInstance() {
+    public static <T> GlobalResult<T> newInstance() {
         return new GlobalResult();
     }
 

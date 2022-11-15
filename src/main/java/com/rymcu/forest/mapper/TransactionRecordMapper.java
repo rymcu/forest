@@ -14,6 +14,7 @@ import java.util.List;
 public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
     /**
      * 交易
+     *
      * @param formBankAccount
      * @param toBankAccount
      * @param money
@@ -23,6 +24,7 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
 
     /**
      * 查询指定账户的交易记录
+     *
      * @param bankAccount
      * @param startDate
      * @param endDate
@@ -32,6 +34,7 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
 
     /**
      * 校验今日是否已发放答题奖励
+     *
      * @param bankAccount
      * @param funds
      * @return
@@ -40,6 +43,7 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
 
     /**
      * 查询是否已发放
+     *
      * @param bankAccount
      * @return
      */

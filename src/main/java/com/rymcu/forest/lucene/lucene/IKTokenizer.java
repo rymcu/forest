@@ -55,6 +55,7 @@ public final class IKTokenizer extends Tokenizer {
 
     /**
      * Lucene 6.0 Tokenizer适配器类构造函数
+     *
      * @param useSmart
      */
     public IKTokenizer(boolean useSmart) {
@@ -70,6 +71,7 @@ public final class IKTokenizer extends Tokenizer {
     /**
      * lucene 6.0 新增
      * 方便创建 工厂类
+     *
      * @param factory
      * @param useSmart
      */

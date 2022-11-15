@@ -25,7 +25,7 @@ public class AnswerController {
     @GetMapping("/today")
     public GlobalResult today() {
         User user = UserUtils.getCurrentUserByToken();
-        String result = HttpUtils.sendGet(ANSWER_API_URL + "/record/" + user.getIdUser() );
+        String result = HttpUtils.sendGet(ANSWER_API_URL + "/record/" + user.getIdUser());
         return JSONObject.parseObject(result, GlobalResult.class);
     }
 
@@ -43,7 +43,7 @@ public class AnswerController {
 
     @GetMapping("/get-answer")
     public GlobalResult getAnswer(Integer idSubjectQuestion) {
-        String result = HttpUtils.sendGet(ANSWER_API_URL + "/show-answer/" + idSubjectQuestion );
+        String result = HttpUtils.sendGet(ANSWER_API_URL + "/show-answer/" + idSubjectQuestion);
         return JSONObject.parseObject(result, GlobalResult.class);
     }
 }

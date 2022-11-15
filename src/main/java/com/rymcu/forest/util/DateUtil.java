@@ -34,6 +34,6 @@ public class DateUtil {
 
     public static String getNowDateNum() {
         Calendar cal = Calendar.getInstance();
-        return getYear(cal)  + getMonth(cal)  + getDay(cal);
+        return getYear(cal) + getMonth(cal) + getDay(cal);
     }
 }

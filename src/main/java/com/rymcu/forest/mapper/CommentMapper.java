@@ -14,6 +14,7 @@ import java.util.List;
 public interface CommentMapper extends Mapper<Comment> {
     /**
      * 获取文章评论列表
+     *
      * @param idArticle
      * @return
      */
@@ -21,6 +22,7 @@ public interface CommentMapper extends Mapper<Comment> {
 
     /**
      * 查询评论作者
+     *
      * @param commentAuthorId
      * @return
      */
@@ -28,6 +30,7 @@ public interface CommentMapper extends Mapper<Comment> {
 
     /**
      * 查询父评论作者
+     *
      * @param commentOriginalCommentId
      * @return
      */
@@ -35,6 +38,7 @@ public interface CommentMapper extends Mapper<Comment> {
 
     /**
      * 更新文章评论分享链接
+     *
      * @param idComment
      * @param commentSharpUrl
      * @return
@@ -43,6 +47,7 @@ public interface CommentMapper extends Mapper<Comment> {
 
     /**
      * 获取评论列表数据
+     *
      * @return
      */
     List<CommentDTO> selectComments();

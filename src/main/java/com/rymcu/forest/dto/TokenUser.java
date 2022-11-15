@@ -1,6 +1,6 @@
 package com.rymcu.forest.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 import java.util.Set;
@@ -11,7 +11,6 @@ import java.util.Set;
 @Data
 public class TokenUser {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idUser;
 
     private String account;

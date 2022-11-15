@@ -1,7 +1,6 @@
 package com.rymcu.forest.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,7 +12,6 @@ import java.util.Date;
 @Data
 public class UserInfoDTO implements Serializable {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idUser;
 
     private String account;

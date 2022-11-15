@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 通过Redis存储和验证token的实现类
+ *
  * @author ScienJus
  * @date 2015/7/31.
  */
@@ -56,7 +57,7 @@ public class RedisTokenManager implements TokenManager {
         }
         StringBuilder key = new StringBuilder();
         key.append(JwtConstants.LAST_ONLINE).append(model.getUsername());
-        String result =  redisTemplate.boundValueOps(key.toString()).get();
+        String result = redisTemplate.boundValueOps(key.toString()).get();
         if (StringUtils.isBlank(result)) {
             // 更新最后在线时间
             applicationEventPublisher.publishEvent(new AccountEvent(model.getUsername()));

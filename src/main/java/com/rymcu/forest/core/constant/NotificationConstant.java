@@ -2,6 +2,7 @@ package com.rymcu.forest.core.constant;
 
 /**
  * 消息通知类型
+ *
  * @author ronger
  */
 public class NotificationConstant {

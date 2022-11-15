@@ -16,26 +16,26 @@ import java.util.List;
 @Mapper
 public interface UserLuceneMapper {
 
-  /**
-   * 加载所有用户信息
-   *
-   * @return
-   */
-  List<UserLucene> getAllUserLucene();
+    /**
+     * 加载所有用户信息
+     *
+     * @return
+     */
+    List<UserLucene> getAllUserLucene();
 
-  /**
-   * 加载所有用户信息
-   *
-   * @param ids 用户id(半角逗号分隔)
-   * @return
-   */
-  List<UserDTO> getUsersByIds(@Param("ids") Long[] ids);
+    /**
+     * 加载所有用户信息
+     *
+     * @param ids 用户id(半角逗号分隔)
+     * @return
+     */
+    List<UserDTO> getUsersByIds(@Param("ids") Long[] ids);
 
-  /**
-   * 加载 UserLucene
-   *
-   * @param id 用户id
-   * @return
-   */
-  UserLucene getById(@Param("id") String id);
+    /**
+     * 加载 UserLucene
+     *
+     * @param id 用户id
+     * @return
+     */
+    UserLucene getById(@Param("id") String id);
 }

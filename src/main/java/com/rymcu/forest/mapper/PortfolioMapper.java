@@ -13,6 +13,7 @@ import java.util.List;
 public interface PortfolioMapper extends Mapper<Portfolio> {
     /**
      * 查询用户作品集
+     *
      * @param idUser
      * @return
      */
@@ -20,6 +21,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 查询作品集
+     *
      * @param id
      * @param type
      * @return
@@ -28,6 +30,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 统计作品集下文章数
+     *
      * @param idPortfolio
      * @return
      */
@@ -35,6 +38,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 查询文章是否已绑定
+     *
      * @param idArticle
      * @param idPortfolio
      * @return
@@ -43,6 +47,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 插入文章与作品集绑定数据
+     *
      * @param idArticle
      * @param idPortfolio
      * @param maxSortNo
@@ -52,6 +57,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 查询作品集下最大排序号
+     *
      * @param idPortfolio
      * @return
      */
@@ -59,6 +65,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 更新文章排序号
+     *
      * @param idPortfolio
      * @param idArticle
      * @param sortNo
@@ -68,6 +75,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 取消绑定文章
+     *
      * @param idPortfolio
      * @param idArticle
      * @return
@@ -76,6 +84,7 @@ public interface PortfolioMapper extends Mapper<Portfolio> {
 
     /**
      * 获取作品集列表数据
+     *
      * @return
      */
     List<PortfolioDTO> selectPortfolios();

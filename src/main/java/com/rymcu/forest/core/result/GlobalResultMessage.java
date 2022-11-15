@@ -12,7 +12,7 @@ public enum GlobalResultMessage {
 
     private String message;
 
-    GlobalResultMessage(String message){
+    GlobalResultMessage(String message) {
         this.message = message;
     }
 }

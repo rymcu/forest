@@ -12,6 +12,7 @@ import java.util.List;
 public interface BankMapper extends Mapper<Bank> {
     /**
      * 查询银行列表数据
+     *
      * @return
      */
     List<BankDTO> selectBanks();

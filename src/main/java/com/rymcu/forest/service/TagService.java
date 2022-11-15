@@ -15,11 +15,12 @@ public interface TagService extends Service<Tag> {
 
     /**
      * 保存文章标签
+     *
      * @param article
      * @param articleContentHtml
-     * @throws UnsupportedEncodingException
      * @return
-     * */
+     * @throws UnsupportedEncodingException
+     */
     Integer saveTagArticle(Article article, String articleContentHtml, Long userId) throws UnsupportedEncodingException;
 
     /**
@@ -39,6 +40,7 @@ public interface TagService extends Service<Tag> {
 
     /**
      * 获取标签列表
+     *
      * @return
      */
     List<LabelModel> findTagLabels();

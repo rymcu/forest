@@ -20,7 +20,6 @@ import java.util.Objects;
 
 /**
  * @author ronger
- *
  */
 @Aspect
 @Component
@@ -32,7 +31,9 @@ public class TransactionAspect {
     private TransactionRecordService transactionRecordService;
 
     @Pointcut("@annotation(com.rymcu.forest.core.service.log.annotation.TransactionLogger)")
-    public void pointCut() {}
+    public void pointCut() {
+    }
+
     /**
      * 保存交易操作日志
      *
@@ -40,7 +41,7 @@ public class TransactionAspect {
      * @return 方法执行结果
      * @throws Throwable 调用出错
      */
-    @AfterReturning(value = "pointCut()", returning="obj")
+    @AfterReturning(value = "pointCut()", returning = "obj")
     public void save(JoinPoint joinPoint, Object obj) throws Exception {
         logger.info("保存交易记录 start ...");
         /**

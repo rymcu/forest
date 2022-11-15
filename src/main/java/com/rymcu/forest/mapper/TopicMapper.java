@@ -15,6 +15,7 @@ import java.util.List;
 public interface TopicMapper extends Mapper<Topic> {
     /**
      * 获取导航主题
+     *
      * @return
      */
     List<Topic> selectTopicNav();
@@ -33,6 +34,7 @@ public interface TopicMapper extends Mapper<Topic> {
 
     /**
      * 更新
+     *
      * @param idTopic
      * @param topicTitle
      * @param topicUri

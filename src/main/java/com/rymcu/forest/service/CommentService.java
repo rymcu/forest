@@ -14,6 +14,7 @@ public interface CommentService extends Service<Comment> {
 
     /**
      * 获取文章评论数据
+     *
      * @param idArticle
      * @return
      */
@@ -21,6 +22,7 @@ public interface CommentService extends Service<Comment> {
 
     /**
      * 评论
+     *
      * @param comment
      * @param request
      * @return
@@ -29,6 +31,7 @@ public interface CommentService extends Service<Comment> {
 
     /**
      * 获取评论列表数据
+     *
      * @return
      */
     List<CommentDTO> findComments();

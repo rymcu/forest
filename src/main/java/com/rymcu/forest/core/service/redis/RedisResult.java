@@ -61,6 +61,7 @@ public class RedisResult<T> extends BaseDO {
     public void setKeyExists(boolean keyExists) {
         this.keyExists = keyExists;
     }
+
     public boolean isKeyExists() {
         return keyExists;
     }

@@ -6,6 +6,7 @@ public interface TreeMapper<T> extends Mapper<T> {
 
     /**
      * 找到所有子节点
+     *
      * @param entity
      * @return
      */
@@ -13,6 +14,7 @@ public interface TreeMapper<T> extends Mapper<T> {
 
     /**
      * 更新所有父节点字段
+     *
      * @param entity
      * @return
      */

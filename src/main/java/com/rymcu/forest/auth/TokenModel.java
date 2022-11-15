@@ -4,6 +4,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 /**
  * Token的Model类，可以增加字段提高安全性，例如时间戳、url签名
+ *
  * @author ScienJus
  * @date 2015/7/31.
  */
@@ -23,14 +24,14 @@ public class TokenModel implements AuthenticationToken {
     }
 
     public String getUsername() {
-		return username;
-	}
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getToken() {
+    public String getToken() {
         return token;
     }
 

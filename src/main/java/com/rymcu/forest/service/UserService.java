@@ -184,6 +184,7 @@ public interface UserService extends Service<User> {
 
     /**
      * 刷新  token
+     *
      * @param refreshToken
      * @return
      */
@@ -191,6 +192,7 @@ public interface UserService extends Service<User> {
 
     /**
      * 查询用户权限
+     *
      * @param user
      * @return
      */

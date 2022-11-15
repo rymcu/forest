@@ -16,12 +16,14 @@ import java.util.List;
 public interface ProductService extends Service<Product> {
     /**
      * 查询产品列表
+     *
      * @return
      */
     List<ProductDTO> findProducts();
 
     /**
      * 获取产品详情
+     *
      * @param idProduct
      * @param type
      * @return

@@ -18,12 +18,15 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /**
      * 查询用户作品集
+     *
      * @param userDTO
      * @return
      */
     List<PortfolioDTO> findUserPortfoliosByUser(UserDTO userDTO);
 
-    /** 查询作品集
+    /**
+     * 查询作品集
+     *
      * @param idPortfolio
      * @param type
      * @return
@@ -32,6 +35,7 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /**
      * 保持/更新作品集
+     *
      * @param portfolio
      * @return
      */
@@ -39,6 +43,7 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /**
      * 查询作品集下未绑定文章
+     *
      * @param page
      * @param rows
      * @param searchText
@@ -50,6 +55,7 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /**
      * 绑定文章
+     *
      * @param portfolioArticle
      * @return
      * @throws ServiceException
@@ -58,6 +64,7 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /**
      * 更新文章排序号
+     *
      * @param portfolioArticle
      * @return
      * @throws ServiceException
@@ -88,6 +95,7 @@ public interface PortfolioService extends Service<Portfolio> {
 
     /**
      * 获取作品集列表数据
+     *
      * @return
      */
     List<PortfolioDTO> findPortfolios();

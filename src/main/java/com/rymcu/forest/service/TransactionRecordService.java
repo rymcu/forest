@@ -13,6 +13,7 @@ import java.util.List;
 public interface TransactionRecordService extends Service<TransactionRecord> {
     /**
      * 交易
+     *
      * @param transactionRecord
      * @return
      */
@@ -20,6 +21,7 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
 
     /**
      * 查询指定账户的交易记录
+     *
      * @param bankAccount
      * @param startDate
      * @param endDate
@@ -29,6 +31,7 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
 
     /**
      * 根据用户主键进行交易
+     *
      * @param toUserId
      * @param formUserId
      * @param transactionType
@@ -38,6 +41,7 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
 
     /**
      * 社区银行转账/奖励发放
+     *
      * @param idUser
      * @param transactionType
      * @return
@@ -46,6 +50,7 @@ public interface TransactionRecordService extends Service<TransactionRecord> {
 
     /**
      * 发放新手奖励
+     *
      * @param transactionRecord
      * @return
      */

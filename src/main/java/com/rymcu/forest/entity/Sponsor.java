@@ -1,6 +1,6 @@
 package com.rymcu.forest.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;
@@ -14,14 +14,13 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="forest_sponsor")
+@Table(name = "forest_sponsor")
 public class Sponsor implements Serializable, Cloneable {
     /**
      * 主键
      */
     @Id
     @GeneratedValue(generator = "JDBC")
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
     /**
      * 数据类型
@@ -30,12 +29,10 @@ public class Sponsor implements Serializable, Cloneable {
     /**
      * 数据主键
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long dataId;
     /**
      * 赞赏人
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long sponsor;
     /**
      * 赞赏日期

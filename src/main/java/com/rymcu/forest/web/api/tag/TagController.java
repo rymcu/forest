@@ -26,7 +26,7 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping("/{name}")
-    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTagName(name);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
