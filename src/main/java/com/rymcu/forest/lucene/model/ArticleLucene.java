@@ -21,7 +21,6 @@ public class ArticleLucene {
     /**
      * 文章编号
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idArticle;
 
     /**

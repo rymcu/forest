@@ -21,7 +21,6 @@ public class UserLucene {
     /**
      * 用户编号
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idUser;
 
     /**

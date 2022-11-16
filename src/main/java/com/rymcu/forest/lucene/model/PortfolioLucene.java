@@ -21,7 +21,6 @@ public class PortfolioLucene {
     /**
      * 作品集编号
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idPortfolio;
 
     /**
