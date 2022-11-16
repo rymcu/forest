@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * @author ronger
@@ -27,7 +26,7 @@ public class CommentController {
     @PostMapping("/post")
     public GlobalResult<Comment> postComment(@RequestBody Comment comment, HttpServletRequest request) {
         comment.setCommentAuthorId(UserUtils.getCurrentUserByToken().getIdUser());
-        comment = commentService.postComment(comment,request);
+        comment = commentService.postComment(comment, request);
         return GlobalResultGenerator.genSuccessResult(comment);
     }
 }

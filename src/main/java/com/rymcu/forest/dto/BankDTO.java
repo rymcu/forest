@@ -13,21 +13,37 @@ import java.util.Date;
 public class BankDTO {
 
     private Integer idBank;
-    /** 银行名称 */
+    /**
+     * 银行名称
+     */
     private String bankName;
-    /** 银行负责人 */
+    /**
+     * 银行负责人
+     */
     private Integer bankOwner;
-    /** 银行负责人 */
+    /**
+     * 银行负责人
+     */
     private String bankOwnerName;
-    /** 银行账户 */
+    /**
+     * 银行账户
+     */
     private String bankAccount;
-    /** 账户余额 */
+    /**
+     * 账户余额
+     */
     private BigDecimal accountBalance;
-    /** 银行描述 */
+    /**
+     * 银行描述
+     */
     private String bankDescription;
-    /** 创建人 */
+    /**
+     * 创建人
+     */
     private Integer createdBy;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 }

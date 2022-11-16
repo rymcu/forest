@@ -20,60 +20,61 @@ import java.util.List;
 @Service
 public class UserDicServiceImpl implements UserDicService {
 
-  @Resource private UserDicMapper userDicMapper;
+    @Resource
+    private UserDicMapper userDicMapper;
 
-  @Override
-  public List<String> getAllDic() {
+    @Override
+    public List<String> getAllDic() {
 
-    return userDicMapper.getAllDic();
-  }
-
-  @Override
-  public List<UserDic> getAll() {
-    return userDicMapper.getAll();
-  }
-
-  @Override
-  public void addDic(String dic) {
-    userDicMapper.addDic(dic);
-    writeUserDic();
-  }
-
-  @Override
-  public void deleteDic(String id) {
-    userDicMapper.deleteDic(id);
-    writeUserDic();
-  }
-
-  @Override
-  public void updateDic(UserDic userDic) {
-    userDicMapper.updateDic(userDic.getId(), userDic.getDic());
-    writeUserDic();
-  }
-
-  @Override
-  public void writeUserDic() {
-    try {
-      String filePath = "lucene/userDic/";
-      File file = new File(filePath);
-      if (!file.exists()) {
-        file.mkdirs();
-      }
-      FileOutputStream stream = new FileOutputStream(file + "/userDic.dic", false);
-      OutputStreamWriter outfw = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
-      PrintWriter fw = new PrintWriter(new BufferedWriter(outfw));
-      userDicMapper
-          .getAllDic()
-          .forEach(
-              each -> {
-                fw.write(each);
-                fw.write("\r\n");
-              });
-      fw.flush();
-      fw.close();
-      Dictionary.getSingleton().updateUserDict();
-    } catch (IOException e) {
-      e.printStackTrace();
+        return userDicMapper.getAllDic();
     }
-  }
+
+    @Override
+    public List<UserDic> getAll() {
+        return userDicMapper.getAll();
+    }
+
+    @Override
+    public void addDic(String dic) {
+        userDicMapper.addDic(dic);
+        writeUserDic();
+    }
+
+    @Override
+    public void deleteDic(String id) {
+        userDicMapper.deleteDic(id);
+        writeUserDic();
+    }
+
+    @Override
+    public void updateDic(UserDic userDic) {
+        userDicMapper.updateDic(userDic.getId(), userDic.getDic());
+        writeUserDic();
+    }
+
+    @Override
+    public void writeUserDic() {
+        try {
+            String filePath = "lucene/userDic/";
+            File file = new File(filePath);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            FileOutputStream stream = new FileOutputStream(file + "/userDic.dic", false);
+            OutputStreamWriter outfw = new OutputStreamWriter(stream, StandardCharsets.UTF_8);
+            PrintWriter fw = new PrintWriter(new BufferedWriter(outfw));
+            userDicMapper
+                    .getAllDic()
+                    .forEach(
+                            each -> {
+                                fw.write(each);
+                                fw.write("\r\n");
+                            });
+            fw.flush();
+            fw.close();
+            Dictionary.getSingleton().updateUserDict();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

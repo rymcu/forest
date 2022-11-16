@@ -44,7 +44,7 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
         bankAccount.setAccountType(defaultAccountType);
         List<BankAccount> bankAccounts = bankAccountMapper.select(bankAccount);
         if (Objects.nonNull(bankAccounts) && bankAccounts.size() > 0) {
-             return bankAccountMapper.selectBankAccount(bankAccounts.get(0).getIdBankAccount());
+            return bankAccountMapper.selectBankAccount(bankAccounts.get(0).getIdBankAccount());
         }
         return null;
     }

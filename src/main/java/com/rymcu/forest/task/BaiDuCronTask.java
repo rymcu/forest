@@ -19,8 +19,8 @@ public class BaiDuCronTask {
     private String env;
 
     /**
-     *  定时推送首页更新
-     * */
+     * 定时推送首页更新
+     */
     @Scheduled(cron = "0 0 10,14,18 * * ?")
     public void pushHome() {
         if (!ProjectConstant.ENV.equals(env)) {

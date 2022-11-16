@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * 消息通知
+ *
  * @author ronger
  */
 @RestController

@@ -14,6 +14,7 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 获取未读通知数据
+     *
      * @param idUser
      * @return
      */
@@ -21,6 +22,7 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 获取消息数据
+     *
      * @param idUser
      * @return
      */
@@ -28,6 +30,7 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 获取消息数据
+     *
      * @param idUser
      * @param dataId
      * @param dataType
@@ -37,6 +40,7 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 创建消息通知
+     *
      * @param idUser
      * @param dataId
      * @param dataType
@@ -56,6 +60,7 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 标记所有消息已读
+     *
      * @param idUser
      * @return
      */
@@ -63,6 +68,7 @@ public interface NotificationMapper extends Mapper<Notification> {
 
     /**
      * 删除相关未读消息
+     *
      * @param dataId
      * @param dataType
      * @return

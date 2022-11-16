@@ -1,7 +1,6 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Table;
@@ -21,7 +20,6 @@ public class ProductContent implements Serializable, Cloneable {
     /**
      * 产品表主键
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idProduct;
     /**
      * 产品详情原文

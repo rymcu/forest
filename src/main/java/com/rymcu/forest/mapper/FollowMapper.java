@@ -13,6 +13,7 @@ import java.util.List;
 public interface FollowMapper extends Mapper<Follow> {
     /**
      * 判断是否关注
+     *
      * @param followingId
      * @param followerId
      * @param followingType
@@ -22,6 +23,7 @@ public interface FollowMapper extends Mapper<Follow> {
 
     /**
      * 查询用户粉丝
+     *
      * @param idUser
      * @return
      */
@@ -29,6 +31,7 @@ public interface FollowMapper extends Mapper<Follow> {
 
     /**
      * 查询用户关注用户
+     *
      * @param idUser
      * @return
      */

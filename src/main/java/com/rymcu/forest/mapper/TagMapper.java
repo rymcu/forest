@@ -14,6 +14,7 @@ public interface TagMapper extends Mapper<Tag> {
 
     /**
      * 插入标签文章表(forest_tag_article)相关信息
+     *
      * @param idTag
      * @param idArticle
      * @return
@@ -22,6 +23,7 @@ public interface TagMapper extends Mapper<Tag> {
 
     /**
      * 统计标签使用数(文章)
+     *
      * @param idTag
      * @param idArticle
      * @return
@@ -30,6 +32,7 @@ public interface TagMapper extends Mapper<Tag> {
 
     /**
      * 获取用户标签数
+     *
      * @param idUser
      * @param idTag
      * @return
@@ -38,6 +41,7 @@ public interface TagMapper extends Mapper<Tag> {
 
     /**
      * 插入用户标签信息
+     *
      * @param idTag
      * @param idUser
      * @param type
@@ -47,12 +51,14 @@ public interface TagMapper extends Mapper<Tag> {
 
     /**
      * 删除未使用标签
+     *
      * @return
      */
     Integer deleteUnusedTag();
 
     /**
      * 更新标签信息
+     *
      * @param idTag
      * @param tagUri
      * @param tagIconPath
@@ -65,6 +71,7 @@ public interface TagMapper extends Mapper<Tag> {
 
     /**
      * 查询标签列表
+     *
      * @return
      */
     List<LabelModel> selectTagLabels();

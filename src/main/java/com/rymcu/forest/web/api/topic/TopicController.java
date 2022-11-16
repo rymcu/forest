@@ -26,14 +26,14 @@ public class TopicController {
     private TopicService topicService;
 
     @GetMapping("/topic-nav")
-    public GlobalResult topicNav(){
+    public GlobalResult topicNav() {
         List<Topic> topics = topicService.findTopicNav();
         return GlobalResultGenerator.genSuccessResult(topics);
     }
 
     @GetMapping("/{name}")
     @VisitLogger
-    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTopicUri(name);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);

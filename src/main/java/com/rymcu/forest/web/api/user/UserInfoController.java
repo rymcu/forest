@@ -36,6 +36,7 @@ public class UserInfoController {
         UserInfoDTO userInfo = userService.findUserInfo(idUser);
         return GlobalResultGenerator.genSuccessResult(userInfo);
     }
+
     @GetMapping("/detail/{idUser}/extend-info")
     @SecurityInterceptor
     public GlobalResult<UserExtend> extendInfo(@PathVariable Long idUser) {

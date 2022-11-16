@@ -1,7 +1,6 @@
 package com.rymcu.forest.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -16,21 +15,19 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="forest_notification")
-public class Notification implements Serializable,Cloneable {
+@Table(name = "forest_notification")
+public class Notification implements Serializable, Cloneable {
     /**
      * 主键
      */
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idNotification;
     /**
      * 用户id
      */
     @Column(name = "id_user")
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long idUser;
     /**
      * 数据类型
@@ -41,7 +38,6 @@ public class Notification implements Serializable,Cloneable {
      * 数据id
      */
     @Column(name = "data_id")
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long dataId;
     /**
      * 数据摘要

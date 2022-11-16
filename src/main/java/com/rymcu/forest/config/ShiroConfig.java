@@ -82,7 +82,7 @@ public class ShiroConfig {
      * Shiro生命周期处理器
      */
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 

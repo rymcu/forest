@@ -16,6 +16,7 @@ import java.util.List;
 public interface ProductMapper extends Mapper<Product> {
     /**
      * 保存产品详情
+     *
      * @param idProduct
      * @param productContent
      * @param productContentHtml
@@ -25,12 +26,14 @@ public interface ProductMapper extends Mapper<Product> {
 
     /**
      * 查询产品列表
+     *
      * @return
      */
     List<ProductDTO> selectProducts();
 
     /**
      * 获取产品详情
+     *
      * @param idProduct
      * @param type
      * @return

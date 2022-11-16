@@ -31,6 +31,7 @@ public interface FollowService extends Service<Follow> {
 
     /**
      * 取消关注操作
+     *
      * @param follow
      * @return
      */
@@ -38,6 +39,7 @@ public interface FollowService extends Service<Follow> {
 
     /**
      * 获取关注用户者数据
+     *
      * @param followType
      * @param followingId
      * @return
@@ -45,9 +47,9 @@ public interface FollowService extends Service<Follow> {
     List<Follow> findByFollowingId(String followType, Long followingId);
 
 
-
     /**
      * 查询用户粉丝
+     *
      * @param userDTO
      * @return
      */
@@ -55,6 +57,7 @@ public interface FollowService extends Service<Follow> {
 
     /**
      * 查询用户关注用户
+     *
      * @param userDTO
      * @return
      */

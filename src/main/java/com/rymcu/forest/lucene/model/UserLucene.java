@@ -1,6 +1,6 @@
 package com.rymcu.forest.lucene.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,16 +18,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserLucene {
 
-  /** 用户编号 */
-  @JsonFormat(shape = JsonFormat.Shape.STRING)
-  private Long idUser;
+    /**
+     * 用户编号
+     */
+    private Long idUser;
 
-  /** 昵称 */
-  private String nickname;
+    /**
+     * 昵称
+     */
+    private String nickname;
 
-  /** 签名 */
-  private String signature;
+    /**
+     * 签名
+     */
+    private String signature;
 
-  /** 相关度评分 */
-  private String score;
+    /**
+     * 相关度评分
+     */
+    private String score;
 }

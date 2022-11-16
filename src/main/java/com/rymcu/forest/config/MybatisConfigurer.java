@@ -17,6 +17,7 @@ import static com.rymcu.forest.core.constant.ProjectConstant.*;
 
 /**
  * Mybatis & Mapper & PageHelper 配置
+ *
  * @author ronger
  */
 @Configuration

@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 public interface ArticleThumbsUpMapper extends Mapper<ArticleThumbsUp> {
     /**
      * 更新文章点赞数
+     *
      * @param idArticle
      * @param thumbsUpNumber
      * @return

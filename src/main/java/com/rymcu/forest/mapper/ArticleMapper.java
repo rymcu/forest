@@ -17,6 +17,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取文章列表
+     *
      * @param searchText
      * @param tag
      * @param topicUri
@@ -26,6 +27,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 根据文章 ID 查询文章
+     *
      * @param id
      * @param type
      * @return
@@ -34,6 +36,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 保存文章内容
+     *
      * @param idArticle
      * @param articleContent
      * @param articleContentHtml
@@ -43,6 +46,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 更新文章内容
+     *
      * @param idArticle
      * @param articleContent
      * @param articleContentHtml
@@ -52,6 +56,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取文章正文内容
+     *
      * @param idArticle
      * @return
      */
@@ -59,6 +64,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取主题下文章列表
+     *
      * @param topicName
      * @return
      */
@@ -66,6 +72,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取标签下文章列表
+     *
      * @param tagName
      * @return
      */
@@ -73,6 +80,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取用户文章列表
+     *
      * @param idUser
      * @return
      */
@@ -80,6 +88,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 删除文章标签
+     *
      * @param id
      * @return
      */
@@ -87,6 +96,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取文章标签列表
+     *
      * @param idArticle
      * @return
      */
@@ -94,6 +104,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 更新文章浏览数
+     *
      * @param id
      * @param articleViewCount
      * @return
@@ -102,6 +113,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 获取草稿列表
+     *
      * @param idUser
      * @return
      */
@@ -109,6 +121,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 删除未使用的文章标签
+     *
      * @param idArticleTag
      * @return
      */
@@ -116,6 +129,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 查询作品集下文章
+     *
      * @param idPortfolio
      * @return
      */
@@ -123,6 +137,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 查询作品集未绑定文章
+     *
      * @param idPortfolio
      * @param searchText
      * @param idUser
@@ -132,6 +147,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 查询文章所属作品集列表
+     *
      * @param idArticle
      * @return
      */
@@ -139,6 +155,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 更新文章标签
+     *
      * @param idArticle
      * @param tags
      * @return
@@ -147,6 +164,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 判断是否有评论
+     *
      * @param id
      * @return
      */
@@ -154,6 +172,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 删除关联作品集数据
+     *
      * @param id
      * @return
      */
@@ -161,6 +180,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 更新文章连接及预览内容
+     *
      * @param idArticle
      * @param articleLink
      * @param articlePermalink
@@ -171,6 +191,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 根据专题主键及当前文章排序号获取专题下文章大纲
+     *
      * @param idPortfolio
      * @param sortNo
      * @return
@@ -179,6 +200,7 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 更新文章优选状态
+     *
      * @param idArticle
      * @param articlePerfect
      * @return
@@ -187,12 +209,14 @@ public interface ArticleMapper extends Mapper<Article> {
 
     /**
      * 删除文章关联文章内容表信息
+     *
      * @param idArticle
      */
     void deleteArticleContent(@Param("idArticle") Long idArticle);
 
     /**
      * 获取公告
+     *
      * @return
      */
     List<ArticleDTO> selectAnnouncements();

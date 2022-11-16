@@ -16,26 +16,26 @@ import java.util.List;
 @Mapper
 public interface PortfolioLuceneMapper {
 
-  /**
-   * 加载所有作品集信息
-   *
-   * @return
-   */
-  List<PortfolioLucene> getAllPortfolioLucene();
+    /**
+     * 加载所有作品集信息
+     *
+     * @return
+     */
+    List<PortfolioLucene> getAllPortfolioLucene();
 
-  /**
-   * 加载所有作品集信息
-   *
-   * @param ids 作品集id(半角逗号分隔)
-   * @return
-   */
-  List<PortfolioDTO> getPortfoliosByIds(@Param("ids") Long[] ids);
+    /**
+     * 加载所有作品集信息
+     *
+     * @param ids 作品集id(半角逗号分隔)
+     * @return
+     */
+    List<PortfolioDTO> getPortfoliosByIds(@Param("ids") Long[] ids);
 
-  /**
-   * 加载作品集
-   *
-   * @param id 用户id
-   * @return
-   */
-  PortfolioLucene getById(@Param("id") Long id);
+    /**
+     * 加载作品集
+     *
+     * @param id 用户id
+     * @return
+     */
+    PortfolioLucene getById(@Param("id") Long id);
 }

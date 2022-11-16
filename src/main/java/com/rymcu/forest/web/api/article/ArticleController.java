@@ -81,7 +81,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{idArticle}/share")
-    public GlobalResult<String> share(@PathVariable Integer idArticle){
+    public GlobalResult<String> share(@PathVariable Integer idArticle) {
         User user = UserUtils.getCurrentUserByToken();
         return GlobalResultGenerator.genResult(true, articleService.share(idArticle, user.getAccount()), "");
     }

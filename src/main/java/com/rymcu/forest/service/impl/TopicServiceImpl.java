@@ -78,9 +78,9 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
                 topic.setTopicIconPath(topicIconPath);
             }
             topic.setUpdatedTime(new Date());
-            result = topicMapper.update(topic.getIdTopic(),topic.getTopicTitle(),topic.getTopicUri()
-                    ,topic.getTopicIconPath(),topic.getTopicNva(),topic.getTopicStatus()
-                    ,topic.getTopicSort(),topic.getTopicDescription(),topic.getTopicDescriptionHtml());
+            result = topicMapper.update(topic.getIdTopic(), topic.getTopicTitle(), topic.getTopicUri()
+                    , topic.getTopicIconPath(), topic.getTopicNva(), topic.getTopicStatus()
+                    , topic.getTopicSort(), topic.getTopicDescription(), topic.getTopicDescriptionHtml());
         }
         if (result == 0) {
             throw new ServiceException("操作失败!");
@@ -93,7 +93,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
         if (StringUtils.isBlank(tagTitle)) {
             tagTitle = "";
         }
-        return topicMapper.selectUnbindTagsById(idTopic,tagTitle);
+        return topicMapper.selectUnbindTagsById(idTopic, tagTitle);
     }
 
     @Override

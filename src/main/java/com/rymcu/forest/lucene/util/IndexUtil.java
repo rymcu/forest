@@ -22,12 +22,13 @@ import java.nio.file.Paths;
 public class IndexUtil {
     /**
      * 创建索引写入器
+     *
      * @param indexPath
      * @param create
      * @return
      * @throws IOException
      */
-    public static IndexWriter getIndexWriter(String indexPath,boolean create) throws IOException{
+    public static IndexWriter getIndexWriter(String indexPath, boolean create) throws IOException {
         Directory dir = FSDirectory.open(Paths.get(indexPath));
         Analyzer analyzer = new IKAnalyzer();
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
@@ -40,9 +41,9 @@ public class IndexUtil {
         //值较小有利于追加索引的速度
         //值较大,适合批量建立索引和更快的搜索
         mergePolicy.setMaxMergeDocs(5000);
-        if (create){
+        if (create) {
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        }else {
+        } else {
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         }
         return new IndexWriter(dir, iwc);

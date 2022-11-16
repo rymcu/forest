@@ -8,11 +8,13 @@ import java.util.List;
 
 /**
  * 消息通知接口类
+ *
  * @author ronger
  */
 public interface NotificationService extends Service<Notification> {
     /**
      * 获取未读消息数据
+     *
      * @param idUser
      * @return
      */
@@ -20,6 +22,7 @@ public interface NotificationService extends Service<Notification> {
 
     /**
      * 获取消息数据
+     *
      * @param idUser
      * @return
      */
@@ -27,6 +30,7 @@ public interface NotificationService extends Service<Notification> {
 
     /**
      * 获取消息数据
+     *
      * @param idUser
      * @param dataId
      * @param dataType
@@ -36,6 +40,7 @@ public interface NotificationService extends Service<Notification> {
 
     /**
      * 创建系统通知
+     *
      * @param idUser
      * @param dataId
      * @param dataType
@@ -55,12 +60,14 @@ public interface NotificationService extends Service<Notification> {
 
     /**
      * 标记所有消息已读
+     *
      * @return
      */
     Integer readAllNotification();
 
     /**
      * 删除相关未读消息
+     *
      * @param dataId
      * @param dataType
      * @return
