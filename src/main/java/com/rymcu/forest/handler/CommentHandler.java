@@ -29,7 +29,7 @@ public class CommentHandler {
     @Resource
     private CommentMapper commentMapper;
 
-    @Async("commentThreadPool")
+    @Async("taskExecutor")
     @EventListener
     public void processCommentCreatedEvent(CommentEvent commentEvent) throws InterruptedException {
         log.info(String.format("开始执行评论发布事件：[%s]", JSON.toJSONString(commentEvent)));
