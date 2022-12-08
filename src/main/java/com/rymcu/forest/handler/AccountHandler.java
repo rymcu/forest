@@ -23,7 +23,7 @@ public class AccountHandler {
     @Resource
     private UserMapper userMapper;
 
-    @Async("accountThreadPool")
+    @Async("taskExecutor")
     @EventListener
     public void processAccountLastOnlineTimeEvent(AccountEvent accountEvent) {
         userMapper.updateLastOnlineTimeByAccount(accountEvent.getAccount());

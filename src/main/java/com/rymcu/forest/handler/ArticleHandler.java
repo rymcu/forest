@@ -26,7 +26,7 @@ public class ArticleHandler {
     private LuceneService luceneService;
 
     @EventListener
-    @Async("articlePostThreadPool")
+    @Async("taskExecutor")
     public void processArticlePostEvent(ArticleEvent articleEvent) throws InterruptedException {
         Thread.sleep(1000);
         log.info(String.format("执行文章发布相关事件：[%s]", JSON.toJSONString(articleEvent)));
@@ -56,7 +56,7 @@ public class ArticleHandler {
     }
 
     @EventListener
-    @Async("articleDeleteThreadPool")
+    @Async("taskExecutor")
     public void processArticleDeleteEvent(ArticleDeleteEvent articleDeleteEvent) throws InterruptedException {
         Thread.sleep(1000);
         log.info(String.format("执行文章删除相关事件：[%s]", JSON.toJSONString(articleDeleteEvent)));
