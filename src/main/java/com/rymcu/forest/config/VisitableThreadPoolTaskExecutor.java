@@ -19,9 +19,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class VisitableThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
     private static final Logger logger = LoggerFactory.getLogger(VisitableThreadPoolTaskExecutor.class);
 
-    private void showThreadPoolInfo(String prefix){
+    private void showThreadPoolInfo(String prefix) {
         ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
-
         logger.info("{}, {},taskCount [{}], completedTaskCount [{}], activeCount [{}], queueSize [{}]",
                 this.getThreadNamePrefix(),
                 prefix,
