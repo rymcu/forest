@@ -24,7 +24,7 @@ public class ArticleIndexUtil {
      * lucene索引保存目录
      */
     private static final String PATH =
-            System.getProperty("user.dir") + LucenePath.ARTICLE_INDEX_PATH;
+            LucenePath.ARTICLE_INDEX_PATH;
 
     /**
      * 删除所有运行中保存的索引

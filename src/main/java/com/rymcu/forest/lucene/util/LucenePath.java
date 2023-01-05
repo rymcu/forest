@@ -10,7 +10,7 @@ public final class LucenePath {
     /**
      * lucene 目录
      */
-    public static final String INDEX_PATH = "/lucene/index";
+    public static final String INDEX_PATH = "lucene/index";
 
     /**
      * 文章 lucene 目录
@@ -21,7 +21,7 @@ public final class LucenePath {
      * 文章增量 lucene 目录
      */
     public static final String ARTICLE_INCREMENT_INDEX_PATH =
-            System.getProperty("user.dir") + ARTICLE_INDEX_PATH + "/index777";
+            ARTICLE_INDEX_PATH + "/index777";
 
     /**
      * 用户 lucene 目录
@@ -32,7 +32,7 @@ public final class LucenePath {
      * 用户增量 lucene 目录
      */
     public static final String USER_INCREMENT_INDEX_PATH =
-            System.getProperty("user.dir") + USER_PATH + "/index777";
+            USER_PATH + "/index777";
 
     /**
      * 作品集 lucene 目录
@@ -43,5 +43,5 @@ public final class LucenePath {
      * 作品集增量 lucene 目录
      */
     public static final String PORTFOLIO_INCREMENT_INDEX_PATH =
-            System.getProperty("user.dir") + PORTFOLIO_PATH + "/index777";
+            PORTFOLIO_PATH + "/index777";
 }

@@ -25,7 +25,7 @@ public class UserIndexUtil {
     /**
      * lucene索引保存目录
      */
-    private static final String PATH = System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.USER_PATH;
+    private static final String PATH = StrUtil.SLASH + LucenePath.USER_PATH;
 
     /**
      * 系统运行时索引保存目录

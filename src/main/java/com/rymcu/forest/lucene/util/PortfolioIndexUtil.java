@@ -24,7 +24,7 @@ public class PortfolioIndexUtil {
      * lucene索引保存目录
      */
     private static final String PATH =
-            System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.PORTFOLIO_PATH;
+            StrUtil.SLASH + LucenePath.PORTFOLIO_PATH;
 
     /**
      * 删除所有运行中保存的索引
