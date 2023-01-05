@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.rymcu</groupId>
     <artifactId>forest</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>war</packaging>
     <name>forest</name>
     <description>forest(森林) —— 一款现代化的知识社区后台项目，使用 SpringBoot + Shiro + MyBatis + JWT + Redis 实现。
