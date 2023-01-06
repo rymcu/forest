@@ -60,7 +60,11 @@ public class UserIndexUtil {
         System.out.println("创建单个索引");
         IndexWriter writer;
         try {
-            writer = IndexUtil.getIndexWriter(INDEX_PATH, false);
+            boolean create = true;
+            if (FileUtil.exist(LucenePath.USER_INCREMENT_INDEX_PATH)) {
+                create = false;
+            }
+            writer = IndexUtil.getIndexWriter(INDEX_PATH, create);
             Document doc = new Document();
             doc.add(new StringField("id", t.getIdUser() + "", Field.Store.YES));
             doc.add(new TextField("nickname", t.getNickname(), Field.Store.YES));

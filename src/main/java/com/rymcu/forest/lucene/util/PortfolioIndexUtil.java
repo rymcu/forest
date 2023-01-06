@@ -53,7 +53,11 @@ public class PortfolioIndexUtil {
         System.out.println("创建单个索引");
         IndexWriter writer;
         try {
-            writer = IndexUtil.getIndexWriter(LucenePath.PORTFOLIO_INCREMENT_INDEX_PATH, false);
+            boolean create = true;
+            if (FileUtil.exist(LucenePath.PORTFOLIO_INCREMENT_INDEX_PATH)) {
+                create = false;
+            }
+            writer = IndexUtil.getIndexWriter(LucenePath.PORTFOLIO_INCREMENT_INDEX_PATH, create);
             Document doc = new Document();
             doc.add(new StringField("id", t.getIdPortfolio() + "", Field.Store.YES));
             doc.add(new TextField("title", t.getPortfolioTitle(), Field.Store.YES));
