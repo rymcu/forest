@@ -23,7 +23,7 @@ public class PortfolioIndexUtil {
     /**
      * lucene索引保存目录
      */
-    private static final String PATH = LucenePath.PORTFOLIO_PATH;
+    private static final String PATH = System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.PORTFOLIO_PATH;
 
     /**
      * 删除所有运行中保存的索引
@@ -81,6 +81,7 @@ public class PortfolioIndexUtil {
                                 try {
                                     writer = IndexUtil.getIndexWriter(each.getAbsolutePath(), false);
                                     writer.deleteDocuments(new Term("id", String.valueOf(id)));
+                                    writer.forceMerge(1);
                                     writer.forceMergeDeletes(); // 强制删除
                                     writer.commit();
                                     writer.close();

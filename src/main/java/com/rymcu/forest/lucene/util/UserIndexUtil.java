@@ -25,7 +25,7 @@ public class UserIndexUtil {
     /**
      * lucene索引保存目录
      */
-    private static final String PATH = LucenePath.USER_PATH;
+    private static final String PATH = System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.USER_PATH;
 
     /**
      * 系统运行时索引保存目录
@@ -89,6 +89,7 @@ public class UserIndexUtil {
                                 try {
                                     writer = IndexUtil.getIndexWriter(each.getAbsolutePath(), false);
                                     writer.deleteDocuments(new Term("id", id));
+                                    writer.forceMerge(1);
                                     writer.forceMergeDeletes(); // 强制删除
                                     writer.commit();
                                     writer.close();
