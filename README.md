@@ -9,7 +9,7 @@
 
 forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使用 SpringBoot + Shiro + MyBatis + JWT + Redis 实现。
 
-与 [nubula](https://github.com/rymcu/nebula) （[ˈnebyələ]，n.星云）一起食用，让我们一起探索知识社区的未来。
+与 [nebula](https://github.com/rymcu/nebula) （[ˈnebyələ]，n.星云）一起食用，让我们一起探索知识社区的未来。
 
 [forest 食用手册](UserManual.md)
 
