@@ -163,7 +163,7 @@ public class RedisServiceImpl implements RedisService {
      * @return
      */
     @Override
-    public String set(String key, Object obj, int expireTime) {
+    public String set(String key, Object obj, long expireTime) {
         String value = RedisService.BLANK_CONTENT;
         if (obj != null) {
             try {
@@ -184,7 +184,7 @@ public class RedisServiceImpl implements RedisService {
      * @return
      */
     @Override
-    public String set(String key, String value, int expireTime) {
+    public String set(String key, String value, long expireTime) {
         if (StringUtils.isBlank(key)) {
             logger.warn("Params key is blank!");
             return null;
@@ -460,7 +460,7 @@ public class RedisServiceImpl implements RedisService {
      * @param seconds
      */
     @Override
-    public void setTTL(String key, int seconds) {
+    public void setTTL(String key, long seconds) {
         if (seconds < 0) {
             return;
         }

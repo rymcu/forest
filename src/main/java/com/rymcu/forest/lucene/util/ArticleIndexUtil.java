@@ -1,6 +1,7 @@
 package com.rymcu.forest.lucene.util;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.rymcu.forest.lucene.model.ArticleLucene;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -23,8 +24,7 @@ public class ArticleIndexUtil {
     /**
      * lucene索引保存目录
      */
-    private static final String PATH =
-            System.getProperty("user.dir") + LucenePath.ARTICLE_INDEX_PATH;
+    private static final String PATH = System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.ARTICLE_INDEX_PATH;
 
     /**
      * 删除所有运行中保存的索引

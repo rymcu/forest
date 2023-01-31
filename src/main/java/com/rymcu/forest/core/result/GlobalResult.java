@@ -21,7 +21,7 @@ public class GlobalResult<T> {
     }
 
     public static <T> GlobalResult<T> newInstance() {
-        return new GlobalResult();
+        return new GlobalResult<>();
     }
 
 }

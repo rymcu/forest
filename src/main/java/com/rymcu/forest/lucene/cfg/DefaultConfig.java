@@ -42,7 +42,7 @@ public class DefaultConfig implements Configuration {
      * 用户自定义字典路径
      */
     private static final String PATH_USER_DIC =
-            System.getProperty("user.dir") + "/lucene/userDic/userDic.dic";
+            "lucene/userDic/userDic.dic";
     /**
      * 配置属性——扩展字典
      */

@@ -23,8 +23,7 @@ public class PortfolioIndexUtil {
     /**
      * lucene索引保存目录
      */
-    private static final String PATH =
-            System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.PORTFOLIO_PATH;
+    private static final String PATH = System.getProperty("user.dir") + StrUtil.SLASH + LucenePath.PORTFOLIO_PATH;
 
     /**
      * 删除所有运行中保存的索引
@@ -54,7 +53,11 @@ public class PortfolioIndexUtil {
         System.out.println("创建单个索引");
         IndexWriter writer;
         try {
-            writer = IndexUtil.getIndexWriter(LucenePath.PORTFOLIO_INCREMENT_INDEX_PATH, false);
+            boolean create = true;
+            if (FileUtil.exist(LucenePath.PORTFOLIO_INCREMENT_INDEX_PATH)) {
+                create = false;
+            }
+            writer = IndexUtil.getIndexWriter(LucenePath.PORTFOLIO_INCREMENT_INDEX_PATH, create);
             Document doc = new Document();
             doc.add(new StringField("id", t.getIdPortfolio() + "", Field.Store.YES));
             doc.add(new TextField("title", t.getPortfolioTitle(), Field.Store.YES));
@@ -78,6 +81,7 @@ public class PortfolioIndexUtil {
                                 try {
                                     writer = IndexUtil.getIndexWriter(each.getAbsolutePath(), false);
                                     writer.deleteDocuments(new Term("id", String.valueOf(id)));
+                                    writer.forceMerge(1);
                                     writer.forceMergeDeletes(); // 强制删除
                                     writer.commit();
                                     writer.close();
