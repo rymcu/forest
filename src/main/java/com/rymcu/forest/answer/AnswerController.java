@@ -8,6 +8,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.util.HttpUtils;
 import com.rymcu.forest.util.UserUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,7 +21,8 @@ import java.util.Map;
 @RequestMapping("/api/v1/answer")
 public class AnswerController {
 
-    private final static String ANSWER_API_URL = "https://test.rymcu.com/subject/question";
+    @Value("${resource.answer-api-url}")
+    private String ANSWER_API_URL;
 
     @GetMapping("/today")
     public GlobalResult today() {
