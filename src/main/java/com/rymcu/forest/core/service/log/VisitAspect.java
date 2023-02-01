@@ -59,6 +59,10 @@ public class VisitAspect {
         String url = request.getRequestURL().toString();
         String ua = request.getHeader("user-agent");
         String referer = request.getHeader("Referer");
+        int maxVisitRefererUrlLength = 256;
+        if (StringUtils.isNotBlank(referer) && referer.length() > maxVisitRefererUrlLength) {
+            referer = referer.substring(0, maxVisitRefererUrlLength - 1);
+        }
         String fingerprint = request.getHeader("fingerprint");
         Visit visit = new Visit();
         visit.setVisitUrl(url);
@@ -71,9 +75,7 @@ public class VisitAspect {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
         if (StringUtils.isNotBlank(authHeader)) {
             TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-            if (Objects.nonNull(tokenUser)) {
-                visit.setVisitUserId(tokenUser.getIdUser());
-            }
+            visit.setVisitUserId(tokenUser.getIdUser());
         }
         visitService.save(visit);
 
