@@ -33,4 +33,4 @@ build/
 
 ### lucene ###
 index
-userDic
+userDic!/src/main/resources/application-dev.yml

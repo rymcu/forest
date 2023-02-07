@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  redis:
+    image: redis:5.0.14
+    container_name: forest-ce-redis
+    sysctls:
+      - net.core.somaxconn=1024
+    ports:
+      - "6379:6379"
+    volumes:
+      - "redis-volume:/data"
+    command: redis-server --requirepass d9d2j9w2 --appendonly yes
+    environment:
+      - TZ=Asia/Shanghai
+  mysql:
+    image: mysql:5.7.8
+    container_name: forest-ce-mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - "mysql-volume:/etc/mysql/conf.d"
+      - "mysql-volume:/var/lib/mysql"
+      - "mysql-volume:/logs"
+    environment:
+      - MYSQL_ROOT_PASSWORD=XzHvhX4CDaN696oQAXdmlcsrqgWbkxRl
+      - TZ=Asia/Shanghai
+volumes:
+  mysql-volume:
+  redis-volume:
