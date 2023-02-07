@@ -9,7 +9,7 @@ spring:
       content-type: text/html
     cache: false
   redis:
-    host: 127.0.0.1
+    host: 192.168.31.200
     port: 6379
     password: d9d2j9w2
     database: 1
@@ -22,7 +22,7 @@ spring:
         min-idle: 0
   datasource:
     druid:
-      url: jdbc:mysql://127.0.0.1:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      url: jdbc:mysql://192.168.31.200:3306/forest?characterEncoding=UTF-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
       username: root
       password: Ldh1NrsXJntz5nTXeO0nPh+8s1FMe+JHCfXy2Zj3egqqjegN+mNe+53ZmduUlVdE4ZqKuUho7T9yftc6AYYKog==
       driver-class-name: com.mysql.cj.jdbc.Driver
