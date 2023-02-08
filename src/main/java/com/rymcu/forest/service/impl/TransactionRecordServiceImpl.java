@@ -18,40 +18,62 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author ronger
  */
 @Service
 public class TransactionRecordServiceImpl extends AbstractService<TransactionRecord> implements TransactionRecordService {
-
     @Resource
     private TransactionRecordMapper transactionRecordMapper;
     @Resource
     private BankAccountMapper bankAccountMapper;
     @Resource
     private RedisService redisService;
+    private final Map<String, ReentrantLock> userTransferLocks = new HashMap<>();
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public TransactionRecord transfer(TransactionRecord transactionRecord) {
-        // 判断发起者账户状态
-        boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
-        if (formAccountStatus) {
-            Integer result = transactionRecordMapper.transfer(transactionRecord.getFormBankAccount(), transactionRecord.getToBankAccount(), transactionRecord.getMoney());
-            if (result > 0) {
-                transactionRecord.setTransactionNo(nextTransactionNo());
-                transactionRecord.setTransactionTime(new Date());
-                transactionRecordMapper.insertSelective(transactionRecord);
+        ReentrantLock lock = getUserTransferLocks(transactionRecord.getFormBankAccount());
+        lock.lock();
+        try {
+            // 判断发起者账户状态
+            boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
+            boolean toAccountStatus = checkFormAccountStatus(transactionRecord.getToBankAccount(), BigDecimal.valueOf(0));
+            if (formAccountStatus && toAccountStatus) {
+                Integer result = transactionRecordMapper.debit(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
+                if (result > 0) {
+                    result = transactionRecordMapper.credit(transactionRecord.getToBankAccount(), transactionRecord.getMoney());
+                    if (result > 0) {
+                        transactionRecord.setTransactionNo(nextTransactionNo());
+                        transactionRecord.setTransactionTime(new Date());
+                        transactionRecordMapper.insertSelective(transactionRecord);
+                        return transactionRecord;
+                    }
+                }
+            } else if (toAccountStatus) {
+                throw new TransactionException(TransactionCode.INSUFFICIENT_BALANCE);
+            } else {
+                throw new TransactionException(TransactionCode.UNKNOWN_ACCOUNT);
             }
-        } else {
-            throw new TransactionException(TransactionCode.INSUFFICIENT_BALANCE);
+        } finally {
+            lock.unlock();
         }
-        return transactionRecord;
+        throw new TransactionException(TransactionCode.FAIL);
+    }
+
+    private ReentrantLock getUserTransferLocks(String formBankAccount) {
+        synchronized (userTransferLocks) {
+            ReentrantLock lock = userTransferLocks.get(formBankAccount);
+            if (lock == null) {
+                lock = new ReentrantLock();
+                userTransferLocks.put(formBankAccount, lock);
+            }
+            return lock;
+        }
     }
 
     @Override
@@ -162,7 +184,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     private boolean checkFormAccountStatus(String formBankAccount, BigDecimal money) {
         BankAccount bankAccount = findInfoByBankAccount(formBankAccount);
         if (Objects.nonNull(bankAccount)) {
-            return bankAccount.getAccountBalance().compareTo(money) > 0;
+            return bankAccount.getAccountBalance().compareTo(money) >= 0;
         }
         return false;
     }
