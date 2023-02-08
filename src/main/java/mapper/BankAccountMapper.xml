@@ -47,6 +47,6 @@
     <select id="findPersonBankAccountByIdUser" resultMap="DTOResultMap">
         select fba.*
         from forest_bank_account fba
-        where fba.account_owner = #{idUser}
+        where fba.account_owner = #{idUser} and account_type = 0
     </select>
 </mapper>
