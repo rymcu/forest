@@ -18,12 +18,14 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      - "./forest.sql:/forest.sql"
       - "mysql8-volume:/etc/mysql/conf.d"
       - "mysql8-volume:/var/lib/mysql"
       - "mysql8-volume:/logs"
     environment:
       - MYSQL_ROOT_PASSWORD=XzHvhX4CDaN696oQAXdmlcsrqgWbkxRl
       - TZ=Asia/Shanghai
+    command: ["--default-authentication-plugin=mysql_native_password", "--init-file=/forest.sql"]
 volumes:
   mysql8-volume:
   redis-volume:
