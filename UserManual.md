@@ -12,7 +12,12 @@
 - 本项目使用了 `Lombok`，所以你还需在你的编辑器上安装 `Lombok` 插件
 - 本项目使用 `maven` 作为依赖管理工具
 
-## 初始化数据库
+## 使用 Docker 初始化开发环境
+- 确保本机已安装并启动 `Docker`
+- 在 `docker\dev` 目录下执行 `docker-compose up` 可初始化 `redis` 和 `mysql` 环境
+- 如需修改相关配置，请编辑 `docker\dev` 目录下的 `docker-compose.yml` 文件
+
+## 手动初始化数据库
 
 ![forest-sql](https://static.rymcu.com/article/1650261394563.png)
 

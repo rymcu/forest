@@ -16,11 +16,10 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
      * 交易
      *
      * @param formBankAccount
-     * @param toBankAccount
      * @param money
      * @return
      */
-    Integer transfer(@Param("formBankAccount") String formBankAccount, @Param("toBankAccount") String toBankAccount, @Param("money") BigDecimal money);
+    Integer debit(@Param("formBankAccount") String formBankAccount, @Param("money") BigDecimal money);
 
     /**
      * 查询指定账户的交易记录
@@ -48,4 +47,11 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
      * @return
      */
     Boolean existsWithNewbieRewards(@Param("bankAccount") String bankAccount);
+
+    /**
+     * @param toBankAccount
+     * @param money
+     * @return
+     */
+    Integer credit(@Param("toBankAccount") String toBankAccount, @Param("money") BigDecimal money);
 }

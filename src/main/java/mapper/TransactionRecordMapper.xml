@@ -11,13 +11,15 @@
         <result column="transaction_type" property="transactionType"></result>
         <result column="transaction_time" property="transactionTime"></result>
     </resultMap>
-    <update id="transfer">
+    <update id="debit">
         update forest_bank_account
         set account_balance = account_balance - #{money}
-        where bank_account = #{formBankAccount};
+        where bank_account = #{formBankAccount} and account_balance >= #{money}
+    </update>
+    <update id="credit">
         update forest_bank_account
         set account_balance = account_balance + #{money}
-        where bank_account = #{toBankAccount};
+        where bank_account = #{toBankAccount}
     </update>
     <select id="selectTransactionRecords" resultMap="DTOResultMap">
         select *
