@@ -36,6 +36,8 @@ spring:
     port: 465
     username: # 邮箱
     password: # 密码
+  application:
+    name: forest
 wx:
   open:
     componentAppId: #
@@ -66,10 +68,16 @@ server:
   port: 8099
   servlet:
     context-path: /forest
+  max-http-header-size: 1048576
+  shutdown: graceful
+  tomcat:
+    reject-illegal-header: false
 version: 1.0
 resource:
   domain: http://yourdomain.com # 网站域名
   file-path: http://yourdomain.com # 上传文件前缀域名
   pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址
   answer-api-url: https://test.rymcu.com/subject/question
+openai:
+  token: # Open Ai Key
 
