@@ -1,5 +1,6 @@
 package com.rymcu.forest.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.ArticleSearchDTO;
 import com.rymcu.forest.dto.ArticleTagDTO;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -98,8 +98,8 @@ class ArticleServiceTest {
     @BeforeEach
     public void postArticle() throws UnsupportedEncodingException {
         Long articleId = articleService.postArticle(testArticle, testUser);
-        testArticle.setIdArticle(articleId);
         assertNotNull(articleId);
+        testArticle.setIdArticle(articleId);
     }
 
     /**
@@ -111,8 +111,7 @@ class ArticleServiceTest {
     void findArticles() {
         // 无参数时返回参数不应为EmptyList
         List<ArticleDTO> articlesAll = articleService.findArticles(new ArticleSearchDTO());
-        assertNotNull(articlesAll);
-        assertNotEquals(Collections.emptyList(), articlesAll);
+        assertTrue(CollectionUtil.isNotEmpty(articlesAll));
 
         // 测试条件查询是否含有目标数据
         ArticleSearchDTO articleSearchDTO = new ArticleSearchDTO();
@@ -151,7 +150,7 @@ class ArticleServiceTest {
     @Test
     void findUserArticlesByIdUser() {
         List<ArticleDTO> userArticlesByIdUser = articleService.findUserArticlesByIdUser(testArticle.getArticleAuthorId());
-        assertNotEquals(Collections.emptyList(), userArticlesByIdUser);
+        assertTrue(CollectionUtil.isNotEmpty(userArticlesByIdUser));
     }
 
     /**
