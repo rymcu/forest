@@ -67,8 +67,11 @@ public class ArticleController {
     }
 
     @GetMapping("/{idArticle}/comments")
-    public GlobalResult<List<CommentDTO>> commons(@PathVariable Integer idArticle) {
-        return GlobalResultGenerator.genSuccessResult(commentService.getArticleComments(idArticle));
+    public GlobalResult<PageInfo<CommentDTO>> commons(@PathVariable Integer idArticle, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+        PageHelper.startPage(page, rows);
+        List<CommentDTO> list = commentService.getArticleComments(idArticle);
+        PageInfo<CommentDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/drafts")
