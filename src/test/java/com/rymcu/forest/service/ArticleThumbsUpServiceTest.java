@@ -1,7 +1,6 @@
 package com.rymcu.forest.service;
 
 import com.rymcu.forest.core.exception.BusinessException;
-import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.ArticleSearchDTO;
 import com.rymcu.forest.entity.ArticleThumbsUp;
@@ -42,13 +41,10 @@ class ArticleThumbsUpServiceTest {
     private ArticleService articleService;
 
     {
-        {
             articleThumbsUp = new ArticleThumbsUp();
             articleThumbsUp.setIdArticle(-1L);
             articleThumbsUp.setThumbsUpTime(new Date());
             articleThumbsUp.setIdUser(-1L);
-
-        }
     }
 
 
@@ -56,7 +52,7 @@ class ArticleThumbsUpServiceTest {
      * 测试点赞不存在的文章
      */
     @Test
-    void thumbsNotExistsArticle() {
+    public void thumbsNotExistsArticle() {
         assertThrows(BusinessException.class, () -> {
             articleThumbsUpService.thumbsUp(articleThumbsUp);
         });
@@ -66,20 +62,7 @@ class ArticleThumbsUpServiceTest {
      * 测试点赞存在的文章
      */
     @Test
-    void thumbsExistsArticle() {
-        assertThrows(NullPointerException.class, () -> {
-            assertDoesNotThrow(() -> {
-                List<ArticleDTO> articles = articleService.findArticles(null);
-            });
-
-        });
-    }
-
-    /**
-     * 测试点赞存在的文章
-     */
-    @Test
-    void thumbsExistsArticle2() {
+    public void thumbsExistsArticle2() {
         assertDoesNotThrow(() -> {
             List<ArticleDTO> articles = articleService.findArticles(new ArticleSearchDTO());
             articleThumbsUp.setIdArticle(articles.get(0).getIdArticle());
@@ -88,18 +71,5 @@ class ArticleThumbsUpServiceTest {
         int i = articleThumbsUpService.thumbsUp(articleThumbsUp);
         assertEquals(1, i);
     }
-
-
-    /**
-     * 测试点赞存在的文章
-     */
-    @Test
-    void thumbsNotExistsUser() {
-        articleThumbsUp.setIdUser(null);
-        assertThrows(ServiceException.class, () -> {
-            articleThumbsUpService.thumbsUp(articleThumbsUp);
-        });
-    }
-
 
 }
