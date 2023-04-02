@@ -587,22 +587,27 @@ insert into forest.forest_user (id, account, password, nickname, real_name, sex,
 values (2, 'testUser', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'testUser', 'testUser', '0', '0',
         null, 'testUser@rymcu.com',
         null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', '2021-01-25 18:21:54', null);
+INSERT INTO `forest`.`forest_user` (`id`, `account`, `password`, `nickname`, `real_name`, `sex`, `avatar_type`,
+                                    `avatar_url`, `email`, `phone`, `status`, `created_time`, `updated_time`,
+                                    `last_login_time`, `signature`, `last_online_time`, `bg_img_url`)
+VALUES (65001, 'testUser1', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'testUser', 'testUser1', '0',
+        '0', NULL, 'testUser@rymcu.com', NULL, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', '2021-01-25 18:21:54',
+        NULL, NULL, NULL);
 
 insert into forest.forest_user_role (id_user, id_role, created_time)
 values (1, 1, '2021-01-25 18:22:12');
 
 create table forest_file
 (
-    id           int unsigned auto_increment comment 'id'
-        primary key,
+    id           int unsigned auto_increment comment 'id' primary key,
     md5_value    varchar(40)  not null comment '文件md5值',
     file_path    varchar(255) not null comment '文件上传路径',
     file_url     varchar(255) not null comment '网络访问路径',
-    created_time datetime     null comment '创建时间',
-    updated_time datetime     null comment '更新时间',
-    created_by   int          null comment '创建人',
-    file_size    int          null comment '文件大小',
-    file_type    varchar(10)  null comment '文件类型'
+    created_time datetime null comment '创建时间',
+    updated_time datetime null comment '更新时间',
+    created_by   int null comment '创建人',
+    file_size    int null comment '文件大小',
+    file_type    varchar(10) null comment '文件类型'
 ) comment '文件上传记录表' collate = utf8mb4_unicode_ci;
 
 create index index_md5_value_created_by

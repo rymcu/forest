@@ -1,17 +1,12 @@
 package com.rymcu.forest.service;
 
+import com.rymcu.forest.base.BaseServiceTest;
 import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.ArticleSearchDTO;
 import com.rymcu.forest.entity.ArticleThumbsUp;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -19,16 +14,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 点赞文章
+ * 点赞文章测试
  *
  * @author 毛毛虫
  */
-@SpringBootTest
-@ExtendWith(SpringExtension.class)
-@Transactional
-// 顺序执行单元测试
-@TestMethodOrder(MethodOrderer.Random.class)
-class ArticleThumbsUpServiceTest {
+class ArticleThumbsUpServiceTest extends BaseServiceTest {
 
     /**
      * 测试用点赞实体
@@ -64,7 +54,9 @@ class ArticleThumbsUpServiceTest {
     @Test
     public void thumbsExistsArticle2() {
         assertDoesNotThrow(() -> {
-            List<ArticleDTO> articles = articleService.findArticles(new ArticleSearchDTO());
+            ArticleSearchDTO articleSearchDTO = new ArticleSearchDTO();
+            articleSearchDTO.setTopicUri("news");
+            List<ArticleDTO> articles = articleService.findArticles(articleSearchDTO);
             articleThumbsUp.setIdArticle(articles.get(0).getIdArticle());
         });
 
