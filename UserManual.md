@@ -1,18 +1,17 @@
 # forest 食用手册
 感谢使用 forest，以下是本项目的开发手册
-## 开发环境搭建
-### ide
+
+## 开发环境搭建（方式1）
+### IDE
 本项目使用 `JetBrains IntelliJ IDEA UItimate` 作为编辑器进行开发
-### java 环境
-本项目在 `java se 8` 环境下进行开发
+### Java 环境
+本项目在 `Java 8` 环境下进行开发
 ### 数据库
 - `redis`
 - `mysql`
-## 其他
-- 本项目使用了 `Lombok`，所以你还需在你的编辑器上安装 `Lombok` 插件
-- 本项目使用 `maven` 作为依赖管理工具
 
-## 使用 Docker 初始化开发环境
+
+## 使用 Docker 初始化开发环境（方式2）
 - 确保本机已安装并启动 `Docker`
 - 在 `docker\dev` 目录下执行 `docker-compose up` 可初始化 `redis` 和 `mysql` 环境
 - 如需修改相关配置，请编辑 `docker\dev` 目录下的 `docker-compose.yml` 文件
@@ -88,3 +87,16 @@ baidu:
 A: 检查是否配置了资源文件目录
 
 ![1636569760e18471dd2c74bedac5756e5fff537df.png](https://static.rymcu.com/article/1650261657433.png)
+
+**Q: Caused by: java.lang.IllegalArgumentException: Failed to decrypt.
+Caused by: java.lang.IllegalArgumentException: String length must be a multiple of four.**
+
+A: 这种情况一般是发生在你使用`application-dev.yml`启动项目的时候，里面在druid初始化的时候你需要修改一下相关的参数，具体如下:
+
+```yaml
+spring:
+  datasource:
+    druid:
+      # 关闭密码加密
+      connection-properties: config.decrypt=false;config.decrypt.key=${publicKey}
+```
