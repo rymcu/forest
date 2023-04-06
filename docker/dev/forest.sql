@@ -840,3 +840,9 @@ VALUES (2, 1, '100000002', 1207980.00000000, 2, '2020-11-26 21:37:18', '1');
 INSERT INTO forest.forest_bank_account (id, id_bank, bank_account, account_balance, account_owner, created_time,
                                         account_type)
 VALUES (1, 1, '100000001', 997500000.00000000, 1, '2020-11-26 21:36:21', '1');
+INSERT INTO `forest`.`forest_bank_account` (`id`, `id_bank`, `bank_account`, `account_balance`, `account_owner`,
+                                            `created_time`, `account_type`)
+VALUES (3, 1, '100000061', 100.00000000, 65001, '2020-11-26 21:37:18', '0');
+INSERT INTO `forest`.`forest_bank_account` (`id`, `id_bank`, `bank_account`, `account_balance`, `account_owner`,
+                                            `created_time`, `account_type`)
+VALUES (4, 1, '100000063', 100.00000000, 65003, '2020-11-26 21:37:18', '0');
