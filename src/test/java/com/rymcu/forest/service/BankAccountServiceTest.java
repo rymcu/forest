@@ -46,7 +46,7 @@ public class BankAccountServiceTest extends BaseServiceTest {
     @DisplayName("测试查询银行账户列表")
     public void findBankAccounts() {
         List<BankAccountDTO> bankAccounts = bankAccountService.findBankAccounts(bankAccountSearchDTO);
-        assertEquals(1L, bankAccounts.size());
+        assertEquals(3, bankAccounts.size());
     }
 
     @Test

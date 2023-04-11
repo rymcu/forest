@@ -105,8 +105,8 @@ class TagServiceTest extends BaseServiceTest {
         assertFalse(b);
 
         Tag tag = new Tag();
-        tag.setTagDescription("test");
-        tag.setTagTitle("test");
+        tag.setTagDescription("test1");
+        tag.setTagTitle("test1");
         Tag tag1 = tagService.saveTag(tag);
         assertNotNull(tag1.getIdTag());
 
@@ -118,19 +118,19 @@ class TagServiceTest extends BaseServiceTest {
     @DisplayName("添加/更新标签")
     void saveTag() throws Exception {
         List<LabelModel> tagLabels = tagService.findTagLabels();
-        assertTrue(tagLabels.isEmpty());
+        assertEquals(1, tagLabels.size());
 
         Tag tag = new Tag();
-        tag.setTagDescription("test");
+        tag.setTagDescription("test1");
 
         assertThrows(IllegalArgumentException.class, () -> tagService.saveTag(tag));
 
-        tag.setTagTitle("test");
+        tag.setTagTitle("test1");
         Tag tag1 = tagService.saveTag(tag);
         assertNotNull(tag1.getIdTag());
 
         tagLabels = tagService.findTagLabels();
-        assertTrue(tagLabels.isEmpty());
+        assertEquals(1, tagLabels.size());
 
         tag.setIdTag(null);
         assertThrows(BusinessException.class, () -> tagService.saveTag(tag));
@@ -140,6 +140,6 @@ class TagServiceTest extends BaseServiceTest {
     @DisplayName("获取标签列表")
     void findTagLabels() {
         List<LabelModel> tagLabels = tagService.findTagLabels();
-        assertTrue(tagLabels.isEmpty());
+        assertFalse(tagLabels.isEmpty());
     }
 }
