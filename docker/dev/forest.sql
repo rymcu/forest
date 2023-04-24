@@ -587,22 +587,27 @@ insert into forest.forest_user (id, account, password, nickname, real_name, sex,
 values (2, 'testUser', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'testUser', 'testUser', '0', '0',
         null, 'testUser@rymcu.com',
         null, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', '2021-01-25 18:21:54', null);
+INSERT INTO `forest`.`forest_user` (`id`, `account`, `password`, `nickname`, `real_name`, `sex`, `avatar_type`,
+                                    `avatar_url`, `email`, `phone`, `status`, `created_time`, `updated_time`,
+                                    `last_login_time`, `signature`, `last_online_time`, `bg_img_url`)
+VALUES (65001, 'testUser1', '8ce2dd866238958ac4f07870766813cdaa39a9b83a8c75e26aa50f23', 'testUser', 'testUser1', '0',
+        '0', NULL, 'testUser@rymcu.com', NULL, '0', '2021-01-25 18:21:51', '2021-01-25 18:21:54', '2021-01-25 18:21:54',
+        NULL, NULL, NULL);
 
 insert into forest.forest_user_role (id_user, id_role, created_time)
 values (1, 1, '2021-01-25 18:22:12');
 
 create table forest_file
 (
-    id           int unsigned auto_increment comment 'id'
-        primary key,
+    id           int unsigned auto_increment comment 'id' primary key,
     md5_value    varchar(40)  not null comment '文件md5值',
     file_path    varchar(255) not null comment '文件上传路径',
     file_url     varchar(255) not null comment '网络访问路径',
-    created_time datetime     null comment '创建时间',
-    updated_time datetime     null comment '更新时间',
-    created_by   int          null comment '创建人',
-    file_size    int          null comment '文件大小',
-    file_type    varchar(10)  null comment '文件类型'
+    created_time datetime null comment '创建时间',
+    updated_time datetime null comment '更新时间',
+    created_by   int null comment '创建人',
+    file_size    int null comment '文件大小',
+    file_type    varchar(10) null comment '文件类型'
 ) comment '文件上传记录表' collate = utf8mb4_unicode_ci;
 
 create index index_md5_value_created_by
@@ -835,3 +840,9 @@ VALUES (2, 1, '100000002', 1207980.00000000, 2, '2020-11-26 21:37:18', '1');
 INSERT INTO forest.forest_bank_account (id, id_bank, bank_account, account_balance, account_owner, created_time,
                                         account_type)
 VALUES (1, 1, '100000001', 997500000.00000000, 1, '2020-11-26 21:36:21', '1');
+INSERT INTO `forest`.`forest_bank_account` (`id`, `id_bank`, `bank_account`, `account_balance`, `account_owner`,
+                                            `created_time`, `account_type`)
+VALUES (3, 1, '100000061', 100.00000000, 65001, '2020-11-26 21:37:18', '0');
+INSERT INTO `forest`.`forest_bank_account` (`id`, `id_bank`, `bank_account`, `account_balance`, `account_owner`,
+                                            `created_time`, `account_type`)
+VALUES (4, 1, '100000063', 100.00000000, 65003, '2020-11-26 21:37:18', '0');

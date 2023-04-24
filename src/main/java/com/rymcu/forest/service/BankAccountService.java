@@ -9,6 +9,8 @@ import com.rymcu.forest.entity.BankAccount;
 import java.util.List;
 
 /**
+ * 银行账户服务
+ *
  * @author ronger
  */
 public interface BankAccountService extends Service<BankAccount> {

@@ -4,6 +4,8 @@ import com.rymcu.forest.core.service.Service;
 import com.rymcu.forest.entity.ArticleThumbsUp;
 
 /**
+ * 点赞
+ *
  * @author ronger
  */
 public interface ArticleThumbsUpService extends Service<ArticleThumbsUp> {
