@@ -63,7 +63,7 @@ public interface NotificationService extends Service<Notification> {
      *
      * @return
      */
-    Integer readAllNotification();
+    Integer readAllNotification(Long idUser);
 
     /**
      * 删除相关未读消息

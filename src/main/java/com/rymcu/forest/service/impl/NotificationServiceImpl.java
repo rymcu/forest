@@ -73,8 +73,8 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     }
 
     @Override
-    public Integer readAllNotification() {
-        return notificationMapper.readAllNotification(Objects.requireNonNull(UserUtils.getCurrentUserByToken()).getIdUser());
+    public Integer readAllNotification(Long idUser) {
+        return notificationMapper.readAllNotification(idUser);
     }
 
     @Override

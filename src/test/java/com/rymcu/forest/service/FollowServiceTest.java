@@ -24,7 +24,6 @@ class FollowServiceTest extends BaseServiceTest {
     {
         follow = new Follow();
         follow.setFollowerId(idUser);
-
         follow.setFollowingType(followingType);
         follow.setFollowingId(followingId);
 

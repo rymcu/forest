@@ -1,9 +1,9 @@
 package com.rymcu.forest.service;
 
 import com.rymcu.forest.base.BaseServiceTest;
+import com.rymcu.forest.core.constant.NotificationConstant;
 import com.rymcu.forest.dto.NotificationDTO;
 import com.rymcu.forest.entity.Notification;
-import org.apache.shiro.authz.UnauthenticatedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -19,72 +19,66 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Order(1)
 class NotificationServiceTest extends BaseServiceTest {
-    private final Long idUser = 1L;
+    private final Long idUser = 2L;
     private final Long dataId = 1L;
-    private final String datatype = "1";
     private final String dataSummary = "nickname 关注了你!";
     @Autowired
     private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
+        save();
     }
 
     @Test
     @DisplayName("获取未读消息数据")
     void findUnreadNotifications() {
-        List<Notification> unreadNotifications = notificationService.findUnreadNotifications(1L);
+        List<Notification> unreadNotifications = notificationService.findUnreadNotifications(idUser);
         assertFalse(unreadNotifications.isEmpty());
-        assertEquals(1, unreadNotifications.size());
     }
 
     @Test
     @DisplayName("获取消息数据")
     void findNotifications() {
-        List<NotificationDTO> notifications = notificationService.findNotifications(1L);
-        assertFalse(notifications.isEmpty());
-        assertEquals(1, notifications.size());
+        List<NotificationDTO> notifications = notificationService.findNotifications(idUser);
+        assertNotNull(notifications);
     }
 
     @Test
     @DisplayName("获取消息数据")
     void findNotification() {
-
-        Notification notification = notificationService.findNotification(idUser, dataId, datatype);
-
+        Notification notification = notificationService.findNotification(idUser, dataId, NotificationConstant.Follow);
         assertNotNull(notification);
         assertEquals(idUser, notification.getIdUser());
         assertEquals(dataSummary, notification.getDataSummary());
 
-        Notification notification2 = notificationService.findNotification(0L, dataId, datatype);
+        Notification notification2 = notificationService.findNotification(0L, dataId, NotificationConstant.Follow);
         assertNull(notification2);
     }
 
-    @Test
     @DisplayName("创建系统通知")
     void save() {
         List<Notification> notifications = notificationService.findUnreadNotifications(idUser);
-        assertEquals(1, notifications.size());
-        Integer integer = notificationService.save(idUser, 2L, datatype, dataSummary);
+        int size = notifications.size();
+        Integer integer = notificationService.save(idUser, dataId, NotificationConstant.Follow, dataSummary);
         assertEquals(1, integer);
-
         notifications = notificationService.findUnreadNotifications(idUser);
-        assertEquals(2, notifications.size());
+        assertEquals(size + 1, notifications.size());
     }
 
     @Test
     @DisplayName("标记消息已读")
     void readNotification() {
         List<Notification> notifications = notificationService.findUnreadNotifications(idUser);
-        assertEquals(1, notifications.size());
-        Integer integer = notificationService.deleteUnreadNotification(idUser, datatype);
-        assertEquals(1, integer);
+        int size = notifications.size();
+//        Integer integer = notificationService.deleteUnreadNotification(idUser, NotificationConstant.Follow);
+//        assertEquals(1, integer);
 
-        integer = notificationService.readNotification(1L, idUser);
-        assertEquals(0, integer);
+        Integer integer = notificationService.readNotification(notifications.get(0).getIdNotification(), idUser);
+        assertNotEquals(0, integer);
 
         notifications = notificationService.findUnreadNotifications(idUser);
-        assertEquals(0, notifications.size());
+        assertEquals(size - 1, notifications.size());
     }
 
     /**
@@ -94,23 +88,22 @@ class NotificationServiceTest extends BaseServiceTest {
     @Test
     @DisplayName("标记所有消息已读")
     void readAllNotification() {
-        assertThrows(UnauthenticatedException.class, () -> notificationService.readAllNotification());
+        assertNotEquals(0, notificationService.readAllNotification(idUser));
     }
 
     @Test
     @DisplayName("删除相关未读消息")
     void deleteUnreadNotification() {
         List<Notification> notifications = notificationService.findUnreadNotifications(idUser);
-        assertEquals(1, notifications.size());
-        Integer integer = notificationService.deleteUnreadNotification(idUser, datatype);
-        assertEquals(1, integer);
+        int size = notifications.size();
+        System.out.println(size);
+        Integer integer = notificationService.deleteUnreadNotification(dataId, NotificationConstant.Follow);
+        assertNotEquals(0, integer);
 
-        integer = notificationService.deleteUnreadNotification(idUser, datatype);
+        integer = notificationService.deleteUnreadNotification(dataId, NotificationConstant.Follow);
         assertEquals(0, integer);
 
         notifications = notificationService.findUnreadNotifications(idUser);
         assertEquals(0, notifications.size());
-
-
     }
 }

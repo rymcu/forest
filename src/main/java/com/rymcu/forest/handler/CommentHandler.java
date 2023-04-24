@@ -34,7 +34,7 @@ public class CommentHandler {
     public void processCommentCreatedEvent(CommentEvent commentEvent) throws InterruptedException {
         log.info(String.format("开始执行评论发布事件：[%s]", JSON.toJSONString(commentEvent)));
         String commentContent = commentEvent.getContent();
-        Integer length = commentContent.length();
+        int length = commentContent.length();
         if (length > MAX_PREVIEW) {
             length = 200;
         }

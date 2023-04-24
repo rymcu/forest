@@ -23,12 +23,12 @@ class JavaMailServiceTest extends BaseServiceTest {
 
     @Test
     void sendEmailCode() throws MessagingException {
-        assertThrows(MailParseException.class, () -> javaMailService.sendEmailCode(REALITY_EMAIL));
+        assertEquals(1, javaMailService.sendEmailCode(REALITY_EMAIL));
     }
 
     @Test
     void sendForgetPasswordEmail() throws MessagingException {
-        assertThrows(AddressException.class, () -> javaMailService.sendForgetPasswordEmail(REALITY_EMAIL));
+        assertEquals(1, javaMailService.sendForgetPasswordEmail(REALITY_EMAIL));
     }
 
     @Test
