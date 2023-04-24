@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 消息通知
@@ -56,7 +57,8 @@ public class NotificationController {
 
     @PutMapping("/read-all")
     public GlobalResult readAll() {
-        Integer result = notificationService.readAllNotification();
+        Long idUser = UserUtils.getCurrentUserByToken().getIdUser();
+        Integer result = notificationService.readAllNotification(idUser);
         if (result == 0) {
             return GlobalResultGenerator.genErrorResult("标记已读失败");
         }
