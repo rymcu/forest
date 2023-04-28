@@ -111,7 +111,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Tag saveTag(Tag tag) throws Exception {
+    public Tag saveTag(Tag tag) {
         Integer result;
         tag.setTagDescription(XssUtils.filterHtmlCode(tag.getTagDescription()));
         if (tag.getIdTag() == null) {
