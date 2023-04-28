@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -27,6 +28,7 @@ public class ArticleHandler {
 
     @EventListener
     @Async("taskExecutor")
+    @Transactional(rollbackFor = Exception.class)
     public void processArticlePostEvent(ArticleEvent articleEvent) throws InterruptedException {
         Thread.sleep(1000);
         log.info(String.format("执行文章发布相关事件：[%s]", JSON.toJSONString(articleEvent)));

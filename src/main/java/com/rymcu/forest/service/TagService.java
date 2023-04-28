@@ -18,6 +18,7 @@ public interface TagService extends Service<Tag> {
      *
      * @param article
      * @param articleContentHtml
+     * @param userId
      * @return
      * @throws UnsupportedEncodingException
      */
