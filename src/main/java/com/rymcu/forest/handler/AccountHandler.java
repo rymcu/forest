@@ -3,10 +3,8 @@ package com.rymcu.forest.handler;
 import com.rymcu.forest.handler.event.AccountEvent;
 import com.rymcu.forest.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Resource;
 
@@ -24,9 +22,7 @@ public class AccountHandler {
     @Resource
     private UserMapper userMapper;
 
-    @Async("taskExecutor")
-    @EventListener
-    @Transactional(rollbackFor = Exception.class)
+    @TransactionalEventListener
     public void processAccountLastOnlineTimeEvent(AccountEvent accountEvent) {
         userMapper.updateLastOnlineTimeByAccount(accountEvent.getAccount());
     }
