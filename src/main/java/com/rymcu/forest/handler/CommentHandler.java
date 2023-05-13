@@ -8,12 +8,11 @@ import com.rymcu.forest.mapper.CommentMapper;
 import com.rymcu.forest.util.Html2TextUtil;
 import com.rymcu.forest.util.NotificationUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 
 /**
  * Created on 2022/8/17 7:38.
@@ -30,10 +29,8 @@ public class CommentHandler {
     @Resource
     private CommentMapper commentMapper;
 
-    @Async("taskExecutor")
-    @EventListener
-    @Transactional(rollbackFor = Exception.class)
-    public void processCommentCreatedEvent(CommentEvent commentEvent) {
+    @TransactionalEventListener
+    public void processCommentCreatedEvent(CommentEvent commentEvent) throws MessagingException {
         log.info(String.format("开始执行评论发布事件：[%s]", JSON.toJSONString(commentEvent)));
         String commentContent = commentEvent.getContent();
         int length = commentContent.length();

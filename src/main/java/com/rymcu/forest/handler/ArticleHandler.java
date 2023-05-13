@@ -7,10 +7,8 @@ import com.rymcu.forest.handler.event.ArticleEvent;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.util.NotificationUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Resource;
 
@@ -26,11 +24,8 @@ public class ArticleHandler {
     @Resource
     private LuceneService luceneService;
 
-    @EventListener
-    @Async("taskExecutor")
-    @Transactional(rollbackFor = Exception.class)
-    public void processArticlePostEvent(ArticleEvent articleEvent) throws InterruptedException {
-        Thread.sleep(1000);
+    @TransactionalEventListener
+    public void processArticlePostEvent(ArticleEvent articleEvent) {
         log.info(String.format("执行文章发布相关事件：[%s]", JSON.toJSONString(articleEvent)));
         // 发送系统通知
         if (articleEvent.getNotification()) {
@@ -57,10 +52,8 @@ public class ArticleHandler {
         log.info("执行完成文章发布相关事件...id={}", articleEvent.getIdArticle());
     }
 
-    @EventListener
-    @Async("taskExecutor")
-    public void processArticleDeleteEvent(ArticleDeleteEvent articleDeleteEvent) throws InterruptedException {
-        Thread.sleep(1000);
+    @TransactionalEventListener
+    public void processArticleDeleteEvent(ArticleDeleteEvent articleDeleteEvent) {
         log.info(String.format("执行文章删除相关事件：[%s]", JSON.toJSONString(articleDeleteEvent)));
         luceneService.deleteArticle(articleDeleteEvent.getIdArticle());
         log.info("执行完成文章删除相关事件...id={}", articleDeleteEvent.getIdArticle());
