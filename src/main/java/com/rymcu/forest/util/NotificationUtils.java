@@ -10,9 +10,9 @@ import com.rymcu.forest.entity.Notification;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.*;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.*;
 
 /**
  * 消息通知工具类
@@ -21,75 +21,56 @@ import java.util.concurrent.*;
  */
 public class NotificationUtils {
 
-    private static NotificationService notificationService = SpringContextHolder.getBean(NotificationService.class);
-    private static UserService userService = SpringContextHolder.getBean(UserService.class);
-    private static FollowService followService = SpringContextHolder.getBean(FollowService.class);
-    private static JavaMailService mailService = SpringContextHolder.getBean(JavaMailService.class);
-
-    private static ArticleService articleService = SpringContextHolder.getBean(ArticleService.class);
-    private static CommentService commentService = SpringContextHolder.getBean(CommentService.class);
+    private static final NotificationService notificationService = SpringContextHolder.getBean(NotificationService.class);
+    private static final UserService userService = SpringContextHolder.getBean(UserService.class);
+    private static final FollowService followService = SpringContextHolder.getBean(FollowService.class);
+    private static final JavaMailService mailService = SpringContextHolder.getBean(JavaMailService.class);
+    private static final ArticleService articleService = SpringContextHolder.getBean(ArticleService.class);
+    private static final CommentService commentService = SpringContextHolder.getBean(CommentService.class);
 
     public static void sendAnnouncement(Long dataId, String dataType, String dataSummary) {
-        ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        CompletableFuture.supplyAsync(() -> {
+        List<User> users = userService.findAll();
+        users.forEach(user -> {
             try {
-                List<User> users = userService.findAll();
-                users.forEach(user -> {
-                    saveNotification(user.getIdUser(), dataId, dataType, dataSummary);
-                });
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                saveNotification(user.getIdUser(), dataId, dataType, dataSummary);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
             }
-            return 0;
-        }, executor);
+        });
     }
 
-    public static void saveNotification(Long idUser, Long dataId, String dataType, String dataSummary) {
-        ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        CompletableFuture.supplyAsync(() -> {
-            try {
-                Notification notification = notificationService.findNotification(idUser, dataId, dataType);
-                if (notification == null || NotificationConstant.UpdateArticle.equals(dataType)) {
-                    System.out.println("------------------- 开始执行消息通知 ------------------");
-                    Integer result = notificationService.save(idUser, dataId, dataType, dataSummary);
-                    if (result == 0) {
-                        // TODO 记录操作失败数据
-                    }
-                }
-                if (NotificationConstant.Comment.equals(dataType)) {
-                    notification = notificationService.findNotification(idUser, dataId, dataType);
-                    NotificationDTO notificationDTO = genNotification(notification);
-                    mailService.sendNotification(notificationDTO);
-                }
-            } catch (Exception ex) {
+    public static void saveNotification(Long idUser, Long dataId, String dataType, String dataSummary) throws MessagingException {
+        Notification notification = notificationService.findNotification(idUser, dataId, dataType);
+        if (notification == null || NotificationConstant.UpdateArticle.equals(dataType)) {
+            System.out.println("------------------- 开始执行消息通知 ------------------");
+            Integer result = notificationService.save(idUser, dataId, dataType, dataSummary);
+            if (result == 0) {
                 // TODO 记录操作失败数据
-                ex.printStackTrace();
             }
-            return 0;
-        }, executor);
-
+        }
+        if (NotificationConstant.Comment.equals(dataType)) {
+            notification = notificationService.findNotification(idUser, dataId, dataType);
+            NotificationDTO notificationDTO = genNotification(notification);
+            mailService.sendNotification(notificationDTO);
+        }
     }
 
     public static void sendArticlePush(Long dataId, String dataType, String dataSummary, Long articleAuthorId) {
-        ExecutorService executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        CompletableFuture.supplyAsync(() -> {
+        List<Follow> follows;
+        if (NotificationConstant.PostArticle.equals(dataType)) {
+            // 关注用户通知
+            follows = followService.findByFollowingId("0", articleAuthorId);
+        } else {
+            // 关注文章通知
+            follows = followService.findByFollowingId("3", articleAuthorId);
+        }
+        follows.forEach(follow -> {
             try {
-                List<Follow> follows;
-                if (NotificationConstant.PostArticle.equals(dataType)) {
-                    // 关注用户通知
-                    follows = followService.findByFollowingId("0", articleAuthorId);
-                } else {
-                    // 关注文章通知
-                    follows = followService.findByFollowingId("3", articleAuthorId);
-                }
-                follows.forEach(follow -> {
-                    saveNotification(follow.getFollowerId(), dataId, dataType, dataSummary);
-                });
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                saveNotification(follow.getFollowerId(), dataId, dataType, dataSummary);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
             }
-            return 0;
-        }, executor);
+        });
     }
 
     public static NotificationDTO genNotification(Notification notification) {
