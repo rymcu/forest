@@ -45,6 +45,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/api/v1/auth/login/**", "anon");
         filterChainDefinitionMap.put("/api/v1/auth/logout/**", "anon");
         filterChainDefinitionMap.put("/api/v1/auth/refresh-token/**", "anon");
+        filterChainDefinitionMap.put("/api/v1/sse/**", "anon");
         filterChainDefinitionMap.put("/**", "jwt");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
