@@ -131,9 +131,6 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             } else {
                 tag.setTagIconPath(tag.getTagIconPath());
             }
-            tag.setTagStatus(tag.getTagStatus());
-            tag.setTagDescription(tag.getTagDescription());
-            tag.setTagReservation(tag.getTagReservation());
             tag.setCreatedTime(new Date());
             tag.setUpdatedTime(tag.getCreatedTime());
             result = tagMapper.insertSelective(tag);
