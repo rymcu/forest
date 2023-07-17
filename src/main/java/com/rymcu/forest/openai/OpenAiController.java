@@ -7,6 +7,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.openai.entity.ChatMessageModel;
 import com.rymcu.forest.openai.service.OpenAiService;
 import com.rymcu.forest.openai.service.SseService;
+import com.rymcu.forest.util.Html2TextUtil;
 import com.rymcu.forest.util.UserUtils;
 import com.theokanning.openai.completion.chat.ChatCompletionChoice;
 import com.theokanning.openai.completion.chat.ChatCompletionChunk;
@@ -72,7 +73,7 @@ public class OpenAiController {
             list.add(message);
         }
         messages.forEach(chatMessageModel -> {
-            ChatMessage message = new ChatMessage(chatMessageModel.getRole(), chatMessageModel.getContent());
+            ChatMessage message = new ChatMessage(chatMessageModel.getRole(), Html2TextUtil.getContent(chatMessageModel.getContent()));
             list.add(message);
         });
         return sendMessage(user, list);
@@ -82,7 +83,7 @@ public class OpenAiController {
     private GlobalResult sendMessage(User user, List<ChatMessage> list) {
         OpenAiService service = new OpenAiService(token, Duration.ofSeconds(180));
         ChatCompletionRequest completionRequest = ChatCompletionRequest.builder()
-                .model("gpt-3.5-turbo")
+                .model("gpt-3.5-turbo-16k-0613")
                 .stream(true)
                 .messages(list)
                 .build();
