@@ -125,7 +125,9 @@
         where topic.id = vtt.id_topic and topic.topic_uri = #{topicName}))) order by updated_time desc
     </select>
     <select id="selectArticlesByTagName" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id where
+        FIND_IN_SET(#{tagName},art.article_tags) > 0
+        order by updated_time desc
     </select>
     <select id="selectUserArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on su.id = #{idUser}
