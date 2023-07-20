@@ -1,6 +1,6 @@
 package com.rymcu.forest.config;
 
-import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import com.alibaba.fastjson.support.spring.annotation.FastJsonView;
 import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.exception.ServiceException;
 import com.rymcu.forest.core.exception.TransactionException;
@@ -47,7 +47,7 @@ public class BaseExceptionHandler {
                 result = new GlobalResult<>(ResultCode.UNAUTHORIZED);
                 logger.info("用户无权限");
             } else if (ex instanceof UnknownAccountException) {
-                // 账号或密码错误
+                // 未知账号
                 result = new GlobalResult<>(ResultCode.UNKNOWN_ACCOUNT);
                 logger.info(ex.getMessage());
             } else if (ex instanceof AccountException) {
@@ -91,7 +91,7 @@ public class BaseExceptionHandler {
             return result;
         } else {
             ModelAndView mv = new ModelAndView();
-            FastJsonJsonView view = new FastJsonJsonView();
+            FastJsonView view = new FastJsonView();
             Map<String, Object> attributes = new HashMap(2);
             if (ex instanceof UnauthenticatedException) {
                 attributes.put("code", ResultCode.UNAUTHENTICATED.getCode());
@@ -99,6 +99,16 @@ public class BaseExceptionHandler {
             } else if (ex instanceof UnauthorizedException) {
                 attributes.put("code", ResultCode.UNAUTHORIZED.getCode());
                 attributes.put("message", ResultCode.UNAUTHORIZED.getMessage());
+            } else if (ex instanceof UnknownAccountException) {
+                // 未知账号
+                attributes.put("code", ResultCode.UNKNOWN_ACCOUNT.getCode());
+                attributes.put("message", ex.getMessage());
+                logger.info(ex.getMessage());
+            } else if (ex instanceof AccountException) {
+                // 账号或密码错误
+                attributes.put("code", ResultCode.INCORRECT_ACCOUNT_OR_PASSWORD.getCode());
+                attributes.put("message", ex.getMessage());
+                logger.info(ex.getMessage());
             } else if (ex instanceof ServiceException) {
                 //业务失败的异常，如“账号或密码错误”
                 attributes.put("code", ((ServiceException) ex).getCode());
