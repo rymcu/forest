@@ -126,6 +126,16 @@ public class NotificationUtils {
                     notificationDTO.setAuthor(genAuthor(user));
                 }
                 break;
+            case "5":
+                // 文章状态变更
+                article = articleService.findArticleDTOById(notification.getDataId(), 0);
+                if (Objects.nonNull(article)) {
+                    notificationDTO.setDataTitle("系统通知");
+                    notificationDTO.setDataUrl(article.getArticlePermalink());
+                    user = userService.findById(article.getArticleAuthorId().toString());
+                    notificationDTO.setAuthor(genAuthor(user));
+                }
+                break;
             default:
                 break;
         }
