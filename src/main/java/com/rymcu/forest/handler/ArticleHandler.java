@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.rymcu.forest.core.constant.NotificationConstant;
 import com.rymcu.forest.handler.event.ArticleDeleteEvent;
 import com.rymcu.forest.handler.event.ArticleEvent;
+import com.rymcu.forest.handler.event.ArticleStatusEvent;
 import com.rymcu.forest.lucene.service.LuceneService;
 import com.rymcu.forest.util.NotificationUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 
 /**
  * Created on 2022/8/16 20:42.
@@ -57,5 +59,11 @@ public class ArticleHandler {
         log.info(String.format("执行文章删除相关事件：[%s]", JSON.toJSONString(articleDeleteEvent)));
         luceneService.deleteArticle(articleDeleteEvent.getIdArticle());
         log.info("执行完成文章删除相关事件...id={}", articleDeleteEvent.getIdArticle());
+    }
+
+    @TransactionalEventListener
+    public void processArticleStatusEvent(ArticleStatusEvent articleStatusEvent) throws MessagingException {
+        log.info(String.format("执行文章删除相关事件：[%s]", JSON.toJSONString(articleStatusEvent)));
+        NotificationUtils.saveNotification(articleStatusEvent.getArticleAuthor(), articleStatusEvent.getIdArticle(), NotificationConstant.UpdateArticleStatus, articleStatusEvent.getMessage());
     }
 }

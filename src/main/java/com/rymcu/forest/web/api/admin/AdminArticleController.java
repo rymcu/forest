@@ -2,6 +2,7 @@ package com.rymcu.forest.web.api.admin;
 
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.dto.ArticleUpdateStatusDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.service.ArticleService;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,5 +30,13 @@ public class AdminArticleController {
         Long idArticle = article.getIdArticle();
         String articlePerfect = article.getArticlePerfect();
         return GlobalResultGenerator.genSuccessResult(articleService.updatePerfect(idArticle, articlePerfect));
+    }
+
+    @PatchMapping("/update-status")
+    public GlobalResult<Boolean> updateArticleStatus(@RequestBody ArticleUpdateStatusDTO article) {
+        Long idArticle = article.getIdArticle();;
+        String articleStatus = article.getArticleStatus();
+        String remarks = article.getRemarks();
+        return GlobalResultGenerator.genSuccessResult(articleService.updateStatus(idArticle, articleStatus, remarks));
     }
 }

@@ -12,6 +12,7 @@ import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.handler.event.ArticleDeleteEvent;
 import com.rymcu.forest.handler.event.ArticleEvent;
+import com.rymcu.forest.handler.event.ArticleStatusEvent;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.*;
 import com.rymcu.forest.util.Html2TextUtil;
@@ -59,6 +60,9 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private static final String DEFAULT_STATUS = "0";
     private static final String DEFAULT_TOPIC_URI = "news";
     private static final int ADMIN_ROLE_WEIGHTS = 2;
+
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public List<ArticleDTO> findArticles(ArticleSearchDTO searchDTO) {
@@ -250,6 +254,7 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean updatePerfect(Long idArticle, String articlePerfect) {
         if (articleMapper.updatePerfect(idArticle, articlePerfect) == 0) {
             throw new ContentNotExistException("设置优选文章失败!");
@@ -262,6 +267,23 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         List<ArticleDTO> list = articleMapper.selectAnnouncements();
         list.forEach(articleDTO -> genArticle(articleDTO, 0));
         return list;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateStatus(Long idArticle, String articleStatus, String remarks) {
+        if (articleMapper.updateStatus(idArticle, articleStatus) == 0) {
+            throw new ContentNotExistException("设置文章状态失败!");
+        }
+        Article article = articleMapper.selectByPrimaryKey(idArticle);
+        String message = "你的文章《"+article.getArticleTitle()+"》";
+        if ("1".equals(articleStatus)) {
+            message += "已下架, 下架原因: " + remarks;
+        } else {
+            message += "已上架!";
+        }
+        applicationEventPublisher.publishEvent(new ArticleStatusEvent(idArticle, article.getArticleAuthorId(), message));
+        return true;
     }
 
     private ArticleDTO genArticle(ArticleDTO article, Integer type) {

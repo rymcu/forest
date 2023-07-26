@@ -41,7 +41,7 @@ public class NotificationUtils {
 
     public static void saveNotification(Long idUser, Long dataId, String dataType, String dataSummary) throws MessagingException {
         Notification notification = notificationService.findNotification(idUser, dataId, dataType);
-        if (notification == null || NotificationConstant.UpdateArticle.equals(dataType)) {
+        if (notification == null || NotificationConstant.UpdateArticle.equals(dataType) || NotificationConstant.UpdateArticleStatus.equals(dataType)) {
             System.out.println("------------------- 开始执行消息通知 ------------------");
             Integer result = notificationService.save(idUser, dataId, dataType, dataSummary);
             if (result == 0) {
