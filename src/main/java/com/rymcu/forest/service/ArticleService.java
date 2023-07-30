@@ -140,4 +140,14 @@ public interface ArticleService extends Service<Article> {
      * @return
      */
     List<ArticleDTO> findAnnouncements();
+
+    /**
+     * 变更文章状态
+     *
+     * @param idArticle
+     * @param articleStatus
+     * @param remarks
+     * @return
+     */
+    Boolean updateStatus(Long idArticle, String articleStatus, String remarks);
 }

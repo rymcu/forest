@@ -88,6 +88,9 @@
     <update id="updatePerfect">
         update forest_article set article_perfect = #{articlePerfect} where id = #{idArticle}
     </update>
+    <update id="updateStatus">
+        update forest_article set article_status = #{articleStatus} where id = #{idArticle}
+    </update>
     <delete id="deleteTagArticle">
         delete from forest_tag_article where id_article = #{id}
     </delete>

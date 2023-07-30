@@ -41,7 +41,7 @@ public class NotificationUtils {
 
     public static void saveNotification(Long idUser, Long dataId, String dataType, String dataSummary) throws MessagingException {
         Notification notification = notificationService.findNotification(idUser, dataId, dataType);
-        if (notification == null || NotificationConstant.UpdateArticle.equals(dataType)) {
+        if (notification == null || NotificationConstant.UpdateArticle.equals(dataType) || NotificationConstant.UpdateArticleStatus.equals(dataType)) {
             System.out.println("------------------- 开始执行消息通知 ------------------");
             Integer result = notificationService.save(idUser, dataId, dataType, dataSummary);
             if (result == 0) {
@@ -121,6 +121,16 @@ public class NotificationUtils {
                 article = articleService.findArticleDTOById(notification.getDataId(), 0);
                 if (Objects.nonNull(article)) {
                     notificationDTO.setDataTitle("关注通知");
+                    notificationDTO.setDataUrl(article.getArticlePermalink());
+                    user = userService.findById(article.getArticleAuthorId().toString());
+                    notificationDTO.setAuthor(genAuthor(user));
+                }
+                break;
+            case "5":
+                // 文章状态变更
+                article = articleService.findArticleDTOById(notification.getDataId(), 0);
+                if (Objects.nonNull(article)) {
+                    notificationDTO.setDataTitle("系统通知");
                     notificationDTO.setDataUrl(article.getArticlePermalink());
                     user = userService.findById(article.getArticleAuthorId().toString());
                     notificationDTO.setAuthor(genAuthor(user));

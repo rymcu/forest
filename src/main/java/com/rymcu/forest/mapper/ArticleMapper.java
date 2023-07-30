@@ -220,4 +220,6 @@ public interface ArticleMapper extends Mapper<Article> {
      * @return
      */
     List<ArticleDTO> selectAnnouncements();
+
+    int updateStatus(@Param("idArticle") Long idArticle, @Param("articleStatus") String articleStatus);
 }
