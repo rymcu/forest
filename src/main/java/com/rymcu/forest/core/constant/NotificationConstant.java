@@ -17,4 +17,6 @@ public class NotificationConstant {
 
     public static String UpdateArticle = "4";
 
+    public static String UpdateArticleStatus = "5";
+
 }
