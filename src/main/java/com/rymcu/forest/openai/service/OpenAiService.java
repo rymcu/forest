@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.rymcu.forest.util.Utils;
 import com.theokanning.openai.DeleteResult;
 import com.theokanning.openai.OpenAiError;
 import com.theokanning.openai.OpenAiHttpException;
@@ -38,6 +39,8 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import okhttp3.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.Call;
@@ -52,6 +55,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import com.rymcu.forest.util.SpringContextHolder;
 import org.springframework.core.env.Environment;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 public class OpenAiService {
@@ -395,10 +400,12 @@ public class OpenAiService {
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         return mapper;
     }
-
     public static OkHttpClient defaultClient(String token, Duration timeout) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String ip = Utils.getIpAddress(request);
         return new OkHttpClient.Builder()
                 .addInterceptor(new AuthenticationInterceptor(token))
+                .addInterceptor(new IpAddressInterceptor(ip))
                 .connectionPool(new ConnectionPool(5, 1, TimeUnit.SECONDS))
                 .readTimeout(timeout.toMillis(), TimeUnit.MILLISECONDS)
                 .build();
