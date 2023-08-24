@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.rymcu.forest.util.SpringContextHolder;
 import com.rymcu.forest.util.Utils;
 import com.theokanning.openai.DeleteResult;
-import com.theokanning.openai.OpenAiApi;
 import com.theokanning.openai.OpenAiError;
 import com.theokanning.openai.OpenAiHttpException;
+import com.theokanning.openai.audio.CreateTranscriptionRequest;
+import com.theokanning.openai.audio.CreateTranslationRequest;
+import com.theokanning.openai.audio.TranscriptionResult;
+import com.theokanning.openai.audio.TranslationResult;
+import com.theokanning.openai.client.OpenAiApi;
 import com.theokanning.openai.completion.CompletionChunk;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.CompletionResult;
@@ -31,26 +34,30 @@ import com.theokanning.openai.image.ImageResult;
 import com.theokanning.openai.model.Model;
 import com.theokanning.openai.moderation.ModerationRequest;
 import com.theokanning.openai.moderation.ModerationResult;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 import okhttp3.*;
-import org.springframework.core.env.Environment;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import retrofit2.Call;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
+import retrofit2.Call;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import com.rymcu.forest.util.SpringContextHolder;
+import org.springframework.core.env.Environment;
+
+import javax.servlet.http.HttpServletRequest;
+
 
 public class OpenAiService {
 
@@ -60,6 +67,7 @@ public class OpenAiService {
 
     private final OpenAiApi api;
     private final ExecutorService executorService;
+
     private static final Environment env = SpringContextHolder.getBean(Environment.class);
 
     /**
@@ -254,6 +262,61 @@ public class OpenAiService {
         return execute(api.createImageVariation(builder.build()));
     }
 
+    public TranscriptionResult createTranscription(CreateTranscriptionRequest request, String audioPath) {
+        java.io.File audio = new java.io.File(audioPath);
+        return createTranscription(request, audio);
+    }
+
+    public TranscriptionResult createTranscription(CreateTranscriptionRequest request, java.io.File audio) {
+        RequestBody audioBody = RequestBody.create(MediaType.parse("audio"), audio);
+
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MediaType.get("multipart/form-data"))
+                .addFormDataPart("model", request.getModel())
+                .addFormDataPart("file", audio.getName(), audioBody);
+
+        if (request.getPrompt() != null) {
+            builder.addFormDataPart("prompt", request.getPrompt());
+        }
+        if (request.getResponseFormat() != null) {
+            builder.addFormDataPart("response_format", request.getResponseFormat());
+        }
+        if (request.getTemperature() != null) {
+            builder.addFormDataPart("temperature", request.getTemperature().toString());
+        }
+        if (request.getLanguage() != null) {
+            builder.addFormDataPart("language", request.getLanguage());
+        }
+
+        return execute(api.createTranscription(builder.build()));
+    }
+
+    public TranslationResult createTranslation(CreateTranslationRequest request, String audioPath) {
+        java.io.File audio = new java.io.File(audioPath);
+        return createTranslation(request, audio);
+    }
+
+    public TranslationResult createTranslation(CreateTranslationRequest request, java.io.File audio) {
+        RequestBody audioBody = RequestBody.create(MediaType.parse("audio"), audio);
+
+        MultipartBody.Builder builder = new MultipartBody.Builder()
+                .setType(MediaType.get("multipart/form-data"))
+                .addFormDataPart("model", request.getModel())
+                .addFormDataPart("file", audio.getName(), audioBody);
+
+        if (request.getPrompt() != null) {
+            builder.addFormDataPart("prompt", request.getPrompt());
+        }
+        if (request.getResponseFormat() != null) {
+            builder.addFormDataPart("response_format", request.getResponseFormat());
+        }
+        if (request.getTemperature() != null) {
+            builder.addFormDataPart("temperature", request.getTemperature().toString());
+        }
+
+        return execute(api.createTranslation(builder.build()));
+    }
+
     public ModerationResult createModeration(ModerationRequest request) {
         return execute(api.createModeration(request));
     }
@@ -337,7 +400,6 @@ public class OpenAiService {
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         return mapper;
     }
-
     public static OkHttpClient defaultClient(String token, Duration timeout) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String ip = Utils.getIpAddress(request);
