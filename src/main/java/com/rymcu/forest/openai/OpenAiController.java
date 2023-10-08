@@ -86,6 +86,9 @@ public class OpenAiController {
                 .build();
         service.streamChatCompletion(completionRequest).doOnError(Throwable::printStackTrace)
                 .blockingForEach(chunk -> {
+                    if (chunk.getChoices().isEmpty() || chunk.getChoices().get(0).getMessage() == null) {
+                        return;
+                    }
                     String text = chunk.getChoices().get(0).getMessage().getContent();
                     if (text == null) {
                         return;
