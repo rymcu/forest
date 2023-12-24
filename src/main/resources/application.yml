@@ -74,9 +74,9 @@ server:
     reject-illegal-header: false
 version: 1.0
 resource:
-  domain: http://yourdomain.com # 网站域名
-  file-path: http://yourdomain.com # 上传文件前缀域名
-  pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址
+  domain: http://yourdomain.com #  网站域名，本地测试时填写前端项目访问地址即可
+  file-path: http://yourdomain.com # 上传文件前缀域名，本地测试时填写前端项目访问地址即可
+  pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址，本地测试时填写前端项目路径下的 static 目录即可
   answer-api-url: https://test.rymcu.com/subject/question
 openai:
   token: # Open Ai Key
