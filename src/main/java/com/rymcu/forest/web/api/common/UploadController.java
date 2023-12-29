@@ -25,13 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import com.rymcu.forest.util.SSRFUtil;
 
 /**
  * 文件上传控制器
@@ -265,6 +263,10 @@ public class UploadController {
             return GlobalResultGenerator.genSuccessResult(data);
         }
         URL link = new URL(url);
+        // SSRF 校验
+        if (!SSRFUtil.checkUrl(link, false)) {
+            throw new FileNotFoundException();
+        }
         HttpURLConnection conn = (HttpURLConnection) link.openConnection();
         //设置超时间为3秒
         conn.setConnectTimeout(3 * 1000);
