@@ -23,7 +23,7 @@ public class SSRFUtil {
             // 获取域名，并转为小写
             String host = url.getHost().toLowerCase();
             // 禁止内网 IP
-            if (!internalIp(host)) {
+            if (internalIp(host)) {
                 return false;
             }
             if (checkWhiteList) {
@@ -38,7 +38,7 @@ public class SSRFUtil {
     }
 
     public static void main(String[] args) throws MalformedURLException {
-        URL url = new URL("http://192.168.0.1");
+        URL url = new URL("http://127.0.0.1:8080");
         boolean b = checkUrl(url, false);
         System.out.println(b);
     }
@@ -71,9 +71,8 @@ public class SSRFUtil {
                     return true;
                 }
             case SECTION_5:
-                switch (b1) {
-                    case SECTION_6:
-                        return true;
+                if (b1 == SECTION_6) {
+                    return true;
                 }
             default:
                 return false;
