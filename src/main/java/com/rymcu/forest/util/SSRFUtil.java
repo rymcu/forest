@@ -1,5 +1,6 @@
 package com.rymcu.forest.util;
 
+import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
 
 import java.net.MalformedURLException;
@@ -22,9 +23,10 @@ public class SSRFUtil {
         try {
             // 获取域名，并转为小写
             String host = url.getHost().toLowerCase();
-            // 禁止内网 IP
-            if (internalIp(host)) {
-                return false;
+            // 判断是不是 IPv4 或 IPv6
+            if (InetAddresses.isInetAddress(host)) {
+                // 禁止内网 IP
+                return !internalIp(host);
             }
             if (checkWhiteList) {
                 // 获取一级域名
@@ -38,7 +40,7 @@ public class SSRFUtil {
     }
 
     public static void main(String[] args) throws MalformedURLException {
-        URL url = new URL("http://127.0.0.1:8080");
+        URL url = new URL("https://rymcu.com");
         boolean b = checkUrl(url, false);
         System.out.println(b);
     }
@@ -50,7 +52,7 @@ public class SSRFUtil {
 
     private static boolean internalIp(byte[] addr) {
         if (Objects.isNull(addr) || addr.length < 2) {
-            return true;
+            return false;
         }
         final byte b0 = addr[0];
         final byte b1 = addr[1];
