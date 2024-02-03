@@ -57,4 +57,6 @@ public class Product implements Serializable, Cloneable {
      */
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
+
+    private String tags;
 }

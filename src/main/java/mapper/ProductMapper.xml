@@ -8,6 +8,7 @@
         <result column="product_description" property="productDescription"></result>
         <result column="product_price" property="productPrice"></result>
         <result column="product_content" property="productContent"></result>
+        <result column="tags" property="tags"></result>
     </resultMap>
     <insert id="insertProductContent">
         insert into forest_product_content(id_product,
@@ -27,7 +28,7 @@
         order by weights
     </select>
     <select id="selectProductDTOById" resultMap="DTOResultMap">
-        select id, product_title,
+        select id, product_title, tags,
         <choose>
             <when test="type == 1">
                 product_content_html as product_content,

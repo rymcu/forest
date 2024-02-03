@@ -30,7 +30,6 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
 
     @Override
     public ProductDTO findProductDTOById(Integer idProduct, Integer type) {
-        ProductDTO productDTO = productMapper.selectProductDTOById(idProduct, type);
-        return productDTO;
+        return productMapper.selectProductDTOById(idProduct, type);
     }
 }
