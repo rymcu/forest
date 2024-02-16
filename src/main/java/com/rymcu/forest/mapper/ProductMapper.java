@@ -38,5 +38,5 @@ public interface ProductMapper extends Mapper<Product> {
      * @param type
      * @return
      */
-    ProductDTO selectProductDTOById(@Param("idProduct") Integer idProduct, @Param("type") Integer type);
+    ProductDTO selectProductDTOById(@Param("idProduct") Long idProduct, @Param("type") Integer type);
 }

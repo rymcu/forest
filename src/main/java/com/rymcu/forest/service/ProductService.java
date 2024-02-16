@@ -28,5 +28,5 @@ public interface ProductService extends Service<Product> {
      * @param type
      * @return
      */
-    ProductDTO findProductDTOById(Integer idProduct, Integer type);
+    ProductDTO findProductDTOById(Long idProduct, Integer type);
 }
