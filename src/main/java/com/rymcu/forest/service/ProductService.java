@@ -29,4 +29,10 @@ public interface ProductService extends Service<Product> {
      * @return
      */
     ProductDTO findProductDTOById(Long idProduct, Integer type);
+
+    /**
+     * 获取在线商品
+     * @return
+     */
+    List<ProductDTO> findOnlineProducts();
 }

@@ -141,14 +141,14 @@ public class CommonApiController {
     @GetMapping("/products")
     public GlobalResult<PageInfo<ProductDTO>> products(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows) {
         PageHelper.startPage(page, rows);
-        List<ProductDTO> list = productService.findProducts();
+        List<ProductDTO> list = productService.findOnlineProducts();
         PageInfo<ProductDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/product/{id}")
     @VisitLogger
-    public GlobalResult<ProductDTO> product(@PathVariable Integer id) {
+    public GlobalResult<ProductDTO> product(@PathVariable Long id) {
         ProductDTO productDTO = productService.findProductDTOById(id, 1);
         return GlobalResultGenerator.genSuccessResult(productDTO);
     }

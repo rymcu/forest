@@ -32,4 +32,9 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
     public ProductDTO findProductDTOById(Long idProduct, Integer type) {
         return productMapper.selectProductDTOById(idProduct, type);
     }
+
+    @Override
+    public List<ProductDTO> findOnlineProducts() {
+        return productMapper.selectOnlineProducts();
+    }
 }
