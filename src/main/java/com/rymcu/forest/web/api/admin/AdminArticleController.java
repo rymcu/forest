@@ -34,7 +34,7 @@ public class AdminArticleController {
 
     @PatchMapping("/update-status")
     public GlobalResult<Boolean> updateArticleStatus(@RequestBody ArticleUpdateStatusDTO article) {
-        Long idArticle = article.getIdArticle();;
+        Long idArticle = article.getIdArticle();
         String articleStatus = article.getArticleStatus();
         String remarks = article.getRemarks();
         return GlobalResultGenerator.genSuccessResult(articleService.updateStatus(idArticle, articleStatus, remarks));

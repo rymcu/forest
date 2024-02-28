@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @Data
 @Table(name = "forest_product_content")
-public class ProductContent implements Serializable, Cloneable {
+public class ProductContent implements Serializable {
     /**
      * 产品表主键
      */

@@ -5,9 +5,13 @@ import com.rymcu.forest.dto.ProductDTO;
 import com.rymcu.forest.entity.Product;
 import com.rymcu.forest.mapper.ProductMapper;
 import com.rymcu.forest.service.ProductService;
+import com.rymcu.forest.util.BeanCopierUtil;
+import com.rymcu.forest.web.api.common.UploadController;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,5 +40,46 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
     @Override
     public List<ProductDTO> findOnlineProducts() {
         return productMapper.selectOnlineProducts();
+    }
+
+    /**
+     * @param product 产品信息
+     * @return 产品信息
+     */
+    @Override
+    public Product postProduct(ProductDTO product) {
+        boolean isUpdate = product.getIdProduct() > 0;
+        if (StringUtils.isNotBlank(product.getProductImgType())) {
+            String headImgUrl = UploadController.uploadBase64File(product.getProductImgUrl(), 0);
+            product.setProductImgUrl(headImgUrl);
+        }
+        Product newProduct;
+        if (isUpdate) {
+            newProduct = productMapper.selectByPrimaryKey(product.getIdProduct());
+            newProduct.setProductImgUrl(product.getProductImgUrl());
+            newProduct.setProductTitle(product.getProductTitle());
+            newProduct.setProductPrice(product.getProductPrice());
+            newProduct.setProductDescription(product.getProductDescription());
+            productMapper.updateByPrimaryKeySelective(newProduct);
+            // 更新产品详情
+            productMapper.updateProductContent(newProduct.getIdProduct(), product.getProductContent(), product.getProductContentHtml());
+        } else {
+            newProduct = new Product();
+            BeanCopierUtil.convert(product, newProduct);
+            newProduct.setCreatedTime(new Date());
+            // 创建产品详情
+            productMapper.insertProductContent(newProduct.getIdProduct(), product.getProductContent(), product.getProductContentHtml());
+        }
+        return newProduct;
+    }
+
+    /**
+     * @param idProduct 产品主键
+     * @param status    状态
+     * @return 更新成功状态
+     */
+    @Override
+    public boolean updateStatus(Long idProduct, Integer status) {
+        return productMapper.updateStatus(idProduct, status) > 0;
     }
 }

@@ -24,6 +24,18 @@
                 sysdate(),
                 sysdate())
     </insert>
+    <update id="updateProductContent">
+        update forest_product_content
+        set product_content      = #{productContent},
+            product_content_html = #{productContentHtml},
+            updated_time         = sysdate()
+        where id_product = #{idProduct}
+    </update>
+    <update id="updateStatus">
+        update forest_product
+        set status = #{status}
+        where id_product = #{idProduct}
+    </update>
     <select id="selectProducts" resultMap="DTOResultMap">
         select id, product_title, product_img_url, tags, product_description, product_price, weights, status
         from forest_product

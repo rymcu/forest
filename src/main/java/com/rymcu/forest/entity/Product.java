@@ -3,10 +3,7 @@ package com.rymcu.forest.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,7 +16,7 @@ import java.util.Date;
  */
 @Data
 @Table(name = "forest_product")
-public class Product implements Serializable, Cloneable {
+public class Product implements Serializable {
     /**
      * 主键
      */
@@ -61,4 +58,7 @@ public class Product implements Serializable, Cloneable {
     private Integer status;
 
     private String tags;
+
+    @Transient
+    private String productImgType;
 }

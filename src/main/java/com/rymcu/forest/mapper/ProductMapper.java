@@ -22,7 +22,7 @@ public interface ProductMapper extends Mapper<Product> {
      * @param productContentHtml 产品详情 html
      * @return 更新数量
      */
-    Integer insertProductContent(@Param("idProduct") Integer idProduct, @Param("productContent") String productContent, @Param("productContentHtml") String productContentHtml);
+    Integer insertProductContent(@Param("idProduct") Long idProduct, @Param("productContent") String productContent, @Param("productContentHtml") String productContentHtml);
 
     /**
      * 查询产品列表
@@ -45,4 +45,21 @@ public interface ProductMapper extends Mapper<Product> {
      * @return 产品信息
      */
     List<ProductDTO> selectOnlineProducts();
+
+    /**
+     * 保存产品详情
+     *
+     * @param idProduct 产品主键
+     * @param productContent 产品详情 markdown
+     * @param productContentHtml 产品详情 html
+     * @return 更新数量
+     */
+    Integer updateProductContent(@Param("idProduct") Long idProduct, @Param("productContent") String productContent, @Param("productContentHtml") String productContentHtml);
+
+    /**
+     * @param idProduct 产品主键
+     * @param status 状态
+     * @return 更新成功状态
+     */
+    int updateStatus(@Param("idProduct") Long idProduct, @Param("status") Integer status);
 }
