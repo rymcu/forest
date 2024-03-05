@@ -67,6 +67,7 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
             newProduct = new Product();
             BeanCopierUtil.convert(product, newProduct);
             newProduct.setCreatedTime(new Date());
+            productMapper.insertSelective(newProduct);
             // 创建产品详情
             productMapper.insertProductContent(newProduct.getIdProduct(), product.getProductContent(), product.getProductContentHtml());
         }
