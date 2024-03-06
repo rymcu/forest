@@ -10,6 +10,7 @@ import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.LabelModel;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Tag;
+import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.mapper.TagMapper;
 import com.rymcu.forest.service.TagService;
@@ -126,7 +127,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                 }
             }
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
-                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 2);
+                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), FilePath.TAG);
                 tag.setTagIconPath(tagIconPath);
             } else {
                 tag.setTagIconPath(tag.getTagIconPath());
@@ -137,7 +138,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
         } else {
             tag.setUpdatedTime(new Date());
             if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
-                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), 2);
+                String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), FilePath.TAG);
                 tag.setTagIconPath(tagIconPath);
             }
             result = tagMapper.update(tag.getIdTag(), tag.getTagUri(), tag.getTagIconPath(), tag.getTagStatus(), tag.getTagDescription(), tag.getTagReservation());

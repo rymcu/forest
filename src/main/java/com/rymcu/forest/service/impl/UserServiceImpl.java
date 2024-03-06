@@ -9,6 +9,8 @@ import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Role;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.entity.UserExtend;
+import com.rymcu.forest.enumerate.FilePath;
+import com.rymcu.forest.enumerate.FileDataType;
 import com.rymcu.forest.lucene.model.UserLucene;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
 import com.rymcu.forest.mapper.RoleMapper;
@@ -191,8 +193,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         if (number > 0) {
             throw new NicknameOccupyException("该昵称已使用!");
         }
-        if (StringUtils.isNotBlank(user.getAvatarType()) && AVATAR_SVG_TYPE.equals(user.getAvatarType())) {
-            String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), 0);
+        if (FileDataType.BASE64.equals(user.getAvatarType())) {
+            String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), FilePath.AVATAR);
             user.setAvatarUrl(avatarUrl);
             user.setAvatarType("0");
         }
