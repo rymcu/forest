@@ -16,7 +16,7 @@ git clone "https://github.com/rymcu/forest"
 - `Redis v7.x +`
 
 ### 手动搭建 MySQL 和 Redis 环境
-> 手动安装 MySQL 时，需初始化数据库。
+> 手动安装 MySQL 时，需初始化数据库, sql 文件创建的用户密码都是 admin。
 
 在配置好 MySQL 和 Redis 的环境之后，在运行项目前，你还需要初始化好数据库中数据。通过执行 `src/main/resources/static`
 目录下的 `forest.sql` 文件进行数据库初始化操作。
