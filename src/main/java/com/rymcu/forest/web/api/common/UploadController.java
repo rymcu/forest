@@ -6,6 +6,7 @@ import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.LinkToImageUrlDTO;
 import com.rymcu.forest.dto.TokenUser;
+import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.service.ForestFileService;
 import com.rymcu.forest.util.FileUtils;
 import com.rymcu.forest.util.SpringContextHolder;
@@ -29,6 +30,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+
 import com.rymcu.forest.util.SSRFUtil;
 
 /**
@@ -48,38 +50,18 @@ public class UploadController {
     @Resource
     private ForestFileService forestFileService;
 
-    private static String getTypePath(Integer type) {
-        String typePath;
-        switch (type) {
-            case 0:
-                typePath = "avatar";
-                break;
-            case 1:
-                typePath = "article";
-                break;
-            case 2:
-                typePath = "tag";
-                break;
-            case 3:
-                typePath = "topic";
-                break;
-            default:
-                typePath = "images";
-        }
-        return typePath;
-    }
-
-    public static String uploadBase64File(String fileStr, Integer type) {
+    public static String uploadBase64File(String fileStr, FilePath filePath) {
         if (StringUtils.isBlank(fileStr)) {
             return "";
         }
-        String typePath = getTypePath(type);
+        String typePath = filePath.name().toLowerCase();
         //图片存储路径
         String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
+            // 创建文件根目录
+            file.mkdirs();
         }
 
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
@@ -98,9 +80,9 @@ public class UploadController {
     /**
      * 从输入流中获取字节数组
      *
-     * @param inputStream
-     * @return
-     * @throws IOException
+     * @param inputStream 输入流
+     * @return byte[]
+     * @throws IOException IO 异常
      */
     public static byte[] readInputStream(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];
@@ -134,20 +116,10 @@ public class UploadController {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
         }
-        String typePath = getTypePath(type);
-        //图片存储路径
-        String ctxHeadPicPath = env.getProperty("resource.pic-path");
-        String dir = ctxHeadPicPath + "/" + typePath;
-        File file = new File(dir);
-        if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
-        }
-
+        File file = genFile(type);
+        String typePath = FilePath.getPath(type);
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
-
-
         String fileName = System.currentTimeMillis() + fileType;
-
         String savePath = file.getPath() + File.separator + fileName;
         fileUrl = localPath + fileName;
         File saveFile = new File(savePath);
@@ -162,11 +134,8 @@ public class UploadController {
 
     }
 
-    @PostMapping("/file/batch")
-    @Transactional(rollbackFor = Exception.class)
-    public GlobalResult<JSONObject> batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
-        TokenUser tokenUser = getTokenUser(request);
-        String typePath = getTypePath(type);
+    private File genFile(Integer type) {
+        String typePath = FilePath.getPath(type);
         //图片存储路径
         String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
@@ -174,13 +143,20 @@ public class UploadController {
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
+        return file;
+    }
 
+    @PostMapping("/file/batch")
+    @Transactional(rollbackFor = Exception.class)
+    public GlobalResult<JSONObject> batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
+        TokenUser tokenUser = getTokenUser(request);
+        File file = genFile(type);
+        String typePath = FilePath.getPath(type);
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
-        Map successMap = new HashMap(16);
-        Set errFiles = new HashSet();
+        Map<String, String> successMap = new HashMap<>(16);
+        Set<String> errFiles = new HashSet<>();
 
-        for (int i = 0, len = multipartFiles.length; i < len; i++) {
-            MultipartFile multipartFile = multipartFiles[i];
+        for (MultipartFile multipartFile : multipartFiles) {
             String orgName = multipartFile.getOriginalFilename();
 
             if (multipartFile.getSize() == 0) {
@@ -247,12 +223,10 @@ public class UploadController {
 
     @PostMapping("/file/link")
     @Transactional(rollbackFor = Exception.class)
-    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO, HttpServletRequest request) throws IOException {
-
+    public GlobalResult<Map<String, String>> linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO, HttpServletRequest request) throws IOException {
         TokenUser tokenUser = getTokenUser(request);
         String url = linkToImageUrlDTO.getUrl();
-        Map data = new HashMap(2);
-
+        Map<String, String> data = new HashMap<>(2);
         if (StringUtils.isBlank(url)) {
             data.put("message", "文件为空!");
             return GlobalResultGenerator.genSuccessResult(data);
@@ -293,19 +267,12 @@ public class UploadController {
                 data.put("url", fileUrl);
                 return GlobalResultGenerator.genSuccessResult(data);
             }
-
             Integer type = linkToImageUrlDTO.getType();
             if (Objects.isNull(type)) {
                 type = 1;
             }
-            String typePath = getTypePath(type);
-            //图片存储路径
-            String ctxHeadPicPath = env.getProperty("resource.pic-path");
-            String dir = ctxHeadPicPath + "/" + typePath;
-            File file = new File(dir);
-            if (!file.exists()) {
-                file.mkdirs();// 创建文件根目录
-            }
+            File file = genFile(type);
+            String typePath = FilePath.getPath(type);
             String fileName = System.currentTimeMillis() + fileType;
             fileUrl = Utils.getProperty("resource.file-path") + "/" + typePath + "/" + fileName;
 
@@ -318,9 +285,7 @@ public class UploadController {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
         } catch (IOException e) {
-            /**
-             * 上传失败返回原链接
-             */
+            // 上传失败返回原链接
             logger.error("link: {},\nmessage: {}", url, e.getMessage());
             data.put("originalURL", url);
             data.put("url", url);

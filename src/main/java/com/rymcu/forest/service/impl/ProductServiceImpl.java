@@ -3,11 +3,12 @@ package com.rymcu.forest.service.impl;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.ProductDTO;
 import com.rymcu.forest.entity.Product;
+import com.rymcu.forest.enumerate.FilePath;
+import com.rymcu.forest.enumerate.FileDataType;
 import com.rymcu.forest.mapper.ProductMapper;
 import com.rymcu.forest.service.ProductService;
 import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.web.api.common.UploadController;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -49,8 +50,8 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
     @Override
     public Product postProduct(ProductDTO product) {
         boolean isUpdate = product.getIdProduct() > 0;
-        if (StringUtils.isNotBlank(product.getProductImgType())) {
-            String headImgUrl = UploadController.uploadBase64File(product.getProductImgUrl(), 0);
+        if (FileDataType.BASE64.equals(product.getProductImgType())) {
+            String headImgUrl = UploadController.uploadBase64File(product.getProductImgUrl(), FilePath.PRODUCT);
             product.setProductImgUrl(headImgUrl);
         }
         Product newProduct;
@@ -67,6 +68,7 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
             newProduct = new Product();
             BeanCopierUtil.convert(product, newProduct);
             newProduct.setCreatedTime(new Date());
+            productMapper.insertSelective(newProduct);
             // 创建产品详情
             productMapper.insertProductContent(newProduct.getIdProduct(), product.getProductContent(), product.getProductContentHtml());
         }

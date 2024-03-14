@@ -8,6 +8,7 @@ import com.rymcu.forest.dto.admin.TopicDTO;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.Topic;
+import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.mapper.TopicMapper;
 import com.rymcu.forest.service.TopicService;
 import com.rymcu.forest.util.XssUtils;
@@ -59,7 +60,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
                 }
             }
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
-                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
+                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), FilePath.TOPIC);
                 topic.setTopicIconPath(topicIconPath);
             } else {
                 topic.setTopicIconPath(topic.getTopicIconPath());
@@ -74,7 +75,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             result = topicMapper.insertSelective(topic);
         } else {
             if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
-                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), 3);
+                String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), FilePath.TOPIC);
                 topic.setTopicIconPath(topicIconPath);
             }
             topic.setUpdatedTime(new Date());

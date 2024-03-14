@@ -8,6 +8,8 @@ import com.rymcu.forest.core.exception.UltraViresException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Portfolio;
+import com.rymcu.forest.enumerate.FilePath;
+import com.rymcu.forest.enumerate.FileDataType;
 import com.rymcu.forest.lucene.model.PortfolioLucene;
 import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.mapper.PortfolioMapper;
@@ -16,7 +18,6 @@ import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -63,8 +64,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
 
     @Override
     public Portfolio postPortfolio(Portfolio portfolio) {
-        if (StringUtils.isNotBlank(portfolio.getHeadImgType())) {
-            String headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), 0);
+        if (FileDataType.BASE64.equals(portfolio.getHeadImgType())) {
+            String headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), FilePath.PORTFOLIO);
             portfolio.setHeadImgUrl(headImgUrl);
         }
         if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
