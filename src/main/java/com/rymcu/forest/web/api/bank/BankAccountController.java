@@ -8,6 +8,8 @@ import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.BankAccountSearchDTO;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.service.BankAccountService;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,6 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/admin/bank-account")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class BankAccountController {
 
     @Resource

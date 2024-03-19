@@ -15,6 +15,9 @@ import com.rymcu.forest.util.Utils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +43,7 @@ import com.rymcu.forest.util.SSRFUtil;
  */
 @RestController
 @RequestMapping("/api/v1/upload")
+@RequiresPermissions(value = "user")
 public class UploadController {
 
     private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";

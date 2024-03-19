@@ -67,12 +67,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
 
     private ReentrantLock getUserTransferLocks(String formBankAccount) {
         synchronized (userTransferLocks) {
-            ReentrantLock lock = userTransferLocks.get(formBankAccount);
-            if (lock == null) {
-                lock = new ReentrantLock();
-                userTransferLocks.put(formBankAccount, lock);
-            }
-            return lock;
+            return userTransferLocks.computeIfAbsent(formBankAccount, k -> new ReentrantLock());
         }
     }
 
@@ -83,15 +78,15 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
         return list;
     }
 
-    private TransactionRecordDTO genTransactionRecord(TransactionRecordDTO transactionRecordDTO) {
+    private void genTransactionRecord(TransactionRecordDTO transactionRecordDTO) {
         BankAccountDTO toBankAccount = bankAccountMapper.selectByBankAccount(transactionRecordDTO.getToBankAccount());
         BankAccountDTO formBankAccount = bankAccountMapper.selectByBankAccount(transactionRecordDTO.getFormBankAccount());
         transactionRecordDTO.setFormBankAccountInfo(formBankAccount);
         transactionRecordDTO.setToBankAccountInfo(toBankAccount);
-        return transactionRecordDTO;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) {
         BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(toUserId);
         BankAccountDTO formBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(formUserId);
@@ -107,6 +102,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) {
         BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(idUser);
         if (Objects.isNull(toBankAccount)) {
@@ -143,6 +139,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TransactionRecord newbieRewards(TransactionRecord transactionRecord) {
         // 判断是否重复发放
         Boolean result = transactionRecordMapper.existsWithNewbieRewards(transactionRecord.getToBankAccount());

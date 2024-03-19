@@ -5,6 +5,8 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.ArticleUpdateStatusDTO;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.service.ArticleService;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/api/v1/admin/article")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class AdminArticleController {
 
     @Resource

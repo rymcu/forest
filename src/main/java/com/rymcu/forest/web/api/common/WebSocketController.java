@@ -1,6 +1,7 @@
 package com.rymcu.forest.web.api.common;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
  * @author ronger
  */
 @Controller
+@RequiresPermissions(value = "user")
 public class WebSocketController {
 
     @Resource

@@ -9,6 +9,7 @@ import com.rymcu.forest.entity.Notification;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.util.UserUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,6 +23,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/api/v1/notification")
+@RequiresPermissions(value = "user")
 public class NotificationController {
 
     @Resource

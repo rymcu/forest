@@ -18,6 +18,9 @@ import com.rymcu.forest.service.ArticleThumbsUpService;
 import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.service.SponsorService;
 import com.rymcu.forest.util.UserUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -48,6 +51,7 @@ public class ArticleController {
     }
 
     @PostMapping("/post")
+    @RequiresPermissions(value = "user")
     public GlobalResult<Long> postArticle(@RequestBody ArticleDTO article) throws UnsupportedEncodingException {
         User user = UserUtils.getCurrentUserByToken();
         return GlobalResultGenerator.genSuccessResult(articleService.postArticle(article, user));
@@ -75,6 +79,7 @@ public class ArticleController {
     }
 
     @GetMapping("/drafts")
+    @RequiresPermissions(value = "user")
     public GlobalResult<PageInfo<ArticleDTO>> drafts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         User user = UserUtils.getCurrentUserByToken();
@@ -84,12 +89,14 @@ public class ArticleController {
     }
 
     @GetMapping("/{idArticle}/share")
+    @RequiresPermissions(value = "user")
     public GlobalResult<String> share(@PathVariable Integer idArticle) {
         User user = UserUtils.getCurrentUserByToken();
         return GlobalResultGenerator.genResult(true, articleService.share(idArticle, user.getAccount()), "");
     }
 
     @PostMapping("/update-tags")
+    @RequiresPermissions(value = "user")
     @AuthorshipInterceptor(moduleName = Module.ARTICLE_TAG)
     public GlobalResult<Boolean> updateTags(@RequestBody Article article) throws UnsupportedEncodingException {
         Long idArticle = article.getIdArticle();
@@ -99,6 +106,7 @@ public class ArticleController {
     }
 
     @PostMapping("/thumbs-up")
+    @RequiresPermissions(value = "user")
     public GlobalResult<Integer> thumbsUp(@RequestBody ArticleThumbsUp articleThumbsUp) {
         if (Objects.isNull(articleThumbsUp) || Objects.isNull(articleThumbsUp.getIdArticle())) {
             throw new BusinessException("数据异常,文章不存在!");
@@ -109,6 +117,7 @@ public class ArticleController {
     }
 
     @PostMapping("/sponsor")
+    @RequiresPermissions(value = "user")
     public GlobalResult<Boolean> sponsor(@RequestBody Sponsor sponsor) {
         if (Objects.isNull(sponsor) || Objects.isNull(sponsor.getDataId()) || Objects.isNull(sponsor.getDataType())) {
             throw new IllegalArgumentException("数据异常");

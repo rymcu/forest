@@ -12,6 +12,8 @@ import com.rymcu.forest.dto.admin.UserRoleDTO;
 import com.rymcu.forest.entity.*;
 import com.rymcu.forest.service.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/admin")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class AdminController {
 
     @Resource
