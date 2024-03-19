@@ -11,6 +11,8 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.service.ProductService;
 import com.rymcu.forest.util.UserUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,12 +38,14 @@ public class ProductController {
     }
 
     @PostMapping("/post")
+    @RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
     public GlobalResult<Product> add(@RequestBody ProductDTO product) {
         Product newProduct = productService.postProduct(product);
         return GlobalResultGenerator.genSuccessResult(newProduct);
     }
 
     @PutMapping("/post")
+    @RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
     public GlobalResult<Product> update(@RequestBody ProductDTO product) {
         if (product.getIdProduct() == null || product.getIdProduct() == 0) {
             throw new IllegalArgumentException("产品主键参数异常!");
@@ -52,6 +56,7 @@ public class ProductController {
 
 
     @PatchMapping("/update-status")
+    @RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
     public GlobalResult<Boolean> updateStatus(@RequestBody Product product) {
         boolean flag = productService.updateStatus(product.getIdProduct(), product.getStatus());
         return GlobalResultGenerator.genSuccessResult(flag);

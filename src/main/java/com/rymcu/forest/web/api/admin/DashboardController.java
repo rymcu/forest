@@ -9,6 +9,8 @@ import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.UserInfoDTO;
 import com.rymcu.forest.dto.admin.Dashboard;
 import com.rymcu.forest.service.DashboardService;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/admin/dashboard")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class DashboardController {
 
     @Resource

@@ -7,6 +7,8 @@ import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.TransactionRecordDTO;
 import com.rymcu.forest.entity.CurrencyRule;
 import com.rymcu.forest.service.CurrencyRuleService;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/admin/rule/currency")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class AdminCurrencyRuleController {
     @Resource
     private CurrencyRuleService currencyRuleService;

@@ -188,11 +188,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UserInfoDTO updateUserInfo(UserInfoDTO user) throws ServiceException {
-        user.setNickname(formatNickname(user.getNickname()));
-        Integer number = userMapper.checkNicknameByIdUser(user.getIdUser(), user.getNickname());
-        if (number > 0) {
+        boolean number = checkNicknameByIdUser(user.getIdUser(), user.getNickname());
+        if (number) {
             throw new NicknameOccupyException("该昵称已使用!");
         }
+        user.setNickname(formatNickname(user.getNickname()));
         if (FileDataType.BASE64.equals(user.getAvatarType())) {
             String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), FilePath.AVATAR);
             user.setAvatarUrl(avatarUrl);
@@ -216,11 +216,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     public boolean checkNicknameByIdUser(Long idUser, String nickname) {
-        Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
-        if (number > 0) {
-            return false;
+        if (StringUtils.isBlank(formatNickname(nickname))) {
+            throw new IllegalArgumentException("昵称不能为空!");
         }
-        return true;
+        Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
+        return number <= 0;
     }
 
     @Override

@@ -49,7 +49,7 @@ public class WalletController {
         }
         PageHelper.startPage(page, rows);
         List<TransactionRecordDTO> list = bankAccountService.findUserTransactionRecords(bankAccount.getBankAccount(), startDate, endDate);
-        PageInfo<TransactionRecordDTO> pageInfo = new PageInfo(list);
+        PageInfo<TransactionRecordDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 

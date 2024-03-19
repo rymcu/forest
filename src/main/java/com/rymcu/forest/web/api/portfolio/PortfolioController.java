@@ -13,6 +13,7 @@ import com.rymcu.forest.enumerate.Module;
 import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.UserUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -38,6 +39,7 @@ public class PortfolioController {
     }
 
     @PostMapping("/post")
+    @RequiresPermissions(value = "user")
     public GlobalResult<Portfolio> add(@RequestBody Portfolio portfolio) {
         User user = UserUtils.getCurrentUserByToken();
         portfolio.setPortfolioAuthorId(user.getIdUser());

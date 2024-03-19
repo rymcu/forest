@@ -13,6 +13,9 @@ import com.rymcu.forest.entity.LoginRecord;
 import com.rymcu.forest.entity.UserExtend;
 import com.rymcu.forest.service.LoginRecordService;
 import com.rymcu.forest.service.UserService;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/user-info")
+@RequiresPermissions(value = "user")
 public class UserInfoController {
 
     @Resource
@@ -45,8 +49,7 @@ public class UserInfoController {
     }
 
     @GetMapping("/check-nickname")
-    @SecurityInterceptor
-    public GlobalResult checkNickname(@RequestParam Long idUser, @RequestParam String nickname) {
+    public GlobalResult<Boolean> checkNickname(@RequestParam Long idUser, @RequestParam String nickname) {
         boolean flag = userService.checkNicknameByIdUser(idUser, nickname);
         return GlobalResultGenerator.genSuccessResult(flag);
     }

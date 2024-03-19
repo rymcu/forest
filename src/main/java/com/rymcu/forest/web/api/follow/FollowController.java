@@ -6,6 +6,7 @@ import com.rymcu.forest.entity.Follow;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.FollowService;
 import com.rymcu.forest.util.UserUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/api/v1/follow")
+@RequiresPermissions(value = "user")
 public class FollowController {
 
     @Resource

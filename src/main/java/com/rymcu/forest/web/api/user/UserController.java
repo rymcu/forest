@@ -36,7 +36,7 @@ public class UserController {
 
     @GetMapping("/{account}")
     @VisitLogger
-    public GlobalResult detail(@PathVariable String account) {
+    public GlobalResult<UserDTO> detail(@PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userDTO);
     }
@@ -49,7 +49,7 @@ public class UserController {
         }
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findUserArticlesByIdUser(userDTO.getIdUser());
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
@@ -61,7 +61,7 @@ public class UserController {
         }
         PageHelper.startPage(page, rows);
         List<PortfolioDTO> list = portfolioService.findUserPortfoliosByUser(userDTO);
-        PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
+        PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
@@ -73,7 +73,7 @@ public class UserController {
         }
         PageHelper.startPage(page, rows);
         List<UserDTO> list = followService.findUserFollowersByUser(userDTO);
-        PageInfo<UserDTO> pageInfo = new PageInfo(list);
+        PageInfo<UserDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
@@ -85,7 +85,7 @@ public class UserController {
         }
         PageHelper.startPage(page, rows);
         List<UserDTO> list = followService.findUserFollowingsByUser(userDTO);
-        PageInfo<UserDTO> pageInfo = new PageInfo(list);
+        PageInfo<UserDTO> pageInfo = new PageInfo<>(list);
         return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
