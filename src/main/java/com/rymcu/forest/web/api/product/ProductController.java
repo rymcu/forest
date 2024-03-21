@@ -26,6 +26,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/api/v1/product")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class ProductController {
 
     @Resource
@@ -38,14 +39,12 @@ public class ProductController {
     }
 
     @PostMapping("/post")
-    @RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
     public GlobalResult<Product> add(@RequestBody ProductDTO product) {
         Product newProduct = productService.postProduct(product);
         return GlobalResultGenerator.genSuccessResult(newProduct);
     }
 
     @PutMapping("/post")
-    @RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
     public GlobalResult<Product> update(@RequestBody ProductDTO product) {
         if (product.getIdProduct() == null || product.getIdProduct() == 0) {
             throw new IllegalArgumentException("产品主键参数异常!");
