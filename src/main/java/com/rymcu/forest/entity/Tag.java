@@ -3,10 +3,7 @@ package com.rymcu.forest.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -75,4 +72,9 @@ public class Tag implements Serializable, Cloneable {
      * 描述
      */
     private String tagDescriptionHtml;
+    /**
+     * 图标类型
+     */
+    @Transient
+    private transient String tagImageType;
 }

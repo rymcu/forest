@@ -53,6 +53,7 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
         if (FileDataType.BASE64.equals(product.getProductImgType())) {
             String headImgUrl = UploadController.uploadBase64File(product.getProductImgUrl(), FilePath.PRODUCT);
             product.setProductImgUrl(headImgUrl);
+            product.setProductImgType(FileDataType.URL);
         }
         Product newProduct;
         if (isUpdate) {
@@ -60,7 +61,9 @@ public class ProductServiceImpl extends AbstractService<Product> implements Prod
             newProduct.setProductImgUrl(product.getProductImgUrl());
             newProduct.setProductTitle(product.getProductTitle());
             newProduct.setProductPrice(product.getProductPrice());
+            newProduct.setTags(product.getTags());
             newProduct.setProductDescription(product.getProductDescription());
+            newProduct.setUpdatedTime(new Date());
             productMapper.updateByPrimaryKeySelective(newProduct);
             // 更新产品详情
             productMapper.updateProductContent(newProduct.getIdProduct(), product.getProductContent(), product.getProductContentHtml());

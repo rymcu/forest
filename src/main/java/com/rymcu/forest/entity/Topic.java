@@ -3,10 +3,7 @@ package com.rymcu.forest.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -71,5 +68,10 @@ public class Topic {
      * 专题描述 Html
      */
     private String topicDescriptionHtml;
+    /**
+     * 专题图片类型
+     */
+    @Transient
+    private transient String topicImageType;
 
 }

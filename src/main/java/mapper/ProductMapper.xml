@@ -37,7 +37,7 @@
         where id_product = #{idProduct}
     </update>
     <select id="selectProducts" resultMap="DTOResultMap">
-        select id, product_title, product_img_url, tags, product_description, product_price, weights, status
+        select id, product_title, product_img_url, tags, product_description, product_price, weights, status, created_time
         from forest_product
         order by weights
     </select>
@@ -57,7 +57,7 @@
     <select id="selectOnlineProducts" resultMap="DTOResultMap">
         select id, product_title, product_img_url, product_description, product_price
         from forest_product
-        where status = 1
+        where status = 0
         order by weights
     </select>
 </mapper>
