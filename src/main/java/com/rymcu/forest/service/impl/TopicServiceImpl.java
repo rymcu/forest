@@ -8,6 +8,7 @@ import com.rymcu.forest.dto.admin.TopicDTO;
 import com.rymcu.forest.dto.admin.TopicTagDTO;
 import com.rymcu.forest.entity.Tag;
 import com.rymcu.forest.entity.Topic;
+import com.rymcu.forest.enumerate.FileDataType;
 import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.mapper.TopicMapper;
 import com.rymcu.forest.service.TopicService;
@@ -59,7 +60,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
                     throw new BusinessException("专题 '" + topic.getTopicTitle() + "' 已存在!");
                 }
             }
-            if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
+            if (FileDataType.BASE64.equals(topic.getTopicImageType())) {
                 String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), FilePath.TOPIC);
                 topic.setTopicIconPath(topicIconPath);
             } else {
@@ -74,7 +75,7 @@ public class TopicServiceImpl extends AbstractService<Topic> implements TopicSer
             topic.setUpdatedTime(topic.getCreatedTime());
             result = topicMapper.insertSelective(topic);
         } else {
-            if (StringUtils.isNotBlank(topic.getTopicIconPath()) && topic.getTopicIconPath().contains("base64")) {
+            if (FileDataType.BASE64.equals(topic.getTopicImageType())) {
                 String topicIconPath = UploadController.uploadBase64File(topic.getTopicIconPath(), FilePath.TOPIC);
                 topic.setTopicIconPath(topicIconPath);
             }

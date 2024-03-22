@@ -10,6 +10,7 @@ import com.rymcu.forest.dto.ArticleTagDTO;
 import com.rymcu.forest.dto.LabelModel;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Tag;
+import com.rymcu.forest.enumerate.FileDataType;
 import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.mapper.TagMapper;
@@ -126,7 +127,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
                     throw new BusinessException("标签 '" + tag.getTagTitle() + "' 已存在!");
                 }
             }
-            if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
+            if (FileDataType.BASE64.equals(tag.getTagImageType())) {
                 String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), FilePath.TAG);
                 tag.setTagIconPath(tagIconPath);
             } else {
@@ -137,7 +138,7 @@ public class TagServiceImpl extends AbstractService<Tag> implements TagService {
             result = tagMapper.insertSelective(tag);
         } else {
             tag.setUpdatedTime(new Date());
-            if (StringUtils.isNotBlank(tag.getTagIconPath()) && tag.getTagIconPath().contains("base64")) {
+            if (FileDataType.BASE64.equals(tag.getTagImageType())) {
                 String tagIconPath = UploadController.uploadBase64File(tag.getTagIconPath(), FilePath.TAG);
                 tag.setTagIconPath(tagIconPath);
             }
