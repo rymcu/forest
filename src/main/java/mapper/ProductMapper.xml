@@ -55,7 +55,7 @@
         where id = #{idProduct}
     </select>
     <select id="selectOnlineProducts" resultMap="DTOResultMap">
-        select id, product_title, product_img_url, product_description, product_price
+        select id, product_title, product_img_url, product_description, product_price, tags
         from forest_product
         where status = 0
         order by weights
