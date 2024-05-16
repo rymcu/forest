@@ -3,6 +3,7 @@ package com.rymcu.forest.lucene.util;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.rymcu.forest.lucene.model.UserLucene;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -20,6 +21,7 @@ import java.util.Arrays;
  *
  * @author suwen
  */
+@Slf4j
 public class UserIndexUtil {
 
     /**
@@ -57,7 +59,7 @@ public class UserIndexUtil {
      * @throws Exception
      */
     private static synchronized void creatIndex(UserLucene t) {
-        System.out.println("创建单个索引");
+        log.info("创建单个索引");
         IndexWriter writer;
         try {
             boolean create = true;

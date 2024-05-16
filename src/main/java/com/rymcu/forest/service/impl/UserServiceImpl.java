@@ -332,4 +332,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         permissions.add("user");
         return permissions;
     }
+
+    @Override
+    public boolean hasAdminPermission(String account) {
+        return userMapper.hasAdminPermission(account);
+    }
 }

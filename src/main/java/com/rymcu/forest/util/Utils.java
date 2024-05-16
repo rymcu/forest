@@ -6,11 +6,7 @@ import com.rymcu.forest.dto.NotificationDTO;
 import com.rymcu.forest.dto.PortfolioDTO;
 import com.rymcu.forest.dto.UserDTO;
 import com.rymcu.forest.entity.Notification;
-import com.rymcu.forest.entity.User;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,13 +18,14 @@ import java.util.Map;
 /**
  * @author ronger
  */
+@Slf4j
 public class Utils {
     public static final String HASH_ALGORITHM = "SHA-1";
     public static final String UNKOWN = "unknown";
     public static final int HASH_INTERATIONS = 1024;
     public static final int SALT_SIZE = 8;
 
-    private static Environment env = SpringContextHolder.getBean(Environment.class);
+    private static final Environment env = SpringContextHolder.getBean(Environment.class);
 
     /**
      * 生成安全的密码，生成随机的16位salt并经过1024次 sha-1 hash
@@ -51,27 +48,6 @@ public class Utils {
         byte[] salt = Encodes.decodeHex(enpwd.substring(0, 16));
         byte[] hashPassword = Digests.sha1(pwd.getBytes(), salt, HASH_INTERATIONS);
         return enpwd.equals(Encodes.encodeHex(salt) + Encodes.encodeHex(hashPassword));
-    }
-
-    public static User getCurrentUser() {
-        return null;
-    }
-
-    public static Session getSession() {
-        try {
-            Subject subject = SecurityUtils.getSubject();
-            Session session = subject.getSession(false);
-            if (session == null) {
-                session = subject.getSession();
-            }
-            if (session != null) {
-                return session;
-            }
-            subject.logout();
-        } catch (InvalidSessionException e) {
-
-        }
-        return null;
     }
 
     public static Integer genCode() {
@@ -135,7 +111,7 @@ public class Utils {
 
     public static void main(String[] args) {
         String s = entryptPassword("admin");
-        System.out.println(s);
+        log.info(s);
     }
 
     public static Map getArticlesGlobalResult(PageInfo<ArticleDTO> pageInfo) {

@@ -59,7 +59,6 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
     private static final int MAX_PREVIEW = 200;
     private static final String DEFAULT_STATUS = "0";
     private static final String DEFAULT_TOPIC_URI = "news";
-    private static final int ADMIN_ROLE_WEIGHTS = 2;
 
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
@@ -116,8 +115,8 @@ public class ArticleServiceImpl extends AbstractService<Article> implements Arti
         String reservedTag = checkTags(articleTags);
         boolean notification = false;
         if (StringUtils.isNotBlank(reservedTag)) {
-            Integer roleWeights = userService.findRoleWeightsByUser(user.getIdUser());
-            if (roleWeights > ADMIN_ROLE_WEIGHTS) {
+            boolean isAdmin = userService.hasAdminPermission(user.getEmail());
+            if (!isAdmin) {
                 throw new UltraViresException(StringEscapeUtils.unescapeJava(reservedTag) + "标签为系统保留标签!");
             } else {
                 notification = true;
