@@ -197,4 +197,6 @@ public interface UserService extends Service<User> {
      * @return
      */
     Set<String> findUserPermissions(User user);
+
+    boolean hasAdminPermission(String account);
 }
