@@ -9,6 +9,7 @@ import com.rymcu.forest.lucene.service.PortfolioLuceneService;
 import com.rymcu.forest.lucene.util.LucenePath;
 import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.lucene.util.SearchUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -38,6 +39,7 @@ import java.util.concurrent.Executors;
  * @author suwen
  * @date 2021/3/6 10:29
  */
+@Slf4j
 @Service
 public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
 
@@ -71,11 +73,11 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
                 pool.execute(runnable);
             }
             countDownLatch1.countDown();
-            System.out.println("开始创建索引");
+            log.info("开始创建索引");
             // 等待所有线程都完成
             countDownLatch2.await();
             // 线程全部完成工作
-            System.out.println("所有线程都创建索引完毕");
+            log.info("所有线程都创建索引完毕");
             // 释放线程池资源
             pool.shutdown();
         } catch (Exception e) {
@@ -180,7 +182,7 @@ public class PortfolioLuceneServiceImpl implements PortfolioLuceneService {
                                 .build());
             }
         } catch (IOException | ParseException | InvalidTokenOffsetsException e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage());
             e.printStackTrace();
         } finally {
             service.shutdownNow();

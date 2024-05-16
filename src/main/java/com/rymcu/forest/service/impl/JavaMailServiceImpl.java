@@ -162,9 +162,9 @@ public class JavaMailServiceImpl implements JavaMailService {
     public void sendTemplateEmail(String deliver, String[] receivers, String[] carbonCopys, String subject, String thymeleafTemplatePath,
                                   Map<String, Object> thymeleafTemplateVariable) throws MessagingException {
         String text = null;
-        if (thymeleafTemplateVariable != null && thymeleafTemplateVariable.size() > 0) {
+        if (thymeleafTemplateVariable != null && !thymeleafTemplateVariable.isEmpty()) {
             Context context = new Context();
-            thymeleafTemplateVariable.forEach((key, value) -> context.setVariable(key, value));
+            thymeleafTemplateVariable.forEach(context::setVariable);
             text = templateEngine.process(thymeleafTemplatePath, context);
         }
         sendMimeMail(deliver, receivers, carbonCopys, subject, text, true, null);
@@ -181,7 +181,7 @@ public class JavaMailServiceImpl implements JavaMailService {
      *                            src=\"cid:attchmentFileName\"></body></html>
      * @param attachmentFilePaths 附件文件路径 如：
      *                            需要注意的是addInline函数中资源名称attchmentFileName需要与正文中cid:attchmentFileName对应起来
-     * @throws Exception 邮件发送过程中的异常信息
+     * @throws MessagingException 邮件发送过程中的异常信息
      */
     private void sendMimeMail(String deliver, String[] receivers, String[] carbonCopys, String subject, String text,
                               boolean isHtml, String[] attachmentFilePaths) throws MessagingException {
@@ -196,7 +196,7 @@ public class JavaMailServiceImpl implements JavaMailService {
         helper.setSubject(subject);
         helper.setText(text, isHtml);
         // 添加邮件附件
-        if (attachmentFilePaths != null && attachmentFilePaths.length > 0) {
+        if (attachmentFilePaths != null) {
             for (String attachmentFilePath : attachmentFilePaths) {
                 File file = new File(attachmentFilePath);
                 if (file.exists()) {

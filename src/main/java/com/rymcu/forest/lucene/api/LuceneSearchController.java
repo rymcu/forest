@@ -17,6 +17,7 @@ import com.rymcu.forest.lucene.service.UserLuceneService;
 import com.rymcu.forest.lucene.util.ArticleIndexUtil;
 import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +39,7 @@ import java.util.concurrent.Executors;
  */
 @RestController
 @RequestMapping("/api/v1/lucene")
+@Slf4j
 public class LuceneSearchController {
 
     @Resource
@@ -59,22 +61,22 @@ public class LuceneSearchController {
         CompletableFuture<String> future =
                 CompletableFuture.supplyAsync(
                         () -> {
-                            System.out.println(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
+                            log.info(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
                             luceneService.writeArticle(luceneService.getAllArticleLucene());
                             userLuceneService.writeUser(userLuceneService.getAllUserLucene());
                             portfolioLuceneService.writePortfolio(portfolioLuceneService.getAllPortfolioLucene());
-                            System.out.println(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
-                            System.out.println("加载用户配置的自定义扩展词典到主词库表");
+                            log.info(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
+                            log.info("加载用户配置的自定义扩展词典到主词库表");
                             try {
-                                System.out.println(">>>>>>>>> 开始加载用户词典 <<<<<<<<<<<");
+                                log.info(">>>>>>>>> 开始加载用户词典 <<<<<<<<<<<");
                                 dicService.writeUserDic();
                             } catch (FileNotFoundException e) {
-                                System.out.println("加载用户词典失败，未成功创建用户词典");
+                                log.info("加载用户词典失败，未成功创建用户词典");
                             }
                             return ">>>>>>>>> 加载用户词典完毕 <<<<<<<<<<<";
                         },
                         executor);
-        future.thenAccept(System.out::println);
+        future.thenAccept(log::info);
     }
 
     /**

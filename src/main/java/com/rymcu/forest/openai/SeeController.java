@@ -1,8 +1,6 @@
 package com.rymcu.forest.openai;
 
-import com.rymcu.forest.entity.User;
 import com.rymcu.forest.openai.service.SseService;
-import com.rymcu.forest.util.UserUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

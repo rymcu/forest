@@ -20,6 +20,7 @@
 package com.rymcu.forest.lucene.dic;
 
 import com.rymcu.forest.lucene.cfg.Configuration;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -31,6 +32,7 @@ import java.util.List;
 /**
  * 词典管理类,单例模式
  */
+@Slf4j
 public class Dictionary {
 
     /**
@@ -220,7 +222,7 @@ public class Dictionary {
             InputStream is;
             for (String extDictName : extDictFiles) {
                 // 读取扩展词典文件
-                System.out.println("加载扩展词典：" + extDictName);
+                log.info("加载扩展词典：" + extDictName);
                 is = this.getClass().getClassLoader().getResourceAsStream(extDictName);
                 // 如果找不到扩展的字典，则忽略
                 if (is == null) {
@@ -238,7 +240,7 @@ public class Dictionary {
                         theWord = br.readLine();
                         if (theWord != null && !"".equals(theWord.trim())) {
                             // 加载扩展词典数据到主内存词典中
-                            System.out.println(theWord);
+                            log.info(theWord);
                             _MainDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
                         }
                     } while (theWord != null);
@@ -267,7 +269,7 @@ public class Dictionary {
         if (extStopWordDictFiles != null) {
             InputStream is = null;
             for (String extStopWordDictName : extStopWordDictFiles) {
-                System.out.println("加载扩展停止词典：" + extStopWordDictName);
+                log.info("加载扩展停止词典：" + extStopWordDictName);
                 // 读取扩展词典文件
                 is = this.getClass().getClassLoader().getResourceAsStream(extStopWordDictName);
                 // 如果找不到扩展的字典，则忽略
@@ -339,7 +341,7 @@ public class Dictionary {
         // 加载扩展词典配置
         InputStream is;
         // 读取扩展词典文件
-        System.out.println("更新加载扩展词典：" + PATH_USER_DIC);
+        log.info("更新加载扩展词典：" + PATH_USER_DIC);
         try {
             is = new FileInputStream(PATH_USER_DIC);
         } catch (FileNotFoundException e) {
@@ -353,7 +355,7 @@ public class Dictionary {
                 theWord = br.readLine();
                 if (theWord != null && !"".equals(theWord.trim())) {
                     // 加载扩展词典数据到主内存词典中
-                    System.out.println(theWord);
+                    log.info(theWord);
                     _MainDict.fillSegment(theWord.trim().toLowerCase().toCharArray());
                 }
             } while (theWord != null);

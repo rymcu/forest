@@ -2,6 +2,7 @@ package com.rymcu.forest.util;
 
 import com.google.common.net.InetAddresses;
 import com.google.common.net.InternetDomainName;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,6 +15,7 @@ import java.util.Objects;
  * @email ronger-x@outlook.com
  * @desc : com.rymcu.forest.util
  */
+@Slf4j
 public class SSRFUtil {
     public static boolean checkUrl(URL url, boolean checkWhiteList) {
         // 协议限制
@@ -42,7 +44,7 @@ public class SSRFUtil {
     public static void main(String[] args) throws MalformedURLException {
         URL url = new URL("https://rymcu.com");
         boolean b = checkUrl(url, false);
-        System.out.println(b);
+        log.info(String.valueOf(b));
     }
 
     public static boolean internalIp(String ip) {

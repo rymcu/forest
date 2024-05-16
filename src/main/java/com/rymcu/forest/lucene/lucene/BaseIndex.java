@@ -1,6 +1,7 @@
 package com.rymcu.forest.lucene.lucene;
 
 import com.rymcu.forest.lucene.util.IndexUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.index.IndexWriter;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
  * @author suwen
  * @date 2021/2/2 14:14
  */
+@Slf4j
 public abstract class BaseIndex<T> implements Runnable {
     /**
      * 父级索引路径
@@ -134,7 +136,7 @@ public abstract class BaseIndex<T> implements Runnable {
     public void run() {
         try {
             countDownLatch1.await();
-            System.out.println(writer);
+            log.info(writer.toString());
             indexDocs(writer, list);
         } catch (Exception e) {
             e.printStackTrace();

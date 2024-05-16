@@ -9,6 +9,7 @@ import com.rymcu.forest.entity.Follow;
 import com.rymcu.forest.entity.Notification;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.service.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.MessagingException;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Objects;
  *
  * @author ronger
  */
+@Slf4j
 public class NotificationUtils {
 
     private static final NotificationService notificationService = SpringContextHolder.getBean(NotificationService.class);
@@ -42,7 +44,7 @@ public class NotificationUtils {
     public static void saveNotification(Long idUser, Long dataId, String dataType, String dataSummary) throws MessagingException {
         Notification notification = notificationService.findNotification(idUser, dataId, dataType);
         if (notification == null || NotificationConstant.UpdateArticle.equals(dataType) || NotificationConstant.UpdateArticleStatus.equals(dataType)) {
-            System.out.println("------------------- 开始执行消息通知 ------------------");
+            log.info("------------------- 开始执行消息通知 ------------------");
             Integer result = notificationService.save(idUser, dataId, dataType, dataSummary);
             if (result == 0) {
                 // TODO 记录操作失败数据

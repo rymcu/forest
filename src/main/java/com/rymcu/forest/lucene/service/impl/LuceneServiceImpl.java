@@ -16,6 +16,7 @@ import com.rymcu.forest.mapper.ArticleMapper;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.Html2TextUtil;
 import com.rymcu.forest.util.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -45,6 +46,7 @@ import java.util.concurrent.Executors;
  * @author suwen
  * @date 2021/2/3 10:29
  */
+@Slf4j
 @Service
 public class LuceneServiceImpl implements LuceneService {
 
@@ -82,11 +84,11 @@ public class LuceneServiceImpl implements LuceneService {
                 pool.execute(runnable);
             }
             countDownLatch1.countDown();
-            System.out.println("开始创建索引");
+            log.info("开始创建索引");
             // 等待所有线程都完成
             countDownLatch2.await();
             // 线程全部完成工作
-            System.out.println("所有线程都创建索引完毕");
+            log.info("所有线程都创建索引完毕");
             // 释放线程池资源
             pool.shutdown();
         } catch (Exception e) {

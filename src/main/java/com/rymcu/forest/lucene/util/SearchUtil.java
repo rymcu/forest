@@ -1,5 +1,6 @@
 package com.rymcu.forest.lucene.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -22,6 +23,7 @@ import java.util.concurrent.ExecutorService;
  * @author suwen
  * @date 2021/2/2 14:04
  */
+@Slf4j
 public class SearchUtil {
     /**
      * 获取IndexSearcher对象
@@ -129,7 +131,7 @@ public class SearchUtil {
             int page, int perPage, IndexSearcher searcher, Query query) throws IOException {
         TopDocs result = null;
         if (query == null) {
-            System.out.println(" Query is null return null ");
+            log.info(" Query is null return null ");
             return null;
         }
         ScoreDoc before = null;
