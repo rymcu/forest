@@ -78,4 +78,8 @@ public class UserUtils {
         }
         throw new UnauthenticatedException();
     }
+
+    public static boolean isAdmin(String email) {
+        return userMapper.hasAdminPermission(email);
+    }
 }
