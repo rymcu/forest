@@ -1,7 +1,10 @@
 package com.rymcu.forest.auth;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
+import com.rymcu.forest.core.result.ResultCode;
+import com.rymcu.forest.util.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
@@ -126,7 +129,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             httpServletResponse.setContentType("application/json");
             httpServletResponse.setCharacterEncoding("UTF-8");
-            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(GlobalResultGenerator.genErrorResult("未登录或已登录超时，请重新登录")).getBytes());
+            httpServletResponse.getOutputStream().write(JSONObject.toJSONString(new GlobalResult<>(ResultCode.UNAUTHENTICATED)).getBytes());
+            httpServletResponse.getOutputStream().flush();
         } catch (IOException e) {
             // 错误日志
             log.error(e.getMessage());
