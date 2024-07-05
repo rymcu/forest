@@ -80,7 +80,7 @@ public class OpenAiController {
         boolean isAdmin = UserUtils.isAdmin(user.getEmail());
         OpenAiService service = new OpenAiService(token, Duration.ofSeconds(180));
         ChatCompletionRequest completionRequest = ChatCompletionRequest.builder()
-                .model(isAdmin ? "gpt-4o" : "gpt-3.5-turbo-16k-0613")
+                .model("gpt-3.5-turbo-16k-0613")
                 .stream(true)
                 .messages(list)
                 .build();
