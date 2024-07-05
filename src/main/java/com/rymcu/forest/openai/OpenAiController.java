@@ -60,7 +60,6 @@ public class OpenAiController {
             throw new IllegalArgumentException("参数异常！");
         }
         User user = UserUtils.getCurrentUserByToken();
-        Collections.reverse(messages);
         List<ChatMessage> list = new ArrayList<>(messages.size());
         if (messages.size() > 4) {
             messages = messages.subList(messages.size() - 4, messages.size());
@@ -78,9 +77,10 @@ public class OpenAiController {
 
     @NotNull
     private GlobalResult sendMessage(User user, List<ChatMessage> list) {
+        boolean isAdmin = UserUtils.isAdmin(user.getEmail());
         OpenAiService service = new OpenAiService(token, Duration.ofSeconds(180));
         ChatCompletionRequest completionRequest = ChatCompletionRequest.builder()
-                .model("gpt-3.5-turbo-16k-0613")
+                .model(isAdmin ? "gpt-4o" : "gpt-3.5-turbo-16k-0613")
                 .stream(true)
                 .messages(list)
                 .build();
