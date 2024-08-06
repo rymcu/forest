@@ -1,10 +1,10 @@
 package com.rymcu.forest.openai;
 
-import com.alibaba.fastjson.JSONObject;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.entity.User;
 import com.rymcu.forest.openai.entity.ChatMessageModel;
+import com.rymcu.forest.openai.entity.ChatModel;
 import com.rymcu.forest.openai.service.OpenAiService;
 import com.rymcu.forest.openai.service.SseService;
 import com.rymcu.forest.util.Html2TextUtil;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -42,20 +41,9 @@ public class OpenAiController {
     private String token;
 
     @PostMapping("/chat")
-    public GlobalResult chat(@RequestBody JSONObject jsonObject) {
-        String message = jsonObject.getString("message");
-        if (StringUtils.isBlank(message)) {
-            throw new IllegalArgumentException("参数异常！");
-        }
-        User user = UserUtils.getCurrentUserByToken();
-        ChatMessage chatMessage = new ChatMessage("user", message);
-        List<ChatMessage> list = new ArrayList<>(4);
-        list.add(chatMessage);
-        return sendMessage(user, list);
-    }
-
-    @PostMapping("/new-chat")
-    public GlobalResult newChat(@RequestBody List<ChatMessageModel> messages) {
+    public GlobalResult newChat(@RequestBody ChatModel chatModel) {
+        List<ChatMessageModel> messages = chatModel.getMessages();
+        String model = chatModel.getModel();
         if (messages.isEmpty()) {
             throw new IllegalArgumentException("参数异常！");
         }
@@ -72,15 +60,17 @@ public class OpenAiController {
             ChatMessage message = new ChatMessage(chatMessageModel.getRole(), Html2TextUtil.getContent(chatMessageModel.getContent()));
             list.add(message);
         });
-        return sendMessage(user, list);
+        return sendMessage(user, list, model);
     }
 
     @NotNull
-    private GlobalResult sendMessage(User user, List<ChatMessage> list) {
-        boolean isAdmin = UserUtils.isAdmin(user.getEmail());
+    private GlobalResult sendMessage(User user, List<ChatMessage> list, String model) {
+        if (StringUtils.isBlank(model)) {
+            model = "gpt-3.5-turbo-16k-0613";
+        }
         OpenAiService service = new OpenAiService(token, Duration.ofSeconds(180));
         ChatCompletionRequest completionRequest = ChatCompletionRequest.builder()
-                .model("gpt-3.5-turbo-16k-0613")
+                .model(model)
                 .stream(true)
                 .messages(list)
                 .build();
