@@ -54,7 +54,6 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Resource
     private LoginRecordService loginRecordService;
 
-    private final static String AVATAR_SVG_TYPE = "1";
     private final static String DEFAULT_AVATAR = "https://static.rymcu.com/article/1578475481946.png";
 
     @Override
@@ -188,11 +187,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UserInfoDTO updateUserInfo(UserInfoDTO user) throws ServiceException {
-        boolean number = checkNicknameByIdUser(user.getIdUser(), user.getNickname());
-        if (number) {
+        String nickname = formatNickname(user.getNickname());
+        boolean flag = checkNicknameByIdUser(user.getIdUser(), nickname);
+        if (!flag) {
             throw new NicknameOccupyException("该昵称已使用!");
         }
-        user.setNickname(formatNickname(user.getNickname()));
+        user.setNickname(nickname);
         if (FileDataType.BASE64.equals(user.getAvatarType())) {
             String avatarUrl = UploadController.uploadBase64File(user.getAvatarUrl(), FilePath.AVATAR);
             user.setAvatarUrl(avatarUrl);
@@ -216,7 +216,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     public boolean checkNicknameByIdUser(Long idUser, String nickname) {
-        if (StringUtils.isBlank(formatNickname(nickname))) {
+        nickname = formatNickname(nickname);
+        if (StringUtils.isBlank(nickname)) {
             throw new IllegalArgumentException("昵称不能为空!");
         }
         Integer number = userMapper.checkNicknameByIdUser(idUser, nickname);
