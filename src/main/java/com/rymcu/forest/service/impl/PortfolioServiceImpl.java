@@ -77,11 +77,6 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             portfolio.setHeadImgUrl(headImgUrl);
         }
         if (isUpdate) {
-            portfolio.setCreatedTime(new Date());
-            portfolio.setUpdatedTime(portfolio.getCreatedTime());
-            portfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
-            portfolioMapper.insertSelective(portfolio);
-        } else {
             Portfolio oldPortfolio = portfolioMapper.selectByPrimaryKey(portfolio.getIdPortfolio());
             oldPortfolio.setUpdatedTime(new Date());
             if (StringUtils.isNotBlank(headImgUrl)) {
@@ -91,6 +86,11 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             oldPortfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
             oldPortfolio.setPortfolioDescription(portfolio.getPortfolioDescription());
             portfolioMapper.updateByPrimaryKeySelective(oldPortfolio);
+        } else {
+            portfolio.setCreatedTime(new Date());
+            portfolio.setUpdatedTime(portfolio.getCreatedTime());
+            portfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
+            portfolioMapper.insertSelective(portfolio);
         }
         applicationEventPublisher.publishEvent(new PortfolioEvent(portfolio.getIdPortfolio(), portfolio.getPortfolioTitle(), portfolio.getPortfolioDescription(), isUpdate ? OperateType.UPDATE : OperateType.ADD));
         return portfolio;
@@ -113,6 +113,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean bindArticle(PortfolioArticleDTO portfolioArticle) throws ServiceException {
         Integer count = portfolioMapper.selectCountPortfolioArticle(portfolioArticle.getIdArticle(), portfolioArticle.getIdPortfolio());
         if (count.equals(0)) {
@@ -128,6 +129,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateArticleSortNo(PortfolioArticleDTO portfolioArticle) throws ServiceException {
         Integer result = portfolioMapper.updateArticleSortNo(portfolioArticle.getIdPortfolio(), portfolioArticle.getIdArticle(), portfolioArticle.getSortNo());
         if (result == 0) {
@@ -137,6 +139,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean unbindArticle(Long idPortfolio, Long idArticle) throws ServiceException {
         Integer result = portfolioMapper.unbindArticle(idPortfolio, idArticle);
         if (result == 0) {
@@ -146,6 +149,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deletePortfolio(Long idPortfolio, Long idUser, Integer roleWeights) {
         if (idPortfolio == null || idPortfolio == 0) {
             throw new IllegalArgumentException("作品集数据异常！");
