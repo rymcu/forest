@@ -8,10 +8,10 @@ import com.rymcu.forest.core.exception.UltraViresException;
 import com.rymcu.forest.core.service.AbstractService;
 import com.rymcu.forest.dto.*;
 import com.rymcu.forest.entity.Portfolio;
-import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.enumerate.FileDataType;
-import com.rymcu.forest.lucene.model.PortfolioLucene;
-import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
+import com.rymcu.forest.enumerate.FilePath;
+import com.rymcu.forest.enumerate.OperateType;
+import com.rymcu.forest.handler.event.PortfolioEvent;
 import com.rymcu.forest.mapper.PortfolioMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.PortfolioService;
@@ -19,7 +19,9 @@ import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -37,6 +39,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     private UserService userService;
     @Resource
     private ArticleService articleService;
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public List<PortfolioDTO> findUserPortfoliosByUser(UserDTO userDTO) {
@@ -64,23 +68,19 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Portfolio postPortfolio(Portfolio portfolio) {
+        boolean isUpdate = portfolio.getIdPortfolio() != null && portfolio.getIdPortfolio() > 0;
         String headImgUrl = "";
         if (FileDataType.BASE64.equals(portfolio.getHeadImgType())) {
             headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), FilePath.PORTFOLIO);
             portfolio.setHeadImgUrl(headImgUrl);
         }
-        if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
+        if (isUpdate) {
             portfolio.setCreatedTime(new Date());
             portfolio.setUpdatedTime(portfolio.getCreatedTime());
             portfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
             portfolioMapper.insertSelective(portfolio);
-            PortfolioIndexUtil.addIndex(
-                    PortfolioLucene.builder()
-                            .idPortfolio(portfolio.getIdPortfolio())
-                            .portfolioTitle(portfolio.getPortfolioTitle())
-                            .portfolioDescription(portfolio.getPortfolioDescription())
-                            .build());
         } else {
             Portfolio oldPortfolio = portfolioMapper.selectByPrimaryKey(portfolio.getIdPortfolio());
             oldPortfolio.setUpdatedTime(new Date());
@@ -91,13 +91,8 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             oldPortfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
             oldPortfolio.setPortfolioDescription(portfolio.getPortfolioDescription());
             portfolioMapper.updateByPrimaryKeySelective(oldPortfolio);
-            PortfolioIndexUtil.updateIndex(
-                    PortfolioLucene.builder()
-                            .idPortfolio(portfolio.getIdPortfolio())
-                            .portfolioTitle(portfolio.getPortfolioTitle())
-                            .portfolioDescription(portfolio.getPortfolioDescription())
-                            .build());
         }
+        applicationEventPublisher.publishEvent(new PortfolioEvent(portfolio.getIdPortfolio(), portfolio.getPortfolioTitle(), portfolio.getPortfolioDescription(), isUpdate ? OperateType.UPDATE : OperateType.ADD));
         return portfolio;
     }
 
@@ -171,7 +166,7 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
             if (result.equals(0)) {
                 throw new BusinessException("操作失败！");
             }
-            PortfolioIndexUtil.deleteIndex(idPortfolio);
+            applicationEventPublisher.publishEvent(new PortfolioEvent(idPortfolio, null, null, OperateType.DELETE));
             return true;
         }
     }
