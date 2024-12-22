@@ -18,6 +18,7 @@ import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
 import com.rymcu.forest.util.XssUtils;
 import com.rymcu.forest.web.api.common.UploadController;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -64,8 +65,9 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
 
     @Override
     public Portfolio postPortfolio(Portfolio portfolio) {
+        String headImgUrl = "";
         if (FileDataType.BASE64.equals(portfolio.getHeadImgType())) {
-            String headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), FilePath.PORTFOLIO);
+            headImgUrl = UploadController.uploadBase64File(portfolio.getHeadImgUrl(), FilePath.PORTFOLIO);
             portfolio.setHeadImgUrl(headImgUrl);
         }
         if (portfolio.getIdPortfolio() == null || portfolio.getIdPortfolio() == 0) {
@@ -80,8 +82,15 @@ public class PortfolioServiceImpl extends AbstractService<Portfolio> implements 
                             .portfolioDescription(portfolio.getPortfolioDescription())
                             .build());
         } else {
-            portfolio.setUpdatedTime(new Date());
-            portfolioMapper.updateByPrimaryKeySelective(portfolio);
+            Portfolio oldPortfolio = portfolioMapper.selectByPrimaryKey(portfolio.getIdPortfolio());
+            oldPortfolio.setUpdatedTime(new Date());
+            if (StringUtils.isNotBlank(headImgUrl)) {
+                oldPortfolio.setHeadImgUrl(headImgUrl);
+            }
+            oldPortfolio.setPortfolioTitle(portfolio.getPortfolioTitle());
+            oldPortfolio.setPortfolioDescriptionHtml(XssUtils.filterHtmlCode(portfolio.getPortfolioDescription()));
+            oldPortfolio.setPortfolioDescription(portfolio.getPortfolioDescription());
+            portfolioMapper.updateByPrimaryKeySelective(oldPortfolio);
             PortfolioIndexUtil.updateIndex(
                     PortfolioLucene.builder()
                             .idPortfolio(portfolio.getIdPortfolio())
