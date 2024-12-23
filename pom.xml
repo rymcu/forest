@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.rymcu</groupId>
     <artifactId>forest</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.5</version>
     <packaging>war</packaging>
     <name>forest</name>
     <description>forest(森林) —— 一款现代化的知识社区后台项目，使用 SpringBoot + Shiro + MyBatis + JWT + Redis 实现。
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.5.13</version>
+            <version>1.2.13</version>
         </dependency>
         <!--- log 日志依赖 end -->
         <dependency>
