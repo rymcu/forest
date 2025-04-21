@@ -186,4 +186,11 @@ public interface UserMapper extends Mapper<User> {
      * @return
      */
     Integer selectCountByAccount(@Param("account") String account);
+
+    /**
+     * 查询用户信息
+     * @param email
+     * @return
+     */
+    User selectByEmail(@Param("email") String email);
 }

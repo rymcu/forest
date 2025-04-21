@@ -122,5 +122,8 @@
     <select id="selectCountByAccount" resultType="java.lang.Integer">
         select count(*) from forest_user where account = #{account}
     </select>
+    <select id="selectByEmail" resultType="com.rymcu.forest.entity.User">
+        select * from forest_user where email = #{email}
+    </select>
 
 </mapper>

@@ -67,7 +67,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         String vCode = redisTemplate.boundValueOps(email).get();
         if (StringUtils.isNotBlank(vCode)) {
             if (vCode.equals(code)) {
-                User user = userMapper.selectByAccount(email);
+                User user = userMapper.selectByEmail(email);
                 if (user != null) {
                     throw new AccountExistsException("该邮箱已被注册！");
                 } else {
