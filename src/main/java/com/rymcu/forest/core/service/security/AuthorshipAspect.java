@@ -2,19 +2,19 @@ package com.rymcu.forest.core.service.security;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.rymcu.forest.auth.JwtConstants;
+import com.rymcu.forest.core.exception.BusinessException;
 import com.rymcu.forest.core.service.security.annotation.AuthorshipInterceptor;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.entity.Article;
 import com.rymcu.forest.entity.Portfolio;
 import com.rymcu.forest.enumerate.Module;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.mapper.UserMapper;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
-import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -64,7 +64,7 @@ public class AuthorshipAspect {
      * @throws Throwable 调用出错
      */
     @Before(value = "authorshipPointCut()")
-    public void doBefore(JoinPoint joinPoint) throws BaseApiException {
+    public void doBefore(JoinPoint joinPoint) {
         logger.info("检查作者身份 start ...");
         String methodName = joinPoint.getSignature().getName();
         Method method = currentMethod(joinPoint, methodName);
@@ -75,21 +75,31 @@ public class AuthorshipAspect {
                 isArticle = false;
             }
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-            String idArticle = "";
-            Integer idAuthor = 0;
+            String id;
+            Long idAuthor = 0L;
             if (isAjax(request)) {
                 Object[] objects = joinPoint.getArgs();
-                JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
+                JSONObject jsonObject;
+                if (objects[0] instanceof Integer) {
+                    jsonObject = new JSONObject();
+                    if (isArticle) {
+                        jsonObject.put("idArticle", objects[0].toString());
+                    } else {
+                        jsonObject.put("idPortfolio", objects[0].toString());
+                    }
+                } else {
+                    jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
+                }
                 if (Objects.nonNull(jsonObject)) {
                     if (isArticle) {
-                        idArticle = jsonObject.getString("idArticle");
-                        Article article = articleService.findById(idArticle);
+                        id = jsonObject.getString("idArticle");
+                        Article article = articleService.findById(id);
                         if (Objects.nonNull(article)) {
                             idAuthor = article.getArticleAuthorId();
                         }
                     } else {
-                        idArticle = jsonObject.getString("idPortfolio");
-                        Portfolio portfolio = portfolioService.findById(idArticle);
+                        id = jsonObject.getString("idPortfolio");
+                        Portfolio portfolio = portfolioService.findById(id);
                         if (Objects.nonNull(portfolio)) {
                             idAuthor = portfolio.getPortfolioAuthorId();
                         }
@@ -103,14 +113,14 @@ public class AuthorshipAspect {
                     params.putAll((Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE));
                 }
                 if (isArticle) {
-                    idArticle = (String) params.get("idArticle");
-                    Article article = articleService.findById(idArticle);
+                    id = (String) params.get("idArticle");
+                    Article article = articleService.findById(id);
                     if (Objects.nonNull(article)) {
                         idAuthor = article.getArticleAuthorId();
                     }
                 } else {
-                    idArticle = (String) params.get("idPortfolio");
-                    Portfolio portfolio = portfolioService.findById(idArticle);
+                    id = (String) params.get("idPortfolio");
+                    Portfolio portfolio = portfolioService.findById(id);
                     if (Objects.nonNull(portfolio)) {
                         idAuthor = portfolio.getPortfolioAuthorId();
                     }
@@ -120,23 +130,19 @@ public class AuthorshipAspect {
                 String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
                 if (StringUtils.isNotBlank(authHeader)) {
                     TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-                    if (Objects.nonNull(tokenUser)) {
-                        if (!idAuthor.equals(tokenUser.getIdUser())) {
-                            boolean hasPermission = false;
-                            if (Module.ARTICLE_TAG.equals(log.moduleName())) {
-                                // 判断管理员权限
-                                hasPermission = userMapper.hasAdminPermission(tokenUser.getAccount());
-                            }
-                            if (!hasPermission) {
-                                throw new BaseApiException(ErrorCode.ACCESS_DENIED);
-                            }
+                    if (!idAuthor.equals(tokenUser.getIdUser())) {
+                        boolean hasPermission = false;
+                        if (Module.ARTICLE_TAG.equals(log.moduleName())) {
+                            // 判断管理员权限
+                            hasPermission = userMapper.hasAdminPermission(tokenUser.getAccount());
                         }
-                    } else {
-                        throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+                        if (!hasPermission) {
+                            throw new UnauthorizedException();
+                        }
                     }
                 }
             } else {
-                throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+                throw new BusinessException("参数异常");
             }
         }
         logger.info("检查作者身份 end ...");

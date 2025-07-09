@@ -1,10 +1,13 @@
+---
 spring:
   profiles:
-    active: dev
+    active: '@profileActive@'
+---
+spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
-    mode: LEGACYHTML5
+    mode: HTML
     encoding: UTF-8
     servlet:
       content-type: text/html
@@ -33,6 +36,8 @@ spring:
     port: 465
     username: # 邮箱
     password: # 密码
+  application:
+    name: forest
 wx:
   open:
     componentAppId: #
@@ -63,17 +68,16 @@ server:
   port: 8099
   servlet:
     context-path: /forest
+  max-http-header-size: 1048576
+  shutdown: graceful
+  tomcat:
+    reject-illegal-header: false
 version: 1.0
 resource:
-  domain: http://yourdomain.com # 网站域名
-  file-path: http://yourdomain.com # 上传文件前缀域名
-  pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址
-baidu:
-  data:
-    site: https://yourdomain.com # 百度搜索绑定网站域名
-    token: xxxx
-  ai:
-    appId: xxx # 百度AI-文字识别 应用 appId
-    appKey: xxxx # 百度AI-文字识别 应用 appKey
-    secretKey: xxxx # 百度AI-文字识别 应用 secretKey
+  domain: http://yourdomain.com #  网站域名，本地测试时填写前端项目访问地址即可
+  file-path: http://yourdomain.com # 上传文件前缀域名，本地测试时填写前端项目访问地址即可
+  pic-path: /yoursrc/xx/nebula/static # 上传文件存储地址，本地测试时填写前端项目路径下的 static 目录即可
+  answer-api-url: https://test.rymcu.com/subject/question
+openai:
+  token: # Open Ai Key
 

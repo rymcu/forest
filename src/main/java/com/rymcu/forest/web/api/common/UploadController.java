@@ -1,19 +1,18 @@
 package com.rymcu.forest.web.api.common;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.core.result.GlobalResult;
 import com.rymcu.forest.core.result.GlobalResultGenerator;
 import com.rymcu.forest.dto.LinkToImageUrlDTO;
 import com.rymcu.forest.dto.TokenUser;
-import com.rymcu.forest.jwt.def.JwtConstants;
+import com.rymcu.forest.enumerate.FilePath;
 import com.rymcu.forest.service.ForestFileService;
-import com.rymcu.forest.util.FileUtils;
-import com.rymcu.forest.util.SpringContextHolder;
-import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.util.Utils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
-import com.rymcu.forest.web.api.exception.ErrorCode;
+import com.rymcu.forest.util.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -40,6 +36,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api/v1/upload")
+@RequiresPermissions(value = "user")
 public class UploadController {
 
     private final static String UPLOAD_SIMPLE_URL = "/api/upload/file";
@@ -50,38 +47,18 @@ public class UploadController {
     @Resource
     private ForestFileService forestFileService;
 
-    private static String getTypePath(Integer type) {
-        String typePath;
-        switch (type) {
-            case 0:
-                typePath = "avatar";
-                break;
-            case 1:
-                typePath = "article";
-                break;
-            case 2:
-                typePath = "tag";
-                break;
-            case 3:
-                typePath = "topic";
-                break;
-            default:
-                typePath = "images";
-        }
-        return typePath;
-    }
-
-    public static String uploadBase64File(String fileStr, Integer type) {
+    public static String uploadBase64File(String fileStr, FilePath filePath) {
         if (StringUtils.isBlank(fileStr)) {
             return "";
         }
-        String typePath = getTypePath(type);
+        String typePath = filePath.name().toLowerCase();
         //图片存储路径
         String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
         File file = new File(dir);
         if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
+            // 创建文件根目录
+            file.mkdirs();
         }
 
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
@@ -100,9 +77,9 @@ public class UploadController {
     /**
      * 从输入流中获取字节数组
      *
-     * @param inputStream
-     * @return
-     * @throws IOException
+     * @param inputStream 输入流
+     * @return byte[]
+     * @throws IOException IO 异常
      */
     public static byte[] readInputStream(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];
@@ -117,12 +94,12 @@ public class UploadController {
 
     @PostMapping("/file")
     @Transactional(rollbackFor = Exception.class)
-    public GlobalResult uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) throws IOException, BaseApiException {
+    public GlobalResult<JSONObject> uploadPicture(@RequestParam(value = "file", required = false) MultipartFile multipartFile, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) throws IOException {
         if (multipartFile == null) {
             return GlobalResultGenerator.genErrorResult("请选择要上传的文件");
         }
         TokenUser tokenUser = getTokenUser(request);
-        Map data = new HashMap(2);
+        JSONObject data = new JSONObject(2);
 
         if (multipartFile.getSize() == 0) {
             data.put("message", "上传失败!");
@@ -136,20 +113,10 @@ public class UploadController {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
         }
-        String typePath = getTypePath(type);
-        //图片存储路径
-        String ctxHeadPicPath = env.getProperty("resource.pic-path");
-        String dir = ctxHeadPicPath + "/" + typePath;
-        File file = new File(dir);
-        if (!file.exists()) {
-            file.mkdirs();// 创建文件根目录
-        }
-
+        File file = genFile(type);
+        String typePath = FilePath.getPath(type);
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
-
-
         String fileName = System.currentTimeMillis() + fileType;
-
         String savePath = file.getPath() + File.separator + fileName;
         fileUrl = localPath + fileName;
         File saveFile = new File(savePath);
@@ -164,11 +131,8 @@ public class UploadController {
 
     }
 
-    @PostMapping("/file/batch")
-    @Transactional(rollbackFor = Exception.class)
-    public GlobalResult batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) throws BaseApiException {
-        TokenUser tokenUser = getTokenUser(request);
-        String typePath = getTypePath(type);
+    private File genFile(Integer type) {
+        String typePath = FilePath.getPath(type);
         //图片存储路径
         String ctxHeadPicPath = env.getProperty("resource.pic-path");
         String dir = ctxHeadPicPath + "/" + typePath;
@@ -176,13 +140,20 @@ public class UploadController {
         if (!file.exists()) {
             file.mkdirs();// 创建文件根目录
         }
+        return file;
+    }
 
+    @PostMapping("/file/batch")
+    @Transactional(rollbackFor = Exception.class)
+    public GlobalResult<JSONObject> batchFileUpload(@RequestParam(value = "file[]", required = false) MultipartFile[] multipartFiles, @RequestParam(defaultValue = "1") Integer type, HttpServletRequest request) {
+        TokenUser tokenUser = getTokenUser(request);
+        File file = genFile(type);
+        String typePath = FilePath.getPath(type);
         String localPath = Utils.getProperty("resource.file-path") + "/" + typePath + "/";
-        Map successMap = new HashMap(16);
-        Set errFiles = new HashSet();
+        Map<String, String> successMap = new HashMap<>(16);
+        Set<String> errFiles = new HashSet<>();
 
-        for (int i = 0, len = multipartFiles.length; i < len; i++) {
-            MultipartFile multipartFile = multipartFiles[i];
+        for (MultipartFile multipartFile : multipartFiles) {
             String orgName = multipartFile.getOriginalFilename();
 
             if (multipartFile.getSize() == 0) {
@@ -210,51 +181,49 @@ public class UploadController {
 
 
         }
-        Map data = new HashMap(2);
+        JSONObject data = new JSONObject(2);
         data.put("errFiles", errFiles);
         data.put("succMap", successMap);
         return GlobalResultGenerator.genSuccessResult(data);
     }
 
-    private TokenUser getTokenUser(HttpServletRequest request) throws BaseApiException {
+    private TokenUser getTokenUser(HttpServletRequest request) {
         String authHeader = request.getHeader(JwtConstants.UPLOAD_TOKEN);
         if (StringUtils.isBlank(authHeader)) {
-            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
+            throw new UnauthorizedException();
         }
         return UserUtils.getTokenUser(authHeader);
     }
 
     @GetMapping("/simple/token")
-    public GlobalResult uploadSimpleToken(HttpServletRequest request) throws BaseApiException {
+    public GlobalResult<JSONObject> uploadSimpleToken(HttpServletRequest request) {
         return getUploadToken(request, UPLOAD_SIMPLE_URL);
     }
 
     @GetMapping("/token")
-    public GlobalResult uploadToken(HttpServletRequest request) throws BaseApiException {
+    public GlobalResult<JSONObject> uploadToken(HttpServletRequest request) {
         return getUploadToken(request, UPLOAD_URL);
     }
 
-    private GlobalResult getUploadToken(HttpServletRequest request, String uploadUrl) throws BaseApiException {
+    private GlobalResult<JSONObject> getUploadToken(HttpServletRequest request, String uploadUrl) {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
         if (StringUtils.isBlank(authHeader)) {
-            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
+            throw new UnauthorizedException();
         }
         TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-        Map map = new HashMap(4);
-        map.put("uploadToken", tokenUser.getToken());
-        map.put("uploadURL", uploadUrl);
-        map.put("linkToImageURL", LINK_TO_IMAGE_URL);
-        return GlobalResultGenerator.genSuccessResult(map);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("uploadToken", tokenUser.getToken());
+        jsonObject.put("uploadURL", uploadUrl);
+        jsonObject.put("linkToImageURL", LINK_TO_IMAGE_URL);
+        return GlobalResultGenerator.genSuccessResult(jsonObject);
     }
 
     @PostMapping("/file/link")
     @Transactional(rollbackFor = Exception.class)
-    public GlobalResult linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO, HttpServletRequest request) throws IOException, BaseApiException {
-
+    public GlobalResult<Map<String, String>> linkToImageUrl(@RequestBody LinkToImageUrlDTO linkToImageUrlDTO, HttpServletRequest request) throws IOException {
         TokenUser tokenUser = getTokenUser(request);
         String url = linkToImageUrlDTO.getUrl();
-        Map data = new HashMap(2);
-
+        Map<String, String> data = new HashMap<>(2);
         if (StringUtils.isBlank(url)) {
             data.put("message", "文件为空!");
             return GlobalResultGenerator.genSuccessResult(data);
@@ -265,6 +234,10 @@ public class UploadController {
             return GlobalResultGenerator.genSuccessResult(data);
         }
         URL link = new URL(url);
+        // SSRF 校验
+        if (!SSRFUtil.checkUrl(link, false)) {
+            throw new FileNotFoundException();
+        }
         HttpURLConnection conn = (HttpURLConnection) link.openConnection();
         //设置超时间为3秒
         conn.setConnectTimeout(3 * 1000);
@@ -291,19 +264,12 @@ public class UploadController {
                 data.put("url", fileUrl);
                 return GlobalResultGenerator.genSuccessResult(data);
             }
-
             Integer type = linkToImageUrlDTO.getType();
             if (Objects.isNull(type)) {
                 type = 1;
             }
-            String typePath = getTypePath(type);
-            //图片存储路径
-            String ctxHeadPicPath = env.getProperty("resource.pic-path");
-            String dir = ctxHeadPicPath + "/" + typePath;
-            File file = new File(dir);
-            if (!file.exists()) {
-                file.mkdirs();// 创建文件根目录
-            }
+            File file = genFile(type);
+            String typePath = FilePath.getPath(type);
             String fileName = System.currentTimeMillis() + fileType;
             fileUrl = Utils.getProperty("resource.file-path") + "/" + typePath + "/" + fileName;
 
@@ -316,9 +282,7 @@ public class UploadController {
             data.put("url", fileUrl);
             return GlobalResultGenerator.genSuccessResult(data);
         } catch (IOException e) {
-            /**
-             * 上传失败返回原链接
-             */
+            // 上传失败返回原链接
             logger.error("link: {},\nmessage: {}", url, e.getMessage());
             data.put("originalURL", url);
             data.put("url", url);

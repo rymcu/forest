@@ -1,14 +1,21 @@
 package com.rymcu.forest.dto;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author ronger
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Author {
 
-    private Integer idUser;
+    private Long idUser;
 
     private String userNickname;
 

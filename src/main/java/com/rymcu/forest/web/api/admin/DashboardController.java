@@ -9,14 +9,14 @@ import com.rymcu.forest.dto.BankAccountDTO;
 import com.rymcu.forest.dto.UserInfoDTO;
 import com.rymcu.forest.dto.admin.Dashboard;
 import com.rymcu.forest.service.DashboardService;
-import com.rymcu.forest.util.Utils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/admin/dashboard")
+@RequiresRoles(value = {"blog_admin", "admin"}, logical = Logical.OR)
 public class DashboardController {
 
     @Resource
@@ -49,41 +50,26 @@ public class DashboardController {
     }
 
     @GetMapping("/new-users")
-    public GlobalResult newUsers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<UserInfoDTO>> newUsers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<UserInfoDTO> list = dashboardService.newUsers();
         PageInfo<UserInfoDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<String, Object>(2);
-        map.put("users", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/new-bank-accounts")
-    public GlobalResult newBankAccounts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<BankAccountDTO>> newBankAccounts(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<BankAccountDTO> list = dashboardService.newBankAccounts();
         PageInfo<BankAccountDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("bankAccounts", pageInfo.getList());
-        Map pagination = new HashMap(4);
-        pagination.put("pageSize", pageInfo.getPageSize());
-        pagination.put("total", pageInfo.getTotal());
-        pagination.put("currentPage", pageInfo.getPageNum());
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/new-articles")
-    public GlobalResult newArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
+    public GlobalResult<PageInfo<ArticleDTO>> newArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = dashboardService.newArticles();
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("articles", pageInfo.getList());
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

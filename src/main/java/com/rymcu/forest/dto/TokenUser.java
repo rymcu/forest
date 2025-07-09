@@ -1,6 +1,9 @@
 package com.rymcu.forest.dto;
 
+
 import lombok.Data;
+
+import java.util.Set;
 
 /**
  * @author ronger
@@ -8,7 +11,7 @@ import lombok.Data;
 @Data
 public class TokenUser {
 
-    private Integer idUser;
+    private Long idUser;
 
     private String account;
 
@@ -16,10 +19,12 @@ public class TokenUser {
 
     private String token;
 
-    private String avatarType;
-
     private String avatarUrl;
 
-    private Integer weights;
+    private String refreshToken;
+
+    private Set<String> scope;
+
+    private String bankAccount;
 
 }

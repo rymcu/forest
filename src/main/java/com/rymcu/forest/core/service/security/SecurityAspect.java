@@ -2,12 +2,12 @@ package com.rymcu.forest.core.service.security;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.dto.TokenUser;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
-import com.rymcu.forest.web.api.exception.ErrorCode;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -48,15 +48,20 @@ public class SecurityAspect {
      * @throws Throwable 调用出错
      */
     @Before(value = "securityPointCut()")
-    public void doBefore(JoinPoint joinPoint) throws BaseApiException {
+    public void doBefore(JoinPoint joinPoint) {
         logger.info("检查用户修改信息权限 start ...");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String idUser = "";
         if (isAjax(request)) {
             Object[] objects = joinPoint.getArgs();
-            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
-            if (Objects.nonNull(jsonObject)) {
-                idUser = jsonObject.getString("idUser");
+            JSONObject jsonObject;
+            if (objects[0] instanceof Integer) {
+                idUser = objects[0].toString();
+            } else {
+                jsonObject = JSONObject.parseObject(JSON.toJSONString(objects[0]));
+                if (Objects.nonNull(jsonObject)) {
+                    idUser = jsonObject.getString("idUser");
+                }
             }
         } else {
             Map params = getParams(request);
@@ -71,16 +76,12 @@ public class SecurityAspect {
             String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
             if (StringUtils.isNotBlank(authHeader)) {
                 TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-                if (Objects.nonNull(tokenUser)) {
-                    if (!idUser.equals(tokenUser.getIdUser().toString())) {
-                        throw new BaseApiException(ErrorCode.ACCESS_DENIED);
-                    }
-                } else {
-                    throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+                if (!idUser.equals(tokenUser.getIdUser().toString())) {
+                    throw new UnauthorizedException();
                 }
             }
         } else {
-            throw new BaseApiException(ErrorCode.ACCESS_DENIED);
+            throw new UnauthenticatedException();
         }
         logger.info("检查用户修改信息权限 end ...");
     }

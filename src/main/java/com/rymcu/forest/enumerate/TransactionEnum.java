@@ -5,31 +5,23 @@ import java.util.Arrays;
 /**
  * @author ronger
  */
-
 public enum TransactionEnum {
-    ArticleSponsor("0", 20, "文章赞赏"),
-    Answer("1", 30, "答题奖励"),
-    CorrectAnswer("2", 50, "答题奖励"),
-    NewbieRewards("3", 200, "新手奖励");
-
-    private String dataType;
+    ArticleSponsor(20, "文章赞赏"),
+    Answer(30, "答题奖励"),
+    CorrectAnswer(50, "答题奖励"),
+    NewbieRewards(200, "新手奖励");
 
     private Integer money;
 
     private String description;
 
-    TransactionEnum(String dataType, Integer money, String description) {
-        this.dataType = dataType;
+    TransactionEnum(Integer money, String description) {
         this.money = money;
         this.description = description;
     }
 
-    public static TransactionEnum findTransactionEnum(String dataType) {
-        return Arrays.stream(TransactionEnum.values()).filter(transactionEnum -> transactionEnum.getDataType().equals(dataType)).findFirst().orElse(TransactionEnum.ArticleSponsor);
-    }
-
-    public String getDataType() {
-        return this.dataType;
+    public static TransactionEnum findTransactionEnum(int dataType) {
+        return Arrays.stream(TransactionEnum.values()).filter(transactionEnum -> transactionEnum.ordinal() == dataType).findFirst().orElse(TransactionEnum.ArticleSponsor);
     }
 
     public Integer getMoney() {

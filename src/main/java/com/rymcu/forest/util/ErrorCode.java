@@ -1,7 +1,6 @@
 package com.rymcu.forest.util;
 
 /**
- *
  * @author kaenry
  * @date 2016/9/20
  * ErrorCode
@@ -17,9 +16,9 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    private String code;
+    private final String code;
 
-    private String message;
+    private final String message;
 
     public String getCode() {
         return code;

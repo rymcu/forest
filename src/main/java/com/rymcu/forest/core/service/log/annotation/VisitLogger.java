@@ -5,6 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * 浏览记录器
+ *
  * @author ronger
  */
 @Retention(RetentionPolicy.RUNTIME)

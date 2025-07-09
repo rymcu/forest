@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto;
 
+
 import lombok.Data;
 
 /**
@@ -8,7 +9,7 @@ import lombok.Data;
 @Data
 public class UpdatePasswordDTO {
 
-    private Integer idUser;
+    private Long idUser;
 
     private String password;
 

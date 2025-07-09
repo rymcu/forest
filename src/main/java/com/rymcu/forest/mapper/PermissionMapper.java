@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface PermissionMapper extends Mapper<Permission> {
 
-    List<Permission> selectMenuByIdRole(@Param("role") Integer role);
+    List<Permission> selectMenuByIdRole(@Param("role") Long role);
 }

@@ -51,7 +51,7 @@
     </select>
     <select id="selectArticleCount" resultType="java.lang.Integer">
         select count(*)
-        from forest_article
+        from forest_article where article_status = 0
     </select>
     <select id="selectNewArticleCount" resultType="java.lang.Integer">
         select count(*)

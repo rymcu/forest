@@ -17,8 +17,11 @@ import com.rymcu.forest.lucene.service.UserLuceneService;
 import com.rymcu.forest.lucene.util.ArticleIndexUtil;
 import com.rymcu.forest.lucene.util.PortfolioIndexUtil;
 import com.rymcu.forest.lucene.util.UserIndexUtil;
-import com.rymcu.forest.util.Utils;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -36,6 +39,7 @@ import java.util.concurrent.Executors;
  */
 @RestController
 @RequestMapping("/api/v1/lucene")
+@Slf4j
 public class LuceneSearchController {
 
     @Resource
@@ -57,22 +61,22 @@ public class LuceneSearchController {
         CompletableFuture<String> future =
                 CompletableFuture.supplyAsync(
                         () -> {
-                            System.out.println(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
+                            log.info(">>>>>>>>> 开始创建索引 <<<<<<<<<<<");
                             luceneService.writeArticle(luceneService.getAllArticleLucene());
                             userLuceneService.writeUser(userLuceneService.getAllUserLucene());
                             portfolioLuceneService.writePortfolio(portfolioLuceneService.getAllPortfolioLucene());
-                            System.out.println(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
-                            System.out.println("加载用户配置的自定义扩展词典到主词库表");
+                            log.info(">>>>>>>>> 索引创建完毕 <<<<<<<<<<<");
+                            log.info("加载用户配置的自定义扩展词典到主词库表");
                             try {
-                                System.out.println(">>>>>>>>> 开始加载用户词典 <<<<<<<<<<<");
+                                log.info(">>>>>>>>> 开始加载用户词典 <<<<<<<<<<<");
                                 dicService.writeUserDic();
                             } catch (FileNotFoundException e) {
-                                System.out.println("加载用户词典失败，未成功创建用户词典");
+                                log.info("加载用户词典失败，未成功创建用户词典");
                             }
                             return ">>>>>>>>> 加载用户词典完毕 <<<<<<<<<<<";
                         },
                         executor);
-        future.thenAccept(System.out::println);
+        future.thenAccept(log::info);
     }
 
     /**
@@ -99,7 +103,7 @@ public class LuceneSearchController {
         int endIndex = Math.min(startIndex + rows, total);
         // 分割子列表
         List<ArticleLucene> subList = resList.subList(startIndex, endIndex);
-        String[] ids = subList.stream().map(ArticleLucene::getIdArticle).toArray(String[]::new);
+        Long[] ids = subList.stream().map(ArticleLucene::getIdArticle).toArray(Long[]::new);
         List<ArticleDTO> articleDTOList = luceneService.getArticlesByIds(ids);
         ArticleDTO temp;
         // 写入文章关键词信息
@@ -114,7 +118,7 @@ public class LuceneSearchController {
         }
         articles.addAll(articleDTOList);
         PageInfo<ArticleDTO> pageInfo = new PageInfo<>(articles);
-        return GlobalResultGenerator.genSuccessResult(Utils.getArticlesGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     /**
@@ -141,7 +145,7 @@ public class LuceneSearchController {
         int endIndex = Math.min(startIndex + rows, total);
         // 分割子列表
         List<UserLucene> subList = resList.subList(startIndex, endIndex);
-        Integer[] ids = subList.stream().map(UserLucene::getIdUser).toArray(Integer[]::new);
+        Long[] ids = subList.stream().map(UserLucene::getIdUser).toArray(Long[]::new);
         List<UserDTO> userDTOList = userLuceneService.getUsersByIds(ids);
         UserDTO temp;
         // 写入文章关键词信息
@@ -156,7 +160,7 @@ public class LuceneSearchController {
         }
         users.addAll(userDTOList);
         PageInfo<UserDTO> pageInfo = new PageInfo<>(users);
-        return GlobalResultGenerator.genSuccessResult(Utils.getUserGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     /**
@@ -183,7 +187,7 @@ public class LuceneSearchController {
         int endIndex = Math.min(startIndex + rows, total);
         // 分割子列表
         List<PortfolioLucene> subList = resList.subList(startIndex, endIndex);
-        String[] ids = subList.stream().map(PortfolioLucene::getIdPortfolio).toArray(String[]::new);
+        Long[] ids = subList.stream().map(PortfolioLucene::getIdPortfolio).toArray(Long[]::new);
         List<PortfolioDTO> portfolioDTOList = portfolioLuceneService.getPortfoliosByIds(ids);
         PortfolioDTO temp;
         // 写入文章关键词信息
@@ -198,6 +202,6 @@ public class LuceneSearchController {
         }
         portfolios.addAll(portfolioDTOList);
         PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(portfolios);
-        return GlobalResultGenerator.genSuccessResult(Utils.getPortfolioGlobalResult(pageInfo));
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 }

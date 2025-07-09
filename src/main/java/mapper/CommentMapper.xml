@@ -49,6 +49,6 @@
         select vu.id,vu.nickname,vu.avatar_url,vu.account from forest_comment vc left join forest_user vu on vu.id = vc.comment_author_id where vc.id = #{commentOriginalCommentId}
     </select>
     <select id="selectComments" resultMap="DTOResultMap">
-        select fc.*, fa.article_title from forest_comment fc join forest_article fa on fc.comment_article_id = fa.id order by fc.created_time desc
+        select fc.*, fa.article_title from forest_comment fc join forest_article fa on fc.comment_article_id = fa.id and fa.article_status = 0 order by fc.created_time desc
     </select>
 </mapper>

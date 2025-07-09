@@ -15,20 +15,20 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="forest_notification")
-public class Notification implements Serializable,Cloneable {
+@Table(name = "forest_notification")
+public class Notification implements Serializable, Cloneable {
     /**
      * 主键
      */
     @Id
     @GeneratedValue(generator = "JDBC")
     @Column(name = "id")
-    private Integer idNotification;
+    private Long idNotification;
     /**
      * 用户id
      */
     @Column(name = "id_user")
-    private Integer idUser;
+    private Long idUser;
     /**
      * 数据类型
      */
@@ -38,7 +38,7 @@ public class Notification implements Serializable,Cloneable {
      * 数据id
      */
     @Column(name = "data_id")
-    private Integer dataId;
+    private Long dataId;
     /**
      * 数据摘要
      */

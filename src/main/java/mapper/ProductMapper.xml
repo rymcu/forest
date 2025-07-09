@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rymcu.forest.mapper.ProductMapper">
+    <resultMap id="DTOResultMap" type="com.rymcu.forest.dto.ProductDTO">
+        <id column="id" property="idProduct"></id>
+        <result column="product_title" property="productTitle"></result>
+        <result column="product_img_url" property="productImgUrl"></result>
+        <result column="product_description" property="productDescription"></result>
+        <result column="product_price" property="productPrice"></result>
+        <result column="product_content" property="productContent"></result>
+        <result column="created_time" property="createdTime"></result>
+        <result column="status" property="status"></result>
+        <result column="tags" property="tags"></result>
+    </resultMap>
+    <insert id="insertProductContent">
+        insert into forest_product_content(id_product,
+                                           product_content,
+                                           product_content_html,
+                                           created_time,
+                                           updated_time)
+        values (#{idProduct},
+                #{productContent},
+                #{productContentHtml},
+                sysdate(),
+                sysdate())
+    </insert>
+    <update id="updateProductContent">
+        update forest_product_content
+        set product_content      = #{productContent},
+            product_content_html = #{productContentHtml},
+            updated_time         = sysdate()
+        where id_product = #{idProduct}
+    </update>
+    <update id="updateStatus">
+        update forest_product
+        set status = #{status}
+        where id_product = #{idProduct}
+    </update>
+    <select id="selectProducts" resultMap="DTOResultMap">
+        select id, product_title, product_img_url, tags, product_description, product_price, weights, status, created_time
+        from forest_product
+        order by weights
+    </select>
+    <select id="selectProductDTOById" resultMap="DTOResultMap">
+        select id, product_title, product_img_url, tags, product_description, product_price, weights, status,
+        <choose>
+            <when test="type == 1">
+                product_content_html as product_content,
+            </when>
+            <otherwise>
+                product_content,
+            </otherwise>
+        </choose>
+        product_img_url from forest_product fp join forest_product_content fpc on fp.id = fpc.id_product
+        where id = #{idProduct}
+    </select>
+    <select id="selectOnlineProducts" resultMap="DTOResultMap">
+        select id, product_title, product_img_url, product_description, product_price, tags
+        from forest_product
+        where status = 0
+        order by weights
+    </select>
+</mapper>

@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
+!/src/main/resources/application-dev.yml
 
 ### STS ###
 .apt_generated
@@ -19,6 +20,8 @@ target/
 *.iml
 *.ipr
 /.mvn/
+.mvn
+forest.iml
 
 ### NetBeans ###
 /nbproject/private/
@@ -34,3 +37,4 @@ build/
 ### lucene ###
 index
 userDic
+

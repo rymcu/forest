@@ -8,7 +8,7 @@ import com.rymcu.forest.entity.User;
 import com.rymcu.forest.enumerate.TransactionEnum;
 import com.rymcu.forest.util.HttpUtils;
 import com.rymcu.forest.util.UserUtils;
-import com.rymcu.forest.web.api.exception.BaseApiException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,20 +21,21 @@ import java.util.Map;
 @RequestMapping("/api/v1/answer")
 public class AnswerController {
 
-    private final static String ANSWER_API_URL = "http://1.116.175.112:8089/question";
+    @Value("${resource.answer-api-url}")
+    private String ANSWER_API_URL;
 
     @GetMapping("/today")
-    public GlobalResult today() throws BaseApiException {
+    public GlobalResult today() {
         User user = UserUtils.getCurrentUserByToken();
-        String result = HttpUtils.sendGet(ANSWER_API_URL + "/record/" + user.getIdUser() );
+        String result = HttpUtils.sendGet(ANSWER_API_URL + "/record/" + user.getIdUser());
         return JSONObject.parseObject(result, GlobalResult.class);
     }
 
     @PostMapping("/answer")
     @TransactionLogger(transactionType = TransactionEnum.Answer)
-    public GlobalResult answer(@RequestBody AnswerDTO answerDTO) throws BaseApiException {
+    public GlobalResult answer(@RequestBody AnswerDTO answerDTO) {
         User user = UserUtils.getCurrentUserByToken();
-        Map params = new HashMap<>(3);
+        Map<String, Object> params = new HashMap<>(3);
         params.put("userId", user.getIdUser());
         params.put("answer", answerDTO.getAnswer());
         params.put("subjectQuestionId", answerDTO.getIdSubjectQuestion());
@@ -44,7 +45,7 @@ public class AnswerController {
 
     @GetMapping("/get-answer")
     public GlobalResult getAnswer(Integer idSubjectQuestion) {
-        String result = HttpUtils.sendGet(ANSWER_API_URL + "/show-answer/" + idSubjectQuestion );
+        String result = HttpUtils.sendGet(ANSWER_API_URL + "/show-answer/" + idSubjectQuestion);
         return JSONObject.parseObject(result, GlobalResult.class);
     }
 }

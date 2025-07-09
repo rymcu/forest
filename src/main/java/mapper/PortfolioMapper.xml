@@ -29,7 +29,10 @@
         delete from forest_portfolio_article where id_portfolio = #{idPortfolio} and id_article = #{idArticle}
     </delete>
     <select id="selectUserPortfoliosByIdUser" resultMap="DTOResultMap">
-        select id, portfolio_head_img_url, portfolio_title, portfolio_author_id, portfolio_description, updated_time from forest_portfolio where portfolio_author_id = #{idUser}
+        select id, portfolio_head_img_url, portfolio_title, portfolio_author_id, portfolio_description, updated_time
+        from forest_portfolio
+        where portfolio_author_id = #{idUser}
+        order by id desc
     </select>
     <select id="selectPortfolioDTOById" resultMap="DTOResultMap">
         select id, portfolio_head_img_url, portfolio_title, portfolio_author_id,

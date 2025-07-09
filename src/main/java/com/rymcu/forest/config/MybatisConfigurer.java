@@ -1,7 +1,6 @@
 package com.rymcu.forest.config;
 
 import com.github.pagehelper.PageInterceptor;
-import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +17,7 @@ import static com.rymcu.forest.core.constant.ProjectConstant.*;
 
 /**
  * Mybatis & Mapper & PageHelper 配置
+ *
  * @author ronger
  */
 @Configuration
@@ -40,12 +40,11 @@ public class MybatisConfigurer {
         pageHelper.setProperties(properties);
 
         //添加插件
-        factory.setPlugins(new Interceptor[]{pageHelper});
+        factory.setPlugins(pageHelper);
 
         //添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         factory.setMapperLocations(resolver.getResources("classpath:mapper/**/*.xml"));
-//        factory.setTypeHandlersPackage("com.rymcu.forest.util.handlers");
         return factory.getObject();
     }
 

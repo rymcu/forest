@@ -10,8 +10,9 @@ import org.apache.ibatis.annotations.Param;
 public interface SponsorMapper extends Mapper<Sponsor> {
     /**
      * 更新文章赞赏数
+     *
      * @param idArticle
      * @return
      */
-    Integer updateArticleSponsorCount(@Param("idArticle") Integer idArticle);
+    Integer updateArticleSponsorCount(@Param("idArticle") Long idArticle);
 }

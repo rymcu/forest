@@ -7,6 +7,7 @@ import com.rymcu.forest.mapper.NotificationMapper;
 import com.rymcu.forest.service.NotificationService;
 import com.rymcu.forest.util.BeanCopierUtil;
 import com.rymcu.forest.util.NotificationUtils;
+import com.rymcu.forest.util.UserUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +27,12 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     private final static String UN_READ = "0";
 
     @Override
-    public List<Notification> findUnreadNotifications(Integer idUser) {
+    public List<Notification> findUnreadNotifications(Long idUser) {
         return notificationMapper.selectUnreadNotifications(idUser);
     }
 
     @Override
-    public List<NotificationDTO> findNotifications(Integer idUser) {
+    public List<NotificationDTO> findNotifications(Long idUser) {
         List<NotificationDTO> list = notificationMapper.selectNotifications(idUser);
         list.forEach(notification -> {
             NotificationDTO notificationDTO = NotificationUtils.genNotification(notification);
@@ -41,7 +42,7 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
             } else {
                 // 关联数据已删除,且未读
                 if (UN_READ.equals(notification.getHasRead())) {
-                    notificationMapper.readNotification(notification.getIdNotification());
+                    notificationMapper.readNotification(notification.getIdNotification(), idUser);
                 }
                 NotificationDTO dto = new NotificationDTO();
                 dto.setDataSummary("该消息已被撤销!");
@@ -55,19 +56,29 @@ public class NotificationServiceImpl extends AbstractService<Notification> imple
     }
 
     @Override
-    public Notification findNotification(Integer idUser, Integer dataId, String dataType) {
+    public Notification findNotification(Long idUser, Long dataId, String dataType) {
         return notificationMapper.selectNotification(idUser, dataId, dataType);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer save(Integer idUser, Integer dataId, String dataType, String dataSummary) {
+    public Integer save(Long idUser, Long dataId, String dataType, String dataSummary) {
         return notificationMapper.insertNotification(idUser, dataId, dataType, dataSummary);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer readNotification(Integer id) {
-        return notificationMapper.readNotification(id);
+    public Integer readNotification(Long id, Long idUser) {
+        return notificationMapper.readNotification(id, idUser);
+    }
+
+    @Override
+    public Integer readAllNotification(Long idUser) {
+        return notificationMapper.readAllNotification(idUser);
+    }
+
+    @Override
+    public Integer deleteUnreadNotification(Long dataId, String dataType) {
+        return notificationMapper.deleteUnreadNotification(dataId, dataType);
     }
 }

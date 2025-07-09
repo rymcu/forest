@@ -7,12 +7,10 @@ import org.apache.shiro.authc.AuthenticationException;
  *
  * @author ronger
  */
-public class CaptchaException extends AuthenticationException
-{
+public class CaptchaException extends AuthenticationException {
     private static final long serialVersionUID = 1L;
 
-    public CaptchaException()
-    {
+    public CaptchaException() {
         super("验证码不正确");
     }
 }

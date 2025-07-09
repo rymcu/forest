@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;
@@ -13,26 +14,26 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="forest_sponsor")
+@Table(name = "forest_sponsor")
 public class Sponsor implements Serializable, Cloneable {
     /**
      * 主键
      */
     @Id
     @GeneratedValue(generator = "JDBC")
-    private Integer id;
+    private Long id;
     /**
      * 数据类型
      */
-    private String dataType;
+    private Integer dataType;
     /**
      * 数据主键
      */
-    private Integer dataId;
+    private Long dataId;
     /**
      * 赞赏人
      */
-    private Integer sponsor;
+    private Long sponsor;
     /**
      * 赞赏日期
      */

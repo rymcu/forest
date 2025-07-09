@@ -3,7 +3,6 @@ package com.rymcu.forest.dto;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,7 +12,7 @@ import java.util.Date;
 @Data
 public class UserInfoDTO implements Serializable {
 
-    private Integer idUser;
+    private Long idUser;
 
     private String account;
 
@@ -45,5 +44,7 @@ public class UserInfoDTO implements Serializable {
     private Date createdTime;
 
     private Integer onlineStatus;
+
+    private String bgImgUrl;
 
 }

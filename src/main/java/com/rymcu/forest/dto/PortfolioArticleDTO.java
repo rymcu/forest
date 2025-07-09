@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto;
 
+
 import lombok.Data;
 
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.List;
 @Data
 public class PortfolioArticleDTO {
 
-    private Integer id;
+    private Long id;
 
-    private Integer idPortfolio;
+    private Long idPortfolio;
 
-    private Integer idArticle;
+    private Long idArticle;
 
     private String headImgUrl;
 

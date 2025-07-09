@@ -1,9 +1,9 @@
 package com.rymcu.forest.core.service.log;
 
+import com.rymcu.forest.auth.JwtConstants;
 import com.rymcu.forest.core.service.log.constant.LoggerConstant;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.entity.Visit;
-import com.rymcu.forest.jwt.def.JwtConstants;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.VisitService;
 import com.rymcu.forest.util.UserUtils;
@@ -59,6 +59,10 @@ public class VisitAspect {
         String url = request.getRequestURL().toString();
         String ua = request.getHeader("user-agent");
         String referer = request.getHeader("Referer");
+        int maxVisitRefererUrlLength = 256;
+        if (StringUtils.isNotBlank(referer) && referer.length() > maxVisitRefererUrlLength) {
+            referer = referer.substring(0, maxVisitRefererUrlLength - 1);
+        }
         String fingerprint = request.getHeader("fingerprint");
         Visit visit = new Visit();
         visit.setVisitUrl(url);
@@ -71,9 +75,7 @@ public class VisitAspect {
         String authHeader = request.getHeader(JwtConstants.AUTHORIZATION);
         if (StringUtils.isNotBlank(authHeader)) {
             TokenUser tokenUser = UserUtils.getTokenUser(authHeader);
-            if (Objects.nonNull(tokenUser)) {
-                visit.setVisitUserId(tokenUser.getIdUser());
-            }
+            visit.setVisitUserId(tokenUser.getIdUser());
         }
         visitService.save(visit);
 
@@ -90,7 +92,7 @@ public class VisitAspect {
                 if (StringUtils.isBlank(param) || "undefined".equals(param) || "null".equals(param)) {
                     break;
                 }
-                Integer id = Integer.parseInt(param);
+                Long id = Long.parseLong(param);
                 articleService.incrementArticleViewCount(id);
                 break;
             default:

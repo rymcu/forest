@@ -26,16 +26,27 @@
         </if>
     </select>
     <select id="selectBankAccount" resultMap="DTOResultMap">
-        select fb.bank_name, fu.nickname as account_owner_name, fba.* from forest_bank_account fba
-        join forest_bank fb on fba.id_bank = fb.id
-        join forest_user fu on fba.account_owner = fu.id where fba.id = #{idBank}
+        select fb.bank_name, fu.nickname as account_owner_name, fba.*
+        from forest_bank_account fba
+                 join forest_bank fb on fba.id_bank = fb.id
+                 join forest_user fu on fba.account_owner = fu.id
+        where fba.id = #{idBank}
     </select>
     <select id="selectMaxBankAccount" resultType="java.lang.String">
-        select max(bank_account) as max_bank_account from forest_bank_account where account_type = 0
+        select max(bank_account) as max_bank_account
+        from forest_bank_account
+        where account_type = 0
     </select>
     <select id="selectByBankAccount" resultMap="DTOResultMap">
-        select fb.bank_name, ifnull(fu.nickname, '系统') as account_owner_name, fba.bank_account from forest_bank_account fba
-            join forest_bank fb on fba.id_bank = fb.id
-            left join forest_user fu on fba.account_owner = fu.id where fba.bank_account = #{bankAccount}
+        select fb.bank_name, ifnull(fu.nickname, '系统') as account_owner_name, fba.bank_account
+        from forest_bank_account fba
+                 join forest_bank fb on fba.id_bank = fb.id
+                 left join forest_user fu on fba.account_owner = fu.id
+        where fba.bank_account = #{bankAccount}
+    </select>
+    <select id="findPersonBankAccountByIdUser" resultMap="DTOResultMap">
+        select fba.*
+        from forest_bank_account fba
+        where fba.account_owner = #{idUser} and account_type = 0
     </select>
 </mapper>

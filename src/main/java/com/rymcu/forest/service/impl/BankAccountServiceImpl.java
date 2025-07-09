@@ -37,25 +37,16 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
     }
 
     @Override
-    public BankAccountDTO findBankAccountByIdUser(Integer idUser) {
+    public BankAccountDTO findBankAccountByIdUser(Long idUser) {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setAccountOwner(idUser);
         String defaultAccountType = "0";
         bankAccount.setAccountType(defaultAccountType);
         List<BankAccount> bankAccounts = bankAccountMapper.select(bankAccount);
-        BankAccountDTO bankAccountDTO;
         if (Objects.nonNull(bankAccounts) && bankAccounts.size() > 0) {
-             bankAccountDTO = bankAccountMapper.selectBankAccount(bankAccounts.get(0).getIdBankAccount());
-        } else {
-            bankAccount.setAccountBalance(new BigDecimal("0"));
-            // 默认为社区发展与改革银行
-            bankAccount.setIdBank(2);
-            bankAccount.setBankAccount(nextBankAccount());
-            bankAccount.setCreatedTime(new Date());
-            bankAccountMapper.insertSelective(bankAccount);
-            bankAccountDTO = bankAccountMapper.selectBankAccount(bankAccount.getIdBankAccount());
+            return bankAccountMapper.selectBankAccount(bankAccounts.get(0).getIdBankAccount());
         }
-        return bankAccountDTO;
+        return null;
     }
 
     @Override
@@ -70,6 +61,19 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
     }
 
     @Override
+    public BankAccount createBankAccount(Long idUser) {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setAccountBalance(new BigDecimal("0"));
+        // 默认为社区发展与改革银行
+        bankAccount.setIdBank(2L);
+        bankAccount.setAccountOwner(idUser);
+        bankAccount.setBankAccount(nextBankAccount());
+        bankAccount.setCreatedTime(new Date());
+        bankAccountMapper.insertSelective(bankAccount);
+        return bankAccount;
+    }
+
+    @Override
     public BankAccountDTO findByBankAccount(String bankAccount) {
         return bankAccountMapper.selectByBankAccount(bankAccount);
     }
@@ -77,9 +81,9 @@ public class BankAccountServiceImpl extends AbstractService<BankAccount> impleme
     @Override
     public BankAccount findSystemBankAccount() {
         BankAccount bankAccount = new BankAccount();
-        bankAccount.setIdBank(1);
+        bankAccount.setIdBank(1L);
         bankAccount.setAccountType("1");
-        bankAccount.setAccountOwner(2);
+        bankAccount.setAccountOwner(2L);
         return bankAccountMapper.selectOne(bankAccount);
     }
 

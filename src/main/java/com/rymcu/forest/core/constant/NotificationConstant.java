@@ -2,6 +2,7 @@ package com.rymcu.forest.core.constant;
 
 /**
  * 消息通知类型
+ *
  * @author ronger
  */
 public class NotificationConstant {
@@ -15,5 +16,7 @@ public class NotificationConstant {
     public static String PostArticle = "3";
 
     public static String UpdateArticle = "4";
+
+    public static String UpdateArticleStatus = "5";
 
 }

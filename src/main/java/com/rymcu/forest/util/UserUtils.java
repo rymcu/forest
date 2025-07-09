@@ -1,17 +1,16 @@
 package com.rymcu.forest.util;
 
+import com.rymcu.forest.auth.JwtConstants;
+import com.rymcu.forest.auth.TokenManager;
+import com.rymcu.forest.auth.TokenModel;
 import com.rymcu.forest.dto.TokenUser;
 import com.rymcu.forest.entity.User;
-import com.rymcu.forest.jwt.def.JwtConstants;
-import com.rymcu.forest.jwt.model.TokenModel;
-import com.rymcu.forest.jwt.service.TokenManager;
 import com.rymcu.forest.mapper.UserMapper;
-import com.rymcu.forest.web.api.exception.BaseApiException;
-import com.rymcu.forest.web.api.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.UnauthenticatedException;
 
 import java.util.Objects;
 
@@ -20,36 +19,37 @@ import java.util.Objects;
  */
 public class UserUtils {
 
-    private static UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
-    private static TokenManager tokenManager = SpringContextHolder.getBean(TokenManager.class);
+    private static final UserMapper userMapper = SpringContextHolder.getBean(UserMapper.class);
+    private static final TokenManager tokenManager = SpringContextHolder.getBean(TokenManager.class);
 
     /**
      * 通过token获取当前用户的信息
      *
      * @return
      */
-    public static User getCurrentUserByToken() throws BaseApiException {
+    public static User getCurrentUserByToken() {
         String authHeader = ContextHolderUtils.getRequest().getHeader(JwtConstants.AUTHORIZATION);
         if (authHeader == null) {
-            return null;
+            throw new UnauthenticatedException();
         }
         // 验证token
         Claims claims;
         try {
             claims = Jwts.parser().setSigningKey(JwtConstants.JWT_SECRET).parseClaimsJws(authHeader).getBody();
         } catch (final SignatureException e) {
-            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
+            throw new UnauthenticatedException();
         }
         Object account = claims.getId();
         if (StringUtils.isNotBlank(Objects.toString(account, ""))) {
             TokenModel model = tokenManager.getToken(authHeader, account.toString());
             if (tokenManager.checkToken(model)) {
-                return userMapper.findByAccount(account.toString());
+                User user = userMapper.selectByAccount(account.toString());
+                if (Objects.nonNull(user)) {
+                    return user;
+                }
             }
-        } else {
-            throw new BaseApiException(ErrorCode.UNAUTHORIZED);
         }
-        return null;
+        throw new UnauthenticatedException();
     }
 
     public static TokenUser getTokenUser(String token) {
@@ -59,24 +59,27 @@ public class UserUtils {
             try {
                 claims = Jwts.parser().setSigningKey(JwtConstants.JWT_SECRET).parseClaimsJws(token).getBody();
             } catch (final SignatureException e) {
-                return null;
+                throw new UnauthenticatedException();
             }
             Object account = claims.getId();
             if (StringUtils.isNotBlank(Objects.toString(account, ""))) {
                 TokenModel model = tokenManager.getToken(token, account.toString());
                 if (tokenManager.checkToken(model)) {
-                    User user = userMapper.findByAccount(account.toString());
-                    if (user != null) {
+                    User user = userMapper.selectByAccount(account.toString());
+                    if (Objects.nonNull(user)) {
                         TokenUser tokenUser = new TokenUser();
                         BeanCopierUtil.copy(user, tokenUser);
                         tokenUser.setAccount(user.getEmail());
                         tokenUser.setToken(token);
-                        tokenUser.setWeights(userMapper.selectRoleWeightsByUser(user.getIdUser()));
                         return tokenUser;
                     }
                 }
             }
         }
-        return null;
+        throw new UnauthenticatedException();
+    }
+
+    public static boolean isAdmin(String email) {
+        return userMapper.hasAdminPermission(email);
     }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 public interface LoginRecordMapper extends Mapper<LoginRecord> {
     /**
      * 获取用户登录记录
+     *
      * @param idUser
      * @return
      */

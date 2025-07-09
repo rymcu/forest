@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto.admin;
 
+
 import lombok.Data;
 
 /**
@@ -7,7 +8,8 @@ import lombok.Data;
  */
 @Data
 public class UserRoleDTO {
-    private Integer idUser;
 
-    private Integer idRole;
+    private Long idUser;
+
+    private Long idRole;
 }

@@ -14,19 +14,33 @@ import java.util.List;
 public class BankAccountDTO {
 
     private Integer idBankAccount;
-    /** 所属银行 */
+    /**
+     * 所属银行
+     */
     private Integer idBank;
-    /** 所属银行名称 */
+    /**
+     * 所属银行名称
+     */
     private String bankName;
-    /** 银行账户 */
+    /**
+     * 银行账户
+     */
     private String bankAccount;
-    /** 账户余额 */
+    /**
+     * 账户余额
+     */
     private BigDecimal accountBalance;
-    /** 账户所有者 */
+    /**
+     * 账户所有者
+     */
     private Integer accountOwner;
-    /** 账户所有者姓名 */
+    /**
+     * 账户所有者姓名
+     */
     private String accountOwnerName;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 

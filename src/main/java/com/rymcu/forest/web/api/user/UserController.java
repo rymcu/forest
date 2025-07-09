@@ -13,13 +13,10 @@ import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.FollowService;
 import com.rymcu.forest.service.PortfolioService;
 import com.rymcu.forest.service.UserService;
-import com.rymcu.forest.util.Utils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -39,74 +36,61 @@ public class UserController {
 
     @GetMapping("/{account}")
     @VisitLogger
-    public GlobalResult detail(@PathVariable String account){
+    public GlobalResult<UserDTO> detail(@PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userDTO);
     }
 
     @GetMapping("/{account}/articles")
-    public GlobalResult userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<ArticleDTO>> userArticles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findUserArticlesByIdUser(userDTO.getIdUser());
-        PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/portfolios")
-    public GlobalResult userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<PortfolioDTO>> userPortfolios(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
         List<PortfolioDTO> list = portfolioService.findUserPortfoliosByUser(userDTO);
-        PageInfo<PortfolioDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("portfolios", list);
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<PortfolioDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/followers")
-    public GlobalResult userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<UserDTO>> userFollowers(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
         List<UserDTO> list = followService.findUserFollowersByUser(userDTO);
-        PageInfo<UserDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("users", list);
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<UserDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/followings")
-    public GlobalResult userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account){
+    public GlobalResult<PageInfo<UserDTO>> userFollowings(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "12") Integer rows, @PathVariable String account) {
         UserDTO userDTO = userService.findUserDTOByAccount(account);
-        if (userDTO == null){
+        if (userDTO == null) {
             return GlobalResultGenerator.genErrorResult("用户不存在！");
         }
         PageHelper.startPage(page, rows);
         List<UserDTO> list = followService.findUserFollowingsByUser(userDTO);
-        PageInfo<UserDTO> pageInfo = new PageInfo(list);
-        Map map = new HashMap(2);
-        map.put("users", list);
-        Map pagination = Utils.getPagination(pageInfo);
-        map.put("pagination", pagination);
-        return GlobalResultGenerator.genSuccessResult(map);
+        PageInfo<UserDTO> pageInfo = new PageInfo<>(list);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/{account}/user-extend")
-    public GlobalResult userExtend(@PathVariable String account) {
+    public GlobalResult<UserExtend> userExtend(@PathVariable String account) {
         UserExtend userExtend = userService.selectUserExtendByAccount(account);
         return GlobalResultGenerator.genSuccessResult(userExtend);
     }

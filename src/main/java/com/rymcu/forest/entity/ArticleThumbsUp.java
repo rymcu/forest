@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -13,7 +14,7 @@ import java.util.Date;
  * @author ronger
  */
 @Data
-@Table(name="forest_article_thumbs_up")
+@Table(name = "forest_article_thumbs_up")
 public class ArticleThumbsUp implements Serializable, Cloneable {
     /**
      * 主键
@@ -21,15 +22,15 @@ public class ArticleThumbsUp implements Serializable, Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idArticleThumbsUp;
+    private Long idArticleThumbsUp;
     /**
      * 文章表主键
      */
-    private Integer idArticle;
+    private Long idArticle;
     /**
      * 用户表主键
      */
-    private Integer idUser;
+    private Long idUser;
     /**
      * 点赞时间
      */

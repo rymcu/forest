@@ -1,5 +1,6 @@
 package com.rymcu.forest.dto.admin;
 
+
 import lombok.Data;
 
 /**
@@ -8,7 +9,7 @@ import lombok.Data;
 @Data
 public class TopicTagDTO {
 
-    private Integer idTopic;
+    private Long idTopic;
 
-    private Integer idTag;
+    private Long idTag;
 }

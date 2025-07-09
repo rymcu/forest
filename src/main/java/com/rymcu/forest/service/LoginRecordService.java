@@ -15,13 +15,15 @@ import java.util.List;
 public interface LoginRecordService extends Service<LoginRecord> {
     /**
      * 保存登录记录
+     *
      * @param idUser
      * @return
      */
-    LoginRecord saveLoginRecord(Integer idUser);
+    LoginRecord saveLoginRecord(Long idUser);
 
     /**
      * 获取用户登录记录
+     *
      * @param idUser
      * @return
      */

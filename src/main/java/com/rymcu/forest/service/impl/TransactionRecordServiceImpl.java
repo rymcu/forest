@@ -9,8 +9,8 @@ import com.rymcu.forest.entity.BankAccount;
 import com.rymcu.forest.entity.TransactionRecord;
 import com.rymcu.forest.enumerate.TransactionCode;
 import com.rymcu.forest.enumerate.TransactionEnum;
+import com.rymcu.forest.mapper.BankAccountMapper;
 import com.rymcu.forest.mapper.TransactionRecordMapper;
-import com.rymcu.forest.service.BankAccountService;
 import com.rymcu.forest.service.TransactionRecordService;
 import com.rymcu.forest.util.DateUtil;
 import org.springframework.stereotype.Service;
@@ -18,61 +18,81 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author ronger
  */
 @Service
 public class TransactionRecordServiceImpl extends AbstractService<TransactionRecord> implements TransactionRecordService {
-
     @Resource
     private TransactionRecordMapper transactionRecordMapper;
     @Resource
-    private BankAccountService bankAccountService;
+    private BankAccountMapper bankAccountMapper;
     @Resource
     private RedisService redisService;
+    private final Map<String, ReentrantLock> userTransferLocks = new HashMap<>();
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public TransactionRecord transfer(TransactionRecord transactionRecord) throws Exception {
-        // 判断发起者账户状态
-        boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
-        if (formAccountStatus) {
-            Integer result = transactionRecordMapper.transfer(transactionRecord.getFormBankAccount(), transactionRecord.getToBankAccount(), transactionRecord.getMoney());
-            if (result > 0) {
-                transactionRecord.setTransactionNo(nextTransactionNo());
-                transactionRecord.setTransactionTime(new Date());
-                transactionRecordMapper.insertSelective(transactionRecord);
+    public TransactionRecord transfer(TransactionRecord transactionRecord) {
+        ReentrantLock lock = getUserTransferLocks(transactionRecord.getFormBankAccount());
+        lock.lock();
+        try {
+            // 判断发起者账户状态
+            boolean formAccountStatus = checkFormAccountStatus(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
+            boolean toAccountStatus = checkFormAccountStatus(transactionRecord.getToBankAccount(), BigDecimal.valueOf(0));
+            if (formAccountStatus && toAccountStatus) {
+                Integer result = transactionRecordMapper.debit(transactionRecord.getFormBankAccount(), transactionRecord.getMoney());
+                if (result > 0) {
+                    result = transactionRecordMapper.credit(transactionRecord.getToBankAccount(), transactionRecord.getMoney());
+                    if (result > 0) {
+                        transactionRecord.setTransactionNo(nextTransactionNo());
+                        transactionRecord.setTransactionTime(new Date());
+                        transactionRecordMapper.insertSelective(transactionRecord);
+                        return transactionRecord;
+                    }
+                }
+            } else if (toAccountStatus) {
+                throw new TransactionException(TransactionCode.INSUFFICIENT_BALANCE);
+            } else {
+                throw new TransactionException(TransactionCode.UNKNOWN_ACCOUNT);
             }
-        } else {
-            throw new TransactionException(TransactionCode.InsufficientBalance);
+        } finally {
+            lock.unlock();
         }
-        return transactionRecord;
+        throw new TransactionException(TransactionCode.FAIL);
+    }
+
+    private ReentrantLock getUserTransferLocks(String formBankAccount) {
+        synchronized (userTransferLocks) {
+            return userTransferLocks.computeIfAbsent(formBankAccount, k -> new ReentrantLock());
+        }
     }
 
     @Override
     public List<TransactionRecordDTO> findTransactionRecords(String bankAccount, String startDate, String endDate) {
         List<TransactionRecordDTO> list = transactionRecordMapper.selectTransactionRecords(bankAccount, startDate, endDate);
-        list.forEach(transactionRecordDTO -> genTransactionRecord(transactionRecordDTO));
+        list.forEach(this::genTransactionRecord);
         return list;
     }
 
-    private TransactionRecordDTO genTransactionRecord(TransactionRecordDTO transactionRecordDTO) {
-        BankAccountDTO toBankAccount = bankAccountService.findByBankAccount(transactionRecordDTO.getToBankAccount());
-        BankAccountDTO formBankAccount = bankAccountService.findByBankAccount(transactionRecordDTO.getFormBankAccount());
+    private void genTransactionRecord(TransactionRecordDTO transactionRecordDTO) {
+        BankAccountDTO toBankAccount = bankAccountMapper.selectByBankAccount(transactionRecordDTO.getToBankAccount());
+        BankAccountDTO formBankAccount = bankAccountMapper.selectByBankAccount(transactionRecordDTO.getFormBankAccount());
         transactionRecordDTO.setFormBankAccountInfo(formBankAccount);
         transactionRecordDTO.setToBankAccountInfo(toBankAccount);
-        return transactionRecordDTO;
     }
 
     @Override
-    public TransactionRecord userTransfer(Integer toUserId, Integer formUserId, TransactionEnum transactionType) throws Exception {
-        BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(toUserId);
-        BankAccountDTO formBankAccount = bankAccountService.findBankAccountByIdUser(formUserId);
+    @Transactional(rollbackFor = Exception.class)
+    public TransactionRecord userTransfer(Long toUserId, Long formUserId, TransactionEnum transactionType) {
+        BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(toUserId);
+        BankAccountDTO formBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(formUserId);
+        if (Objects.isNull(toBankAccount) || Objects.isNull(formBankAccount)) {
+            throw new TransactionException(TransactionCode.UNKNOWN_ACCOUNT);
+        }
         TransactionRecord transactionRecord = new TransactionRecord();
         transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
         transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
@@ -82,8 +102,12 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     @Override
-    public TransactionRecord bankTransfer(Integer idUser, TransactionEnum transactionType) throws Exception {
-        BankAccountDTO toBankAccount = bankAccountService.findBankAccountByIdUser(idUser);
+    @Transactional(rollbackFor = Exception.class)
+    public TransactionRecord bankTransfer(Long idUser, TransactionEnum transactionType) {
+        BankAccountDTO toBankAccount = bankAccountMapper.findPersonBankAccountByIdUser(idUser);
+        if (Objects.isNull(toBankAccount)) {
+            throw new TransactionException(TransactionCode.UNKNOWN_ACCOUNT);
+        }
         Boolean isTrue;
         // 校验货币规则
         switch (transactionType) {
@@ -95,7 +119,7 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
                 isTrue = true;
         }
         if (isTrue) {
-            BankAccount formBankAccount = bankAccountService.findSystemBankAccount();
+            BankAccount formBankAccount = findSystemBankAccount();
             TransactionRecord transactionRecord = new TransactionRecord();
             transactionRecord.setToBankAccount(toBankAccount.getBankAccount());
             transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
@@ -106,14 +130,23 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
         return null;
     }
 
+    private BankAccount findSystemBankAccount() {
+        BankAccount bankAccount = new BankAccount();
+        bankAccount.setIdBank(1L);
+        bankAccount.setAccountType("1");
+        bankAccount.setAccountOwner(2L);
+        return bankAccountMapper.selectOne(bankAccount);
+    }
+
     @Override
-    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) throws Exception {
+    @Transactional(rollbackFor = Exception.class)
+    public TransactionRecord newbieRewards(TransactionRecord transactionRecord) {
         // 判断是否重复发放
         Boolean result = transactionRecordMapper.existsWithNewbieRewards(transactionRecord.getToBankAccount());
         if (result) {
             return transactionRecord;
         }
-        BankAccount formBankAccount = bankAccountService.findSystemBankAccount();
+        BankAccount formBankAccount = findSystemBankAccount();
         transactionRecord.setFormBankAccount(formBankAccount.getBankAccount());
         transactionRecord.setMoney(new BigDecimal(TransactionEnum.NewbieRewards.getMoney()));
         transactionRecord.setFunds(TransactionEnum.NewbieRewards.getDescription());
@@ -146,12 +179,16 @@ public class TransactionRecordServiceImpl extends AbstractService<TransactionRec
     }
 
     private boolean checkFormAccountStatus(String formBankAccount, BigDecimal money) {
-        BankAccount bankAccount = bankAccountService.findInfoByBankAccount(formBankAccount);
+        BankAccount bankAccount = findInfoByBankAccount(formBankAccount);
         if (Objects.nonNull(bankAccount)) {
-            if (bankAccount.getAccountBalance().compareTo(money) > 0) {
-                return true;
-            }
+            return bankAccount.getAccountBalance().compareTo(money) >= 0;
         }
         return false;
+    }
+
+    private BankAccount findInfoByBankAccount(String bankAccount) {
+        BankAccount searchBankAccount = new BankAccount();
+        searchBankAccount.setBankAccount(bankAccount);
+        return bankAccountMapper.selectOne(searchBankAccount);
     }
 }

@@ -35,7 +35,7 @@
         select art.id, art.article_title, content.article_content_html as article_content
         from forest_article art
                  join forest_article_content content on art.id = content.id_article
-        where article_status = 0;
+        where article_status = 0
     </select>
 
     <select id="getArticlesByIds" resultMap="DTOResultMap">
@@ -61,6 +61,6 @@
         from forest_article art
                  join forest_article_content content on art.id = content.id_article
         where article_status = 0
-        and id = #{id};
+        and id = #{id}
     </select>
 </mapper>

@@ -14,12 +14,14 @@ import java.util.Map;
 public interface OpenDataService {
     /**
      * 获取最近 30 天开放数据
+     *
      * @return
      */
     Map lastThirtyDaysData();
 
     /**
      * 获取统计数据
+     *
      * @return
      */
     Dashboard dashboard();

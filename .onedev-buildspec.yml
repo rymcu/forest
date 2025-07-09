@@ -1,0 +1,164 @@
+version: 19
+jobs:
+- name: maven ci
+  steps:
+  - !CheckoutStep
+    name: checkout
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: detect build version
+    runInContainer: true
+    image: '@script:builtin:maven:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - echo "Detecting project version (may require some time while downloading maven
+        dependencies)..."
+      - echo $(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version
+        -q -DforceStdout) > buildVersion
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: set build version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run unit tests
+    runInContainer: true
+    image: '@script:builtin:maven:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - mvn clean test -P dev
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  caches:
+  - key: maven-cache
+    path: /root/.m2/repository
+  timeout: 3600
+- name: package
+  jobExecutor: internal
+  steps:
+  - !CheckoutStep
+    name: Checkout Code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: delete build version
+    runInContainer: true
+    image: '@script:builtin:maven:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - echo "Detecting project version (may require some time while downloading maven
+        dependencies)..."
+      - echo $(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version
+        -q -DforceStdout) > buildVersion
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: Set Build Version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run maven package
+    runInContainer: true
+    image: '@script:builtin:maven:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - mvn package
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: Publish Artifacts
+    artifacts: '**'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  caches:
+  - key: maven-cache
+    path: /root/.m2/repository
+  timeout: 3600
+- name: Build Docker Image
+  steps:
+  - !SetBuildVersionStep
+    name: Set Build Version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !BuildImageStep
+    name: Build Docker Image
+    tags: rymcu/forest:@build_version@
+    publish: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  jobDependencies:
+  - jobName: package
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Pull from Github
+  steps:
+  - !PullRepository
+    name: Pull from GitHub
+    remoteUrl: https://github.com/ronger-x/forest
+    syncToChildProject: false
+    passwordSecret: access_token
+    refs: refs/heads/* refs/tags/*
+    withLfs: false
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !ScheduleTrigger
+    cronExpression: 0 0 1 * * ?
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Push to GitHub
+  steps:
+  - !PushRepository
+    name: Push to GitHub
+    remoteUrl: https://github.com/ronger-x/forest
+    passwordSecret: access_token
+    withLfs: false
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger
+    branches: master
+    projects: forest
+  - !TagCreateTrigger
+    branches: master
+    projects: forest
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: test
+  jobExecutor: internal
+  steps:
+  - !CommandStep
+    name: test
+    runInContainer: true
+    image: '@script:builtin:maven:determine-docker-image@'
+    interpreter: !DefaultInterpreter
+      commands:
+      - export ENCRYPTION_KEY=@secret:encryption_key@
+      - ''
+      - env
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600

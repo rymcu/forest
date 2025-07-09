@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ public class WxUser {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idWxUser;
+    private Long idWxUser;
 
     private Boolean subscribe;
 

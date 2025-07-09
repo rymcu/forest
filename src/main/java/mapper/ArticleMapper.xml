@@ -5,7 +5,7 @@
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" jdbcType="INTEGER" property="idArticle"/>
+        <id column="id" jdbcType="BIGINT" property="idArticle"/>
         <result column="article_title" property="articleTitle"></result>
         <result column="article_thumbnail_url" property="articleThumbnailUrl"></result>
         <result column="article_author_id" property="articleAuthorId"></result>
@@ -88,6 +88,9 @@
     <update id="updatePerfect">
         update forest_article set article_perfect = #{articlePerfect} where id = #{idArticle}
     </update>
+    <update id="updateStatus">
+        update forest_article set article_status = #{articleStatus} where id = #{idArticle}
+    </update>
     <delete id="deleteTagArticle">
         delete from forest_tag_article where id_article = #{id}
     </delete>
@@ -125,7 +128,9 @@
         where topic.id = vtt.id_topic and topic.topic_uri = #{topicName}))) order by updated_time desc
     </select>
     <select id="selectArticlesByTagName" resultMap="DTOResultMap">
-        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id order by updated_time desc
+        select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on art.article_author_id = su.id where
+        FIND_IN_SET(#{tagName},art.article_tags) > 0
+        order by updated_time desc
     </select>
     <select id="selectUserArticles" resultMap="DTOResultMap">
         select art.*,su.nickname,su.avatar_url from forest_article art join forest_user su on su.id = #{idUser}

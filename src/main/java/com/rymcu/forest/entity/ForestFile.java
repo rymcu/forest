@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ public class ForestFile {
      * 文件大小
      */
     @Column(name = "file_size")
-    private long fileSize;
+    private Long fileSize;
 
     /**
      * 文件类型-文件后缀
@@ -68,7 +69,7 @@ public class ForestFile {
      * 创建人
      */
     @Column(name = "created_by")
-    private long createdBy;
+    private Long createdBy;
 
 
 }

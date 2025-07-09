@@ -1,13 +1,10 @@
 package com.rymcu.forest.lucene.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.ibatis.type.JdbcType;
-import tk.mybatis.mapper.annotation.ColumnType;
-
-import javax.persistence.Column;
 
 /**
  * UserLucene
@@ -21,15 +18,23 @@ import javax.persistence.Column;
 @AllArgsConstructor
 public class UserLucene {
 
-  /** 用户编号 */
-  private Integer idUser;
+    /**
+     * 用户编号
+     */
+    private Long idUser;
 
-  /** 昵称 */
-  private String nickname;
+    /**
+     * 昵称
+     */
+    private String nickname;
 
-  /** 签名 */
-  private String signature;
+    /**
+     * 签名
+     */
+    private String signature;
 
-  /** 相关度评分 */
-  private String score;
+    /**
+     * 相关度评分
+     */
+    private String score;
 }

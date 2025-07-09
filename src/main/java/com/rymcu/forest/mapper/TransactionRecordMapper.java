@@ -14,15 +14,16 @@ import java.util.List;
 public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
     /**
      * 交易
+     *
      * @param formBankAccount
-     * @param toBankAccount
      * @param money
      * @return
      */
-    Integer transfer(@Param("formBankAccount") String formBankAccount, @Param("toBankAccount") String toBankAccount, @Param("money") BigDecimal money);
+    Integer debit(@Param("formBankAccount") String formBankAccount, @Param("money") BigDecimal money);
 
     /**
      * 查询指定账户的交易记录
+     *
      * @param bankAccount
      * @param startDate
      * @param endDate
@@ -32,6 +33,7 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
 
     /**
      * 校验今日是否已发放答题奖励
+     *
      * @param bankAccount
      * @param funds
      * @return
@@ -40,8 +42,16 @@ public interface TransactionRecordMapper extends Mapper<TransactionRecord> {
 
     /**
      * 查询是否已发放
+     *
      * @param bankAccount
      * @return
      */
     Boolean existsWithNewbieRewards(@Param("bankAccount") String bankAccount);
+
+    /**
+     * @param toBankAccount
+     * @param money
+     * @return
+     */
+    Integer credit(@Param("toBankAccount") String toBankAccount, @Param("money") BigDecimal money);
 }

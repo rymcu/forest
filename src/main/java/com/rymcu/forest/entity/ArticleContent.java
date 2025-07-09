@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -18,7 +19,7 @@ public class ArticleContent {
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "JDBC")
-    private Integer idArticle;
+    private Long idArticle;
 
     private String articleContent;
 

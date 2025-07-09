@@ -8,12 +8,10 @@ import com.rymcu.forest.dto.ArticleDTO;
 import com.rymcu.forest.dto.LabelModel;
 import com.rymcu.forest.service.ArticleService;
 import com.rymcu.forest.service.TagService;
-import com.rymcu.forest.util.Utils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ronger
@@ -28,12 +26,11 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping("/{name}")
-    public GlobalResult articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name){
+    public GlobalResult<PageInfo<ArticleDTO>> articles(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer rows, @PathVariable String name) {
         PageHelper.startPage(page, rows);
         List<ArticleDTO> list = articleService.findArticlesByTagName(name);
         PageInfo<ArticleDTO> pageInfo = new PageInfo(list);
-        Map map = Utils.getArticlesGlobalResult(pageInfo);
-        return GlobalResultGenerator.genSuccessResult(map);
+        return GlobalResultGenerator.genSuccessResult(pageInfo);
     }
 
     @GetMapping("/tags")

@@ -1,5 +1,6 @@
 package com.rymcu.forest.entity;
 
+
 import lombok.Data;
 
 import javax.persistence.Id;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 public class UserExtend {
 
     @Id
-    private Integer idUser;
+    private Long idUser;
 
     private String github;
 

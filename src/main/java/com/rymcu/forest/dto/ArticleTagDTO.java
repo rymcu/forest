@@ -1,18 +1,24 @@
 package com.rymcu.forest.dto;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author ronger
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticleTagDTO {
-
-    private Integer idArticleTag;
+    private Long idArticleTag;
 
     private Integer idTag;
 
-    private Integer idArticle;
+    private Long idArticle;
 
     private String tagTitle;
 
@@ -22,5 +28,5 @@ public class ArticleTagDTO {
 
     private String tagIconPath;
 
-    private Integer tagAuthorId;
+    private Long tagAuthorId;
 }

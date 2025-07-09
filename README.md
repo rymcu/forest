@@ -1,14 +1,17 @@
 # forest
-![forest](src/main/resources/static/logo_size.jpg)  
+![forest](src/main/resources/static/logo_size.jpg)
+
 下一代的知识社区系统,为未来而建
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frymcu%2Fforest.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frymcu%2Fforest?ref=badge_shield)
 
 ## 💡 简介
 
-forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使用 SpringBoot + Shrio + MyBatis + JWT + Redis 实现。
+forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使用 SpringBoot + Shiro + MyBatis + JWT + Redis 实现。
 
-与 [nubula](https://github.com/rymcu/nubula) （[ˈnebyələ]，n.星云）一起食用，让我们一起探索知识社区的未来。
-
-[forest 食用手册](UserManual.md)
+## 💡 Tips
+- 在 `docker\dev` 目录下执行 `docker-compose up` 可初始化 `redis` 和 `mysql` 环境，更多使用教程请阅读 [forest 食用手册](UserManual.md)
+- 与配套前端项目 [nebula](https://github.com/rymcu/nebula) （[ˈnebyələ]，n.星云）一起食用，让我们一起探索知识社区的未来。
 
 ## ⚡ 动机
 
@@ -92,8 +95,25 @@ forest（[ˈfôrəst]，n.森林）是一款现代化的知识社区项目，使
 
 欢迎对社区提出功能特性方面的建议，我们一起讨论，如果有可能我们会尽快实现。
 
-在提功能建议前可以先看一下 [计划表](https://rymcu.com/article/29) ，避免重复提议
+在提功能建议前可以先看一下 [计划表](https://github.com/orgs/rymcu/projects/3) ，避免重复提议
 
 ## 鸣谢
+- 感谢以下开发者对 Forest 作出的贡献：
+
+<a href="https://github.com/rymcu/forest/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=rymcu/forest&max=1000" />
+</a>
+
 - 感谢 `JetBrains` 对本项目的帮助,为作者提供了开源许可版 `JetBrains` 全家桶
-![JetBrains](src/main/resources/static/jetbrains.png)
+
+![JetBrains](src/main/resources/static/jb_beam.svg)
+
+
+## ⭐ Star 历史
+
+[![Stargazers over time](https://starchart.cc/rymcu/forest.svg)](https://starchart.cc/rymcu/forest)
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frymcu%2Fforest.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frymcu%2Fforest?ref=badge_large)
+
+

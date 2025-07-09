@@ -7,6 +7,7 @@ import java.util.Set;
 
 /**
  * Redis 服务接口
+ *
  * @author Jimersy Lee
  * 2017-09-18 14:58:21
  */
@@ -133,7 +134,7 @@ public interface RedisService {
      * @param expireTime 缓存内容过期时间 （单位：秒） ，若expireTime小于0 则表示该内容不过期
      * @return
      */
-    String set(String key, Object obj, int expireTime);
+    String set(String key, Object obj, long expireTime);
 
 
     /**
@@ -144,7 +145,7 @@ public interface RedisService {
      * @param expireTime 缓存内容过期时间 （单位：秒） ，若expireTime小于0 则表示该内容不过期
      * @return
      */
-    String set(String key, String value, int expireTime);
+    String set(String key, String value, long expireTime);
 
     /**
      * 写入/修改 缓存内容
@@ -211,7 +212,7 @@ public interface RedisService {
      * @param key
      * @param seconds
      */
-    void setTTL(String key, int seconds);
+    void setTTL(String key, long seconds);
 
     /**
      * 根据通配符表达式查询key值的set，通配符仅支持*
