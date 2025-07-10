@@ -155,7 +155,7 @@
             join forest_portfolio_article vpa on vp.id = vpa.id_portfolio where vpa.id_article = #{idArticle}
     </select>
     <select id="existsCommentWithPrimaryKey" resultType="java.lang.Boolean">
-        select exists (select * from forest_comment where comment_article_id = #{id})
+        select exists (select id from forest_comment where comment_article_id = #{id})
     </select>
     <select id="selectPortfolioArticlesByIdPortfolioAndSortNo" resultMap="DTOResultMap">
         select va.article_title, va.id, va.article_permalink from forest_portfolio_article vpa
