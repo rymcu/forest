@@ -30,9 +30,9 @@ class ProductServiceTest extends BaseServiceTest {
     @Test
     @DisplayName("获取产品详情")
     void findProductDTOById() {
-        ProductDTO productDTOById = productService.findProductDTOById(1, null);
+        ProductDTO productDTOById = productService.findProductDTOById(1L, (Integer) null);
         assertNotNull(productDTOById);
-        ProductDTO productDTOById2 = productService.findProductDTOById(1, 1);
+        ProductDTO productDTOById2 = productService.findProductDTOById(1L, 1);
 
         assertEquals(productDTOById.getProductTitle(), productDTOById2.getProductTitle());
         assertNotEquals(productDTOById.getProductContent(), productDTOById2.getProductContent());
