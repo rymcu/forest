@@ -1,3 +1,26 @@
+/*
+ * Copyright (c) 2020 RYMCU (https://rymcu.com)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+
 package com.rymcu.forest.service.impl;
 
 import com.rymcu.forest.core.exception.ContentNotExistException;
@@ -13,7 +36,8 @@ import com.rymcu.forest.service.CommentService;
 import com.rymcu.forest.util.Utils;
 import com.rymcu.forest.util.XssUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.context.ApplicationEventPublisher;
+import com.rymcu.forest.config.RabbitMQConfig;
+import com.rymcu.forest.event.EventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +57,7 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
     @Resource
     private ArticleService articleService;
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private EventPublisher eventPublisher;
 
     @Override
     public List<CommentDTO> getArticleComments(Integer idArticle) {
@@ -92,7 +116,10 @@ public class CommentServiceImpl extends AbstractService<Comment> implements Comm
 
         String commentContent = comment.getCommentContent();
         if (StringUtils.isNotBlank(commentContent)) {
-            applicationEventPublisher.publishEvent(new CommentEvent(comment.getIdComment(), article.getArticleAuthorId(), comment.getCommentAuthorId(), commentContent, comment.getCommentOriginalCommentId()));
+            eventPublisher.publish(RabbitMQConfig.RK_COMMENT_CREATE,
+                    new CommentEvent(comment.getIdComment(), article.getArticleAuthorId(),
+                            comment.getCommentAuthorId(), commentContent,
+                            comment.getCommentOriginalCommentId()));
         }
         return comment;
     }

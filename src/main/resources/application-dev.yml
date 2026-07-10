@@ -8,6 +8,20 @@ spring:
     servlet:
       content-type: text/html
     cache: false
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 3000ms
+    publisher-confirm-type: correlated
+    publisher-returns: true
   redis:
     host: 192.168.31.200
     port: 6379

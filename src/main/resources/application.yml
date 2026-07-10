@@ -36,6 +36,20 @@ spring:
     port: 465
     username: # 邮箱
     password: # 密码
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 3000ms
+    publisher-confirm-type: correlated
+    publisher-returns: true
   application:
     name: forest
 wx:
